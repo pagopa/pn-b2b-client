@@ -23,10 +23,10 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
 
     private final RestTemplate restTemplate;
     private final String safeStorageBaseUrl;
-    private final String clientIdSafeStorage;
-    private final FileUploadApi fileUploadApi;
-    private final FileDownloadApi fileDownloadApi;
-    private final AdditionalFileTagsApi additionalFileTagsApi;
+    private String clientIdSafeStorage;
+    private FileUploadApi fileUploadApi;
+    private FileDownloadApi fileDownloadApi;
+    private AdditionalFileTagsApi additionalFileTagsApi;
 
     public PnSafeStoragePrivateClientImpl(RestTemplate restTemplate,
                                           @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl,
@@ -47,6 +47,13 @@ public class PnSafeStoragePrivateClientImpl implements IPnSafeStoragePrivateClie
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apiKey);
         return newApiClient;
+    }
+
+    public void customApiClient(String clientName) {
+        clientIdSafeStorage = clientName;
+        fileUploadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, clientName + "_api_key"));
+        fileDownloadApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, clientName + "_api_key"));
+        additionalFileTagsApi.setApiClient(newApiClient(restTemplate, safeStorageBaseUrl, clientName + "_api_key"));
     }
 
     public FileCreationResponse createFile(

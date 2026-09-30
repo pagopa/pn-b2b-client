@@ -2,8 +2,17 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.Authenticable;
 import it.pagopa.interop.authorization.service.utils.SettableHeaders;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributesGroup;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed;
+
+import java.util.UUID;
 
 public interface IM2MV3EServiceTemplateAttributeClient extends IM2MEServiceTemplateAttributeClient,
     SettableHeaders, Authenticable {
 
+    EServiceTemplateVersionCertifiedDiscreteAttributes getEServiceTemplateVersionCertifiedDiscreteAttributes(UUID templateId, UUID versionId, Integer offset, Integer limit);
+    EServiceTemplateVersionCertifiedDiscreteAttributesGroup createEServiceTemplateVersionCertifiedDiscreteAttributesGroup(UUID templateId, UUID versionId, EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed);
+    Object assignEServiceTemplateVersionCertifiedDiscreteAttributesToGroup(UUID templateId, UUID versionId, Integer groupIndex, EServiceTemplateVersionCertifiedDiscreteAttributesGroupSeed eserviceTemplateVersionCertifiedDiscreteAttributesGroupSeed);
+    Object deleteEServiceTemplateVersionCertifiedDiscreteAttributeFromGroup(UUID templateId, UUID versionId, Integer groupIndex, UUID attributeId);
 }

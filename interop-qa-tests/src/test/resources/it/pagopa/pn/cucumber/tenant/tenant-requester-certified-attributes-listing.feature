@@ -33,6 +33,13 @@ Feature: Listing attributi certificati assegnati dall'ente certificatore
       | GSP     | support      |        200 |
       | GSP     | api,security |        403 |
 
+    @nuovi-operatori-update
+    Examples: # PA2 è certificatore
+      | ente    | ruolo        | statusCode |
+      | PA2     | reviewer     |        403 |
+      | Privato | reviewer     |        403 |
+      | GSP     | reviewer     |        403 |
+
   @nrt-minimal @tenant_requester_certified_attributes_listing2 @certifiedAttribute
   Scenario: [TENANT_REQUESTER_CERTIFIED_ATTRIBUTES_LISTING_02] A fronte di una richiesta di listing di attributi certificati creati e assegnati dall'ente richiedente, va a buon fine e l'attributo creato è contenuto nei risultati
     Given l'utente è un "admin" di "PA2"

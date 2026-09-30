@@ -7,10 +7,11 @@ import it.pagopa.interop.attribute.service.*;
 import it.pagopa.interop.authorization.domain.Auth;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.IProducerClient;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile.ApiM2MVersion;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile.ApiMode;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile.ApiM2MVersion;
+import it.pagopa.interop.conf.api_profile.ApiProfile.ApiMode;
 import it.pagopa.interop.delegate.service.*;
+import it.pagopa.interop.dev_tools.service.IDevToolsClient;
 import it.pagopa.interop.e_service_template.*;
 import it.pagopa.interop.eservice.service.*;
 import it.pagopa.interop.event.service.IM2MEventClient;
@@ -22,6 +23,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.tenant.service.ITenantsProcessApi;
 import it.pagopa.interop.users.IM2MV3UsersClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +54,7 @@ public class ClientTokenConfigurator {
     private final IAgreementClient agreementClient;
     private final IAttributeApiClient attributeApiClient;
     private final ITenantsApi tenantsApi;
+    private final ITenantsProcessApi tenantsProcessApi;
     private final IEServiceClient eServiceClient;
     private final IEServiceTemplateClient eServiceTemplateClient;
     private final IProducerClient producerClient;
@@ -79,12 +82,14 @@ public class ClientTokenConfigurator {
     private final INotificationClient notificationClient;
     private final INotificationConfigClient notificationConfigClient;
     private final ProducerKeychainClient producerKeychainClient;
+    private final IDevToolsClient devToolsClient;
 
     // Clients M2M API v3
     private final IM2MV3AgreementClient m2mV3AgreementClient;
     private final IM2MV3ClientsClient m2mV3ClientsClient;
     private final IM2MV3TenantClient m2mV3TenantClient;
     private final IM2MV3CertifiedAttributeClient m2mV3CertifiedAttributeClient;
+    private final IM2MV3CertifiedDiscreteAttributeClient m2mV3CertifiedDiscreteAttributeClient;
     private final IM2MV3DeclaredAttributeClient m2mV3DeclaredAttributeClient;
     private final IM2MV3VerifiedAttributeClient m2mV3VerifiedAttributeClient;
     private final IM2MV3DelegationClient m2mV3DelegationClient;
@@ -108,6 +113,7 @@ public class ClientTokenConfigurator {
 
         // Area Attributes
         registerProxy(IM2MCertifiedAttributeClient.class, m2mCertifiedAttributeClient, m2mV3CertifiedAttributeClient);
+        registerProxy(IM2MV3CertifiedDiscreteAttributeClient.class, null, m2mV3CertifiedDiscreteAttributeClient);
         registerProxy(IM2MDeclaredAttributeClient.class, m2mDeclaredAttributeClient, m2mV3DeclaredAttributeClient);
         registerProxy(IM2MVerifiedAttributeClient.class, m2mVerifiedAttributeClient, m2mV3VerifiedAttributeClient);
         registerProxy(IM2MEServiceAttributeClient.class, m2mEServiceAttributeClient, m2mV3EServiceAttributeClient);
@@ -192,6 +198,7 @@ public class ClientTokenConfigurator {
         agreementClient.setBearerToken(token);
         attributeApiClient.setBearerToken(token);
         tenantsApi.setBearerToken(token);
+        tenantsProcessApi.setBearerToken(token);
         eServiceClient.setBearerToken(token);
         eServiceTemplateClient.setBearerToken(token);
         producerClient.setBearerToken(token);
@@ -219,6 +226,7 @@ public class ClientTokenConfigurator {
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);
+        devToolsClient.setBearerToken(token);
     }
 
     public void setAuth(Auth auth) {
@@ -227,6 +235,7 @@ public class ClientTokenConfigurator {
         m2mV3TenantClient.setAuth(auth);
         m2mV3DelegationClient.setAuth(auth);
         m2mV3CertifiedAttributeClient.setAuth(auth);
+        m2mV3CertifiedDiscreteAttributeClient.setAuth(auth);
         m2mV3DeclaredAttributeClient.setAuth(auth);
         m2mV3VerifiedAttributeClient.setAuth(auth);
         m2mV3EServiceAttributeClient.setAuth(auth);

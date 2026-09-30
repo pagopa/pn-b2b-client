@@ -27,6 +27,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private final String bearerTokenSON;
     private final String bearerTokenROOT;
     private final String bearerTokenGA;
+    private final String bearerTokenSupport1;
     private final String userAgent;
     private ApiKeyType apiKeySetted;
 
@@ -38,6 +39,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
                                              @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
                                              @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
                                              @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
+                                                @Value("${pn.external.bearer-token-pa-support-1}") String bearerTokenSupport1,
                                              @Value("${pn.webapi.external.user-agent}")String userAgent) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
@@ -46,6 +48,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
         this.bearerTokenSON = bearerTokenSON;
         this.bearerTokenROOT = bearerTokenROOT;
         this.bearerTokenGA = bearerTokenGA;
+        this.bearerTokenSupport1 = bearerTokenSupport1;
         this.userAgent = userAgent;
         this.apiKeysApi = new ApiKeysApi(newApiClient( restTemplate, basePath, bearerTokenCom1, userAgent) );
         this.apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
@@ -116,6 +119,13 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
                 if (this.apiKeySetted != ApiKeyType.ROOT) {
                     setApiKey(bearerTokenROOT);
                     this.apiKeySetted = ApiKeyType.ROOT;
+                }
+                yield true;
+            }
+            case SUPPORT_1 -> {
+                if (this.apiKeySetted != ApiKeyType.SUPPORT_1) {
+                    setApiKey(bearerTokenSupport1);
+                    this.apiKeySetted = ApiKeyType.SUPPORT_1;
                 }
                 yield true;
             }

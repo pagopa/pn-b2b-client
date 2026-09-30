@@ -25,7 +25,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -649,8 +649,8 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     private String logTimelineWebhook() {
         StringBuilder sb = new StringBuilder("\n");
         progressResponseElementList.forEach(x -> {
-            sb.append("eventType: ");
-            sb.append(x.getEventId());
+            sb.append("elementId: ");
+            sb.append(x.getElement().getElementId());
             sb.append(" status:");
             sb.append(x.getNewStatus());
             sb.append("\n");

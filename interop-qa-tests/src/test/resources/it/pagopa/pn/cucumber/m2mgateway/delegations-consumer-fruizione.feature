@@ -4,7 +4,7 @@ Feature: Gestione delle deleghe in fruizione M2M
   @m2m-parte2-settembre @deleghe2
   Scenario Outline: [M2M_DELEGATIONS_CONSUMER_01] Un utente con ruolo M2M-ADMIN o M2M può recuperare i dettagli di una delega in fruizione (Parte2#Scenario intorno a 236)
     Given l'utente è un "admin" di "PA2"
-    And "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato

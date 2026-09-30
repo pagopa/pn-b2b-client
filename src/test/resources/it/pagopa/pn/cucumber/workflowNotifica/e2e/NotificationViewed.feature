@@ -22,7 +22,7 @@ Feature: Notifica visualizzata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @e2e @ignore
+  @e2e @ignore @deleghe1
   Scenario: [E2E-NOTIFICATION-VIEWED-2] Visualizzazione da parte del delegato della notifica
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"

@@ -4,6 +4,44 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
 
+  @workflowAnalogico @mockNR
+  Scenario: [POSTEL_DEDUPLICA] Viene effettuato un secondo tentativo di consegna analogica allo stesso indirizzo della prima consegna analogica
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario
+      | denomination                        | Test deduplica postel     |
+      | taxId                               | PRMRGG74T16H501R          |
+      | digitalDomicile                     | NULL                      |
+      | physicalAddress_address             | Via @FAIL-Irreperibile_AR |
+      | at                                  | 0_CHAR                    |
+      | physicalAddress_addressDetails      | 0_CHAR                    |
+      | physicalAddress_province            | CT                        |
+      | physicalAddress_municipality        | LICODIA EUBEA             |
+      | physicalAddress_zip                 | 95059                     |
+      | physicalAddress_municipalityDetails | 0_CHAR                    |
+      | physicalAddress_State               | 0_CHAR                    |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                    | NOT_NULL  |
+      | details_deliveryDetailCode | RECRN002F |
+      | details_sentAttemptMade    | 0         |
+      | details_responseStatus     | KO        |
+      | details_recIndex           | 0         |
+      | loadTimeline               | true      |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_sentAttemptMade | 1        |
+      | details_recIndex        | 0        |
+    And verifico che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" con errorCode "PNADDR003" nella tabella paperRequestError al tentativo 1
+
+
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
@@ -61,7 +99,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -98,6 +136,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL |
       | details_recIndex           | 0        |
@@ -236,7 +275,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -251,7 +290,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2                              |
-      | taxId                   | DVNLRD52D15M059P                            |
+      | taxId                   | FNTLCU80T25F205R                            |
       | digitalDomicile         | NULL                                        |
       | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -416,7 +455,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination            | Test AR Fail 2              |
-      | taxId                   | DVNLRD52D15M059P            |
+      | taxId                   | FNTLCU80T25F205R            |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -429,9 +468,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
+    And destinatario Utenza con Errore D01 e:
       | denomination            | Test AR Fail 2               |
-      | taxId                   | NNVFNC80A01H501G             |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -442,8 +480,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
   @mockNR  @workflowAnalogico @mockNormalizzatore
   Scenario: [B2B_TIMELINE_ANALOG_AR_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente
     Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination                        | Test AR Fail                 |
       | taxId                               | CNCGPP80A01H501J             |
@@ -472,20 +511,20 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_RIR_2] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_RIR_scenario negativo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Mario Gherkin e:
+    And destinatario Utenza con Indirizzo Valido da ANPR e:
       | digitalDomicile         | NULL         |
       | physicalAddress_State   | MESSICO      |
       | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@FAIL_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
@@ -513,16 +552,62 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL         |
-      | physicalAddress_State   | MESSICO      |
-      | physicalAddress_zip     | ZONE_2       |
-      | physicalAddress_address | Via@fail_RIR |
+    And destinatario
+      | denomination            | PF non censito   |
+      | taxId                   | STTSGT90A01H501J |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_State   | MESSICO          |
+      | physicalAddress_zip     | ZONE_2           |
+      | physicalAddress_address | Via@fail_RIR     |
+
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
       | details_responseStatus  | KO       |
+
+  @workflowAnalogico
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_1] Invio notifica con sender priority pari a 0 e verifica che venga accettata e processata correttamente
+    Given viene generata una nuova notifica
+      | subject                       | notifica analogica con cucumber |
+      | senderDenomination            | Comune di palermo               |
+      | physicalCommunication         | AR_REGISTERED_LETTER            |
+      | physicalCommunicationPriority | 0                               |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @workflowAnalogico
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_2] Invio notifica con sender priority superiore a 100 e verifica che venga ritornato un errore di richiesta non valida
+    Given viene generata una nuova notifica
+      | subject                       | notifica analogica con cucumber |
+      | senderDenomination            | Comune di palermo               |
+      | physicalCommunication         | AR_REGISTERED_LETTER            |
+      | physicalCommunicationPriority | 101                             |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica ha sollevato un errore "400"
+
+
+  @workflowAnalogico @webhookV29 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_3] Invio notifica con sender priority e verifica che la lettura dello stream vada a buon fine
+    Given viene generata una nuova notifica
+      | subject                       | invio notifica con cucumber |
+      | senderDenomination            | Comune di milano            |
+      | physicalCommunication         | AR_REGISTERED_LETTER        |
+      | physicalCommunicationPriority | 100                         |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "più recente"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione "più recente"

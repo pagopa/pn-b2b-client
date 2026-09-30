@@ -8,7 +8,9 @@ public enum Role {
     API("api"),
     SECURITY("security"),
     SUPPORT("support"),
-    API_SECURITY("api,security");
+    API_SECURITY("api,security"),
+    REVIEWER("reviewer"),
+    VIEWER("viewer");
 
     private final String value;
 

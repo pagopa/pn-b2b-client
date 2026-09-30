@@ -1,6 +1,7 @@
 @bff-notification
 @disable-notifications-hooks # FIXME usato per velocizzare l'esecuzione dei test in locale, rimuovere
 Feature: API Notifiche - verifica bodies
+
   Background:
     # eliminazione di ogni notifica presente per ogni ente ed utente (applicato con Cucumber Hook @Before)
     # abilitazione delle notifiche in-app per ogni ente ed utente (applicato con Cucumber Hook @Before)
@@ -35,11 +36,12 @@ Feature: API Notifiche - verifica bodies
     When l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha sospeso la propria richiesta di fruizione per il suo e-service .+\." e "/erogazione/richieste/.+"
 
+  @agreement-activate-refactor
   Scenario: [NOTIFICATION_AGREEMENTS_6] La riattivazione - da parte del fruitore - di una richiesta di fruizione per un proprio e-service con approvazione automatica produce una notifica (Scenario 74)
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente "admin" di "PA2" richiede una operazione di sospensione di quella richiesta di fruizione con successo
-    When l'utente "admin" di "PA2" richiede una operazione di attivazione di quella richiesta di fruizione con successo
+    When "PA2" ha già riattivato quella richiesta di fruizione come CONSUMER
     Then per l'utente "admin" di "PA1" è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern "L'ente .+ ha riattivato la propria richiesta di fruizione per il tuo e-service .+, precedentemente sospesa\." e "/erogazione/richieste/.+"
 
   # Nota 13 01 2026: ad un utente "api" non è permesso disassociare un client, motivo per cui tutte le precondizioni sono eseguite da un admin

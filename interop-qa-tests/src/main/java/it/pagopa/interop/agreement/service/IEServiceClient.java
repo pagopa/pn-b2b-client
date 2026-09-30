@@ -19,13 +19,39 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedResource updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed updateEServiceDescriptorSeed);
 
+    void updateDescriptorAttributes(UUID eServiceId, UUID descriptorId, DescriptorAttributesSeed descriptorAttributesSeed);
+
     CreatedResource updateDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorQuotas updateEServiceDescriptorQuotas);
 
     CreatedResource createEServiceDocument(UUID eServiceId, UUID descriptorId, String kind, String prettyName, org.springframework.core.io.Resource doc);
 
     void publishDescriptor(UUID eServiceId, UUID descriptorId);
 
-    void suspendDescriptor(UUID eServiceId, UUID descriptorId);
+    ResponseEntity<Void> suspendDescriptor(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> scheduleArchiveDescriptor(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays);
+
+    ResponseEntity<Void> scheduleArchiveEService(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed);
+
+    ResponseEntity<Void> cancelDescriptorArchiving(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> cancelEServiceArchiving(UUID eServiceId);
+
+    ResponseEntity<Void> submitDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, GracePeriodDays gracePeriodDays);
+
+    ResponseEntity<Void> cancelDelegatedDescriptorArchivingRequest(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> approveDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId);
+
+    ResponseEntity<Void> rejectDelegatedDescriptorArchiving(UUID eServiceId, UUID descriptorId, String rejectionReason);
+
+    ResponseEntity<Void> submitDelegatedEServiceArchiving(UUID eServiceId, EServiceArchivingSeed eserviceArchivingSeed);
+
+    ResponseEntity<Void> cancelDelegatedEServiceArchivingRequest(UUID eServiceId);
+
+    ResponseEntity<Void> approveDelegatedEServiceArchiving(UUID eServiceId);
+
+    ResponseEntity<Void> rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason);
 
     CreatedResource createDescriptor(UUID eServiceId);
 
@@ -49,6 +75,8 @@ public interface IEServiceClient extends SettableBearerToken {
 
     CreatedResource updateEServiceById(UUID eServiceId, UpdateEServiceSeed updateEServiceSeed);
 
+    CreatedResource updateEServiceDelegationFlags(UUID eServiceId, EServiceDelegationFlagsUpdateSeed eserviceDelegationFlagsUpdateSeed);
+
     CreatedResource updateEServiceDescription(UUID eServiceId, EServiceDescriptionUpdateSeed eserviceDescriptionUpdateSeed);
 
     CreatedEServiceDescriptor cloneEServiceByDescriptor(UUID eServiceId, UUID descriptorId);
@@ -67,7 +95,7 @@ public interface IEServiceClient extends SettableBearerToken {
 
     void updateEServicePersonalDataFlagAfterPublication(UUID eServiceId, EServicePersonalDataFlagUpdateSeed seed);
 
-    ResponseEntity<CreatedResource> createEServiceInstanceFromTemplateWithHttpInfo(
+    ResponseEntity<CreatedEServiceDescriptor> createEServiceInstanceFromTemplateWithHttpInfo(
             UUID templateId, InstanceEServiceSeed instanceEServiceSeed);
 
     ResponseEntity<EServiceTemplateInstances> getEServiceTemplateInstancesWithHttpInfo(
@@ -114,6 +142,9 @@ public interface IEServiceClient extends SettableBearerToken {
 
     ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceRestWithHttpInfo(
             UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceRESTSeed templateInstanceInterfaceRESTSeed);
+
+    ResponseEntity<CreatedResource> addEServiceTemplateInstanceInterfaceSoapWithHttpInfo(
+            UUID eServiceId, UUID descriptorId, TemplateInstanceInterfaceSOAPSeed templateInstanceInterfaceSOAPSeed);
 
     void editAgreementApprovalPolicy(UUID eServiceId, UUID descriptorId, AgreementApprovalPolicy policy);
 

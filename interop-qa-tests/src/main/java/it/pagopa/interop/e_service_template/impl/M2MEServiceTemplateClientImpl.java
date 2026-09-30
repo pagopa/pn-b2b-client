@@ -2,25 +2,20 @@ package it.pagopa.interop.e_service_template.impl;
 
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -100,8 +95,8 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
     }
 
     @Override
-    public CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload) {
-        return bffEserviceTemplatesApi.createEServiceTemplate(payload);
+    public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload) {
+        return eserviceTemplatesApi.createEServiceTemplate(payload);
     }
 
     @Override
@@ -111,6 +106,16 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
         return eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(
             templateId,
             this.mapper.mapCreationRequestToSeed(request));
+    }
+
+    @Override
+    public Document uploadDocument(UUID templateId, UUID versionId, Resource file, String prettyName) {
+        return eserviceTemplatesApi.uploadEServiceTemplateVersionDocument(templateId, versionId, file, prettyName);
+    }
+
+    @Override
+    public FileDownloadMultipart downloadDocument(UUID templateId, UUID versionId, UUID documentId) {
+        return eserviceTemplatesApi.downloadEServiceTemplateVersionDocument(templateId, versionId, documentId);
     }
 
     @Override
@@ -133,6 +138,15 @@ public class M2MEServiceTemplateClientImpl implements IM2MEServiceTemplateClient
             .mode(patchRequest.getMode())
             .intendedTarget(patchRequest.getIntendedTarget())
             .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+            .personalData(patchRequest.getPersonalData())
+        );
+    }
+
+    @Override
+    public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
+        EServiceTemplateDescriptionPatchRequest patchRequest) {
+        return eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId, new EServiceTemplateDescriptionUpdateSeed()
+            .description(patchRequest.getDescription())
         );
     }
 

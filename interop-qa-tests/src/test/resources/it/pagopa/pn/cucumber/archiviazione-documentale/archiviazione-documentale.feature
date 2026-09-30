@@ -2,7 +2,7 @@
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
   Scenario: [TRIGGER]
-    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -85,7 +85,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
-    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
@@ -124,7 +124,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
-    Given "GSP" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA1"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione

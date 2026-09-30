@@ -6,7 +6,7 @@ import it.pagopa.pn.cucumber.steps.pa.b2bVersions.*;
 import lombok.Getter;
 
 public enum NotificationVersion {
-    V1(1), V2(2), V21(21), V23(23), V24(24), V25(25);
+    V1(1), V2(2), V21(21), V23(23), V24(24), V25(25), V26(26);
 
     /**
      * Scopo di questo campo è quello di poter comparare le versioni con < o >
@@ -28,6 +28,7 @@ public enum NotificationVersion {
             case V23 -> new NotificationStepsV23(sharedSteps);
             case V24 -> new NotificationStepsV24(sharedSteps);
             case V25 -> new NotificationStepsV25(sharedSteps);
+            case V26 -> new NotificationStepsV26(sharedSteps);
         };
     }
 
@@ -39,6 +40,7 @@ public enum NotificationVersion {
             case V23 -> new B2bStepsV23(b2bSteps);
             case V24 -> new B2bStepsV24(b2bSteps);
             case V25 -> new B2bStepsV25(b2bSteps);
+            case V26 -> new B2bStepsV26(b2bSteps);
         };
     }
 }

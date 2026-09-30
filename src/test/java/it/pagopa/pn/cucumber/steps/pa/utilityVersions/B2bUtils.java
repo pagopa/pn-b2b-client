@@ -17,6 +17,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
@@ -58,7 +59,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
@@ -231,19 +232,32 @@ public abstract class B2bUtils {
     }
 
     public static void loadToPresigned(ApplicationContext context, String url, String secret, String sha256, String resource, String contentType) {
-        loadToPresignedWithDepth(context, url, secret, sha256, resource, contentType, 0);
+        HttpEntity httpEntity = new HttpEntity(context.getResource(resource), getHeadersMapForUploadToPresigned(contentType, sha256, secret));
+        loadToPresignedWithDepth(url, httpEntity, 0);
     }
 
-    private static void loadToPresignedWithDepth(ApplicationContext context, String url, String secret, String sha256, String resource, String contentType, int depth) {
+    /**
+     * Consente di fare l'upload di un file passando un byte[] anziché la risorsa (utile in caso si voglia simulare l'upload di un file malevolo, ad esempio un virus EICAR,
+     * che non è possibile salvare nelle risorse, ma dev'essere invece creato a runtime).
+     */
+    public static void loadToPresignedFromByteArray(String url, String secret, String sha256, byte[] byteArray, String contentType) {
+        HttpEntity httpEntity = new HttpEntity(byteArray, getHeadersMapForUploadToPresigned(contentType, sha256, secret));
+        loadToPresignedWithDepth(url, httpEntity, 0);
+    }
+
+    private static MultiValueMap<String, String> getHeadersMapForUploadToPresigned(String contentType, String sha256, String secret) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        if (contentType != null) headers.add("Content-type", contentType);
+        if (sha256 != null) headers.add("x-amz-checksum-sha256", sha256);
+        if (secret != null) headers.add("x-amz-meta-secret", secret);
+        log.info("headers: {}", headers);
+        return headers;
+    }
+
+    private static void loadToPresignedWithDepth(String url, HttpEntity httpEntity, int depth) {
         try {
-            MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-            headers.add("Content-type", contentType);
-            headers.add("x-amz-checksum-sha256", sha256);
-            headers.add("x-amz-meta-secret", secret);
-            log.info("headers: {}", headers);
-            HttpEntity<Resource> req = new HttpEntity<>(context.getResource(resource), headers);
             RestTemplate restTemplate = getDefaultRestTemplate();
-            restTemplate.exchange(URI.create(url), HttpMethod.PUT, req, Object.class);
+            restTemplate.exchange(URI.create(url), HttpMethod.PUT, httpEntity, Object.class);
         } catch (Exception e) {
             if (depth >= 5) {
                 throw e;
@@ -251,12 +265,12 @@ public abstract class B2bUtils {
             log.info("Upload in catch, retry");
             try {
                 Thread.sleep(2000);
-                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}, sha256: {}, contentType: {}", Thread.currentThread().getId(), depth, url, sha256, contentType);
+                log.error("[THREAD IN SLEEP PRELOAD] id: {} , attempt: {} , url: {}", Thread.currentThread().getId(), depth, url);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(ex.getMessage());
             }
-            loadToPresignedWithDepth(context, url, secret, sha256, resource, contentType, depth + 1);
+            loadToPresignedWithDepth(url, httpEntity, depth + 1);
         }
     }
 
@@ -539,6 +553,8 @@ public abstract class B2bUtils {
             case PREPARE_SIMPLE_REGISTERED_LETTER ->
                     TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case NOTIFICATION_VIEWED -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+            case NOTIFICATION_VIEWED_CREATION_REQUEST ->
+                    TimelineEventId.NOTIFICATION_VIEWED_CREATION_REQUEST.buildEventId(event);
             case COMPLETELY_UNREACHABLE -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
             case DIGITAL_DELIVERY_CREATION_REQUEST ->
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
@@ -568,9 +584,24 @@ public abstract class B2bUtils {
         return rawJson;
     }
 
-    public static String getEnvironment(ApplicationContext context) {
+    public static Environment getEnvironment(ApplicationContext context) {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
-        return env;
+        return Environment.valueOf(env.toUpperCase());
+    }
+
+    /**
+     * Metodo di utility per estrarre i valori di una DataTable, con la possibilità di restituire un valore di default in caso di valore null
+     */
+    public static String getDataTableParams(Map<String, String> inputData, String key, String defaultValue) {
+        String value = inputData.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.equalsIgnoreCase("EMPTY_STRING") ? null : value;
+    }
+
+    public static String assertWithIun(String iun, String msg) {
+        return String.format("Assertion failed. Iun %s : %s", iun, msg);
     }
 }

@@ -40,6 +40,15 @@ public class DocumentUpdateSteps {
         );
     }
 
+    @When("l'utente aggiorna il nome dell'interfaccia di callback per quel descrittore")
+    public void updateNameCallbackInterface() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient().updateEServiceDocumentById(
+                eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getCallbackInterfaceId(),
+                new UpdateEServiceDescriptorDocumentSeed().prettyName("updatedPrettyName"))
+        );
+    }
+
     @Given("{string} ha già caricato due documenti con nome {string} e {string} in quel descrittore")
     public void uploadTwoDocumentsWithName(String tenantType, String prettyName1, String prettyName2) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

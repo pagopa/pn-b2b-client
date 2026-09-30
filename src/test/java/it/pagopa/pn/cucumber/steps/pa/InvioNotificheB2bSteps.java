@@ -8,22 +8,43 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.common.util.PDFUtility;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentNotice;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachmentsInner;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationMetadataAttachment;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentAttachment;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PhysicalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StatusDetail;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -36,21 +57,35 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MOST_RECENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -70,6 +105,7 @@ public class InvioNotificheB2bSteps {
     @Getter
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
+    private final IPnSafeStoragePrivateClient safeStoragePrivateClient;
     @Getter
     private final SharedSteps sharedSteps;
     @Getter
@@ -91,8 +127,13 @@ public class InvioNotificheB2bSteps {
     private RequestStatus cancellationResponse;
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps, PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient,
+                                  IPnSafeStoragePrivateClient safeStoragePrivateClient,
+                                  SharedSteps sharedSteps,
+                                  PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
+                                  JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
+        this.safeStoragePrivateClient = safeStoragePrivateClient;
         this.sharedSteps = sharedSteps;
 //        this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
@@ -105,8 +146,8 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV28> notificationByIun = new AtomicReference<>();
-        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV28);
+        AtomicReference<FullSentNotificationV29> notificationByIun = new AtomicReference<>();
+        notificationCanBeRetrievedWithIUN(notificationByIun, b2bClient::getSentNotificationV29);
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1")
@@ -158,7 +199,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
 
         assertThat(sharedSteps.getSentNotificationLastVersion())
                 .as("La notifica inviata non deve essere nulla prima di recuperare il codice IUN")
@@ -187,10 +228,10 @@ public class InvioNotificheB2bSteps {
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
-        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
-        FullSentNotificationV28 notifica120 = null;
-        for (NotificationSearchRow notifica : searchedNotifications) {
-            FullSentNotificationV28 result = b2bClient.getSentNotificationV28(notifica.getIun());
+        List<BffLegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
+        FullSentNotificationV29 notifica120 = null;
+        for (BffLegalNotificationSearchRow notifica : searchedNotifications) {
+            FullSentNotificationV29 result = b2bClient.getSentNotificationV29(notifica.getIun());
             if (result.getRecipients().get(0).getPayments() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa() != null
                     && result.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode() != null) {
@@ -227,12 +268,12 @@ public class InvioNotificheB2bSteps {
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
 
-        List<NotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
-        FullSentNotificationV28 notifica = null;
+        List<BffLegalNotificationSearchRow> searchedNotifications = searchNotificationWebFromADate(offsetDateTime);
+        FullSentNotificationV29 notifica = null;
 
-        for (NotificationSearchRow notifiche : searchedNotifications) {
+        for (BffLegalNotificationSearchRow notifiche : searchedNotifications) {
 
-            notifica = b2bClient.getSentNotificationV28(notifiche.getIun());
+            notifica = b2bClient.getSentNotificationV29(notifiche.getIun());
 
             if (!notifica.getRecipients().get(0).getPayments().isEmpty()
                     && notifica.getRecipients().get(0).getPayments() != null
@@ -263,13 +304,13 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+    private List<BffLegalNotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data) {
+        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
 
-        Objects.requireNonNull(
+        notificationByIun.set(Objects.requireNonNull(
                 webPaClient.searchSentNotification(data, data.plusDays(20), null, null, null, null, 50, null),
                 "Il risultato della ricerca delle notifiche inviate non deve essere nullo"
-        );
+        ));
 
         assertSoftly(softly -> {
             softly.assertThat(notificationByIun.get())
@@ -304,7 +345,7 @@ public class InvioNotificheB2bSteps {
             default -> throw new IllegalArgumentException();
         };
 
-        AtomicReference<BffNotificationsResponse> notificationByIun = new AtomicReference<>();
+        AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
         try {
             assertThatCode(() ->
                     notificationByIun.set(
@@ -396,7 +437,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         String key = switch (documentType) {
             case "ATTO OPPONIBILE" -> fullSentNotification.getDocuments().get(0).getRef().getKey();
             case "PAGOPA" ->
@@ -413,7 +454,7 @@ public class InvioNotificheB2bSteps {
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         if (documentType.equals("ATTACHMENTS")) {
             for (int i = 0; i < fullSentNotification.getDocuments().size(); i++) {
                 String key = fullSentNotification.getDocuments().get(i).getRef().getKey();
@@ -432,7 +473,7 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
 
@@ -474,7 +515,7 @@ public class InvioNotificheB2bSteps {
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws RuntimeException {
         TimelineElementV28 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         if (documentType.equals("ATTACHMENTS")) {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             for (int i = 0; i < fullSentNotification.getRecipients().get(0).getPayments().size(); i++) {
                 String key = fullSentNotification.getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
 
@@ -739,7 +780,7 @@ public class InvioNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId(),
                 Objects.requireNonNull(Objects.requireNonNull(fullSentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getNoticeCode());
@@ -908,7 +949,7 @@ public class InvioNotificheB2bSteps {
         String regex = "[{}-~¡-ÿ^]";
         String regexCaratteriA = "[æ]";
 
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
 
         TimelineElementV28 timelineNormalizer = fullSentNotification.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
         PhysicalAddress oldAddress = timelineNormalizer.getDetails().getOldAddress();
@@ -1030,7 +1071,7 @@ public class InvioNotificheB2bSteps {
     @And("si verifica lo SHA degli attachment inseriti nella pec del destinatario {int} di tipo {string}")
     public void verificaSHAAllegatiPecDelDestinatario(Integer destinatario, String tipoAttachment) {
         try {
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             //caricamento in Mappa di tutti i documenti della notifica
             for (NotificationDocument documentNotifica : fullSentNotification.getDocuments()) {
                 sharedSteps.getMapAllegatiNotificaSha256().put(documentNotifica.getRef().getKey(), documentNotifica.getDigests().getSha256());
@@ -1112,21 +1153,165 @@ public class InvioNotificheB2bSteps {
 
     @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
     public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
-        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+        List<PaperEngageRequestAttachmentsInner> attachments = Optional.ofNullable(documentiPec.get(0))
                 .map(ReceivedMessage::getPaperEngageRequest)
                 .map(PaperEngageRequest::getAttachments)
-                .orElse(List.of())
-                .stream()
-                .map(PaperEngageRequestAttachmentsInner::getUri)
-                .filter(uri -> uri.contains(tipologia))
-                .toList();
+                .orElse(List.of());
+
+        long actualCount;
+        if ("F24".equalsIgnoreCase(tipologia)) {
+            actualCount = attachments.stream().filter(this::isF24).count();
+        } else {
+            actualCount = attachments.stream()
+                    .map(PaperEngageRequestAttachmentsInner::getUri)
+                    .filter(uri -> uri != null && uri.contains(tipologia))
+                    .count();
+        }
+
         try {
-            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size(),
-                    "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + attachmentsUri.size());
+            Assertions.assertEquals(numeroDocumenti.longValue(), actualCount,
+                    "Il numero di allegati di tipo '" + tipologia + "' è diverso da quello atteso. Expected: " + numeroDocumenti + ", Actual: " + actualCount);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
+
+    /**
+     * Riconosce un allegato F24 con cascade a costo crescente:
+     * 1) uri / documentType già presenti su PaperEngage
+     * 2) metadati SafeStorage (key, documentType, tags, url) via getFile
+     * 3) solo in ultima istanza download PDF e ricerca testuale di "F24" (word boundary)
+     * <p>
+     * Sugli hint di key/uri/url si valuta solo il prefisso document-type
+     * (parte prima del primo {@code -}), così non si matchano hex casuali tipo {@code ...f24a...}.
+     */
+    private boolean isF24(PaperEngageRequestAttachmentsInner attachment) {
+        if (attachment == null) {
+            return false;
+        }
+        if (containsF24Hint(attachment.getUri(), attachment.getDocumentType())) {
+            return true;
+        }
+        try {
+            FileDownloadResponse fileInfo = getSafeStorageFileInfo(attachment.getUri());
+            if (hasF24InSafeStorageMetadata(fileInfo)) {
+                return true;
+            }
+            return PDFUtility.containsText(downloadFromSafeStorage(fileInfo, attachment.getUri()), "F24", true);
+        } catch (Exception e) {
+            log.warn("isF24: impossibile verificare allegato uri={}: {}", attachment.getUri(), e.getMessage());
+            return false;
+        }
+    }
+
+    private static boolean hasF24InSafeStorageMetadata(FileDownloadResponse fileInfo) {
+        if (fileInfo == null) {
+            return false;
+        }
+        if (containsF24Hint(fileInfo.getKey(), fileInfo.getDocumentType())) {
+            return true;
+        }
+        if (fileInfo.getDownload() != null && containsF24Hint(fileInfo.getDownload().getUrl())) {
+            return true;
+        }
+        if (fileInfo.getTags() != null) {
+            for (Map.Entry<String, List<String>> entry : fileInfo.getTags().entrySet()) {
+                if (containsF24Hint(entry.getKey())) {
+                    return true;
+                }
+                if (entry.getValue() != null) {
+                    for (String tagValue : entry.getValue()) {
+                        if (containsF24Hint(tagValue)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Cerca "F24" (case-insensitive) solo sul prefisso document-type della stringa,
+     * ottenuto con split sul primo {@code -} (es. {@code PN_CLEAN_PAPER_ATTACHMENT-f4614...pdf}
+     * → {@code PN_CLEAN_PAPER_ATTACHMENT}).
+     */
+    private static boolean containsF24Hint(String... values) {
+        if (values == null) {
+            return false;
+        }
+        for (String value : values) {
+            String prefix = extractDocumentTypePrefix(value);
+            if (prefix != null && prefix.toUpperCase(Locale.ROOT).contains("F24")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Estrae la prima parte del nome SafeStorage (document type), ignorando hash/query.
+     * Esempi:
+     * <ul>
+     *   <li>{@code PN_CLEAN_PAPER_ATTACHMENT-f4614de8....pdf} → {@code PN_CLEAN_PAPER_ATTACHMENT}</li>
+     *   <li>{@code safestorage://PN_AAR-abc...} → {@code PN_AAR}</li>
+     *   <li>{@code https://.../PN_AAR-abc.pdf?X-Amz-...} → {@code PN_AAR}</li>
+     *   <li>{@code ATTO} / {@code PN_AAR} → invariato</li>
+     * </ul>
+     */
+    private static String extractDocumentTypePrefix(String value) {
+        if (value == null || value.isBlank()) {
+            return null;
+        }
+        String s = value.trim();
+        int query = s.indexOf('?');
+        if (query >= 0) {
+            s = s.substring(0, query);
+        }
+        if (s.startsWith("safestorage://")) {
+            s = s.substring("safestorage://".length());
+        } else {
+            int scheme = s.indexOf("://");
+            if (scheme >= 0) {
+                int slash = s.lastIndexOf('/');
+                s = slash >= 0 ? s.substring(slash + 1) : s.substring(scheme + 3);
+            } else {
+                int slash = s.lastIndexOf('/');
+                if (slash >= 0) {
+                    s = s.substring(slash + 1);
+                }
+            }
+        }
+        if (s.toLowerCase(Locale.ROOT).endsWith(".pdf")) {
+            s = s.substring(0, s.length() - 4);
+        }
+        int dash = s.indexOf('-');
+        return dash >= 0 ? s.substring(0, dash) : s;
+    }
+
+    private FileDownloadResponse getSafeStorageFileInfo(String safeStorageUri) {
+        String fileKey = toSafeStorageFileKey(safeStorageUri);
+        ResponseEntity<FileDownloadResponse> responseEntity =
+                safeStoragePrivateClient.getFileWithHttpInfo(fileKey, "pn-test", false, false);
+        return responseEntity != null ? responseEntity.getBody() : null;
+    }
+
+    private static byte[] downloadFromSafeStorage(FileDownloadResponse fileInfo, String safeStorageUri) {
+        String downloadUrl = fileInfo != null && fileInfo.getDownload() != null ? fileInfo.getDownload().getUrl() : null;
+        if (downloadUrl == null || downloadUrl.isBlank()) {
+            throw new IllegalStateException("Presigned URL assente per uri=" + safeStorageUri);
+        }
+        return B2bUtils.downloadFile(downloadUrl);
+    }
+
+    private static String toSafeStorageFileKey(String uri) {
+        if (uri == null) {
+            return null;
+        }
+        String fileKey = uri.startsWith("safestorage://") ? uri.substring("safestorage://".length()) : uri;
+        int q = fileKey.indexOf('?');
+        return q >= 0 ? fileKey.substring(0, q) : fileKey;
     }
 
     @And("si verifica che il {int} documento arrivato sia di tipo {string}")
@@ -1206,7 +1391,7 @@ public class InvioNotificheB2bSteps {
     }
 
     public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         BffPaymentRequest requestCheckout = new BffPaymentRequest()
                 .paymentNotice(new PaymentNotice()
                         .noticeNumber(dataCheckout.get("noticeCode") != null ? dataCheckout.get("noticeCode") :

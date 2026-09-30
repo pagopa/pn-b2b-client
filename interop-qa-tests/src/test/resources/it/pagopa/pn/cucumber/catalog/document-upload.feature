@@ -29,6 +29,15 @@ Feature: Caricamento di un documento di interfaccia
       | PA1  | support      | DRAFT            |       403 |
 
     @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statoDescrittore | risultato |
+      | GSP  | reviewer     | DRAFT            |       403 |
+      | GSP  | viewer       | DRAFT            |       403 |
+      | PA2  | reviewer     | DRAFT            |       403 |
+      | PA2  | viewer       | DRAFT            |       403 |
+
+    @sad-path
     Examples: # Test sugli stati
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | PUBLISHED        |       409 |
@@ -95,3 +104,61 @@ Feature: Caricamento di un documento di interfaccia
     Given "PA1" ha già caricato un documento con nome "test" in quel descrittore
     When l'utente carica un documento con nome "test" in quel descrittore
     Then si ottiene status code 409
+
+  @invalid-yaml
+  Scenario: [DESCRIPTOR_UPLOAD_6] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale viene caricato un documento di interfaccia senza versione, l’operazione restituirà errore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente carica un documento di interfaccia di tipo YAML "senza versione"
+    Then si ottiene status code 400
+
+  @invalid-yaml
+  Scenario: [DESCRIPTOR_UPLOAD_7] Per un e-service che ha un solo descrittore, il quale è in stato DRAFT, e per il quale viene caricato un documento di interfaccia senza versione, l’operazione restituirà errore.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
+    When l'utente carica un documento di interfaccia di tipo YAML "con versione obsoleta"
+    Then si ottiene status code 400
+
+  # PIN-9920 PST 2.1 - serverUrls description handling in interface documents
+  @document-url-description
+  @happy-path
+  Scenario: [DESCRIPTOR_UPLOAD_8] Creazione e-service con interfaccia REST contenente serverUrls con description
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls che contengono descrizione
+    Then si ottiene status code 200
+
+  @document-url-description
+  @happy-path
+  Scenario: [DESCRIPTOR_UPLOAD_9] Creazione e-service con interfaccia REST contenente serverUrls senza description
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls senza descrizione
+    Then si ottiene status code 200
+
+  @document-url-description
+  @sad-path
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10525
+  Scenario: [DESCRIPTOR_UPLOAD_10] Creazione e-service con interfaccia REST con serverUrls array vuoto
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls array vuoto
+    Then si ottiene status code 400
+
+  @document-url-description
+  @sad-path
+  # Ticket aperto https://pagopa.atlassian.net/browse/PIN-10527
+  Scenario: [DESCRIPTOR_UPLOAD_11] Creazione e-service con interfaccia REST senza serverUrls
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" senza serverUrls
+    Then si ottiene status code 400
+
+  @document-url-description
+  @happy-path
+  # Ticket di verifica aperto: https://pagopa.atlassian.net/browse/PIN-10621
+  Scenario: [DESCRIPTOR_UPLOAD_12] Creazione e-service con interfaccia REST contenente un server url con description di lunghezza eccessiva
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT" e tecnologia "REST"
+    When l'utente carica un'interfaccia "REST" con serverUrls che contengono una descrizione di lunghezza eccedente il limite
+    Then si ottiene status code 200

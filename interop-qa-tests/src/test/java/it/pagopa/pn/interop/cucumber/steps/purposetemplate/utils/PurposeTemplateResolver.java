@@ -64,7 +64,9 @@ public class PurposeTemplateResolver extends AbstractResolver {
                 purposeTemplateContext::getActualPurposeTitle,
                 purposeTemplateContext::getActualPurposeTitle,
                 () -> "PT-" + UUID.randomUUID(),
-                () -> ""
+
+                //() -> "" <-- vecchio comportamento, sconfessato da https://pagopaspa.slack.com/archives/C094Z08MXS6/p1776694759386899
+                purposeTemplateContext::getActualPurposeTitle
         );
     }
 

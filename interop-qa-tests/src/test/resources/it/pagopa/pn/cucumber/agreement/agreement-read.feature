@@ -44,6 +44,12 @@ Feature: Lettura richiesta di fruizione
       | Privato | security     |
       | Privato | api,security |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        |
+      | Privato | reviewer     |
+      | Privato | viewer       |
+
   @happy-path
   @nrt-minimal
   @agreement_read2

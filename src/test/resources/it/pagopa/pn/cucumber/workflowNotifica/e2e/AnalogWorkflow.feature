@@ -2014,3 +2014,63 @@ Feature: Workflow analogico
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
+
+  @timelineElementsAddress
+  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.1] Verifica valorizzazione indirizzo su timeline per AR e 890
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | <COMMUNICATION_TYPE>            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | <SEQUENCE> |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
+    Examples:
+      | SEQUENCE    | COMMUNICATION_TYPE    |
+      | via @OK_AR  | AR_REGISTERED_LETTER  |
+      | via @OK_890 | REGISTERED_LETTER_890 |
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.A] Verifica valorizzazione indirizzo su timeline per RS
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@OK_RS    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.B] Verifica valorizzazione indirizzo su timeline per RIS
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State        | FRANCIA      |
+      | physicalAddress_municipality | Parigi       |
+      | physicalAddress_zip          | ZONE_1       |
+      | physicalAddress_province     | Paris        |
+      | digitalDomicile_address      | test@fail.it |
+      | physicalAddress_address      | Via@OK_RIS   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.3] Verifica valorizzazione indirizzo su timeline per notifica digitale
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@pecOk.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati

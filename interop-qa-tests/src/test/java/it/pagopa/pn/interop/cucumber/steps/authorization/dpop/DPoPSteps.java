@@ -4,12 +4,20 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.utils.DpopProofService;
+import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.ClientAssertionOptions;
 import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherResponse;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.authorization.model.VoucherContext;
+import it.pagopa.pn.interop.cucumber.steps.common.AuditTokenContext;
+import it.pagopa.pn.interop.cucumber.steps.dev_tools.config.DevToolsRequestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.assertj.core.api.Assertions;
@@ -18,17 +26,17 @@ import org.springframework.http.HttpMethod;
 
 import java.lang.reflect.Field;
 import java.security.KeyPair;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
+import static it.pagopa.pn.interop.cucumber.utility.CodecUtils.applyOverridesToEncodedJwt;
 
 @Slf4j
 public class DPoPSteps {
 
     private final DPoPTokenService dPoPTokenService;
     private final SharedStepsContext context;
+    private final VoucherContext voucherContext;
 
     private VoucherResponse voucherResponse = new VoucherResponse();
     private String dpopProofJwt;
@@ -37,17 +45,19 @@ public class DPoPSteps {
     private final String DEFAULT_TYP = "dpop+jwt";
     @Value("${authorization.server.token.creation.url}") private String DEFAULT_OAUTH_SERVER_URL;
 
-    public DPoPSteps(DPoPTokenService tokenService, SharedStepsContext sharedStepsContext) {
+    public DPoPSteps(DPoPTokenService tokenService, SharedStepsContext sharedStepsContext, VoucherContext voucherContext) {
         this.dPoPTokenService = tokenService;
         this.context = sharedStepsContext;
         this.dPoPTokenService.setHttpCallExecutor(context.getHttpCallExecutor());
         this.dPoPTokenService.setIdentityService(context.getIdentityService());
+        this.voucherContext = voucherContext;
     }
 
     @When("{string} genera una dpop proof con una chiave {string}")
     @When("{string} genera una dpop proof con una chiave {string} e verifica i campi HTU,HTM")
     public void getDpopProof(String tenantType, String keyAlgorithm) {
         this.dpopProofJwt = generateDpopProofWith(keyAlgorithm, DEFAULT_TYP, DEFAULT_HTTP_METHOD, DEFAULT_OAUTH_SERVER_URL);
+        context.getAuditTokenContext().setToken(AuditTokenContext.TokenType.DPOP_PROOF, this.dpopProofJwt);
     }
 
     @When("{string} genera una dpop proof con una chiave {string} e campo typ errato")
@@ -90,6 +100,13 @@ public class DPoPSteps {
 
         Pair<String, VoucherResponse> proofWithToken = dPoPTokenService.getAccessTokenWithoutCache(dpopProofJwt, client.clientId().toString(), client.keyPair().getKeyPair(), clientType, tenantType, purposeId);
         this.voucherResponse = proofWithToken.getRight();
+
+        context.getAuditTokenContext().setToken(
+                AuditTokenContext.TokenType.CLIENT_ASSERTION, dPoPTokenService.getUsedClientAssertion()
+        );
+        context.getAuditTokenContext().setToken(
+                AuditTokenContext.TokenType.VOUCHER_REQUEST, this.voucherResponse.getAccessToken()
+        );
     }
 
     @When("{string} tenta di ottenere un access token per il client {string} usando il dpop proof creato e inviando due header DPoP nella richiesta")
@@ -134,6 +151,61 @@ public class DPoPSteps {
         Assertions.assertThat(result.valid())
                 .as("Errore nella validazione del campo cnf.jkt: " + result.message())
                 .isTrue();
+    }
+
+    @When("{string} crea una DPoP proof per la client assertion")
+    public void createDPoPProof(String tenantType) {
+        createCustomDPoP(Collections.emptyList());
+    }
+
+    @When("{string} crea una DPoP proof per la client assertion con:")
+    public void createDPoPProof(String tenantType, List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
+        createCustomDPoP(overrides);
+    }
+
+    @When("{string} crea una DPoP proof con firma non valida")
+    public void createDPoPProofWithInvalidSignature(String tenantType) {
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair("RSA", 2048);
+        String dpopProof = this.dPoPTokenService.buildDpopProof(keyPair);
+        String tamperedDpop = dpopProof.substring(0, dpopProof.lastIndexOf(".") + 1) + "bm90LWEtc2lnbmF0dXJl";
+        logDPopProof(tamperedDpop);
+        voucherContext.setActualDpopProof(tamperedDpop);
+    }
+
+    private void logDPopProof(String dpopProof) {
+        log.info("DPoPProof header: '{}'", new String(Base64.getUrlDecoder().decode(dpopProof.split("\\.")[0])));
+        log.info("DPoPProof payload: '{}'", new String(Base64.getUrlDecoder().decode(dpopProof.split("\\.")[1])));
+        log.info("DPoPProof: '{}'", dpopProof);
+    }
+
+    private void createCustomDPoP(List<DevToolsRequestConfig.JwtClaimOverride> overrides) {
+        KeyPair keyPair = KeyPairGeneratorUtil.createKeyPair("RSA", 2048);
+        String dpopProof = this.dPoPTokenService.buildDpopProof(keyPair);
+
+        if (!overrides.isEmpty()) {
+            Jws<Claims> existingJws = Jwts.parser()
+                    .verifyWith(keyPair.getPublic())
+                    .build()
+                    .parseSignedClaims(dpopProof);
+
+            JwtBuilder jwtBuilder = Jwts.builder()
+                    .header()
+                    .add(existingJws.getHeader())
+                    .and()
+                    .claims(existingJws.getPayload())
+                    .signWith(keyPair.getPrivate());
+
+            dpopProof = jwtBuilder.compact();
+
+            try {
+                dpopProof = applyOverridesToEncodedJwt(dpopProof, overrides, keyPair);
+            } catch (Exception e) {
+                throw new RuntimeException("Error processing JSON for client assertion header: " + e.getMessage(), e);
+            }
+        }
+
+        logDPopProof(dpopProof);
+        voucherContext.setActualDpopProof(dpopProof);
     }
 
     private DPoPTokenService.PreparedClient resolvePreparedClient() {

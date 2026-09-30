@@ -171,9 +171,10 @@ Feature: Allegati notifica
   @hotfix-11281
   Scenario: [ALLEGATI-PEC_HOTFIX_1] si verifica che la notifica analogica non contenga nel url degli allegati docTag - PN-11281
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | feePolicy             | DELIVERY_MODE               |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@ok_AR            |

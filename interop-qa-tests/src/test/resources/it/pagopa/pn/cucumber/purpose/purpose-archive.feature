@@ -14,26 +14,37 @@ Feature: Archiviazione di una finalità
 
     @happy-path
     Examples: # Test sui ruoli
-      | ente    | ruolo        | statoFinalita | risultato |
-      | PA1     | admin        | ACTIVE        |       200 |
-      | GSP     | admin        | ACTIVE        |       200 |
-      | Privato | admin        | ACTIVE        |       200 |
+      | ente    | ruolo        | risultato |
+      | PA1     | admin        |       200 |
+      | GSP     | admin        |       200 |
+      | Privato | admin        |       200 |
 
     @sad-path
     Examples: # Test sui ruoli
-      | ente    | ruolo        | statoFinalita | risultato |
-      | PA1     | api          | ACTIVE        |       403 |
-      | PA1     | security     | ACTIVE        |       403 |
-      | PA1     | api,security | ACTIVE        |       403 |
-      | PA1     | support      | ACTIVE        |       403 |
-      | GSP     | api          | ACTIVE        |       403 |
-      | GSP     | security     | ACTIVE        |       403 |
-      | GSP     | api,security | ACTIVE        |       403 |
-      | GSP     | support      | ACTIVE        |       403 |
-      | Privato | api          | ACTIVE        |       403 |
-      | Privato | security     | ACTIVE        |       403 |
-      | Privato | api,security | ACTIVE        |       403 |
-      | Privato | support      | ACTIVE        |       403 |
+      | ente    | ruolo        | risultato |
+      | PA1     | api          |       403 |
+      | PA1     | security     |       403 |
+      | PA1     | api,security |       403 |
+      | PA1     | support      |       403 |
+      | GSP     | api          |       403 |
+      | GSP     | security     |       403 |
+      | GSP     | api,security |       403 |
+      | GSP     | support      |       403 |
+      | Privato | api          |       403 |
+      | Privato | security     |       403 |
+      | Privato | api,security |       403 |
+      | Privato | support      |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
 
     @happy-path
     Examples: # Test sugli stati

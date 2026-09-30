@@ -2,23 +2,16 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersions;
-import java.util.UUID;
-import javax.annotation.Nullable;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public interface IM2MEServiceTemplateClient extends SettableBearerToken {
     @Data
@@ -50,6 +43,13 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
         private EServiceTechnology technology;
         private EServiceMode mode;
         private Boolean isSignalHubEnabled;
+        private Boolean personalData;
+    }
+
+    @Data
+    @Builder
+    class EServiceTemplateDescriptionPatchRequest {
+        private String description;
     }
 
     @Data
@@ -78,19 +78,23 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
 
     EServiceTemplateVersion getEserviceTemplateVersion(UUID templateId, UUID versionId);
 
-    // API BFF
-    // TODO: aggiornare ad API m2m appena disponibili
-    CreatedEServiceTemplateVersion createEserviceTemplate(EServiceTemplateSeed payload);
+    EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload);
 
     ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
         UUID templateId,
         EServiceTemplateVersionCreationRequest request);
+
+    Document uploadDocument(UUID templateId, UUID versionId, Resource file, String prettyName);
+
+    FileDownloadMultipart downloadDocument(UUID templateId, UUID versionId, UUID documentId);
 
     Documents getDocuments(UUID templateId, UUID versionId);
 
     void unsuspend(UUID templateId, UUID versionId);
 
     EServiceTemplate patchEServiceTemplate(UUID templateId, EServiceTemplatePatchRequest patchRequest);
+
+    EServiceTemplate patchEServiceTemplateDescription(UUID templateId, EServiceTemplateDescriptionPatchRequest patchRequest);
 
     EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId, EServiceTemplateVersionPatchRequest patchRequest);
 

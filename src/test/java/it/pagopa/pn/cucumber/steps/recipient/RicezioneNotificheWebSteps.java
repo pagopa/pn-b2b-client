@@ -13,53 +13,75 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.DateUtils;
+import it.pagopa.common.util.StringUtils;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.TimelineElementV28;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.selfcare.privateapi.FilteredPaIdsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.LegalChannelType;
+import it.pagopa.pn.client.b2b.pa.mapper.NotificationSearchParamMapper;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnBFFRecipientNotificationClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BSenderReadClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.LegalNotificationSearchResponse;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
+import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
+import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -68,26 +90,27 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.REFINEMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULE_REFINEMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON_2;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DINO_SAURO;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.REFINEMENT;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULE_REFINEMENT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
@@ -97,20 +120,31 @@ public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
     private IPnWebRecipientClient webRecipientClient;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private AooUoIdsClientImpl aooUoIdsClient;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
+    private final SendSharedContext sendSharedContext;
     private final IPnWebPaClient webPaClient;
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
+    private final B2BSenderReadClientImpl b2BSenderReadClient;
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
     private HttpStatusCodeException notificationError;
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
+    private OtpCodeService otpCodeService;
+    private final NotificationSearchParamMapper notificationSearchParamMapper;
+    private final NotificationSearchCriteriaMapper notificationSearchCriteriaMapper;
+    private final SenderInfoProvider senderInfoProvider;
+
+
+    private final DynamoDbService dynamoDbService;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
 
     private static final String TOS_VERSION = "8";
     private static final String ACCEPT_TOS = "ACCETTA";
+    private FilteredPaIdsResponse filteredPaIdsResponse;
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -120,6 +154,8 @@ public class RicezioneNotificheWebSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+    @Value("${pn.external.senderId-SON-2}")
+    private String senderIdSON2;
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
@@ -145,8 +181,11 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Autowired
-    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
+    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs, DynamoDbService dynamoDbService,
+                                      OtpCodeService otpCodeService, AooUoIdsClientImpl aooUoIdsClient, NotificationSearchParamMapper notificationSearchParamMapper,
+                                      B2BSenderReadClientImpl b2BSenderReadClient, NotificationSearchCriteriaMapper notificationSearchCriteriaMapper,
+                                      SenderInfoProvider senderInfoProvider, SendSharedContext sendSharedContext) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -156,6 +195,14 @@ public class RicezioneNotificheWebSteps {
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
         this.iPnTosPrivacyClient = sharedSteps.getIPnTosPrivacyClientImpl();
         this.timingConfigs = timingConfigs;
+        this.aooUoIdsClient = aooUoIdsClient;
+        this.dynamoDbService = dynamoDbService;
+        this.otpCodeService = otpCodeService;
+        this.notificationSearchParamMapper = notificationSearchParamMapper;
+        this.b2BSenderReadClient = b2BSenderReadClient;
+        this.notificationSearchCriteriaMapper = notificationSearchCriteriaMapper;
+        this.senderInfoProvider = senderInfoProvider;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -271,6 +318,72 @@ public class RicezioneNotificheWebSteps {
                 .findFirst();
     }
 
+    private LegalNotificationSearchResponse notificationSearchResponse;
+    private InformalNotificationSearchResponse informalNotificationSearchResponse;
+    private NotificationSearchParam lastMittenteSearchParam;
+
+    @And("vengono recuperate le notifiche inviate dal mittente {string}")
+    public void vengonoRecuperateLeNotificheInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
+        selectPa(sender);
+        informalNotificationSearchResponse = null;
+        lastMittenteSearchParam = searchParam;
+        try {
+        notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        }
+    }
+
+    @And("vengono recuperate le notifiche bonarie inviate dal mittente {string}")
+    public void vengonoRecuperateLeNotificheBonarieInviateDalMittente(String sender, @Transpose NotificationSearchParam searchParam) {
+        notificationSearchResponse = null;
+        lastMittenteSearchParam = searchParam;
+        try {
+            // Subito dopo l'invio la notifica bonaria può non essere ancora indicizzata lato ricerca:
+            // si ritenta finché resultsPage non è popolata, senza far fallire lo step in caso di timeout,
+            // cosi' che sia l'eventuale step di verifica successivo a segnalare l'assenza di risultati.
+            Awaitility.await()
+                    .atMost(1, TimeUnit.MINUTES)
+                    .pollInterval(10, TimeUnit.SECONDS)
+                    .until(() -> {
+                        informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
+                        return informalNotificationSearchResponse.getResultsPage() != null
+                                && !informalNotificationSearchResponse.getResultsPage().isEmpty();
+                    });
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        } catch (ConditionTimeoutException e) {
+            log.warn("resultsPage ancora vuota dopo il retry per il mittente '{}'", sender);
+        }
+    }
+
+    @And("si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno {int} notifiche")
+    public void sfogliaTutteLePagineLatoMittente(int minimumExpectedCount) {
+        int totalCollected;
+        if (notificationSearchResponse != null) {
+            totalCollected = notificationSearchResponse.getResultsPage().size();
+            while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())
+                    && notificationSearchResponse.getNextPagesKey() != null && !notificationSearchResponse.getNextPagesKey().isEmpty()) {
+                lastMittenteSearchParam.setNextPagesKey(notificationSearchResponse.getNextPagesKey().get(0));
+                notificationSearchResponse = b2BSenderReadClient.searchSentNotification(lastMittenteSearchParam);
+                totalCollected += notificationSearchResponse.getResultsPage().size();
+            }
+        } else if (informalNotificationSearchResponse != null) {
+            totalCollected = informalNotificationSearchResponse.getResultsPage().size();
+            while (Boolean.TRUE.equals(informalNotificationSearchResponse.getMoreResult()) && totalCollected < minimumExpectedCount
+                    && informalNotificationSearchResponse.getNextPagesKey() != null && !informalNotificationSearchResponse.getNextPagesKey().isEmpty()) {
+                lastMittenteSearchParam.setNextPagesKey(informalNotificationSearchResponse.getNextPagesKey().get(0));
+                informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+                totalCollected += informalNotificationSearchResponse.getResultsPage().size();
+            }
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
+        }
+        assertThat(totalCollected)
+                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine")
+                .isGreaterThanOrEqualTo(minimumExpectedCount);
+    }
+
     @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
     public void latoMittenteVengonoLettiIDettagliDellaNotificaLatoWebDalDestinatario(String sender) {
         selectPa(sender);
@@ -303,8 +416,8 @@ public class RicezioneNotificheWebSteps {
                 .filter(Objects::nonNull)
                 .filter(data ->
                         data.getElementId().contains(category) && data.getDetails() != null &&
-                        data.getDetails().getDeliveryDetailCode() != null &&
-                        data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                                data.getDetails().getDeliveryDetailCode() != null &&
+                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
         Assertions.assertTrue(timelineElement.isPresent(), "The searched category is not present in the timeline!");
     }
@@ -364,7 +477,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
                 fullSentNotification.getIun(),
                 Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(fullSentNotification).getDocuments()).get(0).getDocIdx())),
@@ -492,6 +605,13 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @Then("si verifica che sia stato restituito un errore di tipo {string}")
+    public void verifyApiErrorType(String errorType) {
+            assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
+                    .as("Il tipo di errore non coincide con quanto atteso")
+                    .contains(errorType.toUpperCase());
+    }
+
     @And("download attestazione opponibile AAR da parte {string}")
     public void downloadLegalFactIdAARByRecipient(String recipient) {
         sharedSteps.selectUser(recipient);
@@ -505,7 +625,7 @@ public class RicezioneNotificheWebSteps {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 timelineElement = null;
 
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 element : fullSentNotification.getTimeline()) {
             if (Objects.requireNonNull(element.getCategory().getValue()).equals(AAR_GENERATION)) {
                 timelineElement = element;
@@ -535,7 +655,13 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica può essere correttamente recuperata con una ricerca da {string}")
     public void notificationCanBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertTrue(searchNotification(searchParam));
+        Destinatario recipientObj = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
+        try {
+            Assertions.assertTrue(searchNotification(recipientObj, searchParam));
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+            log.info("Errore durante la ricerca della notifica: {}", e.getMessage());
+        }
     }
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
@@ -547,26 +673,39 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non viene recuperata con una ricerca da {string}")
     public void notificationCantBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
-        Assertions.assertFalse(searchNotification(searchParam));
+        Destinatario destinatario = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
+        Assertions.assertFalse(searchNotification(destinatario, searchParam));
     }
 
+//    @DataTableType
+//    public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
+//        NotificationSearchParam searchParam = new NotificationSearchParam();
+//
+//        B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
+//
+//        searchParam.startDate = dates.getValue1();
+//        searchParam.endDate = dates.getValue2();
+//        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
+//        String iun = data.getOrDefault("iunMatch", null);
+//        if (data.containsKey("status")) {
+//            searchParam.status = data.get("status");
+//        }
+//        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
+//        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
+//        if (searchParam.size == -1) searchParam.size = null;
+//        return searchParam;
+//    }
+
+    /**
+     * Metodo di conversione dei parametri di ricerca delle notifiche da DataTable in oggetto NotificationSearchParam
+     * @param data
+     * @return
+     */
     @DataTableType
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
-        NotificationSearchParam searchParam = new NotificationSearchParam();
-
         B2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates = getStartDateAndEndDate(data);
-
-        searchParam.startDate = dates.getValue1();
-        searchParam.endDate = dates.getValue2();
-        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
-        String iun = data.getOrDefault("iunMatch", null);
-        if (data.containsKey("status")) {
-            searchParam.status = data.get("status");
-        }
-        searchParam.iunMatch = iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getNotificationIun() : iun;
-        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
-        if (searchParam.size == -1) searchParam.size = null;
-        return searchParam;
+        TokenResolver tokenResolver = new TokenResolver(sharedSteps, sendSharedContext);
+        return notificationSearchParamMapper.build(data, dates.getValue1(), dates.getValue2(), tokenResolver::resolve);
     }
 
     @DataTableType
@@ -585,51 +724,33 @@ public class RicezioneNotificheWebSteps {
     }
 
     private B2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate(Map<String, String> data) {
-
-        Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH);
-        String monthString = String.valueOf(((String.valueOf(month)).length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1)));
-        int day = now.get(Calendar.DAY_OF_MONTH);
-        String dayString = (String.valueOf(day)).length() == 2 ? (String.valueOf(day)) : ("0" + day);
-        String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
-        String end = data.getOrDefault("endDate", null);
-
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        OffsetDateTime sentAt = Optional.ofNullable(fullSentNotification).map(FullSentNotificationV28::getSentAt).orElse(OffsetDateTime.now());
-        LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-        OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-        OffsetDateTime endDate;
-        if (end != null) {
-            LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-            endDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-        } else {
-            endDate = sentAt;
-        }
-
-        return new B2bUtils.Pair<>(startDate, endDate);
+        String startDate = data.getOrDefault("startDate", LocalDate.now().minusDays(1).toString());
+        String endDate = data.getOrDefault("endDate", LocalDate.now().plusDays(1).toString());
+        return new B2bUtils.Pair<>(toStartOfDayUtc(startDate), toStartOfDayUtc(endDate));
     }
 
-    private boolean searchNotification(NotificationSearchParam searchParam) {
+    private OffsetDateTime toStartOfDayUtc(String rawDate) {
+        String resolvedDate = DateUtils.resolveDate(rawDate);
+        if (resolvedDate == null) {
+            return null;
+        }
+        return LocalDate.parse(resolvedDate).atStartOfDay().atOffset(ZoneOffset.UTC);
+    }
+
+    private boolean searchNotification(Destinatario recipient, NotificationSearchParam searchParam) {
         boolean beenFound;
-        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
-        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse notificationSearchResponse = webRecipientClient
-                .searchReceivedNotification(
-                        searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                        searchParam.iunMatch, searchParam.size, null);
-        List<it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+//        NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
+        FullNotificationSearchResponse notificationSearchResponse = webRecipientClient.searchReceivedNotification(recipient, searchParam);
+        List<FullNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
                 for (String pageKey : Objects.requireNonNull(nextPagesKey)) {
-                    notificationSearchResponse = webRecipientClient
-                            .searchReceivedNotification(
-                                    searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    searchParam.senderId, notificationStatus, searchParam.subjectRegExp,
-                                    searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
+                    searchParam.setNextPagesKey(pageKey);
+                    notificationSearchResponse = webRecipientClient.searchReceivedNotification(recipient, searchParam);
+                    resultsPage = notificationSearchResponse.getResultsPage();
+                    beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }
                 if (beenFound) break;
@@ -643,12 +764,12 @@ public class RicezioneNotificheWebSteps {
         boolean beenFound;
         it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26 convertedStatus;
         convertedStatus = deepCopy(searchParam.status, it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.class);
-        BffNotificationsResponse notificationSearchResponse = webPaClient
+        BffLegalNotificationsResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                         convertedStatus, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
-        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<BffLegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -659,7 +780,8 @@ public class RicezioneNotificheWebSteps {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     convertedStatus, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
+                    resultsPage = notificationSearchResponse.getResultsPage();
+                    beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
                     if (beenFound) break;
                 }//for
                 if (beenFound) break;
@@ -671,112 +793,180 @@ public class RicezioneNotificheWebSteps {
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
-            case MARIO_CUCUMBER ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            case MARIO_GHERKIN ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            case GALILEO_GALILEI ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            case GHERKIN_SRL ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case ALDA_MERINI ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
-            case DINO_SAURO ->
-                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+            case MARIO_CUCUMBER -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER));
+            }
+            case MARIO_GHERKIN -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN));
+            }
+            case GALILEO_GALILEI -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI));
+            }
+            case LUCIO_ANNEO_SENECA, CUCUMBER_SPA -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_CUCUMBER_SPA));
+            }
+            case GHERKIN_SRL -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_GHERKIN_SRL));
+            }
+            case ALDA_MERINI -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_ALDA_MERINI));
+            }
+            case DINO_SAURO -> {
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                sharedSteps.setDestinatariList(List.of(sharedSteps.getDestinatarioRegistry().DESTINATARIO_DINO_SAURO));
+            }
             default -> throw new IllegalArgumentException();
         }
     }
 
     @And("viene inserito un recapito legale {string} con verification code errato {string}")
     public void nuovoRecapitoLegale(String pec, String verificationCode) {
-        postRecipientLegalAddressWrongCode("default", pec, verificationCode);
+        postRecipientLegalAddressWrongCode("default", pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
     public void perLUtenteVieneSettatoLaPec(String pec) {
-        postRecipientLegalAddress("default", pec, "00000", false);
+        postRecipientLegalAddress("default", pec, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento della pec {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void perLUtenteVieneSettatoLaPecELang(String pec, String language) {
+        postRecipientLegalAddress("default", pec, "00000", true, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
-        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del numero di telefono {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefonoELang(String phone, String language) {
+        postRecipientCourtesyAddress("default", phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", true, CxLanguage.fromValue(language));
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
-        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene richiesto l'inserimento del email di cortesia {string}, e passo la lingua selezionata dal destinatario {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaeLang(String email, String language) {
+        postRecipientCourtesyAddress("default", email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", true, CxLanguage.fromValue(language));
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string}")
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, null, true);
+        postRecipientLegalAddress(senderIdPa, pec, null, true, CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string} con verification code errato {string}")
     public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode);
+        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
     public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddress(senderIdPa, pec, "00000", false);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false, CxLanguage.IT);
     }
 
     @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, "00000", false, CxLanguage.IT);
+    }
+
+    @When("viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:")
+    public void vieneInvocataLApiDiFiltroRootPassandoLeSeguentiPA(List<String> paList) {
+        try {
+            List<String> paIds = paList.stream()
+                    .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                    .collect(Collectors.toList());
+            this.filteredPaIdsResponse = this.aooUoIdsClient.getFilteredAooUoIdV2Private(paIds);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @Then("si verifica che la risposta contenga gli id relativi alle seguenti PA:")
+    public void siVerificaCheLaRispostaContengaGliIdRelativiAlleSeguentiPA(List<String> paList) {
+        Assertions.assertNotNull(filteredPaIdsResponse);
+        Assertions.assertNotNull(filteredPaIdsResponse.getIds());
+
+        List<String> expectedIds = paList.stream()
+                .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                .collect(Collectors.toList());
+
+        // Verifica esclusiva: la risposta deve contenere esattamente gli id attesi
+        assertThat(filteredPaIdsResponse.getIds())
+                .containsExactlyInAnyOrderElementsOf(expectedIds);
+    }
+
+    @Then("si verifica che la risposta non contenga id")
+    public void siVerificaCheLaRispostaNonContengaId() {
+        Assertions.assertTrue(
+                filteredPaIdsResponse == null ||
+                        filteredPaIdsResponse.getIds() == null ||
+                        filteredPaIdsResponse.getIds().isEmpty()
+        );
     }
 
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true);
+        postRecipientCourtesyAddress(senderIdPa, email, LegalCourtesyAddressWrapper.ChannelType.EMAIL, null, true, CxLanguage.IT);
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false);
+        postRecipientCourtesyAddress(senderIdPa, phone, LegalCourtesyAddressWrapper.ChannelType.SMS, "00000", false, CxLanguage.IT);
     }
 
-    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento) {
+    private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, LegalCourtesyAddressWrapper.ChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+                // il service tiene traccia dell'ultimo OTP già restituito per questa pk+canale
+                // e attende su Dynamo finché non ne compare uno nuovo dopo la POST
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
+                verificationCode = otpCodeService.getNewOtp(destinatario, type);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
+    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguage) {
         try {
             if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
+                verificationCode = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguage);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
+    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode, CxLanguage xPagopaPnLanguage) {
         String[] code = {verificationCode};
         AddressVerification verification = new AddressVerification()
                 .value(addressVerification)
                 .verificationCode(code[0]);
 
         Assertions.assertThrows(HttpStatusCodeException.class,
-                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification));
+                () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification, xPagopaPnLanguage));
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -796,6 +986,7 @@ public class RicezioneNotificheWebSteps {
             case COMUNE_2 -> senderId2;
             case COMUNE_MULTI -> senderIdGA;
             case COMUNE_SON -> senderIdSON;
+            case COMUNE_SON_2 -> senderIdSON2;
             case COMUNE_ROOT -> senderIdROOT;
             default -> "default";
         };
@@ -806,6 +997,12 @@ public class RicezioneNotificheWebSteps {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @Then("l'inserimento va a buon fine e NON ha prodotto un errore")
+    public void lInserimentoNonHaProdottoErrore() {
+        HttpStatusCodeException codeException = sharedSteps.consumeNotificationError();
+        Assertions.assertNull(codeException);
     }
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
@@ -828,16 +1025,16 @@ public class RicezioneNotificheWebSteps {
         waitState(waiting);
     }
 
-    public static class NotificationSearchParam {
-        OffsetDateTime startDate;
-        OffsetDateTime endDate;
-        String mandateId;
-        String senderId;
-        String status;
-        String subjectRegExp;
-        String iunMatch;
-        Integer size = 10;
-    }
+//    public static class NotificationSearchParam {
+//        OffsetDateTime startDate;
+//        OffsetDateTime endDate;
+//        String mandateId;
+//        String senderId;
+//        String status;
+//        String subjectRegExp;
+//        String iunMatch;
+//        Integer size = 10;
+//    }
 
     private static class NotificationSearchParamWebPA {
         OffsetDateTime startDate;
@@ -895,18 +1092,18 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    private void postRecipientLegalAddressSercq(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercq(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(
-                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address))));
+                senderIdPa, LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND, (new AddressVerification().value(address)), xPagopaPnLanguage));
     }
 
-    private void postRecipientLegalAddressSercqError(String senderIdPa, String address) {
+    private void postRecipientLegalAddressSercqError(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> {
             try {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(
                         senderIdPa,
                         LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
-                        (new AddressVerification().value(address))
+                        (new AddressVerification().value(address)), xPagopaPnLanguage
                 );
                 log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
             } catch (HttpStatusCodeException e) {
@@ -995,15 +1192,19 @@ public class RicezioneNotificheWebSteps {
     @And("viene verificata l'assenza di indirizzi Pec per il comune {string}")
     public void viewedPecPerUtentePerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
-
-        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
-        boolean exists = false;
-        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-            exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
-        }
-        Assertions.assertFalse(exists, "PEC FOUND");
-
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+                    boolean exists = false;
+                    if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                        exists = legalAddressByRecipient.stream()
+                                .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()) && Boolean.TRUE.equals(address.getCodeValid()));
+                    }
+                    Assertions.assertFalse(exists, "PEC FOUND");
+                });
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -1015,12 +1216,12 @@ public class RicezioneNotificheWebSteps {
             log.info("SERCQ già abilitato per la PA selezionata!");
             return;
         }
-        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene attivato il servizio SERCQ SEND per recapito {string} con errore")
     public void attivazioneSercqSendWithError(String pa) {
-        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercqError(pa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -1033,34 +1234,36 @@ public class RicezioneNotificheWebSteps {
             return;
         }
         String senderIdPa = getSenderIdPa(pa);
-        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
+        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered", CxLanguage.IT);
     }
 
     @And("viene inserito un recapito legale {string}")
     public void nuovoRecapitoLegale(String pec) {
-        postRecipientLegalAddress("default", pec, null, true);
+        postRecipientLegalAddress("default", pec, null, true, CxLanguage.IT);
     }
 
     @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
     public void waitedAndViewedPecDiPiattaformaDi(String pa) {
         String senderId = getSenderIdPa(pa);
 
-        try {
-            Thread.sleep(80000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException("Sleep was interrupted", e);
-        }
-        boolean exists = false;
-        List<LegalCourtesyAddressWrapper> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
-        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-            exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) && senderId.equals(address.getSenderId()));
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddresses =
+                            this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
 
-
-        }
-        Assertions.assertTrue(exists, "PEC NOT FOUND");
-
+                    Assertions.assertNotNull(legalAddresses, "Lista indirizzi nulla");
+                    Assertions.assertTrue(
+                            legalAddresses.stream()
+                                    .anyMatch(address ->
+                                            LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) &&
+                                                    senderId.equals(address.getSenderId()) &&
+                                                    Boolean.TRUE.equals(address.getPecValid())),
+                            "PEC NOT FOUND"
+                    );
+                });
     }
 
     @And("viene rimossa se presente la pec per il comune {string}")
@@ -1074,55 +1277,69 @@ public class RicezioneNotificheWebSteps {
 
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
+        // Rimuovo tutti gli indirizzi legali presenti per l'utente
         try {
-            List<BffUserAddress> legalAddressByRecipient =
-                    this.iPnWebUserAttributesClient
-                            .getAddressesByRecipient()
-                            .getBffUserAddress()
-                            .stream()
-                            .filter(x -> "LEGAL".equals(x.getAddressType()))
-                            .collect(Collectors.toList());
-
-
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                legalAddressByRecipient
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
-            }
-            List<BffUserAddress> courtesyDigitalAddresses =
-                    this.iPnWebUserAttributesClient
-                            .getAddressesByRecipient()
-                            .getBffUserAddress()
-                            .stream()
-                            .filter(x -> "COURTESY".equals(x.getAddressType()))
-                            .collect(Collectors.toList());
-
-            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
-                courtesyDigitalAddresses
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue()));
-                            log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
+            List<LegalCourtesyAddressWrapper> legalAddresses = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddresses != null && !legalAddresses.isEmpty()) {
+                legalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo legale tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
             }
         } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI FALLITA: " + e.getStackTrace());
+            log.error("Errore nel recupero degli indirizzi legali: {}", e.getMessage());
         }
+
+        // Rimuovo tutti gli indirizzi di cortesia presenti per l'utente
+        try {
+            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
+            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
+                courtesyDigitalAddresses.forEach(address -> {
+                    try {
+                        this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(
+                                address.getSenderId(),
+                                LegalCourtesyAddressWrapper.ChannelType.valueOf(address.getChannelType().getValue())
+                        );
+                        log.info("Cancellato indirizzo di cortesia di tipo {} per il comune {}", address.getChannelType(), address.getSenderId());
+                    } catch (Exception e) {
+                        log.error("Errore nella rimozione indirizzo di cortesia tipo={} senderId={}: {}",
+                                address.getChannelType(), address.getSenderId(), e.getMessage());
+                    }
+                });
+            }
+        } catch (Exception e) {
+            log.error("Errore nel recupero degli indirizzi di cortesia: {}", e.getMessage());
+        }
+
+        // warm-up: gli OTP eventualmente già presenti su Dynamo (residui di run/iterazioni
+        // precedenti) vengono marcati come "già visti", così il primo getNewOtp dello
+        // scenario attenderà un codice effettivamente nuovo dopo la POST
+        Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
+        otpCodeService.markExistingOtpAsSeen(destinatario);
     }
 
 
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
-        boolean isPresent = fullSentNotification.getTimeline()
-                .stream()
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28::getCategory)
-                .filter(Objects::nonNull)
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28::toString)
-                .anyMatch(category -> category.equals(categoryToFind));
-        if (isPresent) {
-            throw new AssertionFailedError("L'evento cercato è stato ritornato!");
+        try {
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            boolean isPresent = fullSentNotification.getTimeline()
+                    .stream()
+                    .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28::getCategory)
+                    .filter(Objects::nonNull)
+                    .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28::toString)
+                    .anyMatch(category -> category.equals(categoryToFind));
+            assertThat(isPresent).as("La ricerca non doveva restituire nessun elemento %s", categoryToFind).isFalse();
+        } catch (AssertionError ae) {
+            sharedSteps.throwAssertionErrorWithIUN(ae);
         }
     }
 
@@ -1193,6 +1410,70 @@ public class RicezioneNotificheWebSteps {
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }
+    }
+
+    @And("l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:")
+    public void verifySenderNotificationSearchResponse(Map<String, String> criteria) {
+        List<?> resultsPage;
+        if (notificationSearchResponse != null) {
+            resultsPage = notificationSearchResponse.getResultsPage();
+        } else if (informalNotificationSearchResponse != null) {
+            resultsPage = informalNotificationSearchResponse.getResultsPage();
+        } else {
+            throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per la verifica dei criteri.");
+        }
+        Map<String, List<String>> resolvedCriteria = notificationSearchCriteriaMapper.build(criteria, new TokenResolver(sharedSteps, sendSharedContext));
+        NotificationSearchRowAssertions.assertAllRowsMatchCriteria(resultsPage, resolvedCriteria);
+    }
+
+    @And("si verifica sulla tabella pn-NotificationsMetadata che per lo IUN {string} e il destinatario con taxId {string} di tipo {string} gli attributi siano:")
+    public void verifyNotificationsMetadataAttributes(String iun, String taxId, String recipientType, Map<String, String> expectedAttributes) {
+        TokenResolver tokenResolver = new TokenResolver(sharedSteps, sendSharedContext);
+        String resolvedIun = tokenResolver.resolve(iun);
+        String resolvedTaxId = tokenResolver.resolve(taxId);
+        String internalId = externalClient.getInternalIdFromTaxId(recipientType, resolvedTaxId);
+        String iunRecipientId = resolvedIun + "##" + internalId;
+
+        // Il record e i suoi attributi possono comparire su pn-NotificationsMetadata con un piccolo ritardo
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.NOTIFICATIONS_METADATA,
+                            Map.of(":v_iun_recipientId", AttributeValue.builder().s(iunRecipientId).build()));
+                    assertThat(queryResponse.items())
+                            .as("pn-NotificationsMetadata deve contenere esattamente un record per iun_recipientId '%s'", iunRecipientId)
+                            .hasSize(1);
+
+                    Map<String, AttributeValue> item = queryResponse.items().get(0);
+                    expectedAttributes.forEach((attributeName, expectedValue) -> assertNotificationsMetadataAttribute(item, attributeName, expectedValue));
+                });
+    }
+
+    /**
+     * "$NULL" (risolto tramite {@link StringUtils#resolveValue}) verifica che l'attributo sia assente,
+     * "BOOLEAN" verifica solo che sia presente e di tipo booleano (per gli attributi il cui valore
+     * concreto non è deterministico), qualunque altro valore è un confronto esatto.
+     */
+    private void assertNotificationsMetadataAttribute(Map<String, AttributeValue> item, String attributeName, String expectedValue) {
+        String resolvedExpectedValue = StringUtils.resolveValue(expectedValue);
+        if (resolvedExpectedValue == null) {
+            assertThat(item).as("L'attributo '%s' non deve essere presente su pn-NotificationsMetadata", attributeName).doesNotContainKey(attributeName);
+            return;
+        }
+        AttributeValue actualValue = item.get(attributeName);
+        assertThat(actualValue).as("L'attributo '%s' deve essere presente su pn-NotificationsMetadata", attributeName).isNotNull();
+        if ("BOOLEAN".equalsIgnoreCase(resolvedExpectedValue)) {
+            assertThat(actualValue.bool()).as("L'attributo '%s' deve essere valorizzato con un booleano", attributeName).isNotNull();
+            return;
+        }
+        String actualAsString = actualValue.s() != null ? actualValue.s()
+                : actualValue.bool() != null ? actualValue.bool().toString()
+                : actualValue.n();
+        assertThat(actualAsString)
+                .as("L'attributo '%s' su pn-NotificationsMetadata vale '%s': atteso '%s'", attributeName, actualAsString, resolvedExpectedValue)
+                .isEqualTo(resolvedExpectedValue);
     }
 
 }

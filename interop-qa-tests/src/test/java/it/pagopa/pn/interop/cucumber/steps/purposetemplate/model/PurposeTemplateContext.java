@@ -2,8 +2,11 @@ package it.pagopa.pn.interop.cucumber.steps.purposetemplate.model;
 
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateState;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PurposeTemplateContext {
     private String actualPurposeTitle;
     private PurposeTemplateState actualState;
@@ -11,4 +14,3 @@ public class PurposeTemplateContext {
     private Integer actualOffset;
     private Integer actualLimit;
 }
-

@@ -54,6 +54,16 @@ public class DocumentDeleteSteps {
         );
     }
 
+    @When("l'utente cancella quell'interfaccia di callback")
+    public void userRemoveCallbackInterface() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getEServiceClient().deleteEServiceDocumentById(
+                        eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getCallbackInterfaceId()
+                )
+        );
+    }
+
     @Given("{string} ha già creato un e-service con un descrittore in stato {string} con un'interfaccia già caricata")
     public void createEserviceWihtDraftDescriptorAndInterface(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

@@ -1,4 +1,4 @@
-@attribute @wait_for_fix @IMN-347
+@attribute @IMN-347
 Feature: Listing attributi
   Tutti gli utenti autenticati possono leggere la lista degli attributi
 
@@ -28,6 +28,16 @@ Feature: Listing attributi
       | Privato | security     |
       | Privato | support      |
       | Privato | api,security |
+
+    # 04/08/2026 In ottemperenza alla regola generale secondo cui "viewer" può accedere alle API a lui accessibili attraverso
+    # Web UI, ed essendo che questa api viene chiamata durante il processo di creazione di e-service o di una sua
+    # versione (nell'atto di definire gli attributi da associare all'e-service) a lui preclusa, si ha
+    # che questa API non è accessibile al ruolo viewer
+    #@nuovi-operatori-update
+    #Examples:
+    #  | ente    | ruolo  |
+    #  | GSP     | viewer |
+    #  | Privato | viewer |
 
   # NOTE 16/04/2025 adattamento dello scenario così che risultati funzionante nell'attuale
   # ambiente di QA
@@ -101,3 +111,20 @@ Feature: Listing attributi
     Given PA1 ha già creato 3 attributi DECLARED
     When l'utente richiede una operazione di listing degli attributi filtrando per keyword "unknown" all'interno del nome
     Then si ottiene status code 200 e la lista di 0 attributi
+
+  # https://pagopaspa.slack.com/archives/C0AQVEPGQ8L/p1782135024169989
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOff
+  Scenario: [CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il feature flag è false.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    Then l'utente "PA1" non possiede nessun attributo certificato discreto
+    And si ottiene status code 200 e la lista di 0 attributi
+
+  @certifiedDiscreteAttribute
+  @certifiedDiscreteAttributeFlagOn
+  Scenario: [CERT_DISCRETE_ATTR_AVAILABLE] Gli attributi certificati discreti sono disponibili quando il feature flag è true.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
+    Then l'utente "PA1" possiede almeno un attributo certificato discreto
+    And si ottiene response status code 200

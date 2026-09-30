@@ -318,15 +318,15 @@ Feature: Test API of e-service template suffix
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
     And l'utente effettua la creazione di un nuovo e-service in stato <stato> con suffisso "suffisso 1" a partire dal template con successo indicando tutte le specifiche
-    And l'ente "PA1" ha una delega attiva verso l'ente "GSP" per l'istanza dell'e-service template
+    And l'ente "PA1" ha una delega attiva verso l'ente "PA2" per l'istanza dell'e-service template
     When l'utente è un "admin" di "<ente>"
     And l'utente recupera le proprie istanze e-service template create dall'e-service template "%actual"
     Then ottengo solo l'ultimo e-service creato dall'ente prodotti dall'e-service template
     Examples:
       | stato     | ente      |
       #test per delegato (in caso di cambiamenti, nb di modificare anche il valore indicato nello step di creazione e attivazione delega)
-      | DRAFT     | GSP       |
-      | PUBLISHED | GSP       |
+      | DRAFT     | PA2       |
+      | PUBLISHED | PA2       |
 
       #test per delegante
       | DRAFT     | PA1       |

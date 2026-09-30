@@ -13,12 +13,14 @@ import it.pagopa.interop.authorization.service.impl.AuthorizationClientImpl;
 import it.pagopa.interop.authorization.service.impl.ProducerClientImpl;
 import it.pagopa.interop.authorization.service.utils.ConfigFileReader;
 import it.pagopa.interop.authorization.service.utils.PollingService;
+import it.pagopa.interop.authorization.service.utils.voucher.AsyncVoucherService;
 import it.pagopa.interop.authorization.service.utils.voucher.VoucherService;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfileConfiguration;
-import it.pagopa.interop.config.springconfig.springconfig.InteropRestTemplateConfiguration;
-import it.pagopa.interop.config.springconfig.springconfig.JwtTokenServiceConfiguration;
+import it.pagopa.interop.conf.UploadDocumentFilesProperties;
+import it.pagopa.interop.config.springconfig.InteropRestTemplateConfiguration;
+import it.pagopa.interop.config.springconfig.JwtTokenServiceConfiguration;
 import it.pagopa.interop.delegate.service.impl.*;
+import it.pagopa.interop.dev_tools.service.impl.DevToolsClientImpl;
 import it.pagopa.interop.e_service_template.impl.*;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapperImpl;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapperImpl;
@@ -28,6 +30,9 @@ import it.pagopa.interop.event.mapper.M2MEventMapperImpl;
 import it.pagopa.interop.event.mapper.M2MV3EventMapperImpl;
 import it.pagopa.interop.event.service.M2MEventClientImpl;
 import it.pagopa.interop.event.service.M2MV3EventClientImpl;
+import it.pagopa.interop.maintenance.EnvDebugLogger;
+import it.pagopa.interop.maintenance.InteropMaintenanceServiceImpl;
+import it.pagopa.interop.maintenance.TenantMapperImpl;
 import it.pagopa.interop.notification.NotificationClientImpl;
 import it.pagopa.interop.notification.NotificationConfigClient;
 import it.pagopa.interop.probing.config.ProbingClientConfigs;
@@ -41,9 +46,10 @@ import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.interop.tenant.service.impl.TenantsApiClientImpl;
+import it.pagopa.interop.tenant.service.impl.TenantsProcessApiClientImpl;
 import it.pagopa.interop.tracing.config.TracingClientConfigs;
 import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
-import it.pagopa.interop.tracing.service.impl.QAAbstractInteropTracingClient;
+import it.pagopa.interop.tracing.service.impl.ExtraQaAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
@@ -58,9 +64,11 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.ESe
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.mapper.EServiceDescriptorQuotasMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.*;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.assistant.EServiceTemplatePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.helpers.EServiceTemplateSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.mapper.EServiceTemplateMapperImpl;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice_template.version.assistant.EServiceTemplateVersionPatchOperationsAssistant;
@@ -75,11 +83,12 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.mapper.ReversePurposeMapp
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.mapper.PurposeTemplateMapperImpl;
+import it.pagopa.pn.interop.cucumber.steps.maintenance.TenantSetupState;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -111,14 +120,16 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelegationApiClientImpl.class,
         ConfigFileReader.class,
         InteropClientConfigs.class,
+        UploadDocumentFilesProperties.class,
         TracingFileUtils.class,
         BlobFileCreator.class,
         TracingClientConfigs.class,
         ProbingClientConfigs.class,
         DevAbstractInteropTracingClient.class,
-        QAAbstractInteropTracingClient.class,
+        ExtraQaAbstractInteropTracingClient.class,
         CommonUtils.class,
         VoucherService.class,
+        AsyncVoucherService.class,
         EServiceTemplateApiClientImpl.class,
         DescriptorAttributesMapperImpl.class,
         EServiceTemplateTestAssistant.class,
@@ -149,6 +160,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptorMapperImpl.class,
         EServiceTemplateMapperImpl.class,
         EServiceTemplateVersionQuotasMapperImpl.class,
+        EServiceSeedFactory.class,
         DocumentMapperImpl.class,
         PurposeMapperImpl.class,
         ReversePurposeMapperImpl.class,
@@ -168,6 +180,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EServiceDescriptionPatchOperationsAssistant.class,
         EServiceDescriptorPatchOperationsAssistant.class,
         EServiceTemplateVersionPatchOperationsAssistant.class,
+        EServiceTemplateSeedFactory.class,
         PurposePatchOperationsAssistant.class,
         ReversePurposePatchOperationsAssistant.class,
         EServiceTemplatePatchOperationsAssistant.class,
@@ -187,12 +200,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationStore.class,
         ProducerKeychainClientImpl.class,
         PurposeTemplateMapperImpl.class,
-        ApiProfileConfiguration.class,
         M2MVersionsMapper.class,
         M2MVersionsMapperImpl.class,
         M2MV3EventMapperImpl.class,
         M2MV3AgreementClientImpl.class,
         M2MV3CertifiedAttributeClientImpl.class,
+        M2MV3CertifiedDiscreteAttributeClientImpl.class,
         M2MV3PurposeClientImpl.class,
         M2MV3EserviceClientImpl.class,
         M2MV3EServiceTemplateClientImpl.class,
@@ -210,6 +223,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3UsersClient.class,
         IPurposeTemplateClient.class,
         ProbingClient.class,
+        DevToolsClientImpl.class,
+        InteropMaintenanceServiceImpl.class,
+        EnvDebugLogger.class,
+        TenantMapperImpl.class,
+        TenantsProcessApiClientImpl.class,
+        TenantSetupState.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

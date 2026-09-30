@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import software.amazon.awssdk.services.kms.model.NotFoundException;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,9 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
 
     @Value("${spring.profiles.active}")
     private String runProfile;
+
+    @Value("${session.tokens.duration.seconds}")
+    private int sessionTokenDurationSeconds;
 
     public IdentityServiceSelfcareImpl(SessionTokenFactory sessionTokenFactory,
                                        ConfigFileReader configFileReader) {
@@ -46,10 +50,21 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     }
 
     @Override
+    public String getMaintenanceToken() {
+        try {
+            return sessionTokenFactory.getMaintenanceToken();
+        }
+        catch (Exception e) {
+            throw new RuntimeException("Errore durante il reperimento del token di maintenance", e);
+        }
+    }
+
+    @Override
     public UUID getUserId(String tenantType, String role) {
         return getUserId(tenantType, role, 0);
     }
 
+    // TODO: refattorizzare così da utilizzare il metodo List<UUID> getUserIds(String tenantType, String role)
     @Override
     public UUID getUserId(String tenantType, String role, int userIndex) {
         return tenantList.stream()
@@ -60,6 +75,24 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
                 .findFirst()
                 .map(UUID::fromString)
                 .orElseThrow(() -> new IllegalArgumentException("TenantID or Role not defined in the config file!"));
+    }
+
+    @Override
+    public List<UUID> getUserIds(String tenantType, String role) {
+        List<UUID> userIds = tenantList.stream()
+                .filter(tenant -> tenantType.equals(tenant.getName()))
+                .map(Tenant::getUserRoles)
+                .map(userRole -> userRole.get(role))
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .map(UUID::fromString)
+                .toList();
+
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("TenantID or Role not defined in the config file!");
+        }
+
+        return userIds;
     }
 
     @Override
@@ -101,6 +134,14 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
                 .map(Tenant::getKind)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Kind of tenant '%s' not found".formatted(tenantType)));
+    }
+
+    @Override
+    public List<String> getTenantTypesByKind(String tenantKind) {
+        return tenantList.stream()
+                .filter(tenant -> tenantKind.equals(tenant.getKind()))
+                .map(Tenant::getName)
+                .toList();
     }
 
     @Override

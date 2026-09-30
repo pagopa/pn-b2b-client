@@ -1,0 +1,38 @@
+{
+  "[RADD_POSTE_AOR_03_1_A]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "GTKN-LEUK-PZYL-202606-E-1"
+  },
+  "[RADD_POSTE_AOR_03_1_B]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "ZLZQ-KHXZ-VAXL-202606-N-1"
+  },
+  "[RADD_POSTE_02_1_G]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "QGUX-TJHZ-AXQX-202606-Z-1",
+    "recipientType" : "PF",
+    "cf" : "FRMTTR76M06B715E",
+    "qrCode" : "UUdVWC1USkhaLUFYUVgtMjAyNjA2LVotMV9QRi00ZmM3NWRmMy0wOTEzLTQwN2UtYmRhYS1lNTAzMjk3MDhiN2RfYzdiYTQwOTItMDg5Mi00ZmFjLWEzZmYtNmFmMWVmMGVkZDMy"
+  },
+  "[RADD_POSTE_01_3]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "HYLG-KRJD-UYPX-202606-G-1",
+    "recipientType" : "PF",
+    "cf" : "CLMCST42R12D969Z",
+    "qrCode" : "SFlMRy1LUkpELVVZUFgtMjAyNjA2LUctMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfYTI3M2JkN2QtZGZkZi00MWU2LWE2NmUtYzIyNzBhODQyNzIy"
+  },
+  "[RADD_POSTE_02_1_A]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "LQAY-NZEQ-MQUK-202606-H-1",
+    "recipientType" : "PF",
+    "cf" : "CLMCST42R12D969Z",
+    "qrCode" : "TFFBWS1OWkVRLU1RVUstMjAyNjA2LUgtMV9QRi1hNmMxMzUwZC0xZDY5LTQyMDktOGJmOC0zMWRlNThjNzlkNmVfNTdlZTZiYmItMGJmMS00YTJhLTljNjAtZWY2MjBiMGFhMzgx"
+  },
+  "[RADD_POSTE_02_1_C]" : {
+    "pa" : "Comune_Multi",
+    "iun" : "JDYL-DGWP-ATQH-202606-X-1",
+    "recipientType" : "PG",
+    "cf" : "20517490320",
+    "qrCode" : "SkRZTC1ER1dQLUFUUUgtMjAyNjA2LVgtMV9QRy1iMDVkZTc3Ny04MGM2LTQ1NDktYTA1NC1kOGRmZGExMzljNjJfYTc0ZDViZjMtYjY2OC00OWE0LWE5ZjktNTRjYzVjMGZhMDk1"
+  }
+}

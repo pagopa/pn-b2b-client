@@ -4,7 +4,7 @@ import io.cucumber.java.ParameterType;
 
 import java.time.temporal.ChronoUnit;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
 /**
  * Classe pensata come contenitore per tutti i ParameterType del progetto.
@@ -36,7 +36,7 @@ public class ParameterTypes {
     }
 
     @ParameterType("uguale|differente")
-    public static boolean isUguale(String value) {
+    public static boolean isTheSame(String value) {
         return value.equals("uguale");
     }
 
@@ -53,6 +53,11 @@ public class ParameterTypes {
     @ParameterType("con|senza")
     public static boolean with(String value) {
         return value.equals("con");
+    }
+
+    @ParameterType("monodestinatario|multidestinatario")
+    public static boolean monodest(String value) {
+        return value.equals("monodestinatario");
     }
 
     @ParameterType("analogico|digitale")
@@ -102,5 +107,13 @@ public class ParameterTypes {
         return value.equals("può");
     }
 
+    @ParameterType("pre|post")
+    public static boolean isBefore(String value) {
+        return value.equals("pre");
+    }
 
+    @ParameterType("baseCost|firstAnalogCost|secondAnalogCost|simpleRegisteredLetterCost")
+    public static String deliveryNotificationCost(String value) {
+        return value;
+    }
 }

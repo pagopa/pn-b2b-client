@@ -41,7 +41,7 @@ import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 @Slf4j
@@ -231,10 +231,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
     public void createStreamWithFilteredStatus(String pa, String version, String filter) {
+        String[] filterValues = new String[]{filter};
+        if (filter.contains(",")) {
+            filterValues = filter.split(",");
+        }
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, List.of(filter), false, null);
+        createStream(pa, streamVersion, null, false, Arrays.asList(filterValues), false, null);
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con un gruppo disponibile {string}")
@@ -242,7 +246,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, false, null);
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
     }
 
     @And("si crea il nuovo stream con versione {string} per il {string} \\(caso errato)")
@@ -599,7 +603,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElement = webhookStepsInterface.searchStatusElementInWebhook(null, 0, 0, searchElementResult);
             log.debug("PROGRESS-ELEMENT: " + progressResponseElement);
 
-            FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+            FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification
                     .getNotificationStatusHistory().stream()
                     .filter(elem -> elem.getStatus().getValue().equals(notificationStatus.getValue()))
@@ -736,7 +740,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         } else {
             try {
                 Assertions.assertNotNull(progressResponseElement);
-                FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+                FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
                 Assertions.assertFalse(fullSentNotification
                         .getTimeline()
                         .stream()

@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PriceVerificationSteps {
 
     private final SharedSteps sharedSteps;
@@ -27,7 +30,7 @@ public class PriceVerificationSteps {
 
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica, String user) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         Assertions.assertNotNull(fullSentNotification);
 
         Integer pricePartial;
@@ -53,7 +56,7 @@ public class PriceVerificationSteps {
         }
     }
 
-    private Integer calcoloPrezzo(String tipoNotifica, String tipoCosto, String user, FullSentNotificationV28 notifica) {
+    private Integer calcoloPrezzo(String tipoNotifica, String tipoCosto, String user, FullSentNotificationV29 notifica) {
 
         List<TimelineElementV28> listaNotifica = notifica.getTimeline().stream().filter(value -> value.getDetails() != null && value.getDetails().getAnalogCost() != null).toList();
 
@@ -127,7 +130,7 @@ public class PriceVerificationSteps {
     }
 
     public List<NotificationPriceResponseV23> priceVerificationV23(Integer price, String date, Integer destinatario, String tipologiaCosto) {
-        FullSentNotificationV28 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         if (fullSentNotification != null) {
             List<NotificationPaymentItem> listNotificationPaymentItem = fullSentNotification.getRecipients().get(destinatario).getPayments();
             List<NotificationPriceResponseV23> listNotificationPriceV23 = new ArrayList<>();

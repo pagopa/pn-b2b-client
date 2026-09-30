@@ -3,7 +3,6 @@ package it.pagopa.pn.interop.cucumber.steps.catalog;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
-import it.pagopa.interop.utils.HttpCallExecutor;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Assertions;
@@ -33,21 +32,37 @@ public class DescriptorDeletionSteps {
     public void descriptorAndEserviceCancelled() {
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-                        sharedStepsContext.getEServicesCommonContext().getDescriptorId()
-                    )
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                        )
                 ),
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving the e-service descriptor"
         );
         sharedStepsContext.getPollingService().makePolling(
                 () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDetails(
-                        sharedStepsContext.getEServicesCommonContext().getEserviceId()
-                    )
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId()
+                        )
                 ),
                 res -> res == HttpStatus.NOT_FOUND,
                 "There was an error while retrieving e-service details"
         );
+    }
+
+    @Then("l'ultimo descrittore in stato DRAFT è stato cancellato")
+    @Then("l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato")
+    public void lastDraftDescriptorCancelled() {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(() -> clientTokenConfigurator.getProducerClient().getProducerEServiceDescriptor(
+                                sharedStepsContext.getEServicesCommonContext().getEserviceId(),
+                                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+                        )
+                ),
+                res -> res == HttpStatus.NOT_FOUND,
+                "There was an error while retrieving the e-service descriptor"
+        );
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorId(sharedStepsContext.getEServicesCommonContext().getOldDescriptorId());
     }
 
     @Then("quell'e-service non è stato cancellato")

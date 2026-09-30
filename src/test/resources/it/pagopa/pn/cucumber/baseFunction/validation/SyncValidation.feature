@@ -27,6 +27,18 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "409"
 
 
+  @B2Btest @testLite @syncValidation
+  Scenario: [B2B-PA-SYNC_VALIDATION_WRONG_FILEKEY]
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Cristoforo Colombo
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso uguale
+    And la notifica viene inviata dal "Comune_1" con errore "INVALID_DOCUMENT_KEY_SYNC"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "does not contain the expected value: PN_NOTIFICATION_ATTACHMENTS"
+
+
   @B2Btest @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_2] verifica validazione codice fiscale del creditore e codice avviso
     Given viene generata una nuova notifica
@@ -761,7 +773,7 @@ Feature: verifica validazione sincrona
       | senderDenomination | error                                                          |
       | NULL               | instance type (null) does not match any allowed primitive type |
       | 0_CHAR             | too short                                                      |
-      | 81_CHAR            | too long                                                       |
+      | 89_CHAR            | too long                                                       |
       | \n                 | ECMA 262 regex                                                 |
 
   @syncValidation
@@ -1167,7 +1179,6 @@ Feature: verifica validazione sincrona
       | email             | error          |
       | V.S.-SRL@pecOk.it | ECMA 262 regex |
 
-
   @syncValidation @syncValidTaxonomy
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_79] verifica validazione sync taxonomyCode correttamente censito
     Given viene generata una nuova notifica
@@ -1232,6 +1243,33 @@ Feature: verifica validazione sincrona
       | 120101P      |
       | 120102P      |
       | 120103P      |
+
+  @syncValidation @validationSenderFlagON
+  Scenario: [B2B-PA-SYNC_VALIDATION_80] validazione sincrona fallita per incongruenza tra senderTaxId e taxCode con flag ON
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | senderTaxId        | 15376371009                 |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "403" con messaggio di errore "PN_DELIVERY_INVALID_SENDER_TAX_ID"
+
+  @validationSenderFlagOFF
+  Scenario: [B2B-PA-SYNC_VALIDATION_81] validazione sincrona con incongruenza tra senderTaxId e taxCode con flag OFF
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | senderTaxId        | 15376371009                 |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+
+  @syncValidation @validationSenderFlagON @validationSenderFlagOFF
+  Scenario: [B2B-PA-SYNC_VALIDATION_82] validazione sincrona con senderTaxId e taxCode coerenti.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
 
   @blackListCF
   Scenario: [B2B_TIMELINE_RECAPITI_BLACKLIST_1] validazione sincrona campo taxId per la blackList

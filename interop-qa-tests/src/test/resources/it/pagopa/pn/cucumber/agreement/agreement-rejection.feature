@@ -30,6 +30,13 @@ Feature: Rifiuto di una richiesta di fruizione
       | PA1  | support      |       403 |
       | PA1  | api,security |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
+      | GSP  | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @agreement_rejection2

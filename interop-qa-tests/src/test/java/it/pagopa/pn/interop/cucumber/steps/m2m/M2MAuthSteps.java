@@ -9,10 +9,11 @@ import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.DPoPTokenService;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.JWTUtils;
-import it.pagopa.interop.config.springconfig.springconfig.ApiProfile;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.UUID;
@@ -33,6 +34,7 @@ public class M2MAuthSteps {
     private final IdentityService identityService;
     private final ApiProfile apiProfile;
 
+    @Autowired
     public M2MAuthSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
@@ -85,7 +87,6 @@ public class M2MAuthSteps {
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
-    @Given("viene impostato per l'utente un token non valido")
     public void setExpiredM2MAuth() {
         ApiProfile.ApiMode mode = apiProfile.getApiMode();
         ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
@@ -107,9 +108,14 @@ public class M2MAuthSteps {
         }
 
         if (useBearer) {
-            clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
-            sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
+            setExpiredBFFAuth();
         }
+    }
+
+    @Given("viene impostato per l'utente un token non valido")
+    public void setExpiredBFFAuth(){
+        clientTokenConfigurator.setBearerToken(INVALID_AUTH_TOKEN);
+        sharedStepsContext.setUserToken(INVALID_AUTH_TOKEN);
     }
 
     @Given("viene rimosso l'header di autenticazione DPoP")

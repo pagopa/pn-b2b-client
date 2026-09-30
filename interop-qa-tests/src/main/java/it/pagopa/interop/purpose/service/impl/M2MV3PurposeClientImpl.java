@@ -15,6 +15,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersi
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
@@ -25,6 +26,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -158,6 +160,11 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
             .freeOfChargeReason(body.getFreeOfChargeReason())
             .description(body.getDescription())
         ));
+    }
+
+    @Override
+    public RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId) throws RestClientException {
+        return purposesApi.getRemainingDailyCalls(purposeId);
     }
 
     @Override

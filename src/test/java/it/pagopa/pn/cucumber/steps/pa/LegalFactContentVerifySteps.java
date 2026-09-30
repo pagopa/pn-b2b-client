@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
@@ -18,30 +19,27 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.Loader;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
@@ -54,6 +52,12 @@ public class LegalFactContentVerifySteps {
     private String legalFactUrl;
     @Setter
     private String legalFactType;
+
+    @Value("${pn.notification-mario.gherkin.older-10-years}")
+    private String notificationIun10years;
+
+    @Value("${pn.legalFact-mario.gherkin.older-10-years}")
+    private String legalFactId10years;
 
     @Autowired
     public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
@@ -151,25 +155,11 @@ public class LegalFactContentVerifySteps {
 
     public void checkPdfPagesFromBytes(int numPage) {
         byte[] source = B2bUtils.downloadFile(legalFactUrl);
-
-        PDDocument document = null;
-
         try {
-            document = Loader.loadPDF(source);
-            int numberOfPages = document.getNumberOfPages();
-
+            int numberOfPages = PDFUtility.getNumberOfPages(source);
             Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di " + numPage + " pagine!");
-
-        } catch (IOException e) {
+        } catch (IllegalStateException e) {
             Assertions.fail("Errore durante la lettura del PDF: " + e.getMessage());
-        } finally {
-            if (document != null) {
-                try {
-                    document.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
@@ -477,15 +467,12 @@ public class LegalFactContentVerifySteps {
 
     private boolean checkTypeAAR(byte[] source, String aarType) {
         Pattern pattern = Pattern.compile("\\((CAF)\\s");
-        try (final PDDocument document = Loader.loadPDF(source)) {
-            final PDFTextStripper pdfStripper = new PDFTextStripper();
-            pdfStripper.setSortByPosition(true);
-            String extractedText = pdfStripper.getText(document);
-            Matcher matcher = pattern.matcher(extractedText);
+        try {
+            boolean hasCafMarker = PDFUtility.matchesPattern(source, pattern);
             if (aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
-                return !matcher.find();
+                return !hasCafMarker;
             } else if (aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
-                return matcher.find();
+                return hasCafMarker;
             }
         } catch (Exception exception) {
             log.error("Error parsing PDF {}", exception);
@@ -728,5 +715,30 @@ public class LegalFactContentVerifySteps {
             return key.substring(key.indexOf("PN_F24"));
         }
         return null;
+    }
+
+    /**
+     * Verifica che per un legalFact rimosso da SS dopo 10 anni, provando a recuperarlo tramite api-pubblica venga lanciato un 500, tramite api privata un 410.
+     * Il test utilizza notifiche fisse a cui sono stati impostati i seguenti valori per simulare la rimozione da ss:
+     * "documentLogicalState": "DELETED"
+     * "documentState": "deleted"
+     * Tali notifiche sono tutte state inviate da Comune_Multi a Mario Gherkin, ragion per cui i valori di pa e recipientInternalId sono impostati fissi nelle properties.
+     */
+    @Given("verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto")
+    public void checkLegalFactRemovedFromSafeStorage() {
+        sharedSteps.setPA("Comune_Multi");
+        String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
+        try {
+            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
+        } catch (HttpStatusCodeException excApiPubblica) {
+            log.info(excApiPubblica.getMessage());
+            assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
+        }
+        try {
+            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, notificationIun10years, legalFactId10years, null, null, null);
+        } catch (HttpStatusCodeException excApiPrivata) {
+            log.info(excApiPrivata.getMessage());
+            assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
+        }
     }
 }

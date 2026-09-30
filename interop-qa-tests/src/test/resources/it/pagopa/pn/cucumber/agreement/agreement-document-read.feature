@@ -19,6 +19,13 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | PA1  | admin        |       200 |
       | PA1  | support      |       200 |
 
+    @happy-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | viewer       |       200 |
+      | PA2  | viewer       |       200 |
+
     @sad-path
     Examples:
       | ente | ruolo        | risultato |
@@ -28,6 +35,12 @@ Feature: Lettura di un documento allegato alla richiesta di fruizione
       | PA1  | api          |       403 |
       | PA1  | security     |       403 |
       | PA1  | api,security |       403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | risultato |
+      | GSP  | reviewer     |       403 |
 
   @happy-path
   @nrt-minimal

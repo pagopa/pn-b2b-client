@@ -43,14 +43,20 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene creata una risposta di analisi del rischio "ENTRO I LIMITI CONSENTITI FREE TEXT" per il purpose template creato
     And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #89 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
@@ -115,14 +121,20 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And viene eliminata l'annotazione esistente per il purpose template
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #94 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404
@@ -203,14 +215,20 @@ Feature: finalità agevolata, purpose template ANNOTATION DOCUMENT
     And viene aggiunta un'annotazione con testo entro i 50 caratteri ad una risposta esistente del purpose template
     And si ottiene lo status code 200
     And vengono caricati 1 documenti "DIVERSI CON NOME DIVERSO" associati all'annotazione esistente
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And viene eliminato il documento esistente dell'annotazione precedentemente creata
     Then si ottiene lo status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #100 (KO)
   # 27 01 2026: In osservanza a https://pagopa.atlassian.net/browse/PIN-8190 il codice restituito è stato mutato 403 -> 404

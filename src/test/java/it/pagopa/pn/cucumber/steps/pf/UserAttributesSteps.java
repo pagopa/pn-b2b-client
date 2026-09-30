@@ -4,28 +4,22 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
 
-    //    private final IPnWebUserAttributesClient webUserAttributesClient;//INTERFACCIA NON VA
-
     private final IPnWebUserAttributesClient webUserAttributesClient;//B2B
-//    private final PnWebUserAttributesExternalClientImpl webUserAttributesClient;//WEB
-
     private Consent consent;
     private HttpStatusCodeException consentError;
 
 
     @Autowired
-//    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
-    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
-//    public UserAttributesSteps(PnWebUserAttributesExternalClientImpl webUserAttributesClient) {
+    public UserAttributesSteps(PnWebUserAttributesInternalClientImpl webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
     }
 
@@ -59,10 +53,5 @@ public class UserAttributesSteps {
     @And("Il consenso è accettato")
     public void ilConsensoAccettato() {
         Assertions.assertEquals(Boolean.TRUE, consent.getAccepted());
-    }
-
-    @Given("viene testato l'otp")
-    public void vieneTestatoLOtp() {
-        //TODO: implementare
     }
 }

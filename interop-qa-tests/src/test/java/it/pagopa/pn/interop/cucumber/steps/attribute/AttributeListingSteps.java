@@ -1,22 +1,24 @@
 package it.pagopa.pn.interop.cucumber.steps.attribute;
 
-import static it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.CERTIFIED;
-import static it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.DECLARED;
-import static it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.VERIFIED;
+import static it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind.*;
 import static java.lang.String.valueOf;
 
 import io.cucumber.java.en.When;
-import it.pagopa.interop.attribute.service.IAttributeApiClient;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeKind;
-import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attributes;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.attribute.AttributeListingSteps.AttributeListRequest.AttributeListRequestBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import lombok.Data;
 
+@Slf4j
 public class AttributeListingSteps {
     @Data
     @Builder(toBuilder = true)
@@ -85,6 +87,14 @@ public class AttributeListingSteps {
         listAttributes(attributeListRequest);
     }
 
+    @When("l'utente richiede una operazione di listing degli attributi certificati discreti disponibili")
+    public void listCertifiedDiscreteAttributes() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getAttributeCommonContext().setAvailableCertifiedDiscreteAttributes(
+                listAllCertifiedDiscreteAttributes()
+        );
+    }
+
     private AttributeListRequestBuilder getAttributeListRequestPrototype() {
         return AttributeListRequest.builder()
             .limit(50)
@@ -104,5 +114,42 @@ public class AttributeListingSteps {
                 attributeListRequest.getOrigin()
             )
         );
+    }
+
+    private List<CompactAttribute> listAllCertifiedDiscreteAttributes() {
+
+        int limit = 50;
+        int offset = 0;
+        int totalCount;
+        List<CompactAttribute> allAttributes = new ArrayList<>();
+
+        do {
+            final int currentOffset = offset;
+
+            sharedStepsContext.getPollingService().makePolling(
+                    () -> httpCallExecutor.performCall(() ->
+                            clientTokenConfigurator.getAttributeApiClient().getAttributes(
+                                    limit,
+                                    currentOffset,
+                                    List.of(CERTIFIED_DISCRETE),
+                                    null,
+                                    null
+                            )
+                    ),
+                    res -> res.is2xxSuccessful() || !sharedStepsContext.getHttpCallExecutor().ongoingOperationConflict(),
+                    "Error while retrieving attribute listing"
+            );
+
+            Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful(), "Expected 2xx successful status code for attribute listing");
+
+            Attributes response = (Attributes) httpCallExecutor.getResponse();
+            allAttributes.addAll(response.getResults());
+            totalCount = response.getPagination().getTotalCount();
+            offset += limit;
+        } while (allAttributes.size() < totalCount);
+
+        log.info("Found {} certified discrete attributes", allAttributes.size());
+
+        return allAttributes;
     }
 }

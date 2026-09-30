@@ -39,6 +39,15 @@ public class EServiceCloneSteps {
         this.producerClient = clientTokenConfigurator.getProducerClient();
     }
 
+    @Given("{string} tenta la creazione di una versione in DRAFT per quell'e-service")
+    public void tenantTryToCreateVersionWithState(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+
+        eServicesCommonContext.setOldDescriptorId(eServicesCommonContext.getDescriptorId());
+        UUID descriptorId = dataPreparationService.createNextDraftDescriptor(eServicesCommonContext.getEserviceId());
+        eServicesCommonContext.setDescriptorId(descriptorId);
+    }
+
     @Given("{string} ha già creato una versione in {string} per quell'e-service")
     public void tenantHasAlreadyCreatedVersionWithState(String tenantType, String descriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
@@ -50,15 +59,72 @@ public class EServiceCloneSteps {
                 EServiceDescriptorState.fromValue(descriptorState), false);
     }
 
+    @When("l'utente tenta di clonare quell'e-service")
+    public void tryCloneEservice() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
+        );
+    }
+
+    @When("l'utente tenta di clonare la vecchia versione dell'e-service")
+    public void tryCloneOldEserviceVersion() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getOldDescriptorId())
+        );
+    }
+
+    @When("l'utente tenta di clonare il descrittore con id {string} dell'e-service con id {string}")
+    public void tryCloneEServiceDescriptor(String descriptorId, String eServiceId) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(
+                        UUID.fromString(eServiceId),
+                        UUID.fromString(descriptorId)
+                )
+        );
+    }
+
     @When("l'utente clona quell'e-service")
     public void cloneEservice() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getEServiceClient().cloneEServiceByDescriptor(eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId())
         );
-        UUID eserviceId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
-        UUID descriptorId = ((CreatedEServiceDescriptor) sharedStepsContext.getHttpCallExecutor().getResponse()).getDescriptorId();
 
+        if (!sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            eServicesCommonContext.setName(null);
+            eServicesCommonContext.setEserviceId(null);
+            eServicesCommonContext.setDescriptorId(null);
+            return;
+        }
+
+        loadClonedEServiceFromResponse();
+    }
+
+    @Then("l'e-service è stato clonato con successo")
+    public void verifyEServiceClonedSuccessfully() {
+        HttpStatus responseStatus = sharedStepsContext.getHttpCallExecutor().getResponseStatus();
+        Assertions.assertThat(responseStatus)
+                .as("La clonazione dell'e-service deve restituire uno status HTTP")
+                .isNotNull();
+        Assertions.assertThat(responseStatus.is2xxSuccessful())
+                .as("La clonazione dell'e-service deve avere successo, status ricevuto: %s", responseStatus)
+                .isTrue();
+
+        loadClonedEServiceFromResponse();
+    }
+
+    private void loadClonedEServiceFromResponse() {
+        Object rawResponse = sharedStepsContext.getHttpCallExecutor().getResponse();
+        Assertions.assertThat(rawResponse)
+                .as("La clonazione dell'e-service deve restituire un payload di tipo CreatedEServiceDescriptor")
+                .isInstanceOf(CreatedEServiceDescriptor.class);
+
+        CreatedEServiceDescriptor created = (CreatedEServiceDescriptor) rawResponse;
+        UUID eserviceId = created.getId();
+        UUID descriptorId = created.getDescriptorId();
         HttpStatus status = sharedStepsContext.getPollingService().makePolling(
                 () -> sharedStepsContext.getHttpCallExecutor().performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 res -> res != HttpStatus.NOT_FOUND && sharedStepsContext.getHttpCallExecutor().getResponse() != null,

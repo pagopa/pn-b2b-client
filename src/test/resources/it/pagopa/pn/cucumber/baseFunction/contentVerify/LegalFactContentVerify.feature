@@ -154,6 +154,10 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
   @legalFact
+  Scenario: [B2B_LEGAL_FACT_RIMOSSO_DA_SS_BUG_19624] Verifica che per legalFact vecchi 10 o più anni (e dunque rimossi da safeStorage) la get tramite api pubblica restituisca errore 500, mentre da api privata 410
+    Given verifico che recuperando un legalFact rimosso da safeStorage, le api restituiscano l'errore corretto
+
+  @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_8] In seguito ad un disservizio verificatosi in piattaforma durante la creazione di una notifica, si verifica l'esistenza del legalFact generato se sia di tipo DOWNTIME
     Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi alla "creazione notifiche"
     When viene individuato se presente l'evento più recente

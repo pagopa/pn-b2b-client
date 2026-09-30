@@ -1,5 +1,6 @@
 package it.pagopa.interop.eservice.service.impl;
 
+import it.pagopa.interop.APIUnavailableException;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
@@ -9,20 +10,19 @@ import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorQuotasUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.UUID;
 
 @ToString
 @EqualsAndHashCode
@@ -135,6 +135,11 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public List<it.pagopa.interop.agreement.domain.EServiceDescriptor> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public Pair<UUID, UUID> getId(EServiceDescriptor entity) {
         return Pair.of(entity.getEServiceId(), entity.getDescriptorId());
     }
@@ -162,6 +167,12 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor suspendDescriptor(
+        UUID eServiceId, UUID descriptorId) {
+        return this.eservicesApi.suspendDescriptor(eServiceId, descriptorId);
+    }
+
+    @Override
     public void unsuspendEService(UUID eServiceId, UUID descriptorId) {
         this.eservicesApi.unsuspendDescriptor(eServiceId, descriptorId);
     }
@@ -173,8 +184,35 @@ public class M2MEserviceDescriptorClientImpl extends AbstractClient implements I
     }
 
     @Override
+    public Document uploadInterface(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
+        return eservicesApi.uploadEServiceDescriptorInterface(eserviceId, descriptorId, file, prettyName);
+    }
+
+    @Override
+    public Document uploadDocument(UUID eserviceId, UUID descriptorId, Resource file, String prettyName) {
+        return eservicesApi.uploadEServiceDescriptorDocument(eserviceId, descriptorId, file, prettyName);
+    }
+
+    @Override
+    public FileDownloadMultipart downloadDocument(UUID eserviceId, UUID descriptorId, UUID documentId) {
+        return eservicesApi.downloadEServiceDescriptorDocument(eserviceId, descriptorId, documentId);
+    }
+
+    @Override
     public Documents getDocuments(UUID eserviceId, UUID descriptorId) {
         return this.eservicesApi.getEServiceDescriptorDocuments(eserviceId, descriptorId, 0, 50);
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor scheduleArchiveEServiceDescriptor(
+        UUID eserviceId, UUID descriptorId, Integer gracePeriodDays) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptor cancelEServiceDescriptorArchiving(
+        UUID eserviceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
     }
 
     @Override

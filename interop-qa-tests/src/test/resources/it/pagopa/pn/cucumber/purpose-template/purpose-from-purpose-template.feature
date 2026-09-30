@@ -75,14 +75,22 @@ Feature: finalità agevolata, purpose from purpose template
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si crea una finalità a partire dal purpose template esistente
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | viewer   |
+
+      # Non applicabile a "reviewer" perché il reviewer non può nemmeno fare il get dell'agreement, il quale è un'azione preliminare dello step "And si crea una finalità a partire dal purpose template esistente"
+      # | PA2  | reviewer |
 
   #113 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
@@ -164,14 +172,20 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template
     And il purpose template creato viene spostato in stato PUBLISHED
     And si crea una finalità a partire dal purpose template esistente
-    When l'utente è un "<ruolo>" di "PA1"
+    When l'utente è un "<ruolo>" di "<ente>"
     And si modifica la finalità creata
     Then si ottiene response status code 403
     Examples:
-      | ruolo    |
-      | api      |
-      | support  |
-      | security |
+      | ente | ruolo    |
+      | PA1  | api      |
+      | PA1  | support  |
+      | PA1  | security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo    |
+      | PA2  | reviewer |
+      | PA2  | viewer   |
 
   #119 (KO)
   @purposeTemplate @purposeFromPurposeTemplate
@@ -198,3 +212,21 @@ Feature: finalità agevolata, purpose from purpose template
     And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When si modifica la finalità creata passando "TITLE ESISTENTE"
     Then si ottiene response status code 409
+
+  @adeguamento-analisi-rischio
+  Scenario Outline: [PURPOSE_TEMPLATE_PATCH_TK_1] A seguito del cambiamento di tenant kind si tenta di modificare una finalità
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "<ente>"
+    And viene creato un nuovo purpose template coerente con la tipologia dell'ente
+    And il purpose template creato viene spostato in stato PUBLISHED
+    And si crea una finalità a partire dal purpose template esistente
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When si modifica la finalità creata
+    Then si ottiene response status code 200
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

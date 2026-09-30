@@ -99,6 +99,49 @@ public class EServiceTemplateDocumentUpdateSteps {
         editDocumentFromEServiceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, documentId, updateSeed);
     }
 
+    @When("l'utente tenta la modifica di un documento di tipo {eServiceTemplateDocumentKind}")
+    public void editAsyncExchangeCallbackInterfaceFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
+        UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        UUID eServiceTemplateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> eServiceTemplateClient.getEServiceTemplateVersionWithHttpInfo(
+                                eServiceTemplateId,
+                                eServiceTemplateVersionId),
+                        ResponseEntity::getStatusCode),
+                res -> res.getStatusCode().is2xxSuccessful(), // && nonNull(res.getBody()) && updateStrategy.hasExpectedDocuments(res.getBody()),
+                "Condizioni di polling non rispettate. NOTA: questo step prevede l'esistenza di almeno 2 documenti nell'e-service template"
+        );
+
+        @SuppressWarnings("unchecked")
+        EServiceTemplateVersionDetails templateVersion = ((ResponseEntity<EServiceTemplateVersionDetails>) httpCallExecutor.getResponse()).getBody();
+
+        assert templateVersion != null;
+        UUID documentId = switch (kind) {
+            case INTERFACE -> {
+                yield templateVersion.getInterface().getId();
+            }
+            case ASYNC_EXCHANGE_CALLBACK_INTERFACE -> {
+                yield templateVersion.getAsyncExchangeCallbackInterface().getId();
+            }
+            case DOCUMENT -> {
+                yield templateVersion.getDocs().get(0).getId();
+            }
+            default -> throw new IllegalArgumentException("Unsupported document kind: " + kind);
+        };
+
+        UpdateEServiceTemplateVersionDocumentSeed seed = new UpdateEServiceTemplateVersionDocumentSeed();
+        seed.setPrettyName("newAsyncExchangeCallbackInterface");
+        lastDocumentUpdateSeed = seed;
+        editDocumentFromEServiceTemplateVersion(
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                documentId,
+                seed
+        );
+    }
+
     @Then("la modifica del documento di tipo {eServiceTemplateDocumentKind} dell'e-service template è stata effettuata correttamente")
     public void checkDocumentEditedFromEServiceTemplateVersion(EServiceTemplateDocumentKind kind) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
@@ -130,6 +173,7 @@ public class EServiceTemplateDocumentUpdateSteps {
             case DOCUMENT -> version.getDocs().stream()
                 .filter(d -> d.getId().equals(documentId)).findFirst();
             case INTERFACE -> Optional.ofNullable(version.getInterface());
+            case ASYNC_EXCHANGE_CALLBACK_INTERFACE -> Optional.ofNullable(version.getAsyncExchangeCallbackInterface());
             default -> throw new IllegalArgumentException("Unsupported document kind: " + kind);
         };
     }

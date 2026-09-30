@@ -38,6 +38,17 @@ Feature: Aggiornamento bozza nuova finalità in erogazione inversa
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
   @sad-path
   @nrt-minimal
   @purpose_update_draft_mode_receive2

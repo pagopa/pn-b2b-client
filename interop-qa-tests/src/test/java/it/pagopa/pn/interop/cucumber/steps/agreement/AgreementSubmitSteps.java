@@ -58,6 +58,15 @@ public class AgreementSubmitSteps {
         );
     }
 
+    @Then("la richiesta di fruizione con id {string} assume lo stato {string}")
+    public void agreementReachSpecificStatus(String agreementId, String agremeentState) {
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementById(UUID.fromString(agreementId)),
+                res -> res.getState().equals(AgreementState.valueOf(agremeentState)),
+                String.format("Agreement with id: %s and state: %s was not found!", agreementId, agremeentState.toUpperCase())
+        );
+    }
+
     @Given("{string} non possiede uno specifico attributo dichiarato")
     public void tenantDoesntHaveSpecificDeclaredAttribute(String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));

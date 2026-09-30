@@ -232,7 +232,6 @@ Feature: Gestione degli attributi dichiarati degli e-service templates templates
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi dichiarati dal gruppo dell'e-service template
     Then si ottiene lo status code 404
-    And gli attributi dichiarati ottenuti sono coerenti con quelli aggiunti nel template
     Examples:
       | mode        |
       | erogazione  |

@@ -13,13 +13,19 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = "pretty," +
                         "json:target/cucumber-report.json," +
                         "html:target/cucumber-report.html," +
-                        "it.pagopa.pn.interop.cucumber.SetApiProfilePropsPlugin:" +
+                        "it.pagopa.pn.interop.cucumber.plugins.SetApiProfilePropsPlugin:" +
                         "api.m2m.version=V3;" +
                         "api.mode=RIGHT_FIT;" +
                         "api.set=M2M"
         ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
+
+        // abilita parallelismo JUnit
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+
+        // abilita parallelismo Cucumber
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({// M2M

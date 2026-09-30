@@ -74,7 +74,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | senderDenomination | Comune di palermo               |
     And destinatario
       | denomination            | Test 890 Fail             |
-      | taxId                   | DVNLRD52D15M059P          |
+      | taxId                   | FNTLCU80T25F205R          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     And destinatario Cucumber Society
@@ -89,9 +89,8 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario
+    And destinatario Utenza con Errore D01 e:
       | denomination            | Test 890 Fail             |
-      | taxId                   | NNVFNC80A01H501G          |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     And destinatario Cucumber Society
@@ -136,6 +135,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | digitalDomicile | NULL           |
       | physicalAddress | Via@ok_890           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0

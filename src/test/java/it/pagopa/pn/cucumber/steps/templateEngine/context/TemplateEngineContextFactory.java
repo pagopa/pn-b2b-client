@@ -52,6 +52,7 @@ public class TemplateEngineContextFactory {
         context.setVerificationCode(getParameter(parameters, "context_verificationCode"));
         context.setRaddPhoneNumber(getParameter(parameters, "context_raddPhoneNumber"));
         context.setRecipients(getParameter(parameters, "context_recipients"));
+        context.setRawParameters(parameters);
 
         return context;
     }

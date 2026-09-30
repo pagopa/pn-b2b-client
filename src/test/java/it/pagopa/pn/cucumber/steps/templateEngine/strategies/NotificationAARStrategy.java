@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -34,6 +35,11 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
+        return String.join(" ", getYamlText("aar-no-radd", recipientType, language));
+    }
+
+    @Override
+    public List<String> getTextsToCheckLanguage(String language, String recipientType) {
         return getYamlText("aar-no-radd", recipientType, language);
     }
 
@@ -44,11 +50,11 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
         return new NotificationAar()
                 .recipient(createRecipient(context))
                 .notification(createNotification(context))
-                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink())
-                .piattaformaNotificheURL(context.getPiattaformaNotificheURL())
-                .piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
-                .perfezionamentoURL(context.getPerfezionamentoURL())
-                .perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
+                .qrCodeQuickAccessLink(context.getQrCodeQuickAccessLink());
+                //.piattaformaNotificheURL(context.getPiattaformaNotificheURL())
+                //.piattaformaNotificheURLLabel(context.getPiattaformaNotificheURLLabel())
+                //.perfezionamentoURL(context.getPerfezionamentoURL())
+                //.perfezionamentoURLLabel(context.getPerfezionamentoURLLabel());
     }
 
     private AarRecipient createRecipient(TemplateRequestContext context) {
@@ -75,7 +81,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
                 .orElse(null);
     }
 
-    private String getYamlText(String templateKey, String recipientType, String language) {
+    private List<String> getYamlText(String templateKey, String recipientType, String language) {
         TemplateEngineMessageConfigs.LocalizedText localizedText =
                 Optional.ofNullable(configs.getMessages().get(templateKey))
                         .map(inner -> inner.get(recipientType.toLowerCase()))
@@ -87,6 +93,7 @@ public class NotificationAARStrategy implements ITemplateEngineStrategy {
             case "TEDESCA" -> localizedText.getDe();
             case "FRANCESE" -> localizedText.getFr();
             case "SLOVENA" -> localizedText.getSl();
+            case "INGLESE" -> localizedText.getEn();
             default -> throw new IllegalArgumentException("Lingua non valida: " + language);
         };
     }

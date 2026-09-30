@@ -1,12 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.risk_analysis;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.collections4.IterableUtils.isEmpty;
-import static org.assertj.core.api.Assertions.fail;
-
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -18,11 +14,18 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant;
-import java.util.List;
-import java.util.UUID;
 import lombok.Data;
 import org.jeasy.random.EasyRandom;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.collections4.IterableUtils.isEmpty;
+import static org.assertj.core.api.Assertions.fail;
 
 /** Cucumber steps involving risk analyses of E-service templates */
 @Data
@@ -50,10 +53,22 @@ public class EServiceTemplateRiskAnalysisUpdateSteps {
 
     @When("l'utente tenta la modifica della risk analysis dell'e-service template")
     public void editRiskAnalysisFromEServiceTemplate() {
+        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeed(false));
+    }
+
+    @When("l'utente tenta la modifica della risk analysis dell'e-service template indicandone una coerente con il tenant kind {string}")
+    public void editRiskAnalysisFromEServiceTemplate(String tenantKind) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        String tenant = identityService.getTenantTypesByKind(tenantKind).stream()
+                .findFirst().orElseThrow(() -> new IllegalStateException("Nessun tenant type trovato per il tenant kind " + tenantKind));
+        editRiskAnalysisBySupplier(() -> testAssistant.getEServiceRiskAnalysisSeedWithType(tenant, true));
+    }
+
+    private void editRiskAnalysisBySupplier(Supplier<EServiceTemplateRiskAnalysisSeed> raSupplier) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         UUID riskAnalysisId = sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysisId();
 
-        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = testAssistant.getEServiceRiskAnalysisSeed(false);
+        EServiceTemplateRiskAnalysisSeed editedRiskAnalysisSeed = raSupplier.get();
 
         editRiskAnalysisFromEServiceTemplate(eServiceTemplateId, riskAnalysisId, editedRiskAnalysisSeed);
         sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(editedRiskAnalysisSeed);

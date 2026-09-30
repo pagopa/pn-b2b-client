@@ -27,3 +27,12 @@ Feature: Rimozione di un membro da un client
       | PA1  | security     |        403 |
       | PA1  | support      |        403 |
       | PA1  | api,security |        403 |
+
+    @happy-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+      | PA2  | reviewer     |        403 |
+      | PA2  | viewer       |        403 |
