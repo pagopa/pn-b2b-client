@@ -57,7 +57,7 @@ public class NotificationSearchParamMapper {
         searchParam.campaignId = resolveWithDefault(data, "campaignId", null, dynamicValueResolver);
         searchParam.size = resolveSize(resolveWithDefault(data, "size", DEFAULT_SIZE, dynamicValueResolver));
         searchParam.iunMatch = resolveWithDefault(data, "iunMatch", null, dynamicValueResolver);
-        searchParam.viewed = Optional.ofNullable(resolveWithDefault(data, "viewed", null, dynamicValueResolver)).map(Boolean::valueOf).orElse(null);
+        searchParam.viewed = Boolean.parseBoolean(resolveWithDefault(data, "viewed", "false", dynamicValueResolver));
         searchParam.delivered = Optional.ofNullable(resolveWithDefault(data, "delivered", null, dynamicValueResolver)).map(Boolean::valueOf).orElse(null);
         return searchParam;
     }

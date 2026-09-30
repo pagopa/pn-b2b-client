@@ -393,7 +393,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | listStatus | COMPLETED_REACHED;REFUSED |
       | senderId   | :informal_senderId        |
       | size       | 50                        |
-      #| delivered  | true                      |
+      | delivered  | NULL                      |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
       | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
       | notificationStatus | COMPLETED_REACHED             |
