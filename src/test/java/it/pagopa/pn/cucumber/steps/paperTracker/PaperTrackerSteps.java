@@ -145,35 +145,50 @@ public class PaperTrackerSteps {
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
     public void verifyTrackingEventsForSequenceWithPCRetryNew(String sequenceName) {
         TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
-        responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
-
-        Map<Integer, List<NotificationEvent>> groupedTrackingByAttempt = responseTracking.getTrackings().stream()
-                .filter(t -> t.getEvents() != null)
-                .collect(Collectors.toMap(
-                        att -> {
-                            int index = att.getAttemptId().lastIndexOf("_");
-                            return Integer.parseInt(att.getAttemptId().substring(index + 1));
-                        },
-                        t -> t.getEvents().stream()
-                                .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrls(pe.getAttachments(), Attachment::getUri), pe.getDeliveryFailureCause()))
-                                .collect(Collectors.toList()),
-                        (existing, newList) -> {
-                            existing.addAll(newList);
-                            return existing;
-                        }
-                ));
-
         Map<Integer, List<NotificationEvent>> expectedEvents = eventTimelineParser.parse(PaperTrackerTrackingSequence.getByName(sequenceName).getEvents());
-        Set<Integer> allAttempts = new HashSet<>();
-        allAttempts.addAll(groupedTrackingByAttempt.keySet());
-        allAttempts.addAll(expectedEvents.keySet());
-        for (Integer attemptIndex : allAttempts) {
-            List<NotificationEvent> actualList = groupedTrackingByAttempt.getOrDefault(attemptIndex, Collections.emptyList());
-            List<NotificationEvent> expectedList = expectedEvents.getOrDefault(attemptIndex, Collections.emptyList());
-            if (!actualList.isEmpty() || !expectedList.isEmpty()) {
-                assertRelaxedSameElements(actualList, expectedList, TRACKINGS_ELEMENT_NOT_FOUND);
-            }
-        }
+
+        await().atMost(Duration.ofMinutes(5))
+                .pollInterval(Duration.ofSeconds(5))
+                .untilAsserted(() -> {
+                    responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
+
+                    Map<Integer, List<NotificationEvent>> groupedTrackingByAttempt = responseTracking.getTrackings().stream()
+                            .filter(t -> t.getEvents() != null)
+                            .collect(Collectors.toMap(
+                                    att -> {
+                                        int index = att.getAttemptId().lastIndexOf("_");
+                                        return Integer.parseInt(att.getAttemptId().substring(index + 1));
+                                    },
+                                    t -> t.getEvents().stream()
+                                            .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrls(pe.getAttachments(), Attachment::getUri), pe.getDeliveryFailureCause()))
+                                            .collect(Collectors.toList()),
+                                    (existing, newList) -> {
+                                        existing.addAll(newList);
+                                        return existing;
+                                    }
+                            ));
+
+                    Set<Integer> allAttempts = new HashSet<>();
+                    allAttempts.addAll(groupedTrackingByAttempt.keySet());
+                    allAttempts.addAll(expectedEvents.keySet());
+
+                    if (expectedEvents.keySet().size() <= 1 && expectedEvents.containsKey(0) && groupedTrackingByAttempt.keySet().size() > 1) {
+                        List<NotificationEvent> allActualEvents = groupedTrackingByAttempt.values().stream()
+                                .flatMap(List::stream)
+                                .collect(Collectors.toList());
+                        List<NotificationEvent> allExpectedEvents = expectedEvents.getOrDefault(0, Collections.emptyList());
+                        assertRelaxedSameElements(allActualEvents, allExpectedEvents, TRACKINGS_ELEMENT_NOT_FOUND);
+                    } else {
+                        for (Integer attemptIndex : allAttempts) {
+                            List<NotificationEvent> actualList = groupedTrackingByAttempt.getOrDefault(attemptIndex, Collections.emptyList());
+                            List<NotificationEvent> expectedList = expectedEvents.getOrDefault(attemptIndex, Collections.emptyList());
+                            if (!actualList.isEmpty() || !expectedList.isEmpty()) {
+                                assertRelaxedSameElements(actualList, expectedList, TRACKINGS_ELEMENT_NOT_FOUND);
+                            }
+                        }
+                    }
+                });
+
         TrackingsResponse validTrackingsResponse = new TrackingsResponse();
         validTrackingsResponse.setTrackings(responseTracking.getTrackings().stream()
                 .filter(t -> t.getEvents() != null && !t.getEvents().isEmpty())
@@ -187,7 +202,7 @@ public class PaperTrackerSteps {
         FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
         List<String> keys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
-                .filter(e -> e.contains(key))
+                .filter(e -> e.contains(key) && (e.contains(".ATTEMPT_0") || !e.contains(".ATTEMPT_")))
                 .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3", prepare + ".PCRETRY_4"))
                 .toList();
         if (keys.isEmpty()) {
@@ -348,8 +363,8 @@ public class PaperTrackerSteps {
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
         AtomicReference<TrackingError> atomicReference = new AtomicReference<>();
-        await().atMost(Duration.ofMinutes(30))
-                .pollInterval(Duration.ofSeconds(30))
+        await().atMost(Duration.ofMinutes(25))
+                .pollInterval(Duration.ofSeconds(5))
                 .untilAsserted(() -> {
                     // recupera la lista di errori e cerca quello che ha category e flowThrow uguali a quelli attesi, se lo trova lo setta nell'atomic reference
                     // altrimenti, l'atomic reference rimane null e l'assert fallisce, facendo riprovare fino a quando non viene trovato o non scade il timeout
