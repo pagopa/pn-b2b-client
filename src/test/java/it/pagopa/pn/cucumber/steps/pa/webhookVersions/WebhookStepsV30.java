@@ -11,6 +11,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.InformalNotificationStatusV1;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.InformalTimelineElementCategoryV1;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV30;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequestV30;
@@ -361,7 +363,35 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return sharedSteps.isLegalNotification() ?
+                searchTimelineElementInWebhookLegal(lastEventId, deepCount, position, timelineForStream) :
+                searchTimelineElementInWebhookInformal(lastEventId, deepCount, position, timelineForStream);
+    }
+
+    private Object searchTimelineElementInWebhookLegal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV28 timeLineOrStatus = ((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory());
+        PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
+                PnPollingParameter.builder()
+                        .value("WEBHOOK")
+                        .pnPollingWebhook(pnPollingWebhook)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
+                        .streamId(eventStreamList.get(position).getStreamId())
+                        .build());
+
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT " + streamVersion + ": " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElement() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
+            return progressResponseElement;
+        }
+        return null;
+    }
+
+    private Object searchTimelineElementInWebhookInformal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        InformalTimelineElementCategoryV1 timeLineOrStatus = ((InformalTimelineElementCategoryV1) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
         PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
@@ -384,7 +414,35 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public Object searchStatusElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
+        return sharedSteps.isLegalNotification() ?
+                searchStatusElementInWebhookLegal(lastEventId, deepCount, position, statusForStream) :
+                searchStatusElementInWebhookInformal(lastEventId, deepCount, position, statusForStream);
+    }
+
+    private Object searchStatusElementInWebhookLegal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         NotificationStatusV26 status = ((NotificationStatusV26) statusForStream.getNotificationStatus());
+        PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
+                PnPollingParameter.builder()
+                        .value("WEBHOOK")
+                        .pnPollingWebhook(pnPollingWebhook)
+                        .deepCount(deepCount)
+                        .lastEventId(lastEventId)
+                        .streamId(eventStreamList.get(position).getStreamId())
+                        .build());
+
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT " + streamVersion + ": " + pnPollingResponse.getProgressResponseElement());
+        if (pnPollingResponse.getProgressResponseElementList() != null) {
+            progressResponseElement = pnPollingResponse.getProgressResponseElement();
+            progressResponseElementList = pnPollingResponse.getProgressResponseElementList();
+            return progressResponseElement;
+        }
+        return null;
+    }
+
+    private Object searchStatusElementInWebhookInformal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
+        InformalNotificationStatusV1 status = ((InformalNotificationStatusV1) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
         PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
@@ -502,20 +560,36 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public <T> AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T> getTimelineEventForStream(String timelineEventCategory, TimingForPolling.TimingResult timingForElement) {
-        AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV28> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
-        result.setTimelineElementCategory(TimelineElementCategoryV28.valueOf(timelineEventCategory));
-        result.setWaiting(timingForElement.waiting());
-        result.setNumCheck(timingForElement.numCheck());
-        return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
+        if (sharedSteps.isLegalNotification()) {
+            AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<TimelineElementCategoryV28> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
+            result.setTimelineElementCategory(TimelineElementCategoryV28.valueOf(timelineEventCategory));
+            result.setWaiting(timingForElement.waiting());
+            result.setNumCheck(timingForElement.numCheck());
+            return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
+        } else {
+            AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<InformalTimelineElementCategoryV1> result = new AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<>();
+            result.setTimelineElementCategory(InformalTimelineElementCategoryV1.valueOf(timelineEventCategory));
+            result.setWaiting(timingForElement.waiting());
+            result.setNumCheck(timingForElement.numCheck());
+            return (AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<T>) result;
+        }
     }
 
     @Override
     public <T> AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T> getStatusEventForStream(String notificationStatusName, TimingForPolling.TimingResult timingForElement) {
-        AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<NotificationStatusV26> result = new AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<>();
-        result.setNotificationStatus(NotificationStatusV26.valueOf(notificationStatusName));
-        result.setWaiting(timingForElement.waiting());
-        result.setNumCheck(timingForElement.numCheck());
-        return (AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T>) result;
+        if (sharedSteps.isLegalNotification()) {
+            AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<NotificationStatusV26> result = new AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<>();
+            result.setNotificationStatus(NotificationStatusV26.valueOf(notificationStatusName));
+            result.setWaiting(timingForElement.waiting());
+            result.setNumCheck(timingForElement.numCheck());
+            return (AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T>) result;
+        } else {
+            AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<InformalNotificationStatusV1> result = new AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<>();
+            result.setNotificationStatus(InformalNotificationStatusV1.valueOf(notificationStatusName));
+            result.setWaiting(timingForElement.waiting());
+            result.setNumCheck(timingForElement.numCheck());
+            return (AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<T>) result;
+        }
     }
 
     @Override
@@ -527,6 +601,14 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
             pnPollingWebhook.setProgressResponseElementListV30(progressResponseElementList);
         } else if (timeLineOrStatus instanceof NotificationStatusV26) {
             pnPollingWebhook.setNotificationStatusV30((NotificationStatusV26) timeLineOrStatus);
+            progressResponseElementList.clear();
+            pnPollingWebhook.setProgressResponseElementListV30(progressResponseElementList);
+        } else if (timeLineOrStatus instanceof InformalTimelineElementCategoryV1) {
+            pnPollingWebhook.setInformalTimelineElementCategoryV1((InformalTimelineElementCategoryV1) timeLineOrStatus);
+            progressResponseElementList.clear();
+            pnPollingWebhook.setProgressResponseElementListV30(progressResponseElementList);
+        } else if (timeLineOrStatus instanceof InformalNotificationStatusV1) {
+            pnPollingWebhook.setInformalNotificationStatusV1((InformalNotificationStatusV1) timeLineOrStatus);
             progressResponseElementList.clear();
             pnPollingWebhook.setProgressResponseElementListV30(progressResponseElementList);
         }

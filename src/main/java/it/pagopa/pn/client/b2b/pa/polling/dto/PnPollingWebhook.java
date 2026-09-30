@@ -40,4 +40,7 @@ public class PnPollingWebhook {
     private List<ProgressResponseElementV28> progressResponseElementListV28;
     private List<ProgressResponseElementV29> progressResponseElementListV29;
     private List<ProgressResponseElementV30> progressResponseElementListV30;
+
+    private InformalNotificationStatusV1 informalNotificationStatusV1;
+    private InformalTimelineElementCategoryV1 informalTimelineElementCategoryV1;
 }
