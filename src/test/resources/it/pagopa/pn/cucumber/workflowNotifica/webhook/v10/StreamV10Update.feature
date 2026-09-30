@@ -1,4 +1,4 @@
-#Lo scenario usa sempre uno stream V10, indipendentemente dalla versione della suite: per questo viene eseguito una sola volta.
+#Scenari che usano solo stream V10: non dipendono dalla versione della suite, quindi sono eseguiti una sola volta e non in ogni suite.
 Feature: aggiornamento stream - stream creato con la V10
 
   @webhookV10Fisso @precondition @cleanWebhook @webhook2

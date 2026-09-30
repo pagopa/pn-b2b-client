@@ -4,8 +4,9 @@ import io.cucumber.junit.platform.engine.Constants;
 import org.junit.platform.suite.api.*;
 
 /**
- * Scenari della V23: versionati (@webhookV23) e comuni (@webhookStream, @streamV23), eseguiti con la versione
- * impostata dall'hook in glue (streamversion.hooks.v23).
+ * Gli scenari comuni non indicano la versione: la imposta l'hook incluso nella glue.
+ * La glue comprende i sottopackage, quindi va indicato il solo package hooks.v23.
+ * ResaAlMittente.feature è incluso perché lo selezionava WebhookV23V25Test, che ora delega a questa suite.
  */
 @Suite
 @IncludeEngines("cucumber")

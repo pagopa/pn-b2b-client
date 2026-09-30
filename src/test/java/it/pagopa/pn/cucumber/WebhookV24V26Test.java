@@ -4,9 +4,9 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 /**
- * Esegue le suite V24 e V26, ciascuna con la propria versione dello stream.
+ * Una suite può impostare una sola versione dello stream: V24 e V26 sono eseguite come suite distinte.
  */
 @Suite
-@SelectClasses({WebhookV24Test.class, WebhookV26Test.class})
+@SelectClasses({WebhookV24Suite.class, WebhookV26Suite.class})
 public class WebhookV24V26Test {
 }

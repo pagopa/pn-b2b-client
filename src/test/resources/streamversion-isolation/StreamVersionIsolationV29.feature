@@ -1,4 +1,4 @@
-#Verifica tecnica, senza chiamate remote: ogni scenario, eseguito in parallelo agli altri, legge la versione della propria suite da un contesto non condiviso.
+#Verifica tecnica senza chiamate remote: dimostra che scenari eseguiti in parallelo leggono la versione della propria suite da un contesto non condiviso.
 Feature: versione dello stream definita dalla suite V29
 
   @streamVersionIsolationV29

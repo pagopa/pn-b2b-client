@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Verifica tecnica del collegamento suite -> hook di versione -> StreamVersionContext, senza chiamate remote.
+ * Step senza chiamate remote: servono a verificare in locale che ogni scenario riceva la versione della propria suite
+ * in un contesto non condiviso, cosa che gli step reali non possono dimostrare senza un ambiente.
  */
 public class StreamVersionIsolationSteps {
 

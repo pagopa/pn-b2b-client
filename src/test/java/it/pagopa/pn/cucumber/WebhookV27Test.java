@@ -4,8 +4,8 @@ import io.cucumber.junit.platform.engine.Constants;
 import org.junit.platform.suite.api.*;
 
 /**
- * Scenari della V27: versionati (@webhookV27) e comuni (@webhookStream, @streamV27), eseguiti con la versione
- * impostata dall'hook in glue (streamversion.hooks.v27).
+ * Gli scenari comuni non indicano la versione: la imposta l'hook incluso nella glue.
+ * La glue comprende i sottopackage, quindi va indicato il solo package hooks.v27.
  */
 @Suite
 @IncludeEngines("cucumber")

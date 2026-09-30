@@ -4,7 +4,7 @@ import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
 /**
- * Mantiene la selezione storica di questo runner, limitata alla V27.
+ * Nonostante il nome, questo runner ha sempre selezionato solo la V27: la selezione è mantenuta.
  */
 @Suite
 @SelectClasses({WebhookV27Test.class})

@@ -4,8 +4,9 @@ import io.cucumber.junit.platform.engine.Constants;
 import org.junit.platform.suite.api.*;
 
 /**
- * Scenari della V24: versionati (@webhookV24) e comuni (@webhookStream, @streamV24), eseguiti con la versione
- * impostata dall'hook in glue (streamversion.hooks.v24).
+ * Gli scenari comuni non indicano la versione: la imposta l'hook incluso nella glue.
+ * La glue comprende i sottopackage, quindi va indicato il solo package hooks.v26.
+ * Il nome non termina in Test: la suite è già eseguita da WebhookV24V26Test e Surefire non deve rilevarla una seconda volta.
  */
 @Suite
 @IncludeEngines("cucumber")
@@ -14,13 +15,13 @@ import org.junit.platform.suite.api.*;
         @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = Constants.PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
                 "html:target/cucumber-report.html," +
-                "json:target/cucumber-report-webhook-v24.json," +
-                "html:target/cucumber-report-webhook-v24.html"),
+                "json:target/cucumber-report-webhook-v26.json," +
+                "html:target/cucumber-report-webhook-v26.html"),
         @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps," +
-                "it.pagopa.pn.cucumber.streamversion.hooks.v24"),
+                "it.pagopa.pn.cucumber.streamversion.hooks.v26"),
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"webhookV24", "webhookStream", "streamV24"})
-public class WebhookV24Test {
+@IncludeTags({"webhookV26", "webhookStream", "streamV26"})
+public class WebhookV26Suite {
 }

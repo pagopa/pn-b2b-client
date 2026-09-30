@@ -9,11 +9,10 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 /**
- * Versione dello stream definita dalla test suite per lo scenario in esecuzione.
- * La valorizza, una sola volta, l'hook del package it.pagopa.pn.cucumber.streamversion.hooks.vXX
- * incluso nella glue del runner; la leggono gli step che non indicano una versione esplicita.
- * La glue comprende anche i sottopackage: il runner deve indicare il solo package hooks.vXX,
- * non streamversion o streamversion.hooks, altrimenti verrebbero caricati tutti gli hook.
+ * Versione dello stream dello scenario, decisa dalla suite (hook del package hooks.vXX in glue) e non dagli step.
+ * Può essere impostata una sola volta e non ha un valore di default: due hook di versione nella stessa glue,
+ * o nessuno, sono errori di configurazione del runner che devono far fallire il test invece di farlo girare
+ * con una versione diversa da quella attesa.
  */
 @Component
 @ScenarioScope(proxyMode = ScopedProxyMode.NO)

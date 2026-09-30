@@ -1,4 +1,4 @@
-#Scenari validi per tutte le versioni dello stream: la versione non è indicata negli step, la definisce la suite che esegue il feature.
+#La versione dello stream non è indicata negli step: la definisce la suite che esegue il feature, così lo stesso scenario vale per più versioni.
 Feature: tentativo consumo stream
 
    #--------------CONSUMO DI EVENTI DI UNO STREAM------------

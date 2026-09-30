@@ -142,8 +142,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     /**
-     * Restituisce la versione indicata nello step oppure, se assente, quella definita dalla suite nello StreamVersionContext.
-     * Negli step la versione è facoltativa grazie ai ParameterType {versione}, {laVersione}, ... definiti in ParameterTypes.
+     * Negli step la versione è facoltativa (ParameterType {versione} e simili): se manca, vale quella definita dalla suite.
      */
     private StreamVersion getStreamVersion(String version) {
         return StreamVersionResolver.resolve(version, streamVersionContext);

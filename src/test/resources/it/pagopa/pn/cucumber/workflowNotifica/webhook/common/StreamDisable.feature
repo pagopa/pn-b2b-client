@@ -1,5 +1,6 @@
-#Scenari validi per tutte le versioni dello stream: la versione non è indicata negli step, la definisce la suite che esegue il feature.
-#I tag @streamVxx indicano le sole versioni per cui lo scenario è valido; @webhookStream vale per tutte.
+#La versione dello stream non è indicata negli step: la definisce la suite che esegue il feature, così lo stesso scenario vale per più versioni.
+#@webhookStream: valido per tutte le versioni. @streamVxx: valido solo per le versioni indicate, perché nelle altre il comportamento è diverso o assente.
+#Uno stesso ID ripetuto con @streamVxx diversi è lo stesso caso, con dati o passi che cambiano tra le versioni.
 Feature: disabilitazione stream
 
   #--------------DISABILITAZIONE DI UNO STREAM------------
@@ -20,8 +21,6 @@ Feature: disabilitazione stream
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-
-  #--------------DISABILITAZIONE DI UNO STREAM------------
 
   @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_58] Disabilitazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.

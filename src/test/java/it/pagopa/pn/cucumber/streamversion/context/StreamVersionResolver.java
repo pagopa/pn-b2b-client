@@ -15,7 +15,8 @@ public final class StreamVersionResolver {
     }
 
     /**
-     * Versione esplicita (anche "più recente") se presente nello step, altrimenti la versione definita dalla suite.
+     * La versione esplicita prevale su quella della suite: i casi di compatibilità tra versioni
+     * devono poter usare, nello stesso scenario, una versione diversa da quella della suite.
      */
     public static StreamVersion resolve(String explicitVersion, StreamVersionContext context) {
         if (explicitVersion == null) {

@@ -1,5 +1,6 @@
-#Scenari validi per tutte le versioni dello stream: la versione non è indicata negli step, la definisce la suite che esegue il feature.
-#I tag @streamVxx indicano le sole versioni per cui lo scenario è valido; @webhookStream vale per tutte.
+#La versione dello stream non è indicata negli step: la definisce la suite che esegue il feature, così lo stesso scenario vale per più versioni.
+#@webhookStream: valido per tutte le versioni. @streamVxx: valido solo per le versioni indicate, perché nelle altre il comportamento è diverso o assente.
+#Uno stesso ID ripetuto con @streamVxx diversi è lo stesso caso, con dati o passi che cambiano tra le versioni.
 Feature: avanzamento notifiche webhook b2b
 
   #COMUNE 1
