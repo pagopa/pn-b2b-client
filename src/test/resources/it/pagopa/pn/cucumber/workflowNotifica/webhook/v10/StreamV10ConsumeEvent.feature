@@ -1,5 +1,5 @@
 #Lo scenario usa sempre uno stream V10, indipendentemente dalla versione della suite: per questo viene eseguito una sola volta.
-Feature: avanzamento notifiche webhook b2b V29 - stream creato con la V10
+Feature: avanzamento notifiche webhook b2b - stream creato con la V10
 
   @webhookV10Fisso @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.2_126] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo e verifica legalfactIds valorizzato -PN-10278

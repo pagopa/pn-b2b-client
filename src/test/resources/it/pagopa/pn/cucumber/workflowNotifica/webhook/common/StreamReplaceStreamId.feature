@@ -242,7 +242,7 @@ Feature: replace streamID webhook
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V26"
     And si crea il nuovo stream con versione "V26" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V25" - Cross Versioning
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V26"
-    # da versione 26 passa alla 27
+    # da versione 26 passa alla versione della suite
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V26" - Cross Versioning
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
@@ -274,7 +274,7 @@ Feature: replace streamID webhook
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V26"
     And si crea il nuovo stream con versione "V26" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V25" - Cross Versioning
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V26"
-    # da versione 26 passa alla 27
+    # da versione 26 passa alla versione della suite
     Then si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And si crea il nuovo stream per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS" con replaceId dello stream creato con la versione "V26" - Cross Versioning
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
