@@ -462,7 +462,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -572,7 +572,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -610,7 +610,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -1270,7 +1270,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_07_1_A] Come ente mittente invio una notifica bonaria verso PF SENZA n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -1294,7 +1294,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   @addressBook2 @informalSerchDigitalON @informalSerchEmailSmsOnly
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_07_1_A] Come ente mittente invio una notifica bonaria verso PG SENZA n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "CucumberSpa"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -1419,7 +1419,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_07_1_D] Come ente mittente invio una notifica bonaria verso PF CON n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -1443,7 +1443,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON @informalSerchEmailSmsOnly
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_07_1_D] Come ente mittente invio una notifica bonaria verso PG CON n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "CucumberSpa"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -1691,7 +1691,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | BonarieAllChannels      |
@@ -1725,7 +1725,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | BonarieAllChannels      |
@@ -1749,7 +1749,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | BonarieAllChannels      |
@@ -2169,7 +2169,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_A] Come ente mittente invio una notifica bonaria verso PF SENZA SMS speciale e CON SMS di piattaforma. Il servizio skippa il canale SMS
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -2195,7 +2195,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalOFF
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_A] Come ente mittente invio una notifica bonaria verso PG SENZA SMS speciale e CON SMS di piattaforma. Il servizio skippa il canale SMS
     Given si predispone addressbook per l'utente "CucumberSpa"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -2321,7 +2321,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_04_3_C] Come ente mittente invio una notifica bonaria verso PF CON SMS speciale e CON SMS di piattaforma. Il servizio utilizza l'SMS speciale.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -2345,7 +2345,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalOFF
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_04_3_C] Come ente mittente invio una notifica bonaria verso PG CON SMS speciale e CON SMS di piattaforma. Il servizio utilizza l'SMS speciale.
     Given si predispone addressbook per l'utente "CucumberSpa"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
