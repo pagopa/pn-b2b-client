@@ -278,20 +278,6 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "NOT_VALID_ADDRESS"
 
 
-  # da fare con supporto dev, eliminare momentanemente la pa dalla whitelist del vas
-  Scenario: [NOTIFICHE_BONARIE_ASYNC_HOTFIX_01] Come ente mittente invio una notifica bonaria senza indirizzo analogico da PA non censita per il VAS delle bonarie.
-    Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | MessaMora                |
-      | denomination     | PF censito vas           |
-      | recipientType    | PF                       |
-      | taxId            | FRMTTR76M06B715E         |
-      | digitalDomicile  | NULL                     |
-      | physical_address | ${PHYSICAL_ADDRESS_NULL} |
-      | messageId        | ${NEW-IT}                |
-    When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
-    Then la notifica bonaria è stata rifiutata per l'errore: "PN_DELIVERY_PHYSICAL_ADDRESS_NULL"
-
-
   @informalAsyncValidation @ricercaIndirizzoVas
   Scenario: [NOTIFICHE_BONARIE_VAS_HOTFIX_02] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
     Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
