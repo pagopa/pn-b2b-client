@@ -466,10 +466,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                         |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]           |
@@ -483,6 +479,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun  | auto                         |
+      | log1 | pushing message for clientId |
+      | log4 | from source: INIPEC          |
 
 
   @PFinipec
@@ -511,10 +511,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
@@ -523,5 +519,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun  | auto                         |
+      | log1 | pushing message for clientId |
+      | log4 | from source: INIPEC          |
 
