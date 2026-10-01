@@ -23,11 +23,35 @@ public class IOMockProfilesSteps {
 
     private final IoMockScenarioContext context;
     private final IOMockCommonSteps commonSteps;
+    private final org.springframework.core.env.Environment environment;
 
     @Autowired
-    public IOMockProfilesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps) {
+    public IOMockProfilesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, org.springframework.core.env.Environment environment) {
         this.context = context;
         this.commonSteps = commonSteps;
+        this.environment = environment;
+    }
+
+    private String resolveFiscalCode(String rawFiscalCode) {
+        if (rawFiscalCode == null || rawFiscalCode.isBlank()) {
+            return rawFiscalCode;
+        }
+        String trimmed = rawFiscalCode.trim();
+        if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
+            return environment.resolvePlaceholders(trimmed);
+        }
+        if (trimmed.startsWith("$")) {
+            String propKey = trimmed.substring(1);
+            String val = environment.getProperty(propKey);
+            if (val != null && !val.isBlank()) {
+                return val;
+            }
+        }
+        String direct = environment.getProperty(trimmed);
+        if (direct != null && !direct.isBlank()) {
+            return direct;
+        }
+        return StringUtils.resolveValue(trimmed);
     }
 
     //-----------------------------------------------------------------------------------------
@@ -40,7 +64,7 @@ public class IOMockProfilesSteps {
     @Given("un destinatario non registrato ad App IO {string}")
     public void prepareProfileRequestWithFiscalCode(String fiscalCode) {
         Map<String, Object> payload = new HashMap<>();
-        payload.put("fiscal_code", StringUtils.resolveValue(fiscalCode));
+        payload.put("fiscal_code", resolveFiscalCode(fiscalCode));
         context.setRequestPayload(payload);
     }
 

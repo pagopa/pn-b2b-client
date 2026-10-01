@@ -6,7 +6,7 @@ Feature: Verifica e Routing dei Profili Utente App IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_A
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_A] Destinatario non abilitato alla ricezione su IO (Mock)
-    Given un destinatario con codice fiscale in blacklist "DRCGNN12A46A326K"
+    Given un destinatario con codice fiscale in blacklist "${pn.io-mock.sender-not-allowed.tax-id}"
     When viene richiesta la verifica del profilo utente
     Then il profilo risulta non abilitato alla ricezione dei messaggi
 
