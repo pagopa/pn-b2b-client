@@ -30,9 +30,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 # ***********************************************
 
 
-
-
-
 # ***********************************************
 # **** 1 - Invio di una notifica bonaria tramite canali digitali PEC
 # ***********************************************
@@ -86,7 +83,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
@@ -111,13 +108,12 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_1_B] Come ente mittente invio una notifica bonaria verso PG NON specificando una pec speciale e il servizio utilizzerà quella di piattaforma
-    Given si predispone addressbook per l'utente "CucumberSpa"
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
@@ -136,7 +132,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
@@ -193,7 +189,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      | details_isTosAccepted        | xx       |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
@@ -255,7 +250,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      | details_isTosAccepted        | xx       |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
@@ -359,7 +353,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
+      #| details_isTosAccepted        | false   |
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_5] Come ente mittente invio una notifica bonaria verso PG con solo pec speciale e il servizio utilizzerà la pec speciale
@@ -377,7 +371,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
+      #| details_isTosAccepted        | false   |
 
 
   @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchRnOFF
@@ -430,7 +424,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    When viene richiesto l'inserimento del numero di telefono "+3900001"
+    When viene richiesto l'inserimento del numero di telefono "+393331234567"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
       # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -448,7 +442,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -486,7 +480,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -521,7 +515,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -558,7 +552,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -596,7 +590,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -634,7 +628,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -669,7 +663,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
       | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
@@ -706,11 +700,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      | details_isTosAccepted        | true     |
+      #| details_isTosAccepted        | true     |
     And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
-      | details_xx | EMAIL |
+      | details_digitalAddress_type | EMAIL |
     And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
-      | details_xx | SMS |
+      | details_digitalAddress_type | SMS |
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 
@@ -1096,7 +1090,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -1119,7 +1113,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -1132,11 +1126,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-         And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
 
 
@@ -1147,7 +1141,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -1164,7 +1158,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
 
 
@@ -1175,7 +1169,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -1188,7 +1182,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -1201,7 +1195,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PG                      |
@@ -1214,7 +1208,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -1228,7 +1222,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -1241,7 +1235,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-     And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON @informalSerchEmailSmsOnly
@@ -1252,7 +1246,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -1294,7 +1288,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-        And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @addressBook2 @informalSerchDigitalON @informalSerchEmailSmsOnly
@@ -1318,7 +1312,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-      And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalSerchEmailSmsOnly
@@ -1339,7 +1333,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -1365,11 +1359,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | SMS |
 
 
@@ -1391,7 +1385,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -1415,7 +1409,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
@@ -1443,7 +1437,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-         And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON @informalSerchEmailSmsOnly
@@ -1467,7 +1461,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-        And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
 
@@ -1515,7 +1509,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-        And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 # xxx controllo prograss feedback
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
@@ -1546,7 +1540,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-       And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 # xxx controllo prograss feedback
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
@@ -1580,7 +1574,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
-       Then viene disabilitato il servizio SERCQ SEND per la PA "default"
+    Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 #controlli xxx
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
@@ -2039,7 +2033,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -2052,7 +2046,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
 
 
@@ -2063,7 +2057,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2076,7 +2070,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
 
 
@@ -2087,7 +2081,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -2109,7 +2103,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PG                      |
@@ -2132,7 +2126,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL        |
+      | campaignId      | CampaignOnlyEMAIL       |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -2145,7 +2139,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-       And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalOFF
@@ -2156,7 +2150,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2168,7 +2162,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | EMAIL   |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-        And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
 
   @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalOFF
@@ -2193,7 +2187,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | SMS |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
@@ -2219,7 +2213,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-        And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | SMS |
 
 
@@ -2241,11 +2235,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | SMS |
 
 
@@ -2267,11 +2261,11 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 #      | details_channel              | SMS      |
 #      | details_digitalAddressSource | PLATFORM |
 #      | details_isAvailable          | false    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-       And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | SMS |
 
 
@@ -2293,7 +2287,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | flase    |
-       And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
@@ -2317,7 +2311,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | flase    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
