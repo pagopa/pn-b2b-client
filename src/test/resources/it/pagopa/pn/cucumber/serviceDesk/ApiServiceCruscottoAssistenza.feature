@@ -369,7 +369,7 @@ Feature: Api Service Cruscotto Assistenza
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "Mario Gherkin"  recipientType  "PF"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "Mario Cucumber"  recipientType  "PF"
     Then il servizio risponde con errore "404"
 
   @cruscottoAssistenza
