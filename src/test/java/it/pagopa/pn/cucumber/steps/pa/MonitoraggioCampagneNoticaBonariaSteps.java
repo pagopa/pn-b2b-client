@@ -41,7 +41,6 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
 
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
         this.currentCxId = paInfo.getSenderId();
-
         initialCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
         assertNotNull(initialCampaignStatistics);
     }
@@ -80,15 +79,31 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
         CampaignCounter counter = CampaignCounter.valueOf(counterName);
         int initialValue = counter.extract(initialCampaignStatistics.getStats());
 
-        await()
-                .atMost(Duration.ofMinutes(2))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> {
+        try {
+            await()
+                    .atMost(Duration.ofMinutes(2))
+                    .pollInterval(Duration.ofSeconds(5))
+                    .until(() -> {
+                        finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
+                        int currentValue = counter.extract(finalCampaignStatistics.getStats());
+                        log.info("Campagna={}, IUN={}, Counter={}, Initial={}, Current={}, Expected={}", campaignId, sharedSteps.getNotificationIun(), counterName, initialValue, currentValue, initialValue + increment);
+                        return currentValue == initialValue + increment;
+                    });
 
-                    finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
-                    int currentValue = counter.extract(finalCampaignStatistics.getStats());
-                    return currentValue == initialValue + increment;
-                });
+        } catch (Exception e) {
+            int currentValue = finalCampaignStatistics != null ? counter.extract(finalCampaignStatistics.getStats()) : -1;
+            fail(String.format(
+                    """
+                    Timeout verifica contatore.
+                    Campagna=%s
+                    IUN=%s
+                    Counter=%s
+                    Initial=%d
+                    Current=%d
+                    Expected=%d
+                    """,
+                    campaignId, sharedSteps.getNotificationIun(), counterName, initialValue, currentValue, initialValue + increment));
+        }
     }
 }
 

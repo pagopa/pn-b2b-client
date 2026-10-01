@@ -26,6 +26,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
 # **** CAMPAGNE:
   # CampaignOnlySMS
   # CampaignOnlyEMAI
+  # BonarieAllChannels
 # ***********************************************
 
 
@@ -1095,7 +1096,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -1118,7 +1119,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -1146,7 +1147,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -1174,7 +1175,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -1200,7 +1201,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PG                      |
@@ -1227,7 +1228,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -1251,7 +1252,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2038,7 +2039,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -2062,7 +2063,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2086,7 +2087,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -2108,7 +2109,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 0 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 	    #tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PG                      |
@@ -2131,7 +2132,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI        |
+      | campaignId      | CampaignOnlyEMAIL        |
       | messageId       | ${NEW-IT}               |
       | subject         | Test Serch Contact      |
       | recipientType   | PF                      |
@@ -2155,7 +2156,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
