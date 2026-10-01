@@ -34,11 +34,13 @@ public class DelegationCommonStep {
     private final IHttpExecutor httpCallExecutor;
     private final ITenantsApi tenantsApi;
     private final BFFDataPreparationService dataPreparationService;
+    private final DescriptorPublicationSteps descriptorPublicationSteps;
 
     public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext,
                                 PollingService pollingService,
-                                BFFDataPreparationService dataPreparationService) {
+                                BFFDataPreparationService dataPreparationService,
+                                DescriptorPublicationSteps descriptorPublicationSteps) {
         this.sharedStepsContext = sharedStepsContext;
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -46,6 +48,7 @@ public class DelegationCommonStep {
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.pollingService = pollingService;
         this.dataPreparationService = dataPreparationService;
+        this.descriptorPublicationSteps = descriptorPublicationSteps;
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
@@ -151,7 +154,7 @@ public class DelegationCommonStep {
         );
 
         // Il delegato pubblica l'e-service
-        DescriptorPublicationSteps.publishDescriptor(
+        descriptorPublicationSteps.publishDescriptor(
             httpCallExecutor,
             clientTokenConfigurator.getEServiceClient(),
             sharedStepsContext.getEServicesCommonContext());
