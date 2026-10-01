@@ -236,7 +236,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_1] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale personale su INAD
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_1] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale personale su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -275,7 +275,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -312,7 +312,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_3] Invio Notifica mono destinatario a PF con recupero di domicili digitali su INAD
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_3] Invio Notifica mono destinatario a PF con recupero di domicili digitali su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -350,7 +350,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
 
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale impresa in IniPec – INAD non trovato
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale impresa in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -395,7 +395,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_2] Invio Notifica mono destinatario a PF con recupero dei domicili digitali profesionali in IniPec – INAD non trovato
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_2] Invio Notifica mono destinatario a PF con recupero dei domicili digitali profesionali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -441,7 +441,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -486,7 +486,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
 
 
   @PFinipec
-  Scenario: [Ricerca_domicilio_digitale_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
