@@ -45,7 +45,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | physicalAddress_address      | Via@<sequenceName> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
@@ -53,8 +52,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName |
-#      | OK_RIS       |
-#      | FAIL_RIS     |
+      | OK_RIS       |
+      | FAIL_RIS     |
       | FAIL_RIS_M05 |
 
   # ---------------- RUN MODE ----------------

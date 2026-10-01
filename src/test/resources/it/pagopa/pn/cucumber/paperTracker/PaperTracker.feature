@@ -55,14 +55,14 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
-      | sequenceName |
-#      | OK_RIR                  |
-#      | FAIL_RIR                |
-#      | OK_RIR_INVALID_DATETIME |
-#      | OK_RIR_TIMESTAMP_ERR    |
-#      | OK_RIR_NOT_ORDERED      |
-      | FAIL_RIR_M06 |
-      | OK_RIR_M02   |
+      | sequenceName            |
+      | OK_RIR                  |
+      | FAIL_RIR                |
+      | OK_RIR_INVALID_DATETIME |
+      | OK_RIR_TIMESTAMP_ERR    |
+      | OK_RIR_NOT_ORDERED      |
+      | FAIL_RIR_M06            |
+      | OK_RIR_M02              |
 
   @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
