@@ -48,6 +48,7 @@ public class InformalTimelinePollingConfig {
         WORKFLOW_DONE_UNREACHED(200, 5),
 
         PUBLIC_REGISTRY_CALL(300, 5),
+        PUBLIC_REGISTRY_RESPONSE(200, 5),
         GET_ADDRESS(300, 5),
 
         PUBLIC_REGISTRY_VALIDATION_CALL(300, 5),
