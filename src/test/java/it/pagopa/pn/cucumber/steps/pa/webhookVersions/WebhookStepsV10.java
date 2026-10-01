@@ -64,8 +64,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         return (FullSentNotificationV23) getFullSentNotification();
     }
 
-    //TODO MATTEO: controllare per possibili metodi non implementati
-
     @Override
     public void initializeStreamRequest(String action, String pa) {
         streamRequest = new StreamCreationRequest();
@@ -430,11 +428,6 @@ public class WebhookStepsV10 implements WebhookStepsInterface {
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
-    }
-
-    @Override
-    public void setValueForWaitForAccepted(boolean waitForAccepted) {
-        //waitForAccepted introdotto a partire dalla V27
     }
 
     @Override

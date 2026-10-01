@@ -410,6 +410,13 @@ public class SharedSteps {
         return b2bClient.getSentNotificationV29(iun);
     }
 
+    /**
+     * In base al notificationIun settato stabilisce se si tratta di una notifica legale o bonaria (le legali terminano con 1, le bonarie con A)
+     */
+    public boolean isLegalNotification() {
+        return notificationIun != null && notificationIun.endsWith("1");
+    }
+
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
             return NotificationVersion.V26;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente

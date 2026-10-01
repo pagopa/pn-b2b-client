@@ -461,8 +461,8 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
     }
 
     @Override
-    public void setValueForWaitForAccepted(boolean bool) {
-        waitForAccepted = bool;
+    public void setValueForWaitForAccepted(String waitForAccepted) {
+        this.waitForAccepted = Boolean.parseBoolean(waitForAccepted);
     }
 
     @Override

@@ -142,5 +142,22 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
     List<ProgressResponseElementV29> consumeEventStreamV29(UUID streamId, String lastEventId) throws RestClientException;
 
     ResponseEntity<List<ProgressResponseElementV29>> consumeEventStreamHttpV29(UUID streamId, String lastEventId) throws RestClientException;
+
+    //V30
+    StreamMetadataResponseV30 createEventStreamV30(StreamCreationRequestV30 streamCreationRequestV30) throws RestClientException;
+
+    StreamMetadataResponseV30 disableEventStreamV30(UUID streamId) throws RestClientException;
+
+    List<StreamListElement> listEventStreamsV30() throws RestClientException;
+
+    void deleteEventStreamV30(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV30 retrieveEventStreamV30(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV30 updateEventStreamV30(UUID streamId, StreamRequestV30 streamRequestV30) throws RestClientException;
+
+    List<ProgressResponseElementV30> consumeEventStreamV30(UUID streamId, String lastEventId) throws RestClientException;
+
+    ResponseEntity<List<ProgressResponseElementV30>> consumeEventStreamHttpV30(UUID streamId, String lastEventId) throws RestClientException;
 }
 
