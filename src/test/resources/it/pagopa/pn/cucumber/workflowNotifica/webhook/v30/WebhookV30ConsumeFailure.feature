@@ -8,7 +8,7 @@ Feature: tentativo consumo stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    And si crea il nuovo stream con versione "V30" per il "CoFmune_Multi" con un gruppo disponibile "FIRST"
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
