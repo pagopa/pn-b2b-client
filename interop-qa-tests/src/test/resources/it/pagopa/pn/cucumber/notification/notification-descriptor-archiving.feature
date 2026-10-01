@@ -240,15 +240,15 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente delegato invia al delegante una richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" impostando 30 giorni di preavviso
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    L'ente delegato $DA_CONTESTO(delegateName) ha richiesto l'archiviazione della versione 1
-    dell'e-service $DA_CONTESTO(eServiceName). Puoi confermare o rifiutare la richiesta.
+    L'ente delegato $CONTEXT(delegateName) ha richiesto l'archiviazione della versione 1
+    dell'e-service $CONTEXT(eServiceName). Puoi confermare o rifiutare la richiesta.
     """
     When l'utente è un "admin" di "PA1"
     And l'utente delegante accetta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    L'ente delegante $DA_CONTESTO(producerName) ha approvato la tua richiesta di archiviazione della versione 1
-    dell'e-service $DA_CONTESTO(eServiceName). L'archiviazione avverrà il giorno $DA_CONTESTO(TODAY+30).
+    L'ente delegante $CONTEXT(producerName) ha approvato la tua richiesta di archiviazione della versione 1
+    dell'e-service $CONTEXT(eServiceName). L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+31D).
     """
 
   @notification-manual-archiving-delegation
@@ -265,13 +265,13 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     When l'utente delegato annulla la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual"
     Then admin di "PA1" ha ricevuto la notifica in-app
     """
-    L'ente delegato $DA_CONTESTO(delegateName) ha annullato la richiesta di archiviazione per la versione 1
-    dell'e-service $DA_CONTESTO(eServiceName).
+    L'ente delegato $CONTEXT(delegateName) ha annullato la richiesta di archiviazione per la versione 1
+    dell'e-service $CONTEXT(eServiceName).
     """
     And admin di "PA2" ha ricevuto la notifica in-app
     """
-    È stata annullata la richiesta di archiviazione per la versione 1 dell'e-service $DA_CONTESTO(eServiceName)
-    inviata all'ente delegante $DA_CONTESTO(producerName).
+    È stata annullata la richiesta di archiviazione per la versione 1 dell'e-service $CONTEXT(eServiceName)
+    inviata all'ente delegante $CONTEXT(producerName).
     """
 
   @notification-manual-archiving-delegation
@@ -289,6 +289,6 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     And l'utente delegante rifiuta la richiesta di archiviazione della vecchia versione identificata da "%actual" per l'e-service "%actual" con motivazione "Test di rifiuto di archiviazione"
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE
     """
-    L'ente delegante $DA_CONTESTO(producerName) ha rifiutato la tua richiesta di archiviazione della versione 1
-    dell'e-service $DA_CONTESTO(eServiceName).
+    L'ente delegante $CONTEXT(producerName) ha rifiutato la tua richiesta di archiviazione della versione 1
+    dell'e-service $CONTEXT(eServiceName).
     """
