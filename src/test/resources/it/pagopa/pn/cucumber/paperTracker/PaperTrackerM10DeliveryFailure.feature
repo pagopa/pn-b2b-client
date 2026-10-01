@@ -74,21 +74,21 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And si verifica che non ci siano outputs per i trackingId richiesti
     And si verifica che non ci siano errori per i trackingId richiesti
 
-  @paperTrackerM10 @paperTrackerARRunMode
+  @paperTrackerM10 @paperTrackerAR @MOCK_RECAPITO_M10_01_1_D
   Scenario: [MOCK_RECAPITO_M10_01_1_D] Ricezione evento di mancato recapito con causale M10 per Raccomandata Internazionale (RIR)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
+    And destinatario Mario Cucumber e:
       | physicalAddress_address | Via@OK-Retry_RIR_M10 |
       | digitalDomicile         | NULL                 |
       | physicalAddress_State   | MESSICO              |
       | physicalAddress_zip     | ZONE_2               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI004C"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "RIR"
     And si verifica che la risposta tracking per la sequence "OK-Retry_RIR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
