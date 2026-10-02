@@ -471,7 +471,44 @@
       And verifica la corretta pianificazione di ogni test case
 
     @delayerSkipSenderLimitFlagOn
-    Scenario: [DELAYER-TC18] Verifica che una spedizione rimandata alla settimana successiva per superamento della capacità di stampa venga pianificata come residuo prioritario
+    Scenario: [DELAYER-TC18] Verifica che una spedizione arrivata al delayer in ritardo e caricata dall'ente in una settimana in cui non c'è più
+    disponibilità di recapito NON venga pianificata come residuo prioritario e sia gestita come le altre spedizioni
+      Given vengono puliti i dati dalle tabelle target
+      Given il CSV "tcSpedizioniRitardate.csv" contiene 12 notifiche distribuite tra i seguenti test case:
+        | seed                   | quantita | deliveryWeek |
+        | tcResiduoBuonoRitardo_ | 12       | 2026-09-14   |
+      And si presuppone che il limite mittente settimanale (paId-product_type-province) sia:
+        | senderId              | comparative | limit |
+        | ranking2nd_890~890~P1 | esattamente | 7     |
+      And si presume che il limite settimanale dei recapitisti (unifiedDeliveryDriver-geoKey) sia:
+        | unifiedDeliveryDriverId      | comparative | limit |
+        | driverRanking2nd_890~P1      | esattamente | 10    |
+        | driverRanking2nd_890~CAP1_P1 | esattamente | 10    |
+      And il CSV "tcSpedizioniRitardate.csv" è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test
+      And viene verificato che il contatore EXCLUDE sia pari a: 7 per la provincia "P1" e prodotto "890"
+      And vengono simulate internamente le operazioni di BatchWorkflowStateMachine
+      When viene avviata la step function BatchWorkflowStateMachine con deliveryDate: "2026-09-14"
+      And vengono recuperate le notifiche al workflow step "EVALUATE_SENDER_LIMIT"
+      And vengono recuperate le notifiche al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_DRIVER_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria           | ordinamentoCampo   |
+        | RS                  | prepareRequestDate |
+        | SECONDO_TENTATIVO   | prepareRequestDate |
+        | RESIDUO_PRIORITARIO | prepareRequestDate |
+        | ALTRO               | notificationSentAt |
+      Then verifica che la spedizione con requestId "tcResiduoBuonoRitardo_11" sia al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And verifica che la spedizione con requestId "tcResiduoBuonoRitardo_12" sia al workflow step "EVALUATE_DRIVER_CAPACITY"
+      And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
+      And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
+        | categoria           | ordinamentoCampo   |
+        | RS                  | prepareRequestDate |
+        | SECONDO_TENTATIVO   | prepareRequestDate |
+        | RESIDUO_PRIORITARIO | prepareRequestDate |
+        | ALTRO               | notificationSentAt |
+      And verifica la corretta pianificazione di ogni test case
+
+    @delayerSkipSenderLimitFlagOn
+    Scenario: [DELAYER-TC19] Verifica che una spedizione rimandata alla settimana successiva per superamento della capacità di stampa venga pianificata come residuo prioritario
       Given vengono puliti i dati dalle tabelle target
       Given il CSV "tcSenderPriorityDelayedNuova.csv" contiene 4 notifiche distribuite tra i seguenti test case:
         | seed                     | quantita |
@@ -503,7 +540,7 @@
     @delayerSkipSenderLimitFlagOn
     #Verifica il job EVALUATE_SENDER_PRIORITY: il riordino per senderPriority all'interno dello stesso
     #mittente scambia lo slot temporale (virtualNotificationSentAt) e, insieme ad esso, skipSenderLimit.
-    Scenario: [DELAYER-TC19] Verifica lo scambio di skipSenderLimit nel riordino per senderPriority e l'esclusione delle nuove spedizioni ritardate
+    Scenario: [DELAYER-TC20] Verifica lo scambio di skipSenderLimit nel riordino per senderPriority e l'esclusione delle nuove spedizioni ritardate
       Given vengono puliti i dati dalle tabelle target
       Given il CSV "tcSenderPriorityDelayedElaborata.csv" contiene 12 notifiche distribuite tra i seguenti test case:
         | seed                   | quantita | deliveryWeek |
@@ -529,7 +566,7 @@
       And verifica la corretta pianificazione di ogni test case
 
     @delayerSkipSenderLimitFlagOff
-    Scenario: [DELAYER-TC20] Verifica che con il feature flag ad OFF, una spedizione arrivata al delayer in ritardo e caricata dall'ente in una settimana in cui c'è ancora
+    Scenario: [DELAYER-TC21] Verifica che con il feature flag ad OFF, una spedizione arrivata al delayer in ritardo e caricata dall'ente in una settimana in cui c'è ancora
     disponibilità di recapito e di stampa NON venga pianificata come residuo prioritario
       Given vengono puliti i dati dalle tabelle target
       Given il CSV "tcResiduoBuonoRitardo.csv" contiene 12 notifiche distribuite tra i seguenti test case:

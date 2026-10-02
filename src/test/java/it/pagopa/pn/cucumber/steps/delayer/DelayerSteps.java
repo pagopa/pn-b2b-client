@@ -553,7 +553,7 @@ public class DelayerSteps {
                 .isNotEmpty();
         Assertions.assertThat(found.stream().filter(d -> d.getPk().endsWith(expectedStep)))
                 .as("Workflow step per requestId '%s'", requestId)
-                .isNotNull();
+                .isNotEmpty();
     }
 
     @Then("viene verificato che il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} sia corretto")
