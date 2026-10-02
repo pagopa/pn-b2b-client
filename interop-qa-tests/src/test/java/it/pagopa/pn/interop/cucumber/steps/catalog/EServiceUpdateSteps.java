@@ -72,6 +72,9 @@ public class EServiceUpdateSteps {
                     "Il nome dell'e-service non è stato aggiornato correttamente"
             );
 
+            sharedStepsContext.getEServicesCommonContext().setOldName(
+                    sharedStepsContext.getEServicesCommonContext().getName()
+            );
             sharedStepsContext.getEServicesCommonContext().setName(nameToUpdate);
             sharedStepsContext.getEServicesCommonContext().setEServiceEditTimestamp(OffsetDateTime.now());
         }
