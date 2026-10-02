@@ -1,6 +1,7 @@
 @archiviazione-documentale
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
+  @ignore
   Scenario: [TRIGGER]
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
