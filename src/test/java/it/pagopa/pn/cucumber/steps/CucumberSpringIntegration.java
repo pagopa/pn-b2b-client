@@ -411,7 +411,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationSearchCriteriaMapper.class,
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
-        PnPaB2bExternalInformalClientImpl.class,
+        PnPaB2bExternalInformalClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
