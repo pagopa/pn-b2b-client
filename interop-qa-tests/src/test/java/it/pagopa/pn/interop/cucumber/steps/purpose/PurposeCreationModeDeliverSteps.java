@@ -53,6 +53,29 @@ public class PurposeCreationModeDeliverSteps {
         );
     }
 
+    @When("l'utente crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeWithPolicyURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        String kind = identityService.getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(true)
+                                .freeOfChargeReason("free of charge - QA")
+                                .dailyCalls(49)
+                                .riskAnalysisForm(riskAnalysisByExample)
+                )
+        );
+    }
+
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a {int}")
     public void createPurposeWithAllRequiredFields(int dailyCalls) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
