@@ -67,7 +67,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("Richiesta di delega alla fruizione", ":consumerDelegationId"),
+                        ListFileTokenSource.of("Delega alla fruizione", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
