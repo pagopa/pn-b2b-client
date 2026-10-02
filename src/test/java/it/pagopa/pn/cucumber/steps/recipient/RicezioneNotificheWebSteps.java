@@ -297,7 +297,7 @@ public class RicezioneNotificheWebSteps {
     public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
         Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
-        Assertions.assertTrue(dato.get().getHidden());
+        Assertions.assertEquals(Boolean.TRUE, dato.get().getHidden());
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
