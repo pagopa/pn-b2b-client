@@ -829,3 +829,85 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La chiave $CONTEXT(newKeyId) è stata rimossa dal client $CONTEXT(clientName).
     Assicurati che l'operatività non sia compromessa.
     """
+
+  Scenario: [Notifica soglia fruitore superata] La soglia giornaliera per fruitore definita nell'e-service è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 2 attributi CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
+    ha superato la soglia massima consentita dall'erogatore pari a 10 chiamate API giornaliere.
+    """
+
+  Scenario: [Notifica soglia personalizzata fruitore superata] La soglia giornaliera personalizzata per fruitore definita nell'attributo certificato è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 2 attributi CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
+    And l'utente tenta di aggiungere una soglia differenziata di 99 per l'attributo CERTIFIED 0-esimo creato
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "99"
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
+    ha superato la soglia massima consentita dall'erogatore pari a 10 chiamate API giornaliere.
+    """
+
+  Scenario: [Notifica soglie fruitore e totali superate] La soglia giornaliera per fruitore e quella totale definite nell'e-service sono state superate
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 2 attributi CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 20 e dailyCallsTotal uguale a 20
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 21
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
+    ha superato la soglia massima consentita dall'erogatore pari a 20 chiamate API giornaliere.
+    """
+
+  Scenario: [Notifica soglia totale superata] La soglia totale definita nell'e-service è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 2 attributi CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 20
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 21
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
+    ha superato la soglia massima consentita dall'erogatore pari a 10 chiamate API giornaliere.
+    """
+
+    # purposeWaitingForApprovalReason.dailyCallsPerConsumer,
+    #   "Hai superato la soglia di chiamate API per fruitore",
+    #   "con questa stima di chiamate API superi la soglia per fruitore",
+    # ],
+    # [
+    #   purposeWaitingForApprovalReason.dailyCallsTotal,
+    #   "Superamento soglie totali di chiamate API",
+    #   "sono già state superate le soglie totali di chiamate API definite dall'erogatore",
+    # ],
+    # [
+    #   purposeWaitingForApprovalReason.dailyCallsPerConsumerAndTotal,
+    #   "Superamento soglie per fruitore e soglie totali",
+    #   "è stata superata almeno una delle soglie di chiamate API/giorno definite dall’erogatore (per fruitore o totali)",
+    # ],
+
