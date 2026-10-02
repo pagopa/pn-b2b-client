@@ -36,7 +36,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_BAD_EVENT          |
       | OK_AR_ALL_CON            |
 
-  @paperTrackerAR
+#  TODO MATTEO RIPRISTINARE @paperTrackerAR
+  @paperTrackerRIRDryRun
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -61,6 +62,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_INVALID_DATETIME |
       | OK_RIR_TIMESTAMP_ERR    |
       | OK_RIR_NOT_ORDERED      |
+      | FAIL_RIR_M06            |
+      | OK_RIR_M02              |
 
   @paperTrackerAR
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
@@ -396,8 +399,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_NOT_ORDERED            |
       | FAIL_CON996_PCRETRY_FURTO_RIR |
       | OK_PCRETRY_CON996_RIR         |
-      | FAIL_RIR_M06                  |
-      | OK_RIR_M02                    |
 
 
   @paperTrackerARRunMode
