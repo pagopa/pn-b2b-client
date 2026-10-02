@@ -38,12 +38,12 @@ public class Definitions {
                 ),
 
                 new FileInfoDefinition(
-                    AUDIT_JWT_M2M_EVENTS_LOG,
-                    MapFileTokenSource.of("jwtId", ":jwtId"),
-                    MapFileTokenSource.of(),
-                    List.of(new LocationDefinition(STANDARD, m2mJwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
-                            new LocationDefinition(SIGNED, m2mJwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
-                    )
+                        AUDIT_JWT_M2M_EVENTS_LOG,
+                        MapFileTokenSource.of("jwtId", ":jwtId"),
+                        MapFileTokenSource.of(),
+                        List.of(new LocationDefinition(STANDARD, m2mJwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                                new LocationDefinition(SIGNED, m2mJwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                        )
                 ),
 
                 new FileInfoDefinition(
@@ -105,43 +105,51 @@ public class Definitions {
                         AGREEMENT_ACTIVATE_EVENTS_LOG,
                         InteropEvent.AGREEMENT_ACTIVATED,
                         ":agreementId",
-                        AgreementState.ACTIVE.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.ACTIVE.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG,
                         InteropEvent.AGREEMENT_SUSPENDED_BY_CONSUMER,
                         ":agreementId",
-                        AgreementState.SUSPENDED.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.SUSPENDED.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG,
                         InteropEvent.AGREEMENT_ARCHIVED_BY_CONSUMER,
                         ":agreementId",
-                        AgreementState.ARCHIVED.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.ARCHIVED.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         PURPOSE_ACTIVATE_EVENTS_LOG,
                         InteropEvent.PURPOSE_ACTIVATED,
                         ":purposeId",
-                        PurposeVersionState.ACTIVE.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        PurposeVersionState.ACTIVE.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         NEW_PURPOSE_VERSION_ACTIVATE_EVENTS_LOG,
                         InteropEvent.NEW_PURPOSE_VERSION_ACTIVATED,
                         ":purposeId",
-                        PurposeVersionState.ACTIVE.getValue(),
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        PurposeVersionState.ACTIVE.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CLIENT_DELETED_EVENTS_LOG,
+                        InteropEvent.CLIENT_DELETED,
+                        ":clientId",
                         eventBucketBase,
                         eventWormBucketBase
                 )
@@ -152,18 +160,25 @@ public class Definitions {
             InteropFile type,
             InteropEvent event,
             String id,
-            String state,
             String eventBucketBase,
-            String eventWormBucketBase
+            String eventWormBucketBase,
+            String... states
     ) {
+
+        var maps = states.length > 0
+                ? MapFileTokenSource.of(
+                "event_name", event.getValue(),
+                "id", id,
+                "state", toCamelCase(states[0])
+        )
+                : MapFileTokenSource.of(
+                "event_name", event.getValue(),
+                "id", id
+        );
 
         return new FileInfoDefinition(
                 type,
-                MapFileTokenSource.of(
-                        "event_name", event.getValue(),
-                        "id", id,
-                        "state", toCamelCase(state)
-                ),
+                maps,
                 MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp()),
                 List.of(new LocationDefinition(STANDARD, eventBucketBase, FilenameFormat.EVENT_LOG),
                         new LocationDefinition(WORM, eventWormBucketBase, FilenameFormat.EVENT_SIGNED_LOG))
