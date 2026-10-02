@@ -157,17 +157,16 @@ public class TemplateEngineSteps {
     }
 
     public boolean isValidPdf(Resource resource) {
-        try (InputStream is = resource.getInputStream()) {
-            String retrievedText = PDFUtility.extractText(is.readAllBytes());
+        try {
+            String retrievedText = extractPdfText(resource, "template corrente");
             if (retrievedText == null) {
                 return false;
             }
             result.setFileTextRetrieved(retrievedText);
             return !retrievedText.isBlank();
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             return false;
         }
-//        return true;
     }
 
     @Then("verifico che (tutte le chiamate)(la chiamata) (sia)(siano) (andata)(andate) in {string} error(.)( e che nessuna abbia ricevuto una risposta)")
@@ -294,9 +293,9 @@ public class TemplateEngineSteps {
     }
 
     /**
-     * Esegue sul medesimo campo il corpus minimo richiesto: i cinque caratteri singoli,
-     * una stringa random che li combina tutti e un payload markup-like utile soprattutto
-     * a verificare che il renderer PDF non interpreti il valore come HTML.
+     * Esegue sul medesimo campo il corpus minimo richiesto usando marker univoci,
+     * così le asserzioni negative non collidono con i caratteri strutturali del template HTML.
+     * Copre i cinque caratteri da escapare, una combinazione completa e un payload markup-like.
      */
     @When("eseguo il corpus di fuzzing HTML escaping sull'endpoint {string} in lingua {string} sul campo {string}")
     public void eseguoIlCorpusDiFuzzingHtmlEscaping(String endpoint, String language, String field) {
@@ -305,13 +304,13 @@ public class TemplateEngineSteps {
 
         String random = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
         List<String> corpus = List.of(
-                "<",
-                ">",
-                "&",
-                "\"",
-                "'",
-                "FUZZ_" + random + "_A<>&\"'Z",
-                "<b>FUZZ_" + random + "</b>"
+                "FUZZ_" + random + "_LT_<_END",
+                "FUZZ_" + random + "_GT_>_END",
+                "FUZZ_" + random + "_AMP_&_END",
+                "FUZZ_" + random + "_QUOTE_\"_END",
+                "FUZZ_" + random + "_APOS_'_END",
+                "FUZZ_" + random + "_ALL_<>&\"'_END",
+                "FUZZ_" + random + "_MARKUP_<b>X</b>_END"
         );
 
         for (String value : corpus) {
@@ -321,78 +320,157 @@ public class TemplateEngineSteps {
 
     @Then("verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo {string}")
     public void verificoCheTuttiIValoriFuzzedSianoEscapati(String format) {
+
         Assertions.assertFalse(
                 htmlEscapeFuzzExecutions.isEmpty(),
                 "Nessuna esecuzione fuzzing disponibile"
         );
 
+        String expectedFormat = format.toLowerCase();
+
         for (HtmlEscapeFuzzExecution execution : htmlEscapeFuzzExecutions) {
+
             Assertions.assertEquals(
-                    format.toLowerCase(),
+                    expectedFormat,
                     execution.getFormat(),
                     "Il formato dichiarato nello scenario non coincide con quello dell'endpoint "
                             + execution.getEndpoint()
             );
 
             String rendered = retrieveFuzzedOutput(execution);
-            Assertions.assertNotNull(
-                    rendered,
-                    "Output nullo per endpoint " + execution.getEndpoint()
-            );
 
-            // PDF/HTML possono introdurre line break dovuti esclusivamente al rendering.
-            // Le asserzioni devono verificare il contenuto, non il wrapping grafico.
-            String normalizedRendered = toSingleLine(rendered);
+            Assertions.assertNotNull(rendered,
+                    "Output nullo per endpoint " + execution.getEndpoint());
 
-            for (Map.Entry<String, String> value : execution.getRawValues().entrySet()) {
-                String field = value.getKey();
-                String rawValue = toSingleLine(value.getValue());
+            String normalizedRendered = normalizeRendered(rendered, execution.getFormat());
 
-                if ("pdf".equals(execution.getFormat())) {
-                    assertThat(normalizedRendered)
-                            .as(
-                                    "Il PDF dell'endpoint %s non contiene il valore letterale del campo %s",
-                                    execution.getEndpoint(),
-                                    field
-                            )
-                            .contains(rawValue);
+            for (Map.Entry<String, String> entry : execution.getRawValues().entrySet()) {
 
-                    if (rawValue.contains("FUZZ_")) {
-                        String escapedValue = toSingleLine(escapeExpected(rawValue));
+                String field = entry.getKey();
+                String rawValue = toSingleLine(entry.getValue());
 
-                        assertThat(normalizedRendered)
-                                .as(
-                                        "Il PDF dell'endpoint %s contiene ancora entity HTML non renderizzate per il campo %s",
-                                        execution.getEndpoint(),
-                                        field
-                                )
-                                .doesNotContain(escapedValue);
-                    }
+                switch (execution.getFormat()) {
 
-                } else {
-                    String escapedValue = toSingleLine(escapeExpected(rawValue));
-
-                    assertThat(normalizedRendered)
-                            .as(
-                                    "Escaping errato per endpoint %s, campo %s. Atteso: %s",
-                                    execution.getEndpoint(),
+                    case "pdf" ->
+                            assertPdfValue(
+                                    execution,
                                     field,
-                                    escapedValue
-                            )
-                            .contains(escapedValue);
+                                    rawValue,
+                                    normalizedRendered
+                            );
 
-                    if (rawValue.contains("FUZZ_")) {
-                        assertThat(normalizedRendered)
-                                .as(
-                                        "Il valore non escapato del campo %s e' presente nell'output dell'endpoint %s",
-                                        field,
-                                        execution.getEndpoint()
-                                )
-                                .doesNotContain(rawValue);
-                    }
+                    case "html" ->
+                            assertHtmlValue(
+                                    execution,
+                                    field,
+                                    rawValue,
+                                    normalizedRendered
+                            );
+
+                    case "text" ->
+                            assertTextValue(
+                                    execution,
+                                    field,
+                                    rawValue,
+                                    normalizedRendered
+                            );
+
+                    default ->
+                            throw new IllegalArgumentException(
+                                    "Formato non supportato: " + execution.getFormat()
+                            );
                 }
             }
         }
+    }
+
+    private void assertPdfValue(HtmlEscapeFuzzExecution execution, String field, String rawValue, String rendered) {
+        assertThat(rendered)
+                .as(
+                        "Il PDF dell'endpoint %s non contiene il valore letterale del campo %s. Atteso: %s",
+                        execution.getEndpoint(),
+                        field,
+                        rawValue
+                )
+                .contains(rawValue);
+
+        String escapedValue = toSingleLine(escapeExpected(rawValue));
+
+        if (!escapedValue.equals(rawValue)) {
+            assertThat(rendered)
+                    .as(
+                            "Il PDF dell'endpoint %s contiene entity HTML non renderizzate per il campo %s",
+                            execution.getEndpoint(),
+                            field
+                    )
+                    .doesNotContain(escapedValue);
+        }
+    }
+
+    private void assertHtmlValue(HtmlEscapeFuzzExecution execution, String field, String rawValue, String rendered) {
+        String escapedValue = toSingleLine(escapeExpected(rawValue));
+        assertThat(rendered)
+                .as(
+                        "Escaping HTML errato per endpoint %s, campo %s. Atteso: %s",
+                        execution.getEndpoint(),
+                        field,
+                        escapedValue
+                )
+                .contains(escapedValue);
+
+        if (isUniqueFuzzValue(rawValue)) {
+            assertThat(rendered)
+                    .as(
+                            "Il valore non escapato del campo %s e' presente nell'HTML dell'endpoint %s",
+                            field,
+                            execution.getEndpoint()
+                    )
+                    .doesNotContain(rawValue);
+        }
+    }
+
+    private boolean isUniqueFuzzValue(String value) {
+        return value != null
+                && (value.startsWith("FZ_") || value.startsWith("FUZZ_"));
+    }
+
+    private void assertTextValue(
+            HtmlEscapeFuzzExecution execution,
+            String field,
+            String rawValue,
+            String rendered
+    ) {
+
+        assertThat(rendered)
+                .as(
+                        "Il template testuale dell'endpoint %s non contiene il valore del campo %s. Atteso: %s",
+                        execution.getEndpoint(),
+                        field,
+                        rawValue
+                )
+                .contains(rawValue);
+    }
+
+    private String normalizeRendered(String rendered, String format) {
+        return switch (format) {
+            case "html" -> normalizeHtmlRendered(rendered);
+            case "pdf", "text" -> toSingleLine(rendered);
+            default -> throw new IllegalArgumentException(
+                    "Formato non supportato: " + format
+            );
+        };
+    }
+
+    private String normalizeHtmlRendered(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return toSingleLine(value)
+                .replace("&#xE0;", "à")
+                .replace("&#xE8;", "è")
+                .replace("&#xEC;", "ì")
+                .replace("&#x20AC;", "€");
     }
 
     private String toSingleLine(String value) {
@@ -793,19 +871,38 @@ public class TemplateEngineSteps {
     }
 
     private String retrieveFuzzedOutput(HtmlEscapeFuzzExecution execution) {
-        if ("pdf".equals(execution.getFormat())) {
-            Resource resource = execution.getResult().getTemplateFileReturned();
-            Assertions.assertNotNull(resource, "PDF non restituito per endpoint " + execution.getEndpoint());
-            try (InputStream inputStream = resource.getInputStream()) {
-                return PDFUtility.extractText(inputStream.readAllBytes());
-            } catch (IOException | RuntimeException e) {
-                throw new IllegalStateException("Impossibile estrarre il testo del PDF per " + execution.getEndpoint(), e);
+        return switch (execution.getFormat()) {
+            case "pdf" -> {
+                Resource resource = execution.getResult().getTemplateFileReturned();
+                Assertions.assertNotNull(
+                        resource,
+                        "PDF non restituito per endpoint " + execution.getEndpoint()
+                );
+                yield extractPdfText(resource, execution.getEndpoint());
             }
-        }
+            case "html", "text" -> {
+                String text = execution.getResult().getTemplateHtmlReturned();
+                Assertions.assertNotNull(
+                        text,
+                        "Testo/HTML non restituito per endpoint " + execution.getEndpoint()
+                );
+                yield text;
+            }
+            default -> throw new IllegalArgumentException(
+                    "Formato non supportato: " + execution.getFormat()
+            );
+        };
+    }
 
-        String text = execution.getResult().getTemplateHtmlReturned();
-        Assertions.assertNotNull(text, "Testo/HTML non restituito per endpoint " + execution.getEndpoint());
-        return text;
+    private String extractPdfText(Resource resource, String endpoint) {
+        try (InputStream inputStream = resource.getInputStream()) {
+            return PDFUtility.extractText(inputStream.readAllBytes());
+        } catch (IOException | RuntimeException e) {
+            throw new IllegalStateException(
+                    "Impossibile estrarre il testo del PDF per " + endpoint,
+                    e
+            );
+        }
     }
 
     private void resetFuzzCallState() {

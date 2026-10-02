@@ -756,9 +756,6 @@ Feature: Template engine
 
   # ---------------------------------------------------------------------------
   # HTML ESCAPE FUZZING
-  # Gli endpoint sono quelli i cui request model sono gestiti da HtmlEscapeProcessor.
-  # Un solo Scenario Outline copre il routing di tutti i campi; il secondo verifica
-  # il corpus minimo di caratteri sui tre formati di output (PDF, HTML e text).
   # ---------------------------------------------------------------------------
 
   @templateEngine @htmlEscape @fuzzing
@@ -773,10 +770,10 @@ Feature: Template engine
       | notification-viewed-legal-fact              | recipient.denomination,delegate.denomination                                                                                                                                            |
       | notification-cancelled-legal-fact           | notification.sender.paDenomination,notification.recipients.denomination                                                                                                                 |
       | analog-delivery-workflow-failure-legal-fact | recipient.denomination                                                                                                                                                                  |
-#sospeso      | analog-delivery-workflow-timeout-legal-fact | recipient.denomination,recipient.physicalAddress                                                                                                                                        |
+      | analog-delivery-workflow-timeout-legal-fact | recipient.denomination,recipient.physicalAddress                                                                                                                                        |
       | notification-aar-radd-alt                   | notification.subject,notification.sender.paDenomination,recipient.denomination                                                                                                          |
       | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                                                                                 |
-#sospeso      | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
+      | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
 
   @templateEngine @htmlEscape @fuzzing
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
