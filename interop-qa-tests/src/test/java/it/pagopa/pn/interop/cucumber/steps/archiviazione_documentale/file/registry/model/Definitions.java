@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.model;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.event.enums.InteropEvent;
@@ -66,7 +67,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega alla fruizione", ":agreementId"),
+                        ListFileTokenSource.of("richiesta di delega alla fruizione", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -75,7 +76,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REVOKED_DOC,
-                        ListFileTokenSource.of("Richiesta di revoca della delega", ":agreementId"),
+                        ListFileTokenSource.of("Richiesta di revoca della delega", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -84,7 +85,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         PRODUCER_DELEGATION_REVOKED_DOC,
-                        ListFileTokenSource.of("Richiesta di revoca della delega all’erogazione", ":agreementId"),
+                        ListFileTokenSource.of("Revoca della delega all’erogazione", ":producerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -93,7 +94,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         PRODUCER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega all'erogazione", ":agreementId"),
+                        ListFileTokenSource.of("richiesta di delega all'erogazione", ":producerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -126,6 +127,24 @@ public class Definitions {
                         eventBucketBase,
                         eventWormBucketBase,
                         AgreementState.ARCHIVED.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        PRODUCER_DELEGATION_REVOKED_EVENTS_LOG,
+                        InteropEvent.PRODUCER_DELEGATION_REVOKED,
+                        ":producerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.REVOKED.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CONSUMER_DELEGATION_REVOKED_EVENTS_LOG,
+                        InteropEvent.CONSUMER_DELEGATION_REVOKED,
+                        ":consumerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.REVOKED.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
