@@ -110,22 +110,30 @@ public class PaperTrackerSteps {
     }
 
     private void assertSameElements(List<NotificationEvent> list1, List<NotificationEvent> list2, String errorMessage) {
-        list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
-        list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
-        Assertions.assertEquals(list1, list2, errorMessage);
+        try {
+            list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
+            list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
+            Assertions.assertEquals(list1, list2, errorMessage);
+        } catch (AssertionError error) {
+            sharedSteps.throwAssertionErrorWithIUN(error);
+        }
     }
 
     private void assertRelaxedSameElements(List<NotificationEvent> list1, List<NotificationEvent> list2, String errorMessage) {
-        list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
-        list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
-        assertTrue(() -> {
-            for (int i = 0; i < list1.size(); i++) {
-                if (!list1.get(i).equalsRelaxed(list2.get(i))) {
-                    return false;
+        try {
+            list1.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
+            list2.sort(Comparator.comparing(NotificationEvent::getDeliveryDetailCode).thenComparing(attach -> String.join(",", attach.getAttachmentUrlName())));
+            assertTrue(() -> {
+                for (int i = 0; i < list1.size(); i++) {
+                    if (!list1.get(i).equalsRelaxed(list2.get(i))) {
+                        return false;
+                    }
                 }
-            }
-            return true;
-        });
+                return true;
+            });
+        } catch (AssertionError error) {
+            sharedSteps.throwAssertionErrorWithIUN(error);
+        }
     }
 
     @Then("si verifica che la risposta tracking per la sequence {string} contenga tutti gli elementi attesi e che sia strutturalmente valida")
