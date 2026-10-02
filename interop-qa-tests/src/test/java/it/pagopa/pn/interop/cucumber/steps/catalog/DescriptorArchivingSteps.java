@@ -123,16 +123,17 @@ public class DescriptorArchivingSteps {
         archivingScheduleVerifier.pollDescriptorArchivingSchedule(eServiceId, oldDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
-    //Step specifico per i test relativi al cron job di archiviazione
+    // Controlla i campi valorizzati di archivingSchedule anche nei test del cron job di archiviazione.
     @Then("il descrittore con id {string} dell'e-service avente id {string} è stato correttamente archiviato tramite l'archiviazione manuale del singolo descrittore")
+    @Then("il vecchio descrittore con id {string} dell'e-service avente id {string} è in fase di archiviazione tramite l'archiviazione manuale del singolo descrittore")
     public void descriptorHasPopulatedArchivingScheduleWithDescriptorScope(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID eServiceUUID = UUID.fromString(eServiceId);
-        UUID descriptorUUID = UUID.fromString(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
 
         // verifichiamo che l'attributo archivingSchedule sia valorizzato in tutti i suoi campi; sul solo campo scope controlliamo anche che il valore coincida con quello atteso
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.DESCRIPTOR);
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, ArchivingScope.DESCRIPTOR);
     }
 
     //Step specifico per i test relativi al cron job di archiviazione
@@ -160,6 +161,7 @@ public class DescriptorArchivingSteps {
 
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale del singolo descrittore")
     @And("il descrittore più recente non è stato messo in archiviazione tramite l'archiviazione manuale dell'intero e-service")
+    @Then("l'archiviazione manuale dell'e-service è stata annullata con successo")
     public void latestDescriptorHasNoArchivingSchedule() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 

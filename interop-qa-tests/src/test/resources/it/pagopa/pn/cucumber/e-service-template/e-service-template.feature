@@ -906,6 +906,8 @@ Feature: Test API of e-service template
       | admin        | SUSPENDED | DOCUMENT  |
       | api          | SUSPENDED | DOCUMENT  |
       | api,security | SUSPENDED | DOCUMENT  |
+
+      # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11001
       | admin        | DRAFT     | INTERFACE |
       | api          | DRAFT     | INTERFACE |
       | api,security | DRAFT     | INTERFACE |
@@ -2200,6 +2202,20 @@ Feature: Test API of e-service template
       | stato     |
       | PUBLISHED |
       | SUSPENDED |
+
+  @e-service-template-version-create
+  Scenario Outline: [ESERVICE_TEMPLATE_CREATE_VERSION_DESCRIPTION_2] La creazione di un e-service template non va a buon fine se la descrizione della sua versione contiene meno di 10 caratteri
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di DRAFT
+    When l'utente effettua la creazione di un e-service template con la descrizione della versione impostata a "<descrizione>"
+    Then si ottiene lo status code <risultato>
+
+    Examples:
+      | descrizione | risultato |
+      | %null%      | 400       |
+      | %empty%     | 400       |
+      | 123456789   | 400       |
+      | 1234567890  | 201       |
 
   @sad-path
   @e-service-template-version-create

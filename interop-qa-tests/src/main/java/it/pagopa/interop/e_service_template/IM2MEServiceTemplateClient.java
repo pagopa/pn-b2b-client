@@ -43,6 +43,7 @@ public interface IM2MEServiceTemplateClient extends SettableBearerToken {
         private EServiceTechnology technology;
         private EServiceMode mode;
         private Boolean isSignalHubEnabled;
+        private Boolean personalData;
     }
 
     @Data

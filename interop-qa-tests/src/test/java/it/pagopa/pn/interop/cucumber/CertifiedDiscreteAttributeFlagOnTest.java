@@ -28,5 +28,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @IncludeTags({"certifiedDiscreteAttributeFlagOn"})
+@ExcludeTags({"certifiedDiscreteAttributeM2Mv3"})
 public class CertifiedDiscreteAttributeFlagOnTest {
 }

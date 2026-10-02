@@ -89,6 +89,7 @@ public class ClientTokenConfigurator {
     private final IM2MV3ClientsClient m2mV3ClientsClient;
     private final IM2MV3TenantClient m2mV3TenantClient;
     private final IM2MV3CertifiedAttributeClient m2mV3CertifiedAttributeClient;
+    private final IM2MV3CertifiedDiscreteAttributeClient m2mV3CertifiedDiscreteAttributeClient;
     private final IM2MV3DeclaredAttributeClient m2mV3DeclaredAttributeClient;
     private final IM2MV3VerifiedAttributeClient m2mV3VerifiedAttributeClient;
     private final IM2MV3DelegationClient m2mV3DelegationClient;
@@ -112,6 +113,7 @@ public class ClientTokenConfigurator {
 
         // Area Attributes
         registerProxy(IM2MCertifiedAttributeClient.class, m2mCertifiedAttributeClient, m2mV3CertifiedAttributeClient);
+        registerProxy(IM2MV3CertifiedDiscreteAttributeClient.class, null, m2mV3CertifiedDiscreteAttributeClient);
         registerProxy(IM2MDeclaredAttributeClient.class, m2mDeclaredAttributeClient, m2mV3DeclaredAttributeClient);
         registerProxy(IM2MVerifiedAttributeClient.class, m2mVerifiedAttributeClient, m2mV3VerifiedAttributeClient);
         registerProxy(IM2MEServiceAttributeClient.class, m2mEServiceAttributeClient, m2mV3EServiceAttributeClient);
@@ -233,6 +235,7 @@ public class ClientTokenConfigurator {
         m2mV3TenantClient.setAuth(auth);
         m2mV3DelegationClient.setAuth(auth);
         m2mV3CertifiedAttributeClient.setAuth(auth);
+        m2mV3CertifiedDiscreteAttributeClient.setAuth(auth);
         m2mV3DeclaredAttributeClient.setAuth(auth);
         m2mV3VerifiedAttributeClient.setAuth(auth);
         m2mV3EServiceAttributeClient.setAuth(auth);
