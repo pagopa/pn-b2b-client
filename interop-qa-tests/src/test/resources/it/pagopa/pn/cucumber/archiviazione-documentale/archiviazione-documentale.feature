@@ -47,7 +47,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AgreementSuspendedByConsumer | AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG |
       | ARCHIVED       | AgreementArchivedByConsumer  | AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG  |
 
-  Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
+  Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
