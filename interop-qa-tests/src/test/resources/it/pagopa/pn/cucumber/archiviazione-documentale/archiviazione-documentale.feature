@@ -125,15 +125,31 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
-    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    Given l'utente è un "admin" di "PA2"
+    And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
-    And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+
+    # Delega in stato ACTIVE
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo
     And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato rifiuta la delega in fruizione
+    And l'ente delegato accetta la delega in fruizione con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di reperire i dettagli della delega in fruizione
+    Then si ottiene lo status code 200
+    And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato ACTIVE
+
+    # Delega in stato REVOKED
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di reperire i dettagli della delega in fruizione
+    Then si ottiene lo status code 200
+    And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato REVOKED
+
     And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REVOKED_DOC
     And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REVOKED_DOC
