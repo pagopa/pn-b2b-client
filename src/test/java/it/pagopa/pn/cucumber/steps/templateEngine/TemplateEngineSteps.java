@@ -5,13 +5,18 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
+import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
+import it.pagopa.pn.cucumber.steps.templateEngine.fuzzing.HtmlEscapeFuzzExecution;
+import it.pagopa.pn.cucumber.steps.templateEngine.fuzzing.HtmlEscapeFuzzTarget;
+import it.pagopa.pn.cucumber.steps.templateEngine.fuzzing.HtmlEscapeFuzzTargets;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
@@ -20,9 +25,26 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.URI;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +59,12 @@ public class TemplateEngineSteps {
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
     private final Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
+
+    @Autowired
+    private ITemplateEngineClient templateEngineClient;
+
     private TemplateEngineResult result;
+    private final List<HtmlEscapeFuzzExecution> htmlEscapeFuzzExecutions = new ArrayList<>();
 
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
@@ -140,6 +167,7 @@ public class TemplateEngineSteps {
         } catch (IOException | RuntimeException e) {
             return false;
         }
+//        return true;
     }
 
     @Then("verifico che (tutte le chiamate)(la chiamata) (sia)(siano) (andata)(andate) in {string} error(.)( e che nessuna abbia ricevuto una risposta)")
@@ -247,4 +275,603 @@ public class TemplateEngineSteps {
                     "Il corpo del messaggio contiene il testo non atteso: " + message);
         }
     }
+
+    // -------------------------------------------------------------------------
+    // HTML ESCAPE FUZZING
+    // -------------------------------------------------------------------------
+
+    @When("eseguo il fuzzing HTML escaping sull'endpoint {string} in lingua {string} sui campi {string}")
+    public void eseguoIlFuzzingHtmlEscapingSullEndpoint(String endpoint, String language, String fields) {
+        HtmlEscapeFuzzTarget target = HtmlEscapeFuzzTargets.get(endpoint);
+        htmlEscapeFuzzExecutions.clear();
+
+        Map<String, String> fuzzedValues = new LinkedHashMap<>();
+        for (String field : splitFields(fields)) {
+            fuzzedValues.put(field, buildPdfFuzzValue());
+        }
+
+        htmlEscapeFuzzExecutions.add(executeFuzzCall(target, language, fuzzedValues));
+    }
+
+    /**
+     * Esegue sul medesimo campo il corpus minimo richiesto: i cinque caratteri singoli,
+     * una stringa random che li combina tutti e un payload markup-like utile soprattutto
+     * a verificare che il renderer PDF non interpreti il valore come HTML.
+     */
+    @When("eseguo il corpus di fuzzing HTML escaping sull'endpoint {string} in lingua {string} sul campo {string}")
+    public void eseguoIlCorpusDiFuzzingHtmlEscaping(String endpoint, String language, String field) {
+        HtmlEscapeFuzzTarget target = HtmlEscapeFuzzTargets.get(endpoint);
+        htmlEscapeFuzzExecutions.clear();
+
+        String random = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
+        List<String> corpus = List.of(
+                "<",
+                ">",
+                "&",
+                "\"",
+                "'",
+                "FUZZ_" + random + "_A<>&\"'Z",
+                "<b>FUZZ_" + random + "</b>"
+        );
+
+        for (String value : corpus) {
+            htmlEscapeFuzzExecutions.add(executeFuzzCall(target, language, Map.of(field, value)));
+        }
+    }
+
+    @Then("verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoEscapati(String format) {
+        Assertions.assertFalse(
+                htmlEscapeFuzzExecutions.isEmpty(),
+                "Nessuna esecuzione fuzzing disponibile"
+        );
+
+        for (HtmlEscapeFuzzExecution execution : htmlEscapeFuzzExecutions) {
+            Assertions.assertEquals(
+                    format.toLowerCase(),
+                    execution.getFormat(),
+                    "Il formato dichiarato nello scenario non coincide con quello dell'endpoint "
+                            + execution.getEndpoint()
+            );
+
+            String rendered = retrieveFuzzedOutput(execution);
+            Assertions.assertNotNull(
+                    rendered,
+                    "Output nullo per endpoint " + execution.getEndpoint()
+            );
+
+            // PDF/HTML possono introdurre line break dovuti esclusivamente al rendering.
+            // Le asserzioni devono verificare il contenuto, non il wrapping grafico.
+            String normalizedRendered = toSingleLine(rendered);
+
+            for (Map.Entry<String, String> value : execution.getRawValues().entrySet()) {
+                String field = value.getKey();
+                String rawValue = toSingleLine(value.getValue());
+
+                if ("pdf".equals(execution.getFormat())) {
+                    assertThat(normalizedRendered)
+                            .as(
+                                    "Il PDF dell'endpoint %s non contiene il valore letterale del campo %s",
+                                    execution.getEndpoint(),
+                                    field
+                            )
+                            .contains(rawValue);
+
+                    if (rawValue.contains("FUZZ_")) {
+                        String escapedValue = toSingleLine(escapeExpected(rawValue));
+
+                        assertThat(normalizedRendered)
+                                .as(
+                                        "Il PDF dell'endpoint %s contiene ancora entity HTML non renderizzate per il campo %s",
+                                        execution.getEndpoint(),
+                                        field
+                                )
+                                .doesNotContain(escapedValue);
+                    }
+
+                } else {
+                    String escapedValue = toSingleLine(escapeExpected(rawValue));
+
+                    assertThat(normalizedRendered)
+                            .as(
+                                    "Escaping errato per endpoint %s, campo %s. Atteso: %s",
+                                    execution.getEndpoint(),
+                                    field,
+                                    escapedValue
+                            )
+                            .contains(escapedValue);
+
+                    if (rawValue.contains("FUZZ_")) {
+                        assertThat(normalizedRendered)
+                                .as(
+                                        "Il valore non escapato del campo %s e' presente nell'output dell'endpoint %s",
+                                        field,
+                                        execution.getEndpoint()
+                                )
+                                .doesNotContain(rawValue);
+                    }
+                }
+            }
+        }
+    }
+
+    private String toSingleLine(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        return value.replaceAll("\\R\\s*", "");
+    }
+
+    private HtmlEscapeFuzzExecution executeFuzzCall(HtmlEscapeFuzzTarget target, String language, Map<String, String> logicalValues) {
+        resetFuzzCallState();
+
+        Map<String, String> mappedValues = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : logicalValues.entrySet()) {
+            String mappedField = target.getFieldMappings().get(entry.getKey());
+            if (mappedField == null) {
+                throw new IllegalArgumentException("Campo '" + entry.getKey() + "' non configurato per endpoint " + target.getEndpoint());
+            }
+            mappedValues.put(mappedField, entry.getValue());
+        }
+
+        TemplateEngineResult callResult;
+        if (target.getTemplateType() != null) {
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("context_recipientType", "PF");
+            parameters.put("recipient_recipientType", "PF");
+            parameters.put("recipientType", "PF");
+            parameters.putAll(mappedValues);
+
+            TemplateType templateTypeObject = TemplateType.fromValue(target.getTemplateType().toUpperCase());
+            retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
+
+            if (templateFileException != null) {
+                throw templateFileException;
+            }
+            if (templateServerException != null) {
+                throw templateServerException;
+            }
+            callResult = result;
+        } else {
+            callResult = retrieveTemplateByClientReflection(target, language, mappedValues);
+            result = callResult;
+        }
+
+        Assertions.assertNotNull(callResult, "Nessuna risposta ottenuta dall'endpoint " + target.getEndpoint());
+        return new HtmlEscapeFuzzExecution(target.getEndpoint(), target.getFormat(), new LinkedHashMap<>(logicalValues), callResult);
+    }
+
+    /**
+     * I quattro endpoint presenti nell'OpenAPI ma non ancora mappati da TemplateType/strategy
+     * vengono richiamati tramite il client gia' iniettato. La reflection evita di introdurre
+     * nuove strategy o modificare configurazioni esistenti solo per i test di escaping.
+     */
+    private TemplateEngineResult retrieveTemplateByClientReflection(HtmlEscapeFuzzTarget target, String language,
+                                                                    Map<String, String> propertyValues) {
+        Assertions.assertNotNull(templateEngineClient, "ITemplateEngineClient non disponibile");
+        Method clientMethod = findClientMethod(target.getOperationId());
+
+        try {
+            Object request = createDefaultModel(clientMethod.getParameterTypes()[1], 0, new LinkedHashSet<>());
+            for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
+                setNestedProperty(request, entry.getKey().split("\\."), 0, entry.getValue());
+            }
+
+            Object languageValue = createLanguageValue(clientMethod.getParameterTypes()[0], language);
+            Object response = clientMethod.invoke(templateEngineClient, languageValue, request);
+            return toTemplateEngineResult(response);
+        } catch (InvocationTargetException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof HttpClientErrorException httpClientErrorException) {
+                throw httpClientErrorException;
+            }
+            if (cause instanceof HttpServerErrorException httpServerErrorException) {
+                throw httpServerErrorException;
+            }
+            throw new IllegalStateException("Errore invocando " + target.getOperationId(), cause);
+        } catch (ReflectiveOperationException e) {
+            throw new IllegalStateException("Impossibile costruire/invocare il payload per " + target.getOperationId(), e);
+        }
+    }
+
+    private Method findClientMethod(String operationId) {
+        String normalizedOperation = normalize(operationId);
+        return Arrays.stream(templateEngineClient.getClass().getMethods())
+                .filter(method -> method.getParameterCount() == 2)
+                .filter(method -> normalize(method.getName()).equals(normalizedOperation))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Il client Template Engine non espone l'operationId '" + operationId + "'"));
+    }
+
+    private Object createLanguageValue(Class<?> languageType, String language) {
+        String enumValue = switch (language.toUpperCase()) {
+            case "ITALIANA" -> "IT";
+            case "TEDESCA" -> "DE";
+            case "SLOVENA" -> "SL";
+            case "FRANCESE" -> "FR";
+            case "INGLESE" -> "EN";
+            default -> throw new IllegalArgumentException("Lingua non valida: " + language);
+        };
+
+        if (languageType == String.class) {
+            return enumValue;
+        }
+        if (languageType.isEnum()) {
+            return Arrays.stream(languageType.getEnumConstants())
+                    .filter(value -> ((Enum<?>) value).name().equalsIgnoreCase(enumValue)
+                            || value.toString().equalsIgnoreCase(enumValue))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Valore lingua " + enumValue + " non disponibile su " + languageType.getName()));
+        }
+        throw new IllegalStateException("Tipo lingua non supportato: " + languageType.getName());
+    }
+
+    private TemplateEngineResult toTemplateEngineResult(Object response) throws ReflectiveOperationException {
+        if (response instanceof Resource resource) {
+            return new TemplateEngineResult(resource);
+        }
+        if (response instanceof String text) {
+            return new TemplateEngineResult(text);
+        }
+        if (response == null) {
+            return null;
+        }
+
+        // Compatibilita' con eventuali wrapper tipo ResponseEntity senza introdurre dipendenze nuove.
+        try {
+            Method getBody = response.getClass().getMethod("getBody");
+            return toTemplateEngineResult(getBody.invoke(response));
+        } catch (NoSuchMethodException ignored) {
+            throw new IllegalStateException("Tipo risposta non gestito: " + response.getClass().getName());
+        }
+    }
+
+    private Object createDefaultModel(Class<?> type, int depth, Set<Class<?>> branch) throws ReflectiveOperationException {
+        if (depth > 5 || branch.contains(type)) {
+            return null;
+        }
+
+        Object simpleValue = defaultSimpleValue(type, type.getSimpleName());
+        if (simpleValue != null) {
+            return simpleValue;
+        }
+
+        Object model = type.getDeclaredConstructor().newInstance();
+        Set<Class<?>> nextBranch = new LinkedHashSet<>(branch);
+        nextBranch.add(type);
+
+        for (Method setter : type.getMethods()) {
+            if (!setter.getName().startsWith("set") || setter.getParameterCount() != 1) {
+                continue;
+            }
+
+            String property = decapitalize(setter.getName().substring(3));
+            if ("additionalProperties".equals(property)) {
+                continue;
+            }
+
+            Object value = defaultValueForProperty(setter.getParameterTypes()[0],
+                    setter.getGenericParameterTypes()[0], property, depth + 1, nextBranch);
+            if (value != null) {
+                setter.invoke(model, value);
+            }
+        }
+        return model;
+    }
+
+    private Object defaultValueForProperty(Class<?> type, Type genericType, String property,
+                                           int depth, Set<Class<?>> branch) throws ReflectiveOperationException {
+        if (type == String.class) {
+            return defaultStringValue(property);
+        }
+        if (type == boolean.class || type == Boolean.class) {
+            return Boolean.TRUE;
+        }
+        if (type == int.class || type == Integer.class) {
+            return 1;
+        }
+        if (type == long.class || type == Long.class) {
+            return 1L;
+        }
+        if (type == double.class || type == Double.class) {
+            return 1D;
+        }
+        if (type == float.class || type == Float.class) {
+            return 1F;
+        }
+        if (type == BigDecimal.class) {
+            return BigDecimal.ONE;
+        }
+        if (type == BigInteger.class) {
+            return BigInteger.ONE;
+        }
+        if (type == URI.class) {
+            return URI.create("https://example.org");
+        }
+        if (type == OffsetDateTime.class) {
+            return OffsetDateTime.parse("2025-05-20T10:15:30Z");
+        }
+        if (type == LocalDateTime.class) {
+            return LocalDateTime.parse("2025-05-20T10:15:30");
+        }
+        if (type == LocalDate.class) {
+            return LocalDate.parse("2025-05-20");
+        }
+        if (type == Instant.class) {
+            return Instant.parse("2025-05-20T10:15:30Z");
+        }
+        if (type == UUID.class) {
+            return UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+        }
+        if (type.isEnum()) {
+            return selectEnumDefault(type, property);
+        }
+        if (Collection.class.isAssignableFrom(type)) {
+            Object item = createCollectionItem(genericType, property, depth, branch);
+            if (item == null) {
+                return null;
+            }
+            if (Set.class.isAssignableFrom(type)) {
+                return Set.of(item);
+            }
+            return List.of(item);
+        }
+        if (Map.class.isAssignableFrom(type)) {
+            return Map.of();
+        }
+
+        return createDefaultModel(type, depth, branch);
+    }
+
+    private Object createCollectionItem(Type genericType, String property,
+                                        int depth, Set<Class<?>> branch) throws ReflectiveOperationException {
+        if (!(genericType instanceof ParameterizedType parameterizedType)) {
+            return null;
+        }
+        Type itemType = parameterizedType.getActualTypeArguments()[0];
+        if (!(itemType instanceof Class<?> itemClass)) {
+            return null;
+        }
+        return defaultValueForProperty(itemClass, itemClass, property, depth, branch);
+    }
+
+    private Object defaultSimpleValue(Class<?> type, String property) {
+        if (type == String.class) {
+            return defaultStringValue(property);
+        }
+        if (type == boolean.class || type == Boolean.class) {
+            return Boolean.TRUE;
+        }
+        if (type == int.class || type == Integer.class) {
+            return 1;
+        }
+        if (type == long.class || type == Long.class) {
+            return 1L;
+        }
+        return null;
+    }
+
+    private Object selectEnumDefault(Class<?> enumType, String property) {
+        List<String> preferredNames = new ArrayList<>();
+        String normalizedProperty = normalize(property);
+        if (normalizedProperty.contains("recipienttype")) {
+            preferredNames.add("PF");
+        }
+        if (normalizedProperty.contains("status")) {
+            preferredNames.add("SUCCESS");
+        }
+        if (normalizedProperty.equals("type")) {
+            preferredNames.add("PEC");
+            preferredNames.add("DIGITAL");
+        }
+        preferredNames.add("IT");
+
+        Object[] constants = enumType.getEnumConstants();
+        for (String preferredName : preferredNames) {
+            for (Object constant : constants) {
+                if (((Enum<?>) constant).name().equalsIgnoreCase(preferredName)
+                        || constant.toString().equalsIgnoreCase(preferredName)) {
+                    return constant;
+                }
+            }
+        }
+        return constants.length == 0 ? null : constants[0];
+    }
+
+    private String defaultStringValue(String property) {
+        String normalizedProperty = normalize(property);
+        if (normalizedProperty.contains("iun")) {
+            return "UTGP-ZRHR-XDNQ-202505-Q-1";
+        }
+        if (normalizedProperty.contains("taxid")) {
+            return "RSSMRA80A01H501U";
+        }
+        if (normalizedProperty.contains("url") || normalizedProperty.contains("link")) {
+            return "https://example.org";
+        }
+        if (normalizedProperty.contains("date") || normalizedProperty.contains("time")
+                || normalizedProperty.equals("when")) {
+            return "2025-05-20T10:15:30Z";
+        }
+        if (normalizedProperty.contains("digest")) {
+            return "TEST_digest_allegato";
+        }
+        if (normalizedProperty.contains("recipienttype")) {
+            return "PF";
+        }
+        if (normalizedProperty.equals("type")) {
+            return "PEC";
+        }
+        if (normalizedProperty.contains("status")) {
+            return "SUCCESS";
+        }
+        if (normalizedProperty.contains("phone")) {
+            return "0612345678";
+        }
+        if (normalizedProperty.contains("verificationcode")) {
+            return "12345";
+        }
+        return property + "_value";
+    }
+
+    private void setNestedProperty(Object current, String[] path, int index, String value)
+            throws ReflectiveOperationException {
+        if (current == null) {
+            throw new IllegalStateException("Impossibile valorizzare il path " + String.join(".", path));
+        }
+
+        if (current instanceof Collection<?> collection) {
+            if (collection.isEmpty()) {
+                throw new IllegalStateException("Collection vuota nel path " + String.join(".", path));
+            }
+            for (Object item : collection) {
+                setNestedProperty(item, path, index, value);
+            }
+            return;
+        }
+
+        String property = path[index];
+        if (index == path.length - 1) {
+            Method setter = findSetter(current.getClass(), property);
+            setter.invoke(current, convertStringValue(value, setter.getParameterTypes()[0]));
+            return;
+        }
+
+        Method getter = findGetter(current.getClass(), property);
+        Object nested = getter.invoke(current);
+        if (nested == null) {
+            Method setter = findSetter(current.getClass(), property);
+            nested = defaultValueForProperty(setter.getParameterTypes()[0], setter.getGenericParameterTypes()[0],
+                    property, 1, new LinkedHashSet<>());
+            setter.invoke(current, nested);
+        }
+        setNestedProperty(nested, path, index + 1, value);
+    }
+
+    private Method findGetter(Class<?> type, String property) {
+        String normalizedProperty = normalize(property);
+        return Arrays.stream(type.getMethods())
+                .filter(method -> method.getParameterCount() == 0)
+                .filter(method -> method.getName().startsWith("get") || method.getName().startsWith("is"))
+                .filter(method -> {
+                    String name = method.getName().startsWith("get")
+                            ? method.getName().substring(3)
+                            : method.getName().substring(2);
+                    return normalize(name).equals(normalizedProperty);
+                })
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Getter non trovato per " + type.getSimpleName() + "." + property));
+    }
+
+    private Method findSetter(Class<?> type, String property) {
+        String normalizedProperty = normalize(property);
+        return Arrays.stream(type.getMethods())
+                .filter(method -> method.getName().startsWith("set") && method.getParameterCount() == 1)
+                .filter(method -> normalize(method.getName().substring(3)).equals(normalizedProperty))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        "Setter non trovato per " + type.getSimpleName() + "." + property));
+    }
+
+    private Object convertStringValue(String value, Class<?> targetType) {
+        if (targetType == String.class) {
+            return value;
+        }
+        if (targetType.isEnum()) {
+            return Arrays.stream(targetType.getEnumConstants())
+                    .filter(constant -> ((Enum<?>) constant).name().equalsIgnoreCase(value)
+                            || constant.toString().equalsIgnoreCase(value))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Valore enum non valido " + value + " per " + targetType.getName()));
+        }
+        throw new IllegalStateException("Il fuzzing HTML e' previsto su campi testuali, trovato " + targetType.getName());
+    }
+
+    private String retrieveFuzzedOutput(HtmlEscapeFuzzExecution execution) {
+        if ("pdf".equals(execution.getFormat())) {
+            Resource resource = execution.getResult().getTemplateFileReturned();
+            Assertions.assertNotNull(resource, "PDF non restituito per endpoint " + execution.getEndpoint());
+            try (InputStream inputStream = resource.getInputStream()) {
+                return PDFUtility.extractText(inputStream.readAllBytes());
+            } catch (IOException | RuntimeException e) {
+                throw new IllegalStateException("Impossibile estrarre il testo del PDF per " + execution.getEndpoint(), e);
+            }
+        }
+
+        String text = execution.getResult().getTemplateHtmlReturned();
+        Assertions.assertNotNull(text, "Testo/HTML non restituito per endpoint " + execution.getEndpoint());
+        return text;
+    }
+
+    private void resetFuzzCallState() {
+        result = null;
+        templateFileException = null;
+        templateServerException = null;
+        templateFileExceptions.clear();
+    }
+
+    private List<String> splitFields(String fields) {
+        return Arrays.stream(fields.split(","))
+                .map(String::trim)
+                .filter(field -> !field.isBlank())
+                .toList();
+    }
+
+    private String buildFuzzValue() {
+        String id = UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 10);
+
+        return "FUZZ_" + id
+                + "_START_"
+                + "<b>bold</b>_"
+                + "<span class=\"test\">span</span>_"
+                + "<script>alert('x')</script>_"
+                + "<>&\"'_"
+                + "{}[]()_${value}_#{value}_"
+                + "\\n_\\t_\\\\_"
+                + "&lt;_&amp;_&#39;_"
+                + "àèéìòù_€_"
+                + "END";
+    }
+
+    private String buildPdfFuzzValue() {
+        String id = UUID.randomUUID()
+                .toString()
+                .replace("-", "")
+                .substring(0, 8);
+
+        return "FZ_" + id + "_<b>X</b>_<>&\"'àèì$_€_END";
+    }
+
+    /**
+     * Expected calcolato indipendentemente da FreeMarker: il test non deve usare lo stesso
+     * escaper della produzione, altrimenti un errore comune a implementazione e test passerebbe inosservato.
+     */
+    private String escapeExpected(String value) {
+        return value
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+
+    private static String normalize(String value) {
+        return value == null ? "" : value.replaceAll("[^A-Za-z0-9]", "").toLowerCase();
+    }
+
+    private static String decapitalize(String value) {
+        if (value == null || value.isEmpty()) {
+            return value;
+        }
+        return Character.toLowerCase(value.charAt(0)) + value.substring(1);
+    }
+
 }
