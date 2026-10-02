@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.agreement.domain.EServiceDescriptor;
@@ -29,12 +30,16 @@ import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -42,6 +47,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -61,6 +67,10 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BFFDataPreparationService {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final String RISK_ANALYSIS_EXAMPLES_PATTERN = "classpath*:riskAnalysis/*.json";
+
     @Data
     @Builder
     public static class MutateDescriptorResult {
@@ -73,6 +83,18 @@ public class BFFDataPreparationService {
         public UUID getDocumentId(int index) {
             return size(documentsMetadata) > index ? documentsMetadata.get(0).getId() : null;
         }
+    }
+
+    @Getter
+    public enum RiskAnalysisExample {
+        PERSONAL_DATA("personal_data");
+
+        private final String value;
+
+        RiskAnalysisExample(String value) {
+            this.value = value;
+        }
+
     }
 
     private static final ClientSeed DEFAULT_CLIENT_SEED = new ClientSeed();
@@ -969,6 +991,37 @@ public class BFFDataPreparationService {
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
+
+    public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String suffix, @NonNull RiskAnalysisExample example) {
+        String expectedEnding = suffix + ".json";
+        try {
+            List<Resource> matchingFiles = Arrays.stream(RESOURCE_RESOLVER.getResources(RISK_ANALYSIS_EXAMPLES_PATTERN))
+                .filter(resource -> {
+                    String fileName = resource.getFilename();
+                    return fileName != null
+                        && fileName.contains(example.getValue())
+                        && fileName.endsWith(expectedEnding);
+                })
+                .toList();
+
+            if (matchingFiles.isEmpty()) {
+                throw new IllegalStateException("No risk analysis example matches example '%s' and suffix '%s'"
+                    .formatted(example.getValue(), suffix));
+            }
+            if (matchingFiles.size() > 1) {
+                throw new IllegalStateException("Multiple risk analysis examples match example '%s' and suffix '%s': %s"
+                    .formatted(example.getValue(), suffix, matchingFiles));
+            }
+
+            try (var inputStream = matchingFiles.get(0).getInputStream()) {
+                return OBJECT_MAPPER.readValue(inputStream, RiskAnalysisFormSeed.class);
+            }
+        } catch (IOException exception) {
+            throw new UncheckedIOException("Unable to read risk analysis examples from classpath", exception);
+        }
+    }
+
+
 
     public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
         httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
