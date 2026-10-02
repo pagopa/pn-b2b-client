@@ -157,7 +157,7 @@ public class Definitions {
                 buildStandardEventLogFileDefinition(
                         KEY_ADDED_EVENTS_LOG,
                         InteropEvent.CLIENT_KEY_ADDED,
-                        ":kid",
+                        ":clientId",
                         eventBucketBase,
                         eventWormBucketBase
                 ),
@@ -165,7 +165,7 @@ public class Definitions {
                 buildStandardEventLogFileDefinition(
                         KEY_DELETED_EVENTS_LOG,
                         InteropEvent.CLIENT_KEY_DELETED,
-                        ":kid",
+                        ":clientId",
                         eventBucketBase,
                         eventWormBucketBase
                 )
