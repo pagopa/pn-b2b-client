@@ -67,7 +67,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega alla fruizione", ":consumerDelegationId"),
+                        ListFileTokenSource.of("Richiesta di delega alla fruizione", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -94,7 +94,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         PRODUCER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega all'erogazione", ":producerDelegationId"),
+                        ListFileTokenSource.of("Delega all’erogazione", ":producerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -130,12 +130,30 @@ public class Definitions {
                 ),
 
                 buildStandardEventLogFileDefinition(
+                        PRODUCER_DELEGATION_REQUEST_EVENTS_LOG,
+                        InteropEvent.PRODUCER_DELEGATION_APPROVED,
+                        ":producerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.ACTIVE.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
                         PRODUCER_DELEGATION_REVOKED_EVENTS_LOG,
                         InteropEvent.PRODUCER_DELEGATION_REVOKED,
                         ":producerDelegationId",
                         eventBucketBase,
                         eventWormBucketBase,
                         DelegationState.REVOKED.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CONSUMER_DELEGATION_REQUEST_EVENTS_LOG,
+                        InteropEvent.CONSUMER_DELEGATION_APPROVED,
+                        ":consumerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.ACTIVE.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
