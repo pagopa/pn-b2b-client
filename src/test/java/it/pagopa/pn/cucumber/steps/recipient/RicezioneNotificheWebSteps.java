@@ -328,7 +328,7 @@ public class RicezioneNotificheWebSteps {
         informalNotificationSearchResponse = null;
         lastMittenteSearchParam = searchParam;
         try {
-        notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
+            notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
         } catch (HttpStatusCodeException e) {
             notificationError = e;
         }
@@ -607,9 +607,9 @@ public class RicezioneNotificheWebSteps {
 
     @Then("si verifica che sia stato restituito un errore di tipo {string}")
     public void verifyApiErrorType(String errorType) {
-            assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
-                    .as("Il tipo di errore non coincide con quanto atteso")
-                    .contains(errorType.toUpperCase());
+        assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
+                .as("Il tipo di errore non coincide con quanto atteso")
+                .contains(errorType.toUpperCase());
     }
 
     @And("download attestazione opponibile AAR da parte {string}")
@@ -698,6 +698,7 @@ public class RicezioneNotificheWebSteps {
 
     /**
      * Metodo di conversione dei parametri di ricerca delle notifiche da DataTable in oggetto NotificationSearchParam
+     *
      * @param data
      * @return
      */
@@ -1261,6 +1262,31 @@ public class RicezioneNotificheWebSteps {
                                             LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue()) &&
                                                     senderId.equals(address.getSenderId()) &&
                                                     Boolean.TRUE.equals(address.getPecValid())),
+                            "PEC NOT FOUND"
+                    );
+                });
+    }
+
+    @And("viene controllato che sia presente la pec verificata {string} inserita per il comune {string}")
+    public void waitedAndViewedPecDiPiattaformaDi(String pec, String pa) {
+        String senderId = getSenderIdPa(pa);
+
+        Awaitility.await()
+                .atMost(2, TimeUnit.MINUTES)
+                .pollInterval(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> {
+                    List<LegalCourtesyAddressWrapper> legalAddresses =
+                            this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+
+                    Assertions.assertNotNull(legalAddresses, "Lista indirizzi nulla");
+                    Assertions.assertTrue(
+                            legalAddresses.stream()
+                                    .anyMatch(address ->
+                                            LegalChannelType.PEC.getValue().equals(address.getChannelType().getValue())
+                                                    && senderId.equals(address.getSenderId())
+                                                    && Boolean.TRUE.equals(address.getPecValid())
+                                                    && address.getValue().equals(pec)),
                             "PEC NOT FOUND"
                     );
                 });

@@ -98,6 +98,9 @@ Feature: Api Service Cruscotto Assistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_OK] Invocazione del servizio con taxId e recipientType corretti e verifica risposta
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAX_ID>" e recipientType  "<RECIPIENT_TYPE>"
     Then Il servizio risponde correttamente
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_USERPROFILE |
+      | retention | AUDIT2Y                 |
     Examples:
       | TAX_ID        | RECIPIENT_TYPE |
       | Mario Gherkin | PF             |
@@ -152,7 +155,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | IUN                       | ERROR |
-      | VUOTO                     | 405   |
+      | VUOTO                     | 404   |
       | NULL                      | 400   |
       | JRDT-XAPH-JQYW-202312-J-1 | 404   |
 
@@ -166,6 +169,12 @@ Feature: Api Service Cruscotto Assistenza
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio notifica
     And Il servizio risponde correttamente
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_SEARCH_NOTIFICATION |
+      | retention | AUDIT2Y                    |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_NOTIFICATION |
+      | retention | AUDIT2Y                  |
     Examples:
       | TAX_ID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Gherkin | PF             | 10               | NULL                 | 2023-01-01 | 2023-12-01 |
@@ -309,6 +318,7 @@ Feature: Api Service Cruscotto Assistenza
     And invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Cucumber" e iun "NO_SET" per il  destinatario 1
     And Il servizio risponde correttamente
 
+
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_56_1] Invocazione del servizio con IUN (notifica mono destinatario) corretto e verifica risposta PN-9995
     Given viene generata una nuova notifica
@@ -338,46 +348,40 @@ Feature: Api Service Cruscotto Assistenza
 
   # Response 200 OK
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
+  Scenario: [API-SERVICE-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
-    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAX_ID>"  recipientType  "<RECIPIENT_TYPE>"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "Mario Gherkin"  recipientType  "PF"
     Then Il servizio risponde correttamente con presenza di allegati "true"
-    Examples:
-      | IUN    | TAX_ID        | RECIPIENT_TYPE |
-      | NO_SET | Mario Gherkin | PF             |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_DOC_AVAILABLE |
+      | retention | AUDIT2Y              |
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.8_58_1] Invocazione del servizio con IUN esistente e notifica annullata
+  Scenario: [API-SERVICE-CA_CE02.8_58_1] Invocazione del servizio con IUN esistente e notifica annullata
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAX_ID>"  recipientType  "<RECIPIENT_TYPE>"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "Mario Cucumber"  recipientType  "PF"
     Then il servizio risponde con errore "404"
-    Examples:
-      | IUN    | TAX_ID        | RECIPIENT_TYPE |
-      | NO_SET | Mario Gherkin | PF             |
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-PG-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
+  Scenario: [API-SERVICE-PG-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si verifica la corretta acquisizione della notifica
-    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAX_ID>"  recipientType  "<RECIPIENT_TYPE>"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "CucumberSpa"  recipientType  "PG"
     Then Il servizio risponde correttamente con presenza di allegati "true"
-    Examples:
-      | IUN    | TAX_ID      | RECIPIENT_TYPE |
-      | NO_SET | CucumberSpa | PG             |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
@@ -446,6 +450,9 @@ Feature: Api Service Cruscotto Assistenza
       | startDate      | 2023-01-01 |
       | endDate        | 2023-12-01 |
     Then Il servizio risponde correttamente
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_ONBOARDING |
+      | retention | AUDIT2Y                |
     #  Response 200 OK a95dace4-4a47-4149-a814-0e669113ce40
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
@@ -464,7 +471,7 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | TAX_ID        | IUN                       | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   | ERROR |
-      | Mario Gherkin | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 405   |
+      | Mario Gherkin | VUOTO                     | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 404   |
       | Mario Gherkin | NULL                      | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 400   |
       | Mario Gherkin | JZTK-MGAH-TVZL-202311-X-1 | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 | 404   |
 
@@ -517,55 +524,31 @@ Feature: Api Service Cruscotto Assistenza
 
   #CE02.14 Come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.14_98] Invocazione del servizio con paId vuoto
-    Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
+  Scenario: [API-SERVICE-CA_CE02.14_98] Invocazione del servizio con paId vuoto
+    Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "VUOTO"
     Then il servizio risponde con errore "400"
-    Examples:
-      | paID  |
-      | VUOTO |
   #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_SIZE","element":"_getApiKeys.paId","detail":"size must be between 1 and 50"}]}
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
-    Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
+  Scenario: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
+    Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "4db941cf-17e1-"
     Then Il servizio risponde correttamente con presenza delle apiKey
-    Examples:
-      | paID           |
-      | 4db941cf-17e1- |
     #Response 200 OK
 
   @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
+  Scenario: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     And Il servizio risponde con esito positivo con la lista delle PA
-    When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
+    When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "a95dace4-4a47-4149-a814-0e669113ce40"
     Then Il servizio risponde correttamente con presenza delle apiKey
-    Examples:
-      | paID                                 |
-      | a95dace4-4a47-4149-a814-0e669113ce40 |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-service-desk" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | type      | AUD_CA_VIEW_AK |
+      | retention | AUDIT2Y        |
     #Response 200 OK
 
 #026e8c72-7944-4dcd-8668-f596447fec6d MILANO
 
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE03.01_101] Impostare nuova tipologia di Audit Log
-    Then viene verificato che esiste un audit log "<audit-log>" in "2y"
-    Examples:
-      | audit-log                  |
-      | AUD_CA_SEARCH_NOTIFICATION |
-      | AUD_CA_VIEW_USERPROFILE    |
-      | AUD_CA_VIEW_NOTIFICATION   |
-      | AUD_CA_VIEW_AK             |
-      | AUD_CA_VIEW_ONBOARDING     |
-      | AUD_CA_DOC_AVAILABLE       |
-
-  # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
-  # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
-  # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
-  # AUD_CA_VIEW_AK (visualizzazione lista api key)
-  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
-  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
-
+  
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
     And viene verificato che non esiste un audit log "<audit-log>" in "5y"
@@ -688,7 +671,7 @@ Feature: Api Service Cruscotto Assistenza
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene controllato che sia presente la pec verificata "example2@pecSuccess.it" inserita per il comune "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
 
@@ -715,7 +698,7 @@ Feature: Api Service Cruscotto Assistenza
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune "default"
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
-    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti" tra di loro
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente - IUN non associato allo User
@@ -723,7 +706,8 @@ Feature: Api Service Cruscotto Assistenza
     Then il servizio risponde con errore "<ERROR>"
     Examples:
       | USER           | IUN                      | UID      | ERROR |
-      | Mario Gherkin  | VUOTO                    | corretto | 400   |
+      | Mario Gherkin  | NON VALIDO               | corretto | 400   |
+      | Mario Gherkin  | VUOTO                    | corretto | 404   |
       | Mario Gherkin  | INESISTENTE              | corretto | 404   |
       |                | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
       | ERRATO         | NOTIFICA SENZA PAGAMENTI | corretto | 400   |
