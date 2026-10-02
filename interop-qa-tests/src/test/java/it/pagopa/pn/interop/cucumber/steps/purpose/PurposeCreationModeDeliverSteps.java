@@ -61,7 +61,6 @@ public class PurposeCreationModeDeliverSteps {
         String kind = identityService.getKind(tenantType);
         RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA);
 
-
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
                         new PurposeSeed()
