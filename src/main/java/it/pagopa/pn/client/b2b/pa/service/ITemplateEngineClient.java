@@ -64,4 +64,11 @@ public interface ITemplateEngineClient {
     String informalIoCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
 
     String informalSmsCommunication(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
+
+    String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException;
+
+    String informalSmsCourtesy(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
+
 }
