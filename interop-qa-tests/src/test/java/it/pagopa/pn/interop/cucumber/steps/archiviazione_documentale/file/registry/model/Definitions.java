@@ -152,6 +152,22 @@ public class Definitions {
                         ":clientId",
                         eventBucketBase,
                         eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        KEY_ADDED_EVENTS_LOG,
+                        InteropEvent.CLIENT_KEY_ADDED,
+                        ":kid",
+                        eventBucketBase,
+                        eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        KEY_DELETED_EVENTS_LOG,
+                        InteropEvent.CLIENT_KEY_DELETED,
+                        ":kid",
+                        eventBucketBase,
+                        eventWormBucketBase
                 )
         );
     }
