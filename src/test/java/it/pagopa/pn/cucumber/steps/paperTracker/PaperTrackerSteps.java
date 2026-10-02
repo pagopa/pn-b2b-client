@@ -156,8 +156,15 @@ public class PaperTrackerSteps {
                             .filter(t -> t.getEvents() != null)
                             .collect(Collectors.toMap(
                                     att -> {
-                                        int index = att.getAttemptId().lastIndexOf("_");
-                                        return Integer.parseInt(att.getAttemptId().substring(index + 1));
+                                        String attId = att.getAttemptId();
+                                        int index = attId != null ? attId.lastIndexOf("_") : -1;
+                                        if (index != -1) {
+                                            try {
+                                                return Integer.parseInt(attId.substring(index + 1));
+                                            } catch (NumberFormatException ignored) {
+                                            }
+                                        }
+                                        return 0;
                                     },
                                     t -> t.getEvents().stream()
                                             .map(pe -> new NotificationEvent(pe.getStatusCode(), createAttachmentUrls(pe.getAttachments(), Attachment::getUri), pe.getDeliveryFailureCause()))
