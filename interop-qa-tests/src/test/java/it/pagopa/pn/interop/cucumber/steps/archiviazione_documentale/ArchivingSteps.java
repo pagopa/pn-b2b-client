@@ -68,7 +68,7 @@ public class ArchivingSteps {
                 ArchivingClient.PollingSpecification.builder()
                         .centerTimestamp(context.getCenterTimestamp())
                         .timeoutMs(600_000)
-                        .pollIntervalMs(10_000)
+                        .pollIntervalMs(30_000)
                         .deltaSeconds(300)
                         .fileInfo(fileInfo)
                         .bucketRole(bucketRole)
