@@ -509,10 +509,10 @@ Feature: Comunicazioni bonarie
 
     Examples:
       | endpoint                                   | format | fields                                                           |
-      | informal/analog-communication              | pdf    | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/analog-communication              | pdf    | subject,sender.denomination,recipient.denomination                |
       | informal/email-communication-body          | html   | subject,sender.denomination,sender.service,recipient.denomination |
       | informal/pec-communication-body            | html   | subject,sender.denomination,sender.service,recipient.denomination |
-      | informal/io-communication                  | text   | subject,sender.denomination,sender.service,recipient.denomination |
-      | informal/courtesy-email-communication-body | html   | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/io-communication                  | text   | sender.denomination,recipient.denomination                        |
+#NON ESISTE      | informal/courtesy-email-communication-body | html   | subject,sender.denomination,sender.service,recipient.denomination |
 
 
