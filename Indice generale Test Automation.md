@@ -18618,54 +18618,176 @@ Dati Destinatario
 #### Notifica pagata
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[E2E-WF-INHIBITION-PAID-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline SCHEDULE_REFINEMENT. Il pagamento non deve generare un evento di timeline REFINEMENT.</summary>
+  <summary>[E2E-WF-POST-PAYMENT-1.1] Il pagamento non blocca il primo invio analogico (AR `@OK_AR`, 890 `@OK-CompiutaGiacenza_890`). Il pagamento avviene subito dopo l'accettazione.</summary>
 
 **Descrizione**
 
-:warning: _Ignored_
-
-1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
-3. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 4. l'avviso pagopa viene pagato correttamente
-5. si attende il corretto pagamento della notifica
-6. viene schedulato il perfezionamento per decorrenza termini per il caso `DIGITAL_SUCCESS_WORKFLOW`
-7. si attende che sia presente il perfezionamento per decorrenza termini
-8. viene verificato che l'elemento di timeline `REFINEMENT` non esista
+5. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+6. viene verificato che gli elementi di timeline `PREPARE_ANALOG_DOMICILE` e `SEND_ANALOG_DOMICILE` esistano
+7. viene verificato che `SEND_ANALOG_DOMICILE` al tentativo 0 sia successivo a `PAYMENT` (ingestionTimestamp)
+8. viene verificato che gli elementi di timeline `ANALOG_SUCCESS_WORKFLOW`, `SCHEDULE_REFINEMENT` e `REFINEMENT` esistano
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
 
 </details>
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline DIGITAL_FAILURE_WORKFLOW. Il pagamento non deve generare un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.</summary>
+  <summary>[E2E-WF-POST-PAYMENT-1.2] Il pagamento non blocca il secondo tentativo analogico (AR/890 `@FAIL-Discovery`). Il pagamento avviene dopo il primo invio e prima del secondo tentativo.</summary>
 
 **Descrizione**
 
-:warning: _Ignored_
-
-1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
-4. l'avviso pagopa viene pagato correttamente
-5. si attende il corretto pagamento della notifica
-6. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` non esista
-7. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` non esista
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` al tentativo 0 esista
+5. l'avviso pagopa viene pagato correttamente
+6. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+7. viene verificato che `PAYMENT` sia successivo al primo `SEND_ANALOG_DOMICILE` (ingestionTimestamp)
+8. viene verificato che `SEND_ANALOG_FEEDBACK` al tentativo 0 esista con esito KO
+9. viene verificato che `PREPARE_ANALOG_DOMICILE` e `SEND_ANALOG_DOMICILE` al tentativo 1 esistano
+10. viene verificato che `SEND_ANALOG_DOMICILE` al tentativo 1 sia successivo a `PAYMENT` (ingestionTimestamp)
+11. viene verificato che gli elementi di timeline `ANALOG_SUCCESS_WORKFLOW` e `REFINEMENT` esistano
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
 
 </details>
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[E2E-WF-INHIBITION-PAID-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. Viene effettuato il pagamento subito dopo che la notifica è stata accettata. Il pagamento non deve generare un evento di timeline SEND_ANALOG_DOMICILE.</summary>
+  <summary>[E2E-WF-POST-PAYMENT-1.3] Il pagamento non blocca la raccomandata semplice dopo il fallimento del workflow digitale (PEC `test@fail.it`, `@ok_RS`).</summary>
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. l'avviso pagopa viene pagato correttamente
-4. si attende il corretto pagamento della notifica
-5. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` non esista
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. l'avviso pagopa viene pagato correttamente
+5. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+6. dopo `SEND_DIGITAL_FEEDBACK` al tentativo 1 e `DIGITAL_DELIVERY_CREATION_REQUEST`, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+7. viene verificato che gli elementi di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` e `SEND_SIMPLE_REGISTERED_LETTER` esistano
+8. viene verificato che `SEND_SIMPLE_REGISTERED_LETTER` sia successivo a `PAYMENT` (ingestionTimestamp)
+9. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-2.1] La visualizzazione blocca il primo invio analogico anche con notifica pagata (AR `@OK_AR`, 890 `@ok_890`).</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. l'avviso pagopa viene pagato correttamente
+5. la notifica viene letta dal destinatario `Cristoforo Colombo`
+6. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+7. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+8. viene verificato che gli elementi di timeline `PREPARE_ANALOG_DOMICILE` e `ANALOG_SUCCESS_WORKFLOW` non esistano
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-2.2] La visualizzazione blocca il secondo tentativo analogico anche con notifica pagata (AR/890 `@FAIL-Discovery`). La visualizzazione avviene tra il primo invio e il suo esito.</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` al tentativo 0 esista
+5. l'avviso pagopa viene pagato correttamente
+6. la notifica viene letta dal destinatario `Cristoforo Colombo`
+7. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+8. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+9. viene verificato che `SEND_ANALOG_FEEDBACK` al tentativo 0 esista con esito KO e sia successivo a `NOTIFICATION_VIEWED` (precondizione)
+10. viene verificato che `PREPARE_ANALOG_DOMICILE` al tentativo 1 non esista
+11. viene verificato che esista un solo elemento di timeline `SEND_ANALOG_DOMICILE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-2.3] La visualizzazione blocca la raccomandata semplice anche con notifica pagata (PEC `test@fail.it`, `@ok_RS`). La visualizzazione avviene durante il workflow digitale.</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che `SEND_DIGITAL_FEEDBACK` con esito KO esista
+5. l'avviso pagopa viene pagato correttamente
+6. la notifica viene letta dal destinatario `Cristoforo Colombo`
+7. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+8. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+9. dopo `SEND_DIGITAL_FEEDBACK` al tentativo 1 e `DIGITAL_DELIVERY_CREATION_REQUEST`, viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista e sia successivo a `NOTIFICATION_VIEWED`
+10. viene verificato che gli elementi di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` e `SEND_SIMPLE_REGISTERED_LETTER` non esistano
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-3.1] L'annullamento blocca il primo invio analogico anche con notifica pagata (AR `@OK_AR`, 890 `@ok_890`).</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. l'avviso pagopa viene pagato correttamente
+5. la notifica viene annullata tramite codice IUN
+6. viene verificato che l'elemento di timeline `NOTIFICATION_CANCELLATION_REQUEST` esista
+7. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+8. viene verificato che gli elementi di timeline `PREPARE_ANALOG_DOMICILE` e `SEND_ANALOG_DOMICILE` non esistano
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-3.2] L'annullamento blocca il secondo tentativo analogico anche con notifica pagata (AR/890 `@FAIL-Discovery`). L'annullamento avviene tra il primo invio e il suo esito.</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` al tentativo 0 esista
+5. l'avviso pagopa viene pagato correttamente
+6. la notifica viene annullata tramite codice IUN
+7. viene verificato che l'elemento di timeline `NOTIFICATION_CANCELLATION_REQUEST` esista
+8. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+9. viene verificato che `SEND_ANALOG_FEEDBACK` al tentativo 0 esista con esito KO e sia successivo a `NOTIFICATION_CANCELLATION_REQUEST` (precondizione)
+10. viene verificato che `PREPARE_ANALOG_DOMICILE` al tentativo 1 non esista
+11. viene verificato che esista un solo elemento di timeline `SEND_ANALOG_DOMICILE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-POST-PAYMENT-3.3] L'annullamento blocca la raccomandata semplice anche con notifica pagata (PEC `test@fail.it`, `@ok_RS`). L'annullamento avviene durante il workflow digitale.</summary>
+
+**Descrizione**
+
+1. viene rimossa se presente la pec di piattaforma di `Mario Gherkin`
+2. viene generata una nuova notifica con destinatario `Cristoforo Colombo` e avviso pagoPA
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che `SEND_DIGITAL_FEEDBACK` con esito KO esista
+5. l'avviso pagopa viene pagato correttamente
+6. la notifica viene annullata tramite codice IUN
+7. viene verificato che l'elemento di timeline `NOTIFICATION_CANCELLATION_REQUEST` esista
+8. si attende il corretto pagamento della notifica (elemento di timeline `PAYMENT`)
+9. viene verificato che l'elemento di timeline `NOTIFICATION_CANCELLED` esista
+10. viene verificato che gli elementi di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` e `SEND_SIMPLE_REGISTERED_LETTER` non esistano
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
 
