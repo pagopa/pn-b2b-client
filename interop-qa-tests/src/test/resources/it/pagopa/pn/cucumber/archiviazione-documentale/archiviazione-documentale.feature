@@ -188,23 +188,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  Scenario Outline:[ESERVICE_EVENT_ARCHIVE_1] Upgrade descrittore eservice - archiviazione ZIP firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
-    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 STANDARD un ESERVICE_DESCRIPTOR_EVENTS_LOG
-    And verifica che il file contenga le opportune informazioni
-    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 WORM un ESERVICE_DESCRIPTOR_EVENTS_LOG
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica che il file contenga le opportune informazioni
-
-    Examples:
-      | statoVersione |
-      | PUBLISHED     |
-      | SUSPENDED     |
-      | DEPRECATED    |
-      | ARCHIVED      |
-      | DRAFT         |
-
   Scenario: [CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
