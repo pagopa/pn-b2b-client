@@ -1341,7 +1341,7 @@ Feature: Digital send e2e
 
 
   @mailRejected
-  Scenario Outline: [mailRejected_1] Controllo di ko permanente PF e PG
+  Scenario Outline: [TC_MAIL_REJECTED_1] Viene verificata la presenza di KO permanente in caso di indirizzo email non valido
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
