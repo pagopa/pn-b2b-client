@@ -368,8 +368,8 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
-  #@validazioneDeduplica
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_11] Validazione sulla deduplica VAS indirizzo estero
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_11] Validazione VAS indirizzo estero con citta non valorizzata
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -385,8 +385,8 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
-  #@validazioneDeduplica
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_12] Validazione sulla deduplica VAS indirizzo estero
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_12] Validazione VAS indirizzo estero con via non valorizzata
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -402,8 +402,8 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
-  #@validazioneDeduplica
-  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_13] Validazione sulla deduplica VAS indirizzo estero
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_13] Validazione VAS indirizzo estero con via e citta non valorizzate
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -418,6 +418,28 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | loadTimeline           | true                                 |
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+
+  @validazioneDeduplica
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_14] Validazione VAS multidestinatario con un indirizzo estero incompleto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF estero campi mancanti |
+      | taxId           | XVRLVC90A01H501P         |
+      | digitalDomicile | NULL                     |
+      | physicalAddress | NULL                     |
+    And destinatario
+      | denomination    | PF indirizzo valido |
+      | taxId           | FRMTTR76M06B715E    |
+      | digitalDomicile | NULL                |
+      | physicalAddress | NULL                |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline                | true                                                                     |
+      | details                     | NOT_NULL                                                                 |
+      | details_refusalReasons      | [{"recIndex": 0, "errorCode": "NOT_VALID_ADDRESS"}, {"recIndex": 1, "errorCode": "NOT_VALID_ADDRESS"}] |
 
 
 #  seguono test sulla deduplica su ANPR reale - solo ambiente UAT
@@ -437,5 +459,3 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
-
-
