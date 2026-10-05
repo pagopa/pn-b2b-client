@@ -25,6 +25,7 @@ import java.util.*;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateStepContext {
+    private String producerName;
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;

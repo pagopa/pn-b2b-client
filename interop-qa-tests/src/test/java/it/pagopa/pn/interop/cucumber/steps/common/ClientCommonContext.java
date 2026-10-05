@@ -21,6 +21,7 @@ import java.util.UUID;
 public class ClientCommonContext {
     private List<UUID> clients = new ArrayList<>();
     private List<UUID> users = new ArrayList<>();
+    private List<String> clientNames = new ArrayList<>();
     private List<DPoPTokenService.PreparedClient> preparedClients = new ArrayList<>();
 
     //Represents the public key uploaded to the client

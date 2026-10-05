@@ -906,6 +906,8 @@ Feature: Test API of e-service template
       | admin        | SUSPENDED | DOCUMENT  |
       | api          | SUSPENDED | DOCUMENT  |
       | api,security | SUSPENDED | DOCUMENT  |
+
+      # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11001
       | admin        | DRAFT     | INTERFACE |
       | api          | DRAFT     | INTERFACE |
       | api,security | DRAFT     | INTERFACE |
