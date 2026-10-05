@@ -139,7 +139,7 @@ public class AgreementSteps {
 
         UUID agreementId = dataPreparationService.createAndCheckAgreement(eserviceId, descriptorId);
 
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
     }
 
     @When("l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id {string}")
@@ -179,7 +179,7 @@ public class AgreementSteps {
 
     private void verifyAgreementState(AgreementState expectedState, String errorMessage) {
 
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
                 status -> status.is2xxSuccessful() &&
@@ -191,7 +191,7 @@ public class AgreementSteps {
 
     @When("l'utente tenta di ottenere la lista delle finalità correlate alla richiesta di fruizione")
     public void agreementPurposes() {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementPurposes(agreementId)),
                 status -> status.is2xxSuccessful() && !((Purposes) httpCallExecutor.getResponse()).getResults().isEmpty(),
@@ -226,7 +226,7 @@ public class AgreementSteps {
 
     @When("l'utente tenta di ottenere la lista dei documenti correlati alla richiesta di fruizione")
     public void agreementDocuments() {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getConsumerDocuments(agreementId)),
                 status -> status.is2xxSuccessful() && !((Documents) httpCallExecutor.getResponse()).getResults().isEmpty(),
@@ -293,7 +293,7 @@ public class AgreementSteps {
             sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
             delegationId,
             null);
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
     }*/
 
 }

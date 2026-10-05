@@ -77,8 +77,8 @@ public class TemplateEngineSteps {
         this.recipientType = recipientType;
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("context_recipientType", recipientType); // todo t mc.
-        parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        parameters.put("context_recipientType", recipientType);
+        parameters.put("recipient_recipientType", recipientType);
         parameters.put("recipientType", recipientType);
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
@@ -117,15 +117,20 @@ public class TemplateEngineSteps {
     public void verificoCheIlTemplateInFormato(String extentionFile) {
         Assertions.assertNull(templateFileException);
         Assertions.assertNotNull(result);
-        if(extentionFile.equals(".pdf")) {
-            Assertions.assertNotNull(result.getTemplateFileReturned());
-            Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
-        } else if (extentionFile.equals("html")){
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains("<html"));
-        } else if (extentionFile.equals("text")) {
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertFalse(result.getTemplateHtmlReturned().contains("<html"));
+        switch (extentionFile) {
+            case ".pdf" -> {
+                Assertions.assertNotNull(result.getTemplateFileReturned());
+                Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
+            }
+            case "html" -> {
+                Assertions.assertNotNull(result.getTemplateHtmlReturned());
+                Assertions.assertTrue(result.getTemplateHtmlReturned().contains("<html"));
+            }
+            case "text" -> {
+                Assertions.assertNotNull(result.getTemplateHtmlReturned());
+                Assertions.assertFalse(result.getTemplateHtmlReturned().contains("<html"));
+            }
+            default -> Assertions.fail("Formato template non supportato: " + extentionFile);
         }
     }
 
