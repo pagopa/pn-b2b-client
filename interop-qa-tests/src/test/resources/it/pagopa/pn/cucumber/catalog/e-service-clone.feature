@@ -5,7 +5,6 @@ Feature: Clonazione di un e-service
   @nrt-minimal
   @eservice_cloning1
   @nrt-minimal
-  @eservice_cloning1
   Scenario Outline: [ESERVICE_CLONING_1] Per un e-service che ha 2 descrittori, l'ultimo dei quali è in stato PUBLISHED/SUSPENDED, alla richiesta di clonazione, viene creato un nuovo e-service che ha un solo descrittore in stato DRAFT. Sia il nuovo e-service che il suo descrittore hanno esattamente le stesse caratteristiche dell'e-service e descrittore di partenza (ad eccezione del nome dell'e-service al quale viene aggiunto un " - clone" alla fine;
     Given l'utente è un "<ruolo>" di "<ente>"
     Given "<ente>" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -45,7 +44,7 @@ Feature: Clonazione di un e-service
       | ente | ruolo | statoDescrittore | risultato |
       | PA1  | admin | SUSPENDED        | 200       |
 
-  Scenario: [ESERVICE_CLONING_2] La clonazione di un e-service con un nome di lunghezza massima (60 caratteri) genera un nuovo e-service con un nome che non supera i 60 caratteri, aggiungendo al nome originale " - clone - " seguito dalla data e ora della clonazione;
+  Scenario: [ESERVICE_CLONING_2] La clonazione di un e-service con un nome di lunghezza massima (60 caratteri) genera un nuovo e-service con un nome che non supera i 60 caratteri, aggiungendo al nome originale ' - clone - ' seguito dalla data e ora della clonazione;
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'utente aggiorna il nome dell'e-service con un valore di lunghezza 60 caratteri
