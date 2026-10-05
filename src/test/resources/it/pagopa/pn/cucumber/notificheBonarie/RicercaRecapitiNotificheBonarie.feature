@@ -62,7 +62,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
-  @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON
+  @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON @informalSerchRnOFFON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_1_A] Come ente mittente invio una notifica bonaria verso PG specificando una pec speciale e il servizio utilizzerà quella di piattaforma
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -299,13 +299,13 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | iun    | auto                        |
       | param1 | AUD_COM_SEND_EMAIL_COURTESY |
 
-  @informalNotificationsSearchDigitalAddress @addressBook3 @informalSerchDigitalON
+  @informalNotificationsSearchDigitalAddress @addressBook3 @informalSerchDigitalON @informalSerchRnOFFON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_4] Come ente mittente invio una notifica bonaria verso PG con pec speciale e il servizio utilizzerà sercQ
     Given si predispone addressbook per l'utente "GherkinSrl"
     Then l'utente "GherkinSrl" "ACCETTA" i tos per sercq
     And l'utente "GherkinSrl" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "tullio.test@virgilio.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "GherkinSrl"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
@@ -357,7 +357,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_isAvailable          | true    |
       #| details_isTosAccepted        | false   |
 
-  @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON
+  @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchDigitalON @informalSerchRnOFFON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_5] Come ente mittente invio una notifica bonaria verso PG con solo pec speciale e il servizio utilizzerà la pec speciale
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | BonarieAllChannels       |
@@ -376,7 +376,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       #| details_isTosAccepted        | false   |
 
 
-  #@informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchRnOFF
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchRnOFF
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_01_6] Come ente mittente invio una notifica bonaria verso PG SENZA pec speciale, SENZA indirizzo di piattaforma, con config RN NON attiva.Il canale è skippato.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
@@ -394,7 +394,8 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | PEC |
-
+    And non è presente l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria con dettagli
+      | details_recIndex | 0 |
 
   @informalNotificationsSearchDigitalAddress @addressBook2 @informalSerchRnOFF
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_01_6] Come ente mittente invio una notifica bonaria verso PG SENZA pec speciale, SENZA indirizzo di piattaforma, con config RN NON attiva.La notifica è rifiutata.
@@ -464,7 +465,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "tullio.test@virgilio.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
@@ -727,7 +728,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAIL   |
+      | campaignId      | CampaignOnlyEMAIL  |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |

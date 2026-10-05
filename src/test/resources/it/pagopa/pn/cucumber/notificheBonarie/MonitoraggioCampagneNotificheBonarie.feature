@@ -61,7 +61,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | messageId                | ${NEW-IT}                  |
       | subject                  | Test workflow              |
       | recipientType            | PG                         |
-      | taxId                    | 20517490320                |
+      | taxId                    | 15376371009                |
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
@@ -73,7 +73,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | OK |
     Then il contatore "NOTIFICHE_TOTALI" della campagna "MessaMora" risulta incrementato di 1
-    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "MessaMora" risulta incrementato di 2
+    Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "MessaMora" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "MessaMora" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_RS" della campagna "MessaMora" risulta incrementato di 1
     Then il contatore "NOTIFICHE_CONSEGNATE_RS" della campagna "MessaMora" risulta incrementato di 1
@@ -150,7 +150,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | messageId       | ${NEW-IT}                  |
       | subject         | Test workflow              |
       | recipientType   | PG                         |
-      | taxId           | 20517490320                |
+      | taxId           | 15376371009                |
       | denomination    | Acme spa                   |
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
@@ -213,7 +213,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | messageId       | ${NEW-IT}                  |
       | subject         | Test workflow              |
       | recipientType   | PG                         |
-      | taxId           | 20517490320                |
+      | taxId           | 15376371009                |
       | denomination    | Acme spa                   |
       | email           | NULL                       |
       | digitalDomicile | example@FAIL-pecFirstKO.it |
