@@ -72,7 +72,7 @@ public class BFFDataPreparationService {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
         .enable(JsonParser.Feature.ALLOW_COMMENTS);
     private static final ResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
-    private static final String RISK_ANALYSIS_EXAMPLES_PATTERN = "classpath*:riskAnalysis/*.{json,jsonc}";
+    private static final String RISK_ANALYSIS_EXAMPLES_PATTERN = "classpath*:riskAnalysis/*";
 
     @Data
     @Builder
@@ -996,58 +996,44 @@ public class BFFDataPreparationService {
     }
 
     public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String tenantKind, @NonNull RiskAnalysisExample example) {
-        String expectedEnding = tenantKind + ".json";
+        String expectedFileName = "risk_analysis_%s_example_%s".formatted(example.getValue(), tenantKind);
+        return loadRiskAnalysisExample(expectedFileName, RiskAnalysisFormSeed.class,
+            "risk analysis example '%s' and tenantKind '%s'".formatted(example.getValue(), tenantKind));
+    }
+
+    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull RiskAnalysisExample example) {
+        String expectedFileName = "purpose_template_risk_analysis_%s_example_%s".formatted(example.getValue(), suffix);
+        return loadRiskAnalysisExample(expectedFileName, RiskAnalysisFormTemplateSeed.class,
+            "risk analysis template example '%s' and suffix '%s'".formatted(example.getValue(), suffix));
+    }
+
+    private <T> T loadRiskAnalysisExample(String expectedFileName, Class<T> targetType, String description) {
         try {
             List<Resource> matchingFiles = Arrays.stream(RESOURCE_RESOLVER.getResources(RISK_ANALYSIS_EXAMPLES_PATTERN))
                 .filter(resource -> {
                     String fileName = resource.getFilename();
                     return fileName != null
-                        && fileName.contains(example.getValue())
-                        && fileName.endsWith(expectedEnding);
+                        && ("json".equals(FilenameUtils.getExtension(fileName))
+                            || "jsonc".equals(FilenameUtils.getExtension(fileName)))
+                        && expectedFileName.equals(FilenameUtils.getBaseName(fileName));
                 })
                 .toList();
 
             if (matchingFiles.isEmpty()) {
-                throw new IllegalStateException("No risk analysis example matches example '%s' and tenantKind '%s'"
-                    .formatted(example.getValue(), tenantKind));
+                throw new IllegalStateException("No resource matches %s (expected basename '%s')"
+                    .formatted(description, expectedFileName));
             }
             if (matchingFiles.size() > 1) {
-                throw new IllegalStateException("Multiple risk analysis examples match example '%s' and tenantKind '%s': %s"
-                    .formatted(example.getValue(), tenantKind, matchingFiles));
+                throw new IllegalStateException("Multiple resources match %s (expected basename '%s'): %s"
+                    .formatted(description, expectedFileName, matchingFiles));
             }
 
             try (var inputStream = matchingFiles.get(0).getInputStream()) {
-                return OBJECT_MAPPER.readValue(inputStream, RiskAnalysisFormSeed.class);
+                return OBJECT_MAPPER.readValue(inputStream, targetType);
             }
         } catch (IOException exception) {
-            throw new UncheckedIOException("Unable to read risk analysis examples from classpath", exception);
-        }
-    }
-
-    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull RiskAnalysisExample example) {
-        String expectedFileName = "purpose_template_risk_analysis_%s_example_%s".formatted(example.getValue(), suffix);
-        try {
-            List<Resource> matchingFiles = Arrays.stream(RESOURCE_RESOLVER.getResources(RISK_ANALYSIS_EXAMPLES_PATTERN))
-                .filter(resource -> {
-                    String fileName = FilenameUtils.getBaseName(resource.getFilename());
-                    return fileName != null && fileName.equals(expectedFileName);
-                })
-                .toList();
-
-            if (matchingFiles.isEmpty()) {
-                throw new IllegalStateException("No risk analysis template example matches example '%s' and suffix '%s'"
-                    .formatted(example.getValue(), suffix));
-            }
-            if (matchingFiles.size() > 1) {
-                throw new IllegalStateException("Multiple risk analysis template examples match example '%s' and suffix '%s': %s"
-                    .formatted(example.getValue(), suffix, matchingFiles));
-            }
-
-            try (var inputStream = matchingFiles.get(0).getInputStream()) {
-                return OBJECT_MAPPER.readValue(inputStream, RiskAnalysisFormTemplateSeed.class);
-            }
-        } catch (IOException exception) {
-            throw new UncheckedIOException("Unable to read risk analysis template examples from classpath", exception);
+            throw new UncheckedIOException("Unable to read %s from classpath (expected basename '%s')"
+                .formatted(description, expectedFileName), exception);
         }
     }
 
