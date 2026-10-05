@@ -306,7 +306,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And l'utente "GherkinSrl" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "GherkinSrl"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
     #tos v3 xx
@@ -333,7 +333,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel | PEC |
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-managerxxx" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                        |
       | param1 | AUD_COM_SEND_EMAIL_COURTESY |
 
@@ -685,7 +685,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And l'utente "GherkinSrl" controlla l'accettazione "positiva" dei tos per sercq
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "GherkinSrl"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
       # tos v3 xx
@@ -727,7 +727,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     	        # tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | CampaignOnlyEMAI   |
+      | campaignId      | CampaignOnlyEMAIL   |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -1106,7 +1106,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
-  @informalNotificationsSearchDigitalAddress @useB2B @addressBook3 @informalSerchDigitalON
+  @informalNotificationsSearchDigitalAddress @addressBook3 @informalSerchDigitalON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_07_1_D] Come ente mittente invio una notifica bonaria verso PG CON n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "GherkinSrl"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -1294,6 +1294,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | email           | NULL               |
       | digitalDomicile | NULL               |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_RESPONSE" della notifica bonaria
     Then il destinatario CucumberSpa vede in timeline l'elemento "GET_ADDRESS" della notifica bonaria
     Then il destinatario CucumberSpa vede in timeline l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
