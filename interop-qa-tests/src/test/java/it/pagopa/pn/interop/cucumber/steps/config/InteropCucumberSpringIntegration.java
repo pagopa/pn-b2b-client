@@ -88,7 +88,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayServiceImpl;
+import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -205,6 +205,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         M2MV3EventMapperImpl.class,
         M2MV3AgreementClientImpl.class,
         M2MV3CertifiedAttributeClientImpl.class,
+        M2MV3CertifiedDiscreteAttributeClientImpl.class,
         M2MV3PurposeClientImpl.class,
         M2MV3EserviceClientImpl.class,
         M2MV3EServiceTemplateClientImpl.class,

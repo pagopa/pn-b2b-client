@@ -45,19 +45,19 @@ public class AgreementActivateSteps {
     @Given("{string} ha già sospeso quella richiesta di fruizione come {clientType}")
     public void tenantHasAlreadySuspendedThatRequest(String tenantType, ClientType status) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementId(), status);
+        dataPreparationService.suspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), status);
     }
 
     @Given("{string} ha già approvato quella richiesta di fruizione")
     public void tenantHasAlreadyAcceptedThatRequest(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementId(), null);
+        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
     @Given("{string} ha già riattivato quella richiesta di fruizione come {clientType}")
     public void tenantHasAlreadyUnsuspendedThatRequest(String tenantType, ClientType status) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementId(), status, null);
+        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), status, null);
     }
 
     @Given("l'ente {delegationRole} ha già approvato quella richiesta di fruizione")
@@ -65,7 +65,7 @@ public class AgreementActivateSteps {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
-        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @Given("l'ente {delegationRole} ha già riattivato quella richiesta di fruizione come {clientType}")
@@ -73,7 +73,7 @@ public class AgreementActivateSteps {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
         String token = identityService.getToken(tenant, null);
         clientTokenConfigurator.setBearerToken(token);
-        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementId(), status, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
+        dataPreparationService.unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), status, new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()));
     }
 
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string}")
@@ -85,6 +85,7 @@ public class AgreementActivateSteps {
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
 
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
 
         AttributeCommonContext attributeCommonContext = sharedStepsContext.getAttributeCommonContext();
 
@@ -204,7 +205,7 @@ public class AgreementActivateSteps {
 
         dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId,
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                sharedStepsContext.getAgreementId(), null);
+                sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
     @When("l'utente richiede una operazione di approvazione della richiesta di fruizione con id {string}")
@@ -240,7 +241,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementId(), null));
+                        .unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null));
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
@@ -251,7 +252,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .approveAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
+                        .approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
     }
 
     @When("l'ente {delegationRole} con id della delega {string} richiede una operazione di riattivazione di quella richiesta di fruizione")
@@ -261,7 +262,7 @@ public class AgreementActivateSteps {
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .unsuspendAgreement(sharedStepsContext.getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
+                        .unsuspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), new DelegationRef().delegationId(agreementResolver.resolveDelegationId(delegationId))));
     }
 
     @Given("due gruppi di due attributi certificati da {string}, dei quali {string} ne possiede uno per gruppo")
@@ -361,7 +362,7 @@ public class AgreementActivateSteps {
                 .map(group -> group.get(0))
                 .toList();
         for (UUID attributeId : attributeIdsToVerify) {
-            dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId, attributeId, sharedStepsContext.getAgreementId(), null);
+            dataPreparationService.assignVerifiedAttributeToTenant(consumerId, verifierId, attributeId, sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
         }
     }
 }

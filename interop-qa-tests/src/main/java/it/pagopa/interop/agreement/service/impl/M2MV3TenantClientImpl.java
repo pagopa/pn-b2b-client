@@ -10,6 +10,10 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevokers;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.TenantsApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributes;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateTenantCertifiedDiscreteAttributeSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.Map;
@@ -63,5 +67,26 @@ public class M2MV3TenantClientImpl extends AbstractDPoPClient implements IM2MV3T
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.tenantsApi.setApiClient(ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
+    }
+
+    @Override
+    public TenantCertifiedDiscreteAttribute assignTenantCertifiedDiscreteAttribute(UUID tenantId, TenantCertifiedDiscreteAttributeSeed tenantCertifiedDiscreteAttributeSeed) {
+
+        return this.tenantsApi.assignTenantCertifiedDiscreteAttribute(tenantId, tenantCertifiedDiscreteAttributeSeed);
+    }
+
+    @Override
+    public TenantCertifiedDiscreteAttributes getTenantCertifiedDiscreteAttributes(UUID tenantId, Integer offset, Integer limit) {
+        return this.tenantsApi.getTenantCertifiedDiscreteAttributes(tenantId, offset, limit);
+    }
+
+    @Override
+    public TenantCertifiedDiscreteAttribute revokeTenantCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId) {
+        return this.tenantsApi.revokeTenantCertifiedDiscreteAttribute(tenantId, attributeId);
+    }
+
+    @Override
+    public TenantCertifiedDiscreteAttribute replaceTenantCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId, UpdateTenantCertifiedDiscreteAttributeSeed updateTenantCertifiedDiscreteAttributeSeed) {
+        return this.tenantsApi.replaceTenantCertifiedDiscreteAttribute(tenantId, attributeId, updateTenantCertifiedDiscreteAttributeSeed);
     }
 }

@@ -38,7 +38,7 @@ public enum InteropEvent {
     CONSUMER_DELEGATION_REVOKED("ConsumerDelegationRevoked", Family.CONSUMER_DELEGATION),
     CLIENT_KEY_DELETED("ClientKeyDeleted", Family.KEY),
     DESCRIPTOR_ESERVICE_UPGRADED("DescriptorEServiceUpgraded", Family.ESERVICE),
-    CLIENT_DELETE("ClientDelete", Family.CLIENT),
+    CLIENT_DELETED("ClientDeleted", Family.CLIENT),
     CLIENT_KEY_ADDED("ClientKeyAdded", Family.KEY),
     RISK_ANALYSIS_TEMPLATE_DOCUMENT_GENERATED("RiskAnalysisTemplateDocumentGenerated", Family.PURPOSE_TEMPLATE),
     PURPOSE_TEMPLATE_SUSPENDED("PurposeTemplateSuspended", Family.PURPOSE_TEMPLATE),
