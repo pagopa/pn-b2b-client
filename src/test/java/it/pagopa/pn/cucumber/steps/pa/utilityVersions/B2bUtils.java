@@ -616,7 +616,7 @@ public abstract class B2bUtils {
                 Map.Entry<String, JsonNode> field = fields.next();
                 JsonNode value = field.getValue();
 
-                if (value.isTextual() && value.asText().trim().isEmpty()) {
+                if (value.isTextual() && value.asText().isEmpty()) {
                     objectNode.putNull(field.getKey());
                 } else {
                     normalize(value);
