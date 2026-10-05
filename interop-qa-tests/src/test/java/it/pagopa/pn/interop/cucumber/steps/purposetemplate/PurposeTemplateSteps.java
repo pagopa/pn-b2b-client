@@ -230,7 +230,8 @@ public class PurposeTemplateSteps {
         }
     }
 
-    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
+    @And("viene creato un nuovo purpose template destinato a enti {string} con handlePersonalData {bool}")
+    public PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
         return prepareCreationRequest(handlePersonalDataValue, null, targetTenantKind);
     }
 
