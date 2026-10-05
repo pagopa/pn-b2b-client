@@ -50,7 +50,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
   @purpose_creation_deliver1
   Scenario Outline: [CREAZIONE_FINALITA_DELIVER_INFORMATIVA_1] Un utente può specificare un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
     Given l'utente è un "admin" di "<ente>"
-    Given "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
     Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Then si ottiene status code 200

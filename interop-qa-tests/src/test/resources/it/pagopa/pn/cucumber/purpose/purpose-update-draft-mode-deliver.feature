@@ -22,19 +22,13 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
   @sad-path
   @nrt-minimal
   @purpose_update_draft_mode_deliver1
-  Scenario Outline: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_INFORMATIVA_1] Un utente può aggiornare una finalità in bozza indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
-    Given l'utente è un "admin" di "<ente>"
-    Given "PA2" ha già creato e pubblicato 1 e-service
-    Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    Given "<ente>" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+  Scenario: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_INFORMATIVA_1] Un utente può aggiornare una finalità in bozza indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
+    Given l'utente è un "admin" di "PA1"
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    Given "PA1" ha già creato 1 finalità in stato "DRAFT" per quell'eservice con flagPersonalData impostato a "true"
     When l'utente aggiorna quella finalità per quell'e-service in erogazione diretta indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Then si ottiene status code 200
-
-    Examples:
-      | ente    |
-      | PA1     |
-      | GSP     |
-      | Privato |
 
   @sad-path
   @nrt-minimal
