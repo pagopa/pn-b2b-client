@@ -9,6 +9,7 @@ import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 import org.springframework.http.HttpStatus;
 
 import java.util.Random;
@@ -59,7 +60,7 @@ public class PurposeCreationModeDeliverSteps {
         String tenantType = sharedStepsContext.getTenantType();
         UUID consumerId = identityService.getOrganizationId(tenantType);
         String kind = identityService.getKind(tenantType);
-        RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA);
+        RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
 
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(

@@ -12,6 +12,7 @@ import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 
 import java.util.UUID;
 
@@ -57,7 +58,7 @@ public class PurposeUpdateDraftModeDeliverSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getTenantType();
         String kind = identityService.getKind(tenantType);
-        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA);
+        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),

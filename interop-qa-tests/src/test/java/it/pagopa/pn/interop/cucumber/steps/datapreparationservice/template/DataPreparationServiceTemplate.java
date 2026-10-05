@@ -1,25 +1,39 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.agreement.domain.ClientType;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation.AddConsumerDocumentParams;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation.CreateAgreementParams;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.http.HttpStatus;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.*;
 import java.util.function.Function;
 
 @Slf4j
 public class DataPreparationServiceTemplate {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+        .enable(JsonParser.Feature.ALLOW_COMMENTS);
+    private static final ResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
+    private static final String RISK_ANALYSIS_EXAMPLES_PATTERN = "classpath*:riskAnalysis/*";
     private final PollingService pollingService;
     private final IHttpExecutor httpCallExecutor;
     private final CommonUtils commonUtils;
@@ -129,6 +143,48 @@ public class DataPreparationServiceTemplate {
         return performOperation(operation);
     }
 
+    public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String tenantKind, @NonNull RiskAnalysisExample example) {
+        String expectedFileName = "risk_analysis_%s_example_%s".formatted(example.getValue(), tenantKind);
+        return loadRiskAnalysisExample(expectedFileName, RiskAnalysisFormSeed.class,
+            "risk analysis example '%s' and tenantKind '%s'".formatted(example.getValue(), tenantKind));
+    }
+
+    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull RiskAnalysisExample example) {
+        String expectedFileName = "purpose_template_risk_analysis_%s_example_%s".formatted(example.getValue(), suffix);
+        return loadRiskAnalysisExample(expectedFileName, RiskAnalysisFormTemplateSeed.class,
+            "risk analysis template example '%s' and suffix '%s'".formatted(example.getValue(), suffix));
+    }
+
+    private <T> T loadRiskAnalysisExample(String expectedFileName, Class<T> targetType, String description) {
+        try {
+            List<Resource> matchingFiles = Arrays.stream(RESOURCE_RESOLVER.getResources(RISK_ANALYSIS_EXAMPLES_PATTERN))
+                .filter(resource -> {
+                    String fileName = resource.getFilename();
+                    return fileName != null
+                        && ("json".equals(FilenameUtils.getExtension(fileName))
+                            || "jsonc".equals(FilenameUtils.getExtension(fileName)))
+                        && expectedFileName.equals(FilenameUtils.getBaseName(fileName));
+                })
+                .toList();
+
+            if (matchingFiles.isEmpty()) {
+                throw new IllegalStateException("No resource matches %s (expected basename '%s')"
+                    .formatted(description, expectedFileName));
+            }
+            if (matchingFiles.size() > 1) {
+                throw new IllegalStateException("Multiple resources match %s (expected basename '%s'): %s"
+                    .formatted(description, expectedFileName, matchingFiles));
+            }
+
+            try (var inputStream = matchingFiles.get(0).getInputStream()) {
+                return OBJECT_MAPPER.readValue(inputStream, targetType);
+            }
+        } catch (IOException exception) {
+            throw new UncheckedIOException("Unable to read %s from classpath (expected basename '%s')"
+                .formatted(description, expectedFileName), exception);
+        }
+    }
+
     private void assertValidResponse() {
         commonUtils.assertValidResponse();
     }
@@ -152,4 +208,15 @@ public class DataPreparationServiceTemplate {
         return Optional.empty();
     }
 
+    @Getter
+    public enum RiskAnalysisExample {
+        PERSONAL_DATA("personal_data");
+
+        private final String value;
+
+        RiskAnalysisExample(String value) {
+            this.value = value;
+        }
+
+    }
 }

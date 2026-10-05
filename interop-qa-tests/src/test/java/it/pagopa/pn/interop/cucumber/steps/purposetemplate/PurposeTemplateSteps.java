@@ -37,7 +37,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA;
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.generateRiskAnalysisFormTemplateSeedFromFormSeed;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
