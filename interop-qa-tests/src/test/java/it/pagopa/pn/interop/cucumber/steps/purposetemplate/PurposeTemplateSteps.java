@@ -140,8 +140,9 @@ public class PurposeTemplateSteps {
     }
 
     @When("viene creato un nuovo purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
-    public void createPurposeTemplateWithUrl(String tenantKind) {
+    public void createPurposeTemplateWithUrl(String tenantType) {
         prepareCreationRequest(true);
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
         RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
         purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
         invokeCreatePurposeTemplate();

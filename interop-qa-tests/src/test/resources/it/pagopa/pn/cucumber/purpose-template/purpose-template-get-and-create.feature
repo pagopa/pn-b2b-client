@@ -22,9 +22,9 @@ Feature: finalità agevolata, purpose template GET
     Then si ottiene lo status code 200
     Examples:
       | kind    |
-      | PA      |
+      | PA1     |
       | GSP     |
-      | PRIVATE |
+      | Privato |
 
   #2
   @purposeTemplate @purposeTemplateGet
