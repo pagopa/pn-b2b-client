@@ -347,7 +347,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.A2] Vengono inviate due notifiche bonarie con esiti differenti
   e si recuperano le notifiche inviate dal mittente filtrando per lista di stati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | Reminder                       |
+      | campaignId      | QADigital                      |
       | messageId       | ${NEW-IT}                      |
       | subject         | Test workflow                  |
       | recipientType   | PF                             |
@@ -355,18 +355,18 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-      | phone_number    | +3900000                       |
+      | phone_number    | NULL                           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che la notifica bonaria passi in stato "COMPLETED_UNREACHED"
 
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | Reminder                          |
+      | campaignId      | QADigital                         |
       | messageId       | ${NEW-IT}                         |
       | subject         | Test workflow                     |
       | recipientType   | PF                                |
       | taxId           | FRMTTR76M06B715E                  |
       | denomination    | Ettore Fieramosca                 |
-      | email           | complaint@simulator.amazonses.com |
+      | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                              |
       | phone_number    | +39001                            |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
@@ -376,20 +376,20 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)                        |
       | endDate    | $DATE_ADD(1D)                         |
-      | campaignId | Reminder                              |
+      | campaignId | QADigital                              |
       | listStatus | COMPLETED_UNREACHED;COMPLETED_REACHED |
       | senderId   | :informal_senderId                    |
       | size       | 50                                    |
       | delivered  | NULL                                  |
     And l'elenco delle notifiche recuperate dalla PA rispettare i seguenti criteri:
-      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D) |
+      | sentAt             | $DATE_ADD(-1D), $DATE_ADD(1D)         |
       | notificationStatus | COMPLETED_REACHED;COMPLETED_UNREACHED |
 
     #    ricerca per specifico stato
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | startDate  | $DATE_ADD(-1D)            |
       | endDate    | $DATE_ADD(1D)             |
-      | campaignId | Reminder                  |
+      | campaignId | QADigital                  |
       | listStatus | COMPLETED_REACHED;REFUSED |
       | senderId   | :informal_senderId        |
       | size       | 50                        |
