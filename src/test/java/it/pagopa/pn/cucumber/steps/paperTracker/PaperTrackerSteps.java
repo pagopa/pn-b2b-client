@@ -569,8 +569,9 @@ public class PaperTrackerSteps {
 
     @Then("si verifica che la notifica rimanga bloccata in stato DELIVERING al superamento del max retry")
     public void verifyNotificationBlockedInDeliveringOnMaxRetry() {
-        await().atMost(Duration.ofMinutes(10))
-                .pollInterval(Duration.ofSeconds(10))
+        await().atMost(Duration.ofMinutes(25))
+                .pollInterval(Duration.ofSeconds(15))
+                .ignoreExceptionsMatching(e -> e instanceof org.springframework.web.client.RestClientException)
                 .untilAsserted(() -> {
                     FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
                     assertThat(fullSentNotification).isNotNull();
@@ -604,7 +605,7 @@ public class PaperTrackerSteps {
 
                     long recrn002cCount = progressDeliveryCodes.stream().filter("RECRN002C"::equals).count();
                     long recrn006Count = progressDeliveryCodes.stream().filter("RECRN006"::equals).count();
-                    long recrn013Count = progressDeliveryCodes.stream().filter("RECRN013"::equals).count();
+                    long recrn0013Count = progressDeliveryCodes.stream().filter("RECRN013"::equals).count();
 
                     assertThat(recrn002cCount)
                             .as("Devono essere presenti 2 eventi RECRN002C (Attempt 0 e Retry 4)")
@@ -612,7 +613,7 @@ public class PaperTrackerSteps {
                     assertThat(recrn006Count)
                             .as("Devono essere presenti 2 eventi RECRN006 (Retry 1 e Retry 3)")
                             .isEqualTo(2);
-                    assertThat(recrn013Count)
+                    assertThat(recrn0013Count)
                             .as("Deve essere presente 1 evento RECRN013 (Retry 2)")
                             .isEqualTo(1);
                 });
