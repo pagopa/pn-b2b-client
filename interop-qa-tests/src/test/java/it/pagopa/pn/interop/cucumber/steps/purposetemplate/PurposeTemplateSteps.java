@@ -37,6 +37,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.RiskAnalysisExample.PERSONAL_DATA;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.generateRiskAnalysisFormTemplateSeedFromFormSeed;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
@@ -135,6 +136,14 @@ public class PurposeTemplateSteps {
     @When("viene creato un nuovo purpose template")
     public void createPurposeTemplate() {
         prepareCreationRequest(false);
+        invokeCreatePurposeTemplate();
+    }
+
+    @When("viene creato un nuovo purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeTemplateWithUrl(String tenantKind) {
+        prepareCreationRequest(true);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
         invokeCreatePurposeTemplate();
     }
 

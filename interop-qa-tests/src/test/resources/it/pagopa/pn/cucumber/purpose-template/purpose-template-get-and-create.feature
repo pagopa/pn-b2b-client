@@ -15,6 +15,17 @@ Feature: finalità agevolata, purpose template GET
       | support  |
       | security |
 
+  @purposeTemplate @purposeTemplateCreate
+  Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_URL] Creazione di una finalità agevolata indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Given l'utente è un "admin" di "PA1"
+    When viene creato un nuovo purpose template destinato a enti "<kind>" indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene lo status code 200
+    Examples:
+      | kind    |
+      | PA      |
+      | GSP     |
+      | PRIVATE |
+
   #2
   @purposeTemplate @purposeTemplateGet
   Scenario Outline: [PURPOSE_TEMPLATE_GET_CATALOG] Recupero di tutte le finalità agevolata, con possibilità di specificare filtri per la ricerca (OK)
