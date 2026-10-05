@@ -21,7 +21,7 @@ public class AddressManagerServiceImpl implements AddressManagerService {
     private final String xApiKey;
 
     public AddressManagerServiceImpl(RestTemplate restTemplate,
-                                     @Value("${pn.address.manager-url}") String basePath,
+                                     @Value("${pn.address.manager.url}") String basePath,
                                      @Value("${pn.address.manager.cxId}") String cxId,
                                      @Value("${pn.address.manager.api-key}") String apiKey) {
         this.pnAddressManagerCxId = cxId;
