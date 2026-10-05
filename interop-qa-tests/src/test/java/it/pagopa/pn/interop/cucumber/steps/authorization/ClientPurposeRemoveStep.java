@@ -61,7 +61,9 @@ public class ClientPurposeRemoveStep {
     public void removePurposeFromClient(String role, String tenant) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(tenant, role));
         httpCallExecutor.performCall(() -> authorizationClient.removeClientPurpose(
-                sharedStepsContext.getClientCommonContext().getFirstClient(), UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())));
+                sharedStepsContext.getClientCommonContext().getFirstClient(),
+                UUID.fromString(sharedStepsContext.getPurposeId())
+        ));
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 
