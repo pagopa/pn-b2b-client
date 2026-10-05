@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Trac
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperTrackerClient;
@@ -57,6 +58,7 @@ import java.util.stream.Stream;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PREPARE_ANALOG_DOMICILE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PREPARE_SIMPLE_REGISTERED_LETTER;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.REFINEMENT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_FEEDBACK;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
@@ -563,5 +565,56 @@ public class PaperTrackerSteps {
         boolean hasRetry = response != null && response.getTrackings() != null && response.getTrackings().stream()
                 .anyMatch(t -> t.getTrackingId() != null && !t.getTrackingId().endsWith(".PCRETRY_0"));
         assertThat(hasRetry).as("Non deve essere generato alcun retry per la notifica").isFalse();
+    }
+
+    @Then("si verifica che la notifica rimanga bloccata in stato DELIVERING al superamento del max retry")
+    public void verifyNotificationBlockedInDeliveringOnMaxRetry() {
+        await().atMost(Duration.ofMinutes(10))
+                .pollInterval(Duration.ofSeconds(10))
+                .untilAsserted(() -> {
+                    FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
+                    assertThat(fullSentNotification).isNotNull();
+                    assertThat(fullSentNotification.getNotificationStatus())
+                            .as("Lo stato della notifica deve essere DELIVERING")
+                            .isEqualTo(NotificationStatusV26.DELIVERING);
+
+                    List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
+                    assertThat(timeline).as("Timeline non deve essere nulla").isNotNull();
+
+                    // 1. Verificare che non sia presente REFINEMENT né SEND_ANALOG_FEEDBACK
+                    boolean hasRefinementOrFeedback = timeline.stream().anyMatch(te ->
+                            REFINEMENT.equals(te.getCategory().getValue()) ||
+                            SEND_ANALOG_FEEDBACK.equals(te.getCategory().getValue())
+                    );
+                    assertThat(hasRefinementOrFeedback)
+                            .as("La notifica non deve contenere eventi di FEEDBACK o REFINEMENT")
+                            .isFalse();
+
+                    // 2. Verificare che su pn-Timelines siano presenti tutti gli eventi di failure dei 5 tentativi:
+                    // Attempt 0: RECRN002C (M10)
+                    // Retry 1: RECRN006 (Furto/Smarrimento F01)
+                    // Retry 2: RECRN013 (Non rendicontabile)
+                    // Retry 3: RECRN006 (Furto/Smarrimento F01)
+                    // Retry 4: RECRN002C (M10 - 5° tentativo finale che esaurisce i retry)
+                    List<String> progressDeliveryCodes = timeline.stream()
+                            .filter(te -> SEND_ANALOG_PROGRESS.equals(te.getCategory().getValue()))
+                            .map(te -> te.getDetails() != null ? te.getDetails().getDeliveryDetailCode() : null)
+                            .filter(Objects::nonNull)
+                            .toList();
+
+                    long recrn002cCount = progressDeliveryCodes.stream().filter("RECRN002C"::equals).count();
+                    long recrn006Count = progressDeliveryCodes.stream().filter("RECRN006"::equals).count();
+                    long recrn013Count = progressDeliveryCodes.stream().filter("RECRN013"::equals).count();
+
+                    assertThat(recrn002cCount)
+                            .as("Devono essere presenti 2 eventi RECRN002C (Attempt 0 e Retry 4)")
+                            .isEqualTo(2);
+                    assertThat(recrn006Count)
+                            .as("Devono essere presenti 2 eventi RECRN006 (Retry 1 e Retry 3)")
+                            .isEqualTo(2);
+                    assertThat(recrn013Count)
+                            .as("Deve essere presente 1 evento RECRN013 (Retry 2)")
+                            .isEqualTo(1);
+                });
     }
 }

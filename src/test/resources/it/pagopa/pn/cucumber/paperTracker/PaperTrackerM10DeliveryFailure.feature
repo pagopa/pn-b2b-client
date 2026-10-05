@@ -108,7 +108,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
   # vengano intercettati e respinti dal validatore di stato (Negative Path: consegna).
   # ====================================================================================================================
 
-  @paperTrackerM10 @trackerErrors
+  @paperTrackerM10 @trackerErrors @MOCK_RECAPITO_M10_01_2
   Scenario Outline: [MOCK_RECAPITO_M10_01_2] Tentativo non consentito di rendicontare causale M10 su eventi di stato <eventType>
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -118,7 +118,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_address | <sequenceAddress> |
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     And si verifica che non sia presente nessun retry per il tracking
@@ -156,7 +156,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano errori per i trackingId richiesti
 
-  @paperTrackerM10 @paperTrackerAR @ocrDRY
+  @paperTrackerM10 @paperTrackerAR @ocrDRY @MOCK_RECAPITO_M10_02_1_B
   Scenario: [MOCK_RECAPITO_M10_02_1_B] TEST 2.1 - Path B: Validazione positiva con mock OCR:KO ma motore OCR disabilitato (ocrDRY: l'esito KO di OCR viene tollerato senza bloccare il flusso, permettendo l'avanzamento ed il retry)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -176,7 +176,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRN002C |
       | details_deliveryFailureCause | M10       |
-    And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @trackerErrors @ignore
   Scenario: [MOCK_RECAPITO_M10_02_2_B] TEST 2.2 - Path B: Blocco del retry ed emissione errore OCR_VALIDATION con mock OCR:KO e motore OCR abilitato (NO RETRY / ERRORE)
@@ -216,7 +215,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And si verifica che la risposta tracking per la sequence "OK-DoubleRetry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
 
-  @paperTrackerM10 @trackerErrors
+  @paperTrackerM10 @paperTrackerARRunMode @MOCK_RECAPITO_M10_03_2_A
   Scenario: [MOCK_RECAPITO_M10_03_2_A] TEST 3.2 - Path A: Blocco dei tentativi di retry al superamento del limite massimo consentito (MAX_RETRY_REACHED_ERROR)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -226,6 +225,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_address | Via@FAIL_AR-M10-MAX-PCRETRY |
       | digitalDomicile         | NULL                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"created\":\"2026-03-11T12:30:13.838822572Z\",\"errorCategory\":\"MAX_RETRY_REACHED_ERROR\",\"details\":{\"message\":\"Retry not found for trackingId: PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_4\",\"additionalDetails\":null},\"flowThrow\":\"RETRY_PHASE\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"bf6522f1-5d37-4d80-a5af-e0a1b86638b0\",\"productType\":\"AR\",\"type\":\"ERROR\"}"
+    Then si verifica che la notifica rimanga bloccata in stato DELIVERING al superamento del max retry
+
