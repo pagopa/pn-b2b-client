@@ -12,7 +12,7 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
 
   @MOCK_IO_SUBMIT_02_1_B
   Scenario: [MOCK_IO_SUBMIT_02_1_B] Routing trasparente a IO reale per richiesta con subject ordinario privo di marker
-    Given una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist "PLVLRT86R24Z112H"
+    Given una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist "${pn.io-mock.real-routing.tax-id}"
     When viene richiesta la sottomissione del messaggio
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 

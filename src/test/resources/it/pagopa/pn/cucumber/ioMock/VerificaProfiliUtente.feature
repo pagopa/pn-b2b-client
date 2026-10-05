@@ -12,7 +12,7 @@ Feature: Verifica e Routing dei Profili Utente App IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_B
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_B] Destinatario abilitato per inoltro trasparente verso IO reale
-    Given un destinatario abilitato al routing reale "PLVLRT86R24Z112H"
+    Given un destinatario abilitato al routing reale "${pn.io-mock.real-routing.tax-id}"
     When viene richiesta la verifica del profilo utente
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 

@@ -31,12 +31,47 @@ public class IOMockMessagesSteps {
     private final IoMockScenarioContext context;
     private final IOMockCommonSteps commonSteps;
     private final ObjectMapper objectMapper;
+    private final org.springframework.core.env.Environment environment;
 
     @Autowired
-    public IOMockMessagesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, ObjectMapper objectMapper) {
+    public IOMockMessagesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, ObjectMapper objectMapper, org.springframework.core.env.Environment environment) {
         this.context = context;
         this.commonSteps = commonSteps;
         this.objectMapper = objectMapper;
+        this.environment = environment;
+    }
+
+    private String resolveFiscalCode(String rawFiscalCode) {
+        if (rawFiscalCode == null || rawFiscalCode.isBlank()) {
+            return rawFiscalCode;
+        }
+        String trimmed = rawFiscalCode.trim();
+        String resolved = null;
+        if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
+            resolved = environment.resolvePlaceholders(trimmed);
+        } else if (trimmed.startsWith("$")) {
+            String propKey = trimmed.substring(1);
+            resolved = environment.getProperty(propKey);
+        } else {
+            resolved = environment.getProperty(trimmed);
+        }
+        if (resolved == null || resolved.isBlank()) {
+            resolved = StringUtils.resolveValue(trimmed);
+        }
+        if (resolved != null) {
+            resolved = resolved.trim();
+            if (resolved.startsWith("[") && resolved.endsWith("]")) {
+                try {
+                    JsonNode node = objectMapper.readTree(resolved);
+                    if (node.isArray() && !node.isEmpty()) {
+                        resolved = node.get(0).asText();
+                    }
+                } catch (Exception e) {
+                    resolved = resolved.replaceAll("[\\[\\]\"']", "").split(",")[0].trim();
+                }
+            }
+        }
+        return resolved;
     }
 
     //-----------------------------------------------------------------------------------------
@@ -54,7 +89,7 @@ public class IOMockMessagesSteps {
 
     @Given("una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist {string}")
     public void prepareMessageRequestWithoutMarker(String whitelistFiscalCode) {
-        String resolvedFiscalCode = StringUtils.resolveValue(whitelistFiscalCode);
+        String resolvedFiscalCode = resolveFiscalCode(whitelistFiscalCode);
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withFiscalCode(resolvedFiscalCode)
                 .withSubject("Notifica ordinaria senza marker")
@@ -68,7 +103,7 @@ public class IOMockMessagesSteps {
 
     @Given("una richiesta di invio messaggio con subject ordinario senza marker per destinatario ordinario {string}")
     public void prepareMessageRequestWithoutMarkerForOrdinaryRecipient(String ordinaryFiscalCode) {
-        String resolvedFiscalCode = StringUtils.resolveValue(ordinaryFiscalCode);
+        String resolvedFiscalCode = resolveFiscalCode(ordinaryFiscalCode);
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withFiscalCode(resolvedFiscalCode)
                 .withSubject("Notifica ordinaria senza marker")

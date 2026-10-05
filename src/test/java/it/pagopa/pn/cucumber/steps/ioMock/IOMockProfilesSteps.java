@@ -1,5 +1,7 @@
 package it.pagopa.pn.cucumber.steps.ioMock;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -24,12 +26,14 @@ public class IOMockProfilesSteps {
     private final IoMockScenarioContext context;
     private final IOMockCommonSteps commonSteps;
     private final org.springframework.core.env.Environment environment;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public IOMockProfilesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, org.springframework.core.env.Environment environment) {
+    public IOMockProfilesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, org.springframework.core.env.Environment environment, ObjectMapper objectMapper) {
         this.context = context;
         this.commonSteps = commonSteps;
         this.environment = environment;
+        this.objectMapper = objectMapper;
     }
 
     private String resolveFiscalCode(String rawFiscalCode) {
@@ -37,21 +41,32 @@ public class IOMockProfilesSteps {
             return rawFiscalCode;
         }
         String trimmed = rawFiscalCode.trim();
+        String resolved = null;
         if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
-            return environment.resolvePlaceholders(trimmed);
-        }
-        if (trimmed.startsWith("$")) {
+            resolved = environment.resolvePlaceholders(trimmed);
+        } else if (trimmed.startsWith("$")) {
             String propKey = trimmed.substring(1);
-            String val = environment.getProperty(propKey);
-            if (val != null && !val.isBlank()) {
-                return val;
+            resolved = environment.getProperty(propKey);
+        } else {
+            resolved = environment.getProperty(trimmed);
+        }
+        if (resolved == null || resolved.isBlank()) {
+            resolved = StringUtils.resolveValue(trimmed);
+        }
+        if (resolved != null) {
+            resolved = resolved.trim();
+            if (resolved.startsWith("[") && resolved.endsWith("]")) {
+                try {
+                    JsonNode node = objectMapper.readTree(resolved);
+                    if (node.isArray() && !node.isEmpty()) {
+                        resolved = node.get(0).asText();
+                    }
+                } catch (Exception e) {
+                    resolved = resolved.replaceAll("[\\[\\]\"']", "").split(",")[0].trim();
+                }
             }
         }
-        String direct = environment.getProperty(trimmed);
-        if (direct != null && !direct.isBlank()) {
-            return direct;
-        }
-        return StringUtils.resolveValue(trimmed);
+        return resolved;
     }
 
     //-----------------------------------------------------------------------------------------
