@@ -842,8 +842,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
-    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
-    ha superato la soglia massima consentita dall'erogatore pari a 10 chiamate API giornaliere.
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché è stata superata la soglia per fruitore di chiamate API. La finalità dovrà essere approvata dall'erogatore.
     """
 
   Scenario: [Notifica soglia personalizzata fruitore superata] La soglia giornaliera personalizzata per fruitore definita nell'attributo certificato è stata superata
@@ -860,8 +860,8 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
-    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)"
-    ha superato la soglia massima consentita dall'erogatore pari a 10 chiamate API giornaliere.
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché è stata superata la soglia per fruitore di chiamate API. La finalità dovrà essere approvata dall'erogatore.
     """
 
   Scenario: [Notifica soglie fruitore e totali superate] La soglia giornaliera per fruitore e quella totale definite nell'e-service sono state superate
