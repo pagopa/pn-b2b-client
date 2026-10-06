@@ -42,7 +42,7 @@ Feature: Allineamento linee guida
       | false            |
 
   @llgg
-  Scenario Outline: [LLGG_2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData
+  Scenario Outline: [LLGG_2] Creazione e-service in modalità 'RECEIVE' con diverse combinazioni di flagPersonalData
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<eServicePersonalDataFlag>"
     Then si ottiene status code 200
@@ -50,7 +50,7 @@ Feature: Allineamento linee guida
     When l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a "<riskAnalysisPersonalDataFlag>"
     Then si ottiene status code <statusCodeRiskAnalysis>
     Given "PA1" ha già caricato un'interfaccia per quel descrittore
-    When l'utente pubblica quel descrittore
+    When l'utente tenta di pubblicare quel descrittore
     Then si ottiene status code <descriptorStatusCode>
 
     Examples:

@@ -177,6 +177,15 @@ public class DescriptorPublicationSteps {
                 sharedStepsContext.getEServicesCommonContext());
     }
 
+    @When("l'utente tenta di pubblicare quel descrittore")
+    public void userTriesToPublishDescriptor() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        var context = sharedStepsContext.getEServicesCommonContext();
+        sharedStepsContext.getHttpCallExecutor().performCall(() ->
+            clientTokenConfigurator.getEServiceClient().publishDescriptor(context.getEserviceId(), context.getDescriptorId())
+        );
+    }
+
     @When("l'utente ha pubblicato l'e-service")
     public void userHasPublishedEService() {
         userPublishDescriptor();
