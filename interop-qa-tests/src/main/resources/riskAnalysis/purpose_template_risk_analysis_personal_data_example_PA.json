@@ -12,7 +12,8 @@
         "values": [],
         "editable": false,
         "suggestedValues": [
-          "asasdasdasd"
+          "asasdasdasd",
+          "Answer1"
         ]
       },
       "usesPersonalData": {
@@ -68,7 +69,8 @@
         "values": [],
         "editable": false,
         "suggestedValues": [
-          "www.info.it"
+          "www.info.it",
+          "www.altrapolicy.it"
         ]
       },
       "confirmPricipleIntegrityAndDiscretion": {

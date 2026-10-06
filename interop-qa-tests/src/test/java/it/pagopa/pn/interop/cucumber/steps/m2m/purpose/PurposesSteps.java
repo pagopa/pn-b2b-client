@@ -18,6 +18,8 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeCommonContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
@@ -26,6 +28,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
@@ -46,12 +49,14 @@ public class PurposesSteps {
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final int newDailyCalls = 50;
+    private final M2MDataPreparationService dataPreparationService;
 
     private final PurposePatchOperationsAssistant purposePatchAssistant;
     private final ReversePurposePatchOperationsAssistant reversePurposePatchAssistant;
 
     public PurposesSteps(ClientTokenConfigurator clientTokenConfigurator,
                          SharedStepsContext sharedStepsContext,
+                         M2MDataPreparationService dataPreparationService,
                          PurposePatchOperationsAssistant purposePatchAssistant,
                          ReversePurposePatchOperationsAssistant reversePurposePatchAssistant) {
         this.clientTokenConfigurator = clientTokenConfigurator;
@@ -60,6 +65,7 @@ public class PurposesSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.bffPurposeClient = clientTokenConfigurator.getPurposeApiClient();
+        this.dataPreparationService = dataPreparationService;
         this.purposePatchAssistant = purposePatchAssistant;
         this.reversePurposePatchAssistant = reversePurposePatchAssistant;
     }
@@ -545,6 +551,27 @@ public class PurposesSteps {
                 .title("patched title - " + UUID.randomUUID())
                 .build();
         reversePurposePatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente m2m crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeWithPolicyURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getM2mPurposeClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(true)
+                                .freeOfChargeReason("free of charge - QA")
+                                .dailyCalls(49)
+                                .riskAnalysisForm(riskAnalysisByExample)
+                )
+        );
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {

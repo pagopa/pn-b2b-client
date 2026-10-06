@@ -1004,3 +1004,18 @@ Feature: Gestione purposes attraverso APIs M2M V2
     When "GSP" con ruolo m2m-admin tenta di effettuare la modifica parziale della finalità dell'e-service ad erogazione inversa
     Then si ottiene lo status code 403
     And la finalità non ha subito modifiche
+
+  Scenario Outline: [M2MG_PURPOSES_CREATE_01] Un utente può specificare un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
+    Given l'utente è un "admin" di "<ente>"
+    And "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente è un "admin" di "<ente>" con ruolo M2M m2m-admin
+    And l'utente m2m crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene status code 200
+
+    @happy-path
+    Examples:
+      | ente    |
+      | PA1     |
+      | GSP     |
+      | Privato |

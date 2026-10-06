@@ -23,6 +23,7 @@ public interface M2MVersionsMapper {
     Purposes mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purposes bean);
     PurposeVersion mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersion bean);
     PurposeVersions mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersions bean);
+    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeSeed mapToV3(PurposeSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersionSeed mapToV3(PurposeVersionSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersionState mapToV3(PurposeVersionState bean);
     List<it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeVersionState> mapToPStateV3(List<PurposeVersionState> bean);
