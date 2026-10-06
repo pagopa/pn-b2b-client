@@ -21,7 +21,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | denomination             | Ettore Fieramosca                       |
       | email                    | suppressionlist@simulator.amazonses.com |
       | digitalDomicile          | NULL                                    |
-      | physical_address_address | Via@OK_RIS                              |
+      | physical_address_address | Via@OK_RS                              |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
@@ -65,7 +65,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RIS                 |
+      | physical_address_address | Via@ok_RS                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria

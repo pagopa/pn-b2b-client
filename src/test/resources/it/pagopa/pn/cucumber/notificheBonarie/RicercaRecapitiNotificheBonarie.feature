@@ -539,7 +539,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     #And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     #And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "tullio.test@virgilio.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
