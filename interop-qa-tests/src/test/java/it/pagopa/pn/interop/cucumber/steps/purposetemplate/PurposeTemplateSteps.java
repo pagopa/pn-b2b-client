@@ -18,6 +18,7 @@ import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.ParameterTypesInterop.ResourceState;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
@@ -26,6 +27,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
@@ -37,9 +39,9 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.generateRiskAnalysisFormTemplateSeedFromFormSeed;
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
@@ -144,6 +146,20 @@ public class PurposeTemplateSteps {
         prepareCreationRequest(true);
         String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
         RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
+        invokeCreatePurposeTemplate();
+    }
+
+    @When("viene creato un nuovo purpose template destinato a enti {string} indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali")
+    public void createPurposeTemplateWithEditablePolicy(String tenantType) {
+        prepareCreationRequest(true);
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        templateSeed.getAnswers().get("policyProvided").setValues(Collections.emptyList());
+        templateSeed.getAnswers().get("policyProvided").setEditable(true);
+        templateSeed.getAnswers().get("policyProvided").setSuggestedValues(Collections.emptyList());
+        templateSeed.getAnswers().remove("policyProvidedMedium");
+        templateSeed.getAnswers().remove("policyProvidedOnlineLink");
         purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
         invokeCreatePurposeTemplate();
     }
@@ -1340,6 +1356,32 @@ public class PurposeTemplateSteps {
         sharedStepsContext.getPurposeTemplateContext().setUpdatedAt(OffsetDateTime.now());
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
         patchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void patchPurposeTemplateWithURLPolicy() {
+        RandomStringUtils randomUtils = RandomStringUtils.insecure();
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+         RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+         Map<String, List<String>> answers = new HashMap<>();
+         answers.put("institutionalPurpose", List.of("Answer1"));
+         answers.put("policyProvided", List.of("YES"));
+         answers.put("policyProvidedMedium", List.of("ONLINE"));
+         answers.put("policyProvidedOnlineLink", List.of("www.altrapolicy-%s.it".formatted(randomUtils.nextAlphanumeric(3))));
+
+         riskAnalysisForm.setAnswers(answers);
+         httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().patchPurposeFromTemplate(
+                        sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId(),
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                        new PatchPurposeUpdateFromTemplateContent()
+                                .title("some new title - " + randomUtils.nextAlphanumeric(3))
+                                .riskAnalysisForm(riskAnalysisForm)
+                                .dailyCalls(49)
+                )
+        );
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")
