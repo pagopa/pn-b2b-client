@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -200,10 +201,15 @@ public class PnWebUserAttributesInternalClientImpl implements IPnWebUserAttribut
     }
 
     public Consent getConsentByType(ConsentType consentType, String version) throws RestClientException {
-        List<BffConsent> bffConsents = this.consentsApi.getTosPrivacyV2(List.of(
+        return getConsentByTypeWithHttpInfo(consentType, version).getBody();
+    }
+
+    public ResponseEntity<Consent> getConsentByTypeWithHttpInfo(ConsentType consentType, String version) throws RestClientException {
+        ResponseEntity<List<BffConsent>> response = this.consentsApi.getTosPrivacyV2WithHttpInfo(List.of(
                 it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType.fromValue(consentType.getValue()))
         );
-        return deepCopy(bffConsents.get(0), Consent.class);
+        Consent consent = deepCopy(response.getBody().get(0), Consent.class);
+        return new ResponseEntity<>(consent, response.getHeaders(), response.getStatusCodeValue());
     }
 
     public RecipientWrapper getAddressesByRecipient() throws RestClientException {
