@@ -251,7 +251,11 @@ public class SharedStepsContext implements ISharedContext {
 
     @Override
     public String getDelegateName() {
-        return identityService.getTenantName(this.delegationCommonContext.getDelegateTenant());
+        // Per ragioni di retro compatibilità è meglio provare a recuperare l'abbreviazione interna (es. PA1)
+        // da due variabili di contesto qualora la prima non risulta impostata
+        String tenantAbbreviation = this.delegationCommonContext.getDelegateTenant();
+        if (tenantAbbreviation == null) tenantAbbreviation = this.delegationCommonContext.getDelegateTenantType();
+        return identityService.getTenantName(tenantAbbreviation);
     }
 
     @Override
