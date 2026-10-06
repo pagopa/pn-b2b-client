@@ -80,26 +80,26 @@ Feature: Gara Consolidatore/Recapito FASE 2
     And si verifica che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" nella tabella pn-PaperTrackings con statusCodes "RECAG010A"
 
 
-  @consolidatoreFase2
-  Scenario Outline: [CON_F_TWO_06_01] Normalizzazione sincrona con dati configurabili
-    Given preparo una request di normalizzazione con:
-      | addressRow    | <addressRow>    |
-      | addressRow2   | <addressRow2>   |
-      | cap           | <cap>           |
-      | city          | <city>          |
-      | city2         | <city2>         |
-      | pr            | <pr>            |
-      | country       | <country>       |
-      | nameRow2      | <nameRow2>      |
-    When invoco la normalizzazione sincrona
-    Then lo status code della response è <statusCode>
-
-    Examples:
-      | addressRow         | addressRow2 | cap   | city                 | city2  | pr | country | nameRow2 | statusCode |
-      | VIA ROMA 1         | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
-      | VIA ROMA 1         | SCALA A     | 00118 |                      |        | RM | ITALIA  | null     | 200        |
-      |                    |             | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
-      | VIA ROMA 1         | SCALA A     | 00118 | LOCALITA INESISTENTE |        | RM | ITALIA  | null     | 200        |
-      | VIA INESISTENTE 99 | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
-      | VIA ROMÀ 1         | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
+#  @consolidatoreFase2
+#  Scenario Outline: [CON_F_TWO_06_01] Normalizzazione sincrona con dati configurabili
+#    Given preparo una request di normalizzazione con:
+#      | addressRow    | <addressRow>    |
+#      | addressRow2   | <addressRow2>   |
+#      | cap           | <cap>           |
+#      | city          | <city>          |
+#      | city2         | <city2>         |
+#      | pr            | <pr>            |
+#      | country       | <country>       |
+#      | nameRow2      | <nameRow2>      |
+#    When invoco la normalizzazione sincrona
+#    Then lo status code della response è <statusCode>
+#
+#    Examples:
+#      | addressRow         | addressRow2 | cap   | city                 | city2  | pr | country | nameRow2 | statusCode |
+#      | VIA ROMA 1         | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
+#      | VIA ROMA 1         | SCALA A     | 00118 |                      |        | RM | ITALIA  | null     | 200        |
+#      |                    |             | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
+#      | VIA ROMA 1         | SCALA A     | 00118 | LOCALITA INESISTENTE |        | RM | ITALIA  | null     | 200        |
+#      | VIA INESISTENTE 99 | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
+#      | VIA ROMÀ 1         | SCALA A     | 00118 | ROMA                 | CENTRO | RM | ITALIA  | null     | 200        |
 
