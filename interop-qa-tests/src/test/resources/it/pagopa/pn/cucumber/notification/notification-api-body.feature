@@ -322,7 +322,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la richiesta di fruizione formulata dal tuo ente
-    per l'e-service $CONTEXT(eServiceName), precedentemente sospesa. Puoi nuovamente utilizzare i voucher
+    per l'e-service "$CONTEXT(eServiceName)", precedentemente sospesa. Puoi nuovamente utilizzare i voucher
     associati.
     """
 
