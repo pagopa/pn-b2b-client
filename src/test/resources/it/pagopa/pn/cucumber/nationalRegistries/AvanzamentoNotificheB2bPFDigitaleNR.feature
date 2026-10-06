@@ -528,7 +528,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
+      | details     | NOT_NULL |
+      | pollingTime | 40000    |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
