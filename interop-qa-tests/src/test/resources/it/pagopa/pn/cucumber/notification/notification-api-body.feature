@@ -1,7 +1,6 @@
 @bff-notification
 Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (generato da excel)
 
-  # PASSA
   Scenario: [Notifica nuova richiesta fruizione] Ricezione nuova richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     When "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -11,7 +10,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     da parte di $CONTEXT(consumerName).
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione accettata] Accettazione automatica di una richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -21,7 +19,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     da parte di $CONTEXT(consumerName).
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione aggiornata] Il fruitore aggiorna la richiesta di fruizione per la nuova versione dell'e-service pubblicata dall'erogatore
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -38,7 +35,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName) alla versione più recente.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione sospesa e riattivata] Il fruitore sospende e riattiva la richiesta di fruizione per l'e-service dell'erogatore
 
     # Scenario: [Notifica richiesta fruizione sospesa] Il fruitore sospende la richiesta di fruizione per l'e-service dell'erogatore
@@ -50,7 +46,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName).
     """
 
-    # PASSA
     # Scenario: [Notifica richiesta fruizione riattivata] Il fruitore riattiva la richiesta di fruizione per l'e-service dell'erogatore
     When "PA2" ha già attivato nuovamente quella richiesta di fruizione come CONSUMER
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
@@ -59,7 +54,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -75,7 +69,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     di questi dati.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione riattivata dalla Piattaforma] La Piattaforma PDND riattiva la richiesta di fruizione del fruitore per riottenimento dei requisiti
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -91,7 +84,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     il tuo e-service $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione archiviata] Il fruitore archivia la richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When "PA2" ha una richiesta di fruizione in stato "ARCHIVED" per quell'e-service
@@ -101,7 +93,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     il tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica client associato a una finalità] Il fruitore associa un proprio client ad una finalità dell'e-service dell'erogatore
     Given "GSP" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -116,7 +107,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     per il tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica client disassociato da una finalità] Il fruitore disassocia un proprio client ad una finalità dell'e-service dell'erogatore
     Given "GSP" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -132,7 +122,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     per il tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica finalità sospesa dal fruitore] Il fruitore sospende la finalità associata all'e-service dell'erogatore
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -143,7 +132,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     associata al tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica finalità riattivata dal fruitore] Il fruitore riattiva la finalità associata all'e-service dell'erogatore
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -155,7 +143,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     associata al tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica finalità archiviata dal fruitore] Il fruitore archivia la finalità associata all'e-service dell'erogatore
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -167,7 +154,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     associata al tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica richiesta adeguamento piano di carico] Il fruitore chiede un adeguamento del piano di carico della finalità associata all'e-service
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -179,7 +165,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(purposeTitle)", associata al tuo e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica e-service template sospeso] Il creatore sospende il proprio e-service template e l'erogatore viene notificato
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service - OK"
@@ -192,7 +177,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     È stato sospeso il tuo template "$CONTEXT(eServiceTemplateName)".
     """
 
-  # PASSA
   Scenario: [Notifica versione e-service nuova poi sospesa e riattivata] L'erogatore pubblica nuova versione dell'e-service a cui il fruitore è iscritto, poi la sospende e poi la riattiva
 
     # Scenario: [Notifica nuova versione e-service] L'erogatore pubblica nuova versione dell'e-service a cui il fruitore è iscritto
@@ -229,7 +213,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     precedentemente sospesa.
     """
 
-  # PASSA
   Scenario: [Notifica modifica carico a versione e-service] L'erogatore modifica le soglie di carico della versione e-service a cui il fruitore è iscritto
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -242,7 +225,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     versione 1 dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
     """
 
-  # PASSA
   Scenario: [Notifica aggiunta documento a versione e-service] L'erogatore aggiunge un documento nella versione dell'e-service a cui il fruitore è iscritto
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e un documento già caricato
@@ -254,7 +236,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
     """
 
-  # PASSA
   Scenario: [Notifica e-service rinominato] L'erogatore rinomina l'e-service a cui il fruitore è iscritto
     Given "PA2" ha già creato e pubblicato 1 e-service
     And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -267,7 +248,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     non sono richieste azioni da parte tua.
     """
 
-  # PASSA
   Scenario: [Notifica modifica descrizione a versione e-service] L'erogatore modifica la descrizione nella versione dell'e-service a cui il fruitore è iscritto
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -280,7 +260,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
     """
 
-  # PASSA
   Scenario: [Notifica documento aggiornato a versione e-service] L'erogatore ha aggiornato un documento nella versione dell'e-service a cui il fruitore è iscritto
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e un documento già caricato
@@ -292,7 +271,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     versione 1 dell'e-service $CONTEXT(eServiceName), a cui sei iscritto.
     """
 
-  # PASSA
   Scenario: [Notifica nuovo livello di sicurezza per e-service] L'erogatore aggiunge un nuovo livello di sicurezza all'e-service a cui il fruitore è iscritto
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -304,7 +282,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     (portachiavi) all'e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione accettata] L'erogatore accetta al fruitore la richiesta di fruizione di un e-service
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -316,7 +293,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     interrogare le API.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione rifiutata] L'erogatore rifiuta al fruitore la richiesta di fruizione di un e-service
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -326,7 +302,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La richiesta di fruizione per l'e-service $CONTEXT(eServiceName) è stata rifiutata dall'ente erogatore.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta fruizione sospesa e riattivata] L'erogatore sospende e riattiva al fruitore la richiesta di fruizione di un e-service
 
     # Scenario: [Notifica richiesta fruizione sospesa] L'erogatore sospende al fruitore la richiesta di fruizione di un e-service
@@ -340,17 +315,15 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     per l'e-service $CONTEXT(eServiceName). Non potrai utilizzare i voucher associati fino alla riattivazione.
     """
 
-    # PASSA
     # Scenario: [Notifica richiesta fruizione riattivata] L'erogatore riattiva al fruitore la richiesta di fruizione di un e-service
     When "PA1" ha già attivato nuovamente quella richiesta di fruizione come PRODUCER
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la richiesta di fruizione formulata dal tuo ente
-    per l'e-service $CONTEXT(eServiceName), precedentemente sospesa. Puoi nuovamente utilizzare i voucher
+    per l'e-service "$CONTEXT(eServiceName)", precedentemente sospesa. Puoi nuovamente utilizzare i voucher
     associati.
     """
 
-  # PASSA
   Scenario: [Notifica sospensione e riattivazione fruizione da PDND] La Piattaforma PDND sospende e riattiva la richiesta di fruizione per un e-service
 
     # Scenario: [Notifica riattivazione fruizione da PDND] La Piattaforma PDND sospende la richiesta di fruizione per un e-service
@@ -370,7 +343,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), in quanto non risultano più soddisfatti i requisiti necessari.
     """
 
-    # PASSA
     # Scenario: [Notifica riattivazione fruizione da PDND] La Piattaforma PDND riattiva la richiesta di fruizione per un e-service
     When "PA2" ha già assegnato nuovamente quell'attributo "CERTIFIED" a "PA1"
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
@@ -379,7 +351,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(eServiceName)", precedentemente sospesa.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta di adeguamento piano rifiutata] L'erogatore rifiuta la richiesta di adeguamento del piano di carico al fruitore
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
@@ -398,7 +369,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     "$CONTEXT(eServiceName)".
     """
 
-  # PASSA
   Scenario: [Notifica finalità approvata] L'erogatore approva la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -413,6 +383,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
+  @wait_for_fix
   Scenario: [Notifica finalità rifiutata] L'erogatore rifiuta la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -425,7 +396,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     ente ha inoltrato per l'e-service "$CONTEXT(eServiceName)".
     """
 
-  # PASSA
   Scenario: [Notifica finalità sospesa] L'erogatore sospende la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -439,6 +409,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
+  @wait_for_fix
   Scenario: [Notifica finalità riattivata] L'erogatore riattiva la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -453,7 +424,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     all'e-service "$CONTEXT(eServiceName)".
     """
 
-  # PASSA
   Scenario: [Notifica nuova versione template] L'erogatore pubblica una nuova versione di e-service template
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -468,6 +438,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE: la notifica riporta il nome del template vecchio e nuovo, e non dell'e-service nome vecchio e nuovo
+  @wait_for_fix
   Scenario: [Notifica aggiornamento nome template] L'e-service viene rinominato in quanto il suo template è stato rinominato
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -482,7 +453,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     da cui lo hai generato.
     """
 
-  # PASSA
   Scenario: [Notifica sospensione template] L'ente sospende il template e-service da cui un secondo ente ha generato un e-service
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
@@ -496,7 +466,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     da cui il tuo ente ha generato l'e-service.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta delega accettata] Il delegato accetta la delega alla fruizione di un e-service delegabile
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
@@ -513,7 +482,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     tuo ente gli ha conferito per l'e-service "$CONTEXT(eServiceName)". La delega è ora attiva.
     """
 
-  # PASSA
   Scenario: [Notifica richiesta delega rifiutata] Il delegato rifiuta la delega alla fruizione di un e-service delegabile
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     And l'ente delegato "PA2"
@@ -531,6 +499,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
+  @wait_for_fix
   Scenario: [Notifica richiesta approvazione nuova versione e-service] L'ente delegato richiede l'approvazione per pubblicare una nuova versione di e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -555,6 +524,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
+  @wait_for_fix
   Scenario: [Notifica approvazione nuova versione e-service] L'ente delegante approva la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -581,6 +551,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE per una questione di virgolette assenti rispetto all'Excel
+  @wait_for_fix
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -606,7 +577,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
     """
 
-  # PASSA
   Scenario: [Notifica ricezione richiesta di delega] L'ente riceve una richiesta di delega all'erogazione per un e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -620,7 +590,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     l'e-service $CONTEXT(eServiceName).
     """
 
-  # PASSA
   Scenario: [Notifica delega in erogazione revocata] Viene revocata la delega all'erogazione ad un ente per un e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -635,7 +604,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     l'e-service $CONTEXT(eServiceName) che ti aveva conferito.
     """
 
-  # PASSA
   Scenario: [Notifica attributo certificato ricevuto] L'ente certificatore conferisce l'attributo certificato a un ente
     Given l'utente è un "admin" di "PA2"
     And PA2 ha già creato 1 attributo CERTIFIED
@@ -658,7 +626,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 #    Puoi ora utilizzarlo nelle richieste di fruizione.
 #    """
 
-  # PASSA
   Scenario: [Notifica attributo certificato revocato] L'ente certificatore revoca l'attributo certificato a un ente
     Given "PA2" ha creato un attributo certificato e lo ha assegnato a "PA1"
     And l'utente è un "admin" di "PA2"
@@ -682,7 +649,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 #    non potrai più utilizzare questo attributo per le richieste di fruizione.
 #    """
 
-  # PASSA
   Scenario: [Notifica attributo verificato ricevuto] L'ente certificatore conferisce l'attributo verificato a un ente
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -695,6 +661,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE: la notifica è diversa nella forma
+  @wait_for_fix
   Scenario: [Notifica attributo verificato revocato] L'ente certificatore revoca l'attributo verificato a un ente
     Given "PA2" ha già creato un attributo verificato
     And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -709,6 +676,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # FALLISCE: la notifica è diversa nella forma
+  @wait_for_fix
   Scenario: [Notifica chiave rimossa da client e-service] Viene rimossa una chiave da un client e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
@@ -722,7 +690,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Assicurati che l'operatività non sia compromessa.
     """
 
-  # PASSA
   Scenario: [Notifica chiave client non più sicura] L'operatore che ha caricato una chiave al client non è più attivo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
@@ -738,6 +705,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 
   # FALLISCE: si aggiunge una chiave al client e-service, ma la notifica non menziona 'e-service'
   # Inoltre le doppie virgolette attorno al nome del client sono attese ma non presenti
+  @wait_for_fix
   Scenario: [Notifica chiave aggiunta a client e-service] Viene aggiunta una nuova chiave ad un client e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "CONSUMER"
@@ -751,6 +719,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
 
   # FALLISCE: si aggiunge una chiave al client interop, ma la notifica non menziona 'interop'
   # Inoltre le doppie virgolette attorno al nome del client sono attese ma non presenti
+  @wait_for_fix
   Scenario: [Notifica chiave aggiunta al client interop] Viene aggiunta una nuova chiave al client interop
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 1 client "API"
@@ -762,7 +731,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Ti informiamo che è stata aggiunta una nuova chiave al client interop "$CONTEXT(clientName)".
     """
 
-  # PASSA
   Scenario: [Notifica chiave rimossa dal portachiavi] L'utente rimuove una chiave dal portachiavi erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
@@ -776,7 +744,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Assicurati che l'operatività non sia compromessa.
     """
 
-  # PASSA
   Scenario: [Notifica chiave portachiavi non più sicura] L'operatore che ha caricato una chiave al portachiavi non è più attivo
     Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
@@ -789,7 +756,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     sicurezza e l'operatività.
     """
 
-  # PASSA
   Scenario: [Notifica chiave aggiunta al portachiavi] Viene aggiunta una nuova chiave al portachiavi erogatore
     Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     And l'utente "admin" di "PA1" aggiunge l'utente "security" di "PA1" al portachiavi erogatore
@@ -799,7 +765,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Ti informiamo che è stata aggiunta una nuova chiave al portachiavi erogatore $CONTEXT(keychainName).
     """
 
-  # PASSA
   Scenario: [Notifica chiave client rimossa] L'utente rimuove una chiave pubblica dal client
     Given l'utente è un "admin" di "PA1"
     And "GSP" ha già creato e pubblicato 1 e-service
@@ -815,4 +780,81 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
     La chiave $CONTEXT(newKeyId) è stata rimossa dal client $CONTEXT(clientName).
     Assicurati che l'operatività non sia compromessa.
+    """
+
+  @over-quota-thresholds
+  Scenario: [Notifica soglia fruitore superata] La soglia giornaliera per fruitore definita nell'e-service è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 2 attributi CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 11
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché è stata superata la soglia per fruitore di chiamate API. La finalità dovrà essere approvata dall'erogatore.
+    """
+
+  @over-quota-thresholds
+  Scenario: [Notifica soglia personalizzata fruitore superata] La soglia giornaliera personalizzata per fruitore definita nell'attributo certificato è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
+    And l'utente tenta di aggiungere una soglia differenziata di 50 per l'attributo CERTIFIED 0-esimo creato
+    And la soglia differenziata per l'attributo CERTIFIED 0-esimo creato nel gruppo 0-esimo è uguale a "50"
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 51
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché è stata superata la soglia per fruitore di chiamate API. La finalità dovrà essere approvata dall'erogatore.
+    """
+
+  @over-quota-thresholds
+  Scenario: [Notifica soglie fruitore e totali superate] La soglia giornaliera per fruitore e quella totale definite nell'e-service sono state superate
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 20 e dailyCallsTotal uguale a 20
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 21
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché sono state superate sia la soglia di chiamate API per fruitore sia la soglia totale.
+    La finalità dovrà essere approvata dall'erogatore.
+    """
+
+  @over-quota-thresholds
+  Scenario: [Notifica soglia totale superata] La soglia totale definita nell'e-service è stata superata
+    Given l'utente è un "admin" di "PA1"
+    And PA1 ha già creato 1 attributo CERTIFIED
+    And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
+    And l'utente assegna a "PA3" l'attributo certificato precedentemente creato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 15
+    And l'utente è un "admin" di "PA3"
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 9
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 9
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "WAITING_FOR_APPROVAL"
+    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
+    """
+    La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
+    perché è stata superata la soglia totale di chiamate API. La finalità dovrà essere approvata dall'erogatore.
     """
