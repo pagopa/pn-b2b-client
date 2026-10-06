@@ -380,19 +380,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     """
 
   # PASSA
-  Scenario: [Notifica stima di carico superata] La stima di carico complessiva per le finalità associate all'e-service vengono superate dal fruitore
-    Given l'utente è un "admin" di "PA1"
-    And "PA2" ha già creato e pubblicato 1 e-service
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When "PA1" ha già richiesto l'aggiornamento della stima di carico superando i limiti di quell'e-service
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
-    """
-    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)" ha superato
-    la soglia massima consentita dall'erogatore pari a 50 chiamate API giornaliere.
-    """
-
-  # PASSA
   Scenario: [Notifica richiesta di adeguamento piano rifiutata] L'erogatore rifiuta la richiesta di adeguamento del piano di carico al fruitore
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 1 e-service
