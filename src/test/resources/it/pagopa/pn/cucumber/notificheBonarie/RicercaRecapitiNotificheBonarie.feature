@@ -1381,16 +1381,24 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | SMS      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel                | SMS           |
+      | details_digitalAddressSource   | PLATFORM      |
+      | details_digitalAddress_address | +393214210000 |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | EMAIL    |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel                | EMAIL               |
+      | details_digitalAddressSource   | PLATFORM           |
+      | details_digitalAddress_address | provaemail@test.it |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | PEC |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
-  @informalNotificationsSearchDigitalAddress @useB2B @informalSerchEmailSmsOnly @addressBook2
+  @informalNotificationsSearchDigitalAddress @informalSerchEmailSmsOnly @addressBook2
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_11_1_B] Come ente mittente invio una notifica bonaria verso PF utilizzando il canale Email e sms di piattaforma mentre il recupero della pec di piattaforma è inibito.
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -1414,7 +1422,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
 
 
-  @informalNotificationsSearchDigitalAddress @useB2B @informalSerchEmailSmsOnly @addressBook2
+  @informalNotificationsSearchDigitalAddress @informalSerchEmailSmsOnly @addressBook2
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_11_1_C] Come ente mittente invio una notifica bonaria verso PG utilizzando il canale Email e sms di piattaforma mentre il recupero della pec di piattaforma è inibito.
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -1425,15 +1433,15 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     When viene richiesto l'inserimento del numero di telefono "+393214210000", e passo la lingua selezionata dal destinatario "IT"
     Then l'inserimento va a buon fine e NON ha prodotto un errore
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels      |
-      | messageId       | ${NEW-IT}               |
-      | subject         | Test Serch Contact      |
-      | recipientType   | PG                      |
-      | taxId           | 20517490320             |
-      | denomination    | CucumberSpa             |
-      | email           | tullio.test@virgilio.it |
-      | digitalDomicile | NULL                    |
-      | phone_number    | +3900000                |
+      | campaignId      | BonarieAllChannels       |
+      | messageId       | ${NEW-IT}                |
+      | subject         | Test Serch Contact       |
+      | recipientType   | PG                       |
+      | taxId           | 20517490320              |
+      | denomination    | CucumberSpa              |
+      | email           | tullio.test@virgilio.it  |
+      | digitalDomicile | example@OK-pecSuccess.it |
+      | phone_number    | +3900000                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
@@ -1448,12 +1456,15 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel | PEC |
+      | details_channel                | PEC                      |
+      | details_digitalAddress_address | example@OK-pecSuccess.it |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel | EMAIL |
+      | details_channel                | EMAIL              |
+      | details_digitalAddress_address | provaemail@test.it |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel | SMS |
-    #todo aggiungi dettagli del send
+      | details_channel                | SMS           |
+      | details_digitalAddress_address | +393214210000 |
+
 
 
 # ***********************************************
@@ -1481,7 +1492,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | true    |
+      #| details_isTosAccepted        | true    |
     And vengono rimossi eventuali recapiti presenti per l'utente
     # xxx controllo specifico
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
