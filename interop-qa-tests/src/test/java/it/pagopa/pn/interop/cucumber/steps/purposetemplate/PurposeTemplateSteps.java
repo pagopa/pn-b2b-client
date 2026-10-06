@@ -420,6 +420,17 @@ public class PurposeTemplateSteps {
         invokeUpdatePurposeTemplate(resourceState);
     }
 
+    @When("l'utente tenta di effettuare la modifica del purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void updatePurposeTemplateRequest(String tenantType) {
+        prepareCreationRequest(true);
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed().editable(false).suggestedValues(List.of("https://www.example.com/privacy-" + RandomStringUtils.insecure().nextAlphanumeric(3)));
+        templateSeed.getAnswers().put("policyProvidedOnlineLink", answerSeed);
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
+        purposeTemplateClient.updatePurposeTemplate(createdPurposeTemplate.getId(), purposeTemplateCreationRequest);
+    }
+
     @When("si aggiorna il purpose template {exists} con errore di tipo {purposeTemplateError}")
     public void updatePurposeTemplateWithError(boolean exists, PurposeTemplateErrorTypes error) {
         insertErrorsOnPurpose(error);
