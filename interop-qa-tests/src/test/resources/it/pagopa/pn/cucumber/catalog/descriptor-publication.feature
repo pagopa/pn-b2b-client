@@ -81,7 +81,7 @@ Feature: Pubblicazione di un descrittore
     And "<ente>" ha già caricato un'interfaccia per quel descrittore
     And l'utente aggiunge con successo un'analisi del rischio coerente con il tenant kind "<kind_iniziale>"
     And il tenant kind dell'ente "<ente>" viene impostato a "<kind_target>"
-    When l'utente pubblica quel descrittore
+    When l'utente tenta di pubblicare quel descrittore
     Then si ottiene status code 400
     Examples:
       | ente    | kind_iniziale | kind_target |
