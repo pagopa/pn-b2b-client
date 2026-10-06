@@ -177,15 +177,18 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECRN002C |
       | details_deliveryFailureCause | M10       |
 
-  @paperTrackerM10 @trackerErrors @ignore
+  @paperTrackerM10 @trackerErrors @ocrRun
   Scenario: [MOCK_RECAPITO_M10_02_2_B] TEST 2.2 - Path B: Blocco del retry ed emissione errore OCR_VALIDATION con mock OCR:KO e motore OCR abilitato (NO RETRY / ERRORE)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Gherkin e:
-      | physicalAddress_address | Via@OK_AR-M10-OCR-KO |
-      | digitalDomicile         | NULL                 |
+      | physicalAddress_address      | Via@OK_AR-M10-OCR-KO |
+      | digitalDomicile              | NULL                 |
+      | physicalAddress_zip          | 00187                |
+      | physicalAddress_municipality | Roma                 |
+      | physicalAddress_province     | RM                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
