@@ -249,12 +249,14 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
+      | pollingTime                  | 40000    |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
@@ -264,17 +266,19 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | loadTimeline           | true                                         |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]           |
       | details                | NOT_NULL                                     |
+      | pollingTime            | 40000                                        |
       | details_digitalAddress | {"address": "example@pec.it", "type": "PEC"} |
       | details_recIndex       | 0                                            |
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
+      | pollingTime                  | 40000    |
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
 
-  @PFinipec
+  @PFinipecf
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -325,11 +329,13 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | PLATFORM |
+      | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
+      | pollingTime                  | 40000    |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
@@ -337,6 +343,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                   |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
+      | pollingTime            | 40000                                                  |
       | details                | NOT_NULL                                               |
       | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex       | 0                                                      |
@@ -345,11 +352,12 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | GENERAL  |
+      | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
 
 
-  @PFinipec
+  @PFinipeck
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale impresa in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -372,17 +380,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-    # verifica errore 404 in INAD
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                  |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                    |
+      | pollingTime            | 40000                                                 |
       | details                | NOT_NULL                                              |
       | details_digitalAddress | {"address": "DRCDVD87M07E243W@pec.it", "type": "PEC"} |
       | details_recIndex       | 0                                                     |
@@ -390,11 +391,20 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
       | details_digitalAddressSource | GENERAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
+        # verifica errore 404 in INAD
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun  | auto                         |
+      | log1 | pushing message for clientId |
+      | log4 | from source: INIPEC          |
 
-  @PFinipec
+  @PFinipecf
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_2] Invio Notifica mono destinatario a PF con recupero dei domicili digitali profesionali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -406,6 +416,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
+      | pollingTime                  | 40000    |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 0        |
@@ -413,11 +424,27 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
+      | pollingTime                  | 40000    |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-#     verifica errore 404 in INAD
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline           | true                                                 |
+      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                   |
+      | pollingTime            | 40000                                                |
+      | details                | NOT_NULL                                             |
+      | details_digitalAddress | {"address": "professionista1@pec.it", "type": "PEC"} |
+      | details_recIndex       | 0                                                    |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
+    #     verifica errore 404 in INAD
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
@@ -425,22 +452,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | loadTimeline           | true                                                 |
-      | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                   |
-      | details                | NOT_NULL                                             |
-      | details_digitalAddress | {"address": "professionista1@pec.it", "type": "PEC"} |
-      | details_recIndex       | 0                                                    |
-        #Controllato in questo momento per dare tempo alla timeline di aggiornarsi
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | loadTimeline                 | true     |
-      | details                      | NOT_NULL |
-      | details_recIndex             | 0        |
-      | details_digitalAddressSource | GENERAL  |
-      | details_sentAttemptMade      | 0        |
-      | details_isAvailable          | true     |
 
-  @PFinipec
+  @PFinipeck
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -455,6 +468,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_recIndex             | 0        |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 0        |
+      | pollingTime                  | 40000    |
       | details_isAvailable          | false    |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
@@ -462,14 +476,13 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
       | details_sentAttemptMade      | 0        |
+      | pollingTime                  | 40000    |
       | details_isAvailable          | false    |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                         |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]           |
       | details                | NOT_NULL                                     |
+      | pollingTime            | 40000                                        |
       | details_digitalAddress | {"address": "esempio@pec.it", "type": "PEC"} |
       | details_recIndex       | 0                                            |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
@@ -477,15 +490,19 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | GENERAL  |
+      | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
 
 
-  @PFinipec
+  @PFinipecg
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -498,6 +515,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
@@ -506,21 +524,24 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | SPECIAL  |
+      | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | details | NOT_NULL |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
       | details_recIndex             | 0        |
       | details_digitalAddressSource | GENERAL  |
+      | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun  | auto                         |
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
 
