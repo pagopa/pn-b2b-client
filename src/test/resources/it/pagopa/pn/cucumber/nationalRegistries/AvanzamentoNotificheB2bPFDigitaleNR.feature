@@ -278,7 +278,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
 
-  @PFinipecf
+  @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_2] Invio Notifica mono destinatario a PF con recupero del solo domicilio digitale professionale su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -357,7 +357,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
 
 
-  @PFinipeck
+  @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale impresa in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -404,7 +404,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
 
-  @PFinipecf
+  @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_2] Invio Notifica mono destinatario a PF con recupero dei domicili digitali profesionali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -453,7 +453,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | log1 | pushing message for clientId |
       | log4 | from source: INIPEC          |
 
-  @PFinipeck
+  @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -502,7 +502,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | error | INAD - CF non trovato |
 
 
-  @PFinipecg
+  @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
