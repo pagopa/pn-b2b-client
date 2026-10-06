@@ -32,6 +32,10 @@ public interface M2MVersionsMapper {
 
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisFormSeed mapToV3(RiskAnalysisFormSeed bean);
 
+    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisFormTemplateSeed mapToV3(RiskAnalysisFormTemplateSeed bean);
+
+    RiskAnalysisFormTemplate mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisFormTemplate bean);
+
     List<it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.AgreementState> mapToV3(List<AgreementState> bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.AgreementSeed mapToV3(AgreementSeed bean);
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.AgreementSubmission mapToV3(AgreementSubmission bean);

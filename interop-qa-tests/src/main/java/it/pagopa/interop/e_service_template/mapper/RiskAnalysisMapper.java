@@ -18,8 +18,8 @@ public interface RiskAnalysisMapper {
         RiskAnalysisFormSeed seed);
 
     RiskAnalysisFormTemplateSeed mapM2MToBFF(
-            it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisFormTemplateSeed seed);
+            it.pagopa.interop.generated.openapi.clients.m2mGateway.model.RiskAnalysisFormTemplateSeed seed);
 
-    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisFormTemplateSeed mapBFFToM2M(
+    it.pagopa.interop.generated.openapi.clients.m2mGateway.model.RiskAnalysisFormTemplateSeed mapBFFToM2M(
             RiskAnalysisFormTemplateSeed seed);
 }
