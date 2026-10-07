@@ -35,7 +35,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName) alla versione più recente.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa e riattivata] Il fruitore sospende e riattiva la richiesta di fruizione per l'e-service dell'erogatore
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata da fruitore] Il fruitore sospende e riattiva la richiesta di fruizione per l'e-service dell'erogatore
 
     # Scenario: [Notifica richiesta fruizione sospesa] Il fruitore sospende la richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -310,7 +310,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La richiesta di fruizione per l'e-service $CONTEXT(eServiceName) è stata rifiutata dall'ente erogatore.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa e riattivata] L'erogatore sospende e riattiva al fruitore la richiesta di fruizione di un e-service
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata da erogatore] L'erogatore sospende e riattiva al fruitore la richiesta di fruizione di un e-service
 
     # Scenario: [Notifica richiesta fruizione sospesa] L'erogatore sospende al fruitore la richiesta di fruizione di un e-service
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -390,8 +390,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     richiesto per l'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica finalità rifiutata] L'erogatore rifiuta la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -401,7 +399,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha rifiutato la finalità "$CONTEXT(purposeTitle)" che il tuo
-    ente ha inoltrato per l'e-service "$CONTEXT(eServiceName)".
+    ente ha inoltrato per l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Notifica finalità sospesa] L'erogatore sospende la finalità richiesta dal fruitore per un e-service
@@ -416,8 +414,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     all'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica finalità riattivata] L'erogatore riattiva la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -429,7 +425,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la finalità "$CONTEXT(purposeTitle)", associata
-    all'e-service "$CONTEXT(eServiceName)".
+    all'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Notifica nuova versione template] L'erogatore pubblica una nuova versione di e-service template
@@ -506,8 +502,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     tuo ente gli ha conferito per l'e-service "$CONTEXT(eServiceName)".
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica richiesta approvazione nuova versione e-service] L'ente delegato richiede l'approvazione per pubblicare una nuova versione di e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -528,11 +522,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegato $CONTEXT(delegateName) richiede la tua approvazione per pubblicare
-    una nuova versione dell'e-service "$CONTEXT(eServiceName)".
+    una nuova versione dell'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica approvazione nuova versione e-service] L'ente delegante approva la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -555,11 +547,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha approvato la pubblicazione della nuova versione
-    dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
+    dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -582,7 +572,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha rifiutato la pubblicazione della nuova versione
-    dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
+    dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
   Scenario: [Notifica ricezione richiesta di delega] L'ente riceve una richiesta di delega all'erogazione per un e-service
