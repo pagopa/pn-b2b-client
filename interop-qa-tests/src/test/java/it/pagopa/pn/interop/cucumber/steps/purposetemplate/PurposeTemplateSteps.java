@@ -125,7 +125,6 @@ public class PurposeTemplateSteps {
     @AllArgsConstructor
     @Getter
     public enum PurposeTemplateErrorTypes {
-
         ANSWER_OVER_250("ANSWER OVER 250"),
         NO_PURPOSE_ANSWER("NO PURPOSE ANSWER"),
         NO_PERSONAL_DATA_ANSWER("NO PERSONAL DATA ANSWER"),
@@ -143,17 +142,17 @@ public class PurposeTemplateSteps {
 
     @When("viene creato un nuovo purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
     public void createPurposeTemplateWithUrl(String tenantType) {
-String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
-prepareCreationRequest(true, "PA".equals(tenantKind) ? TargetTenantKind.PA : TargetTenantKind.PRIVATE);
-RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(true, tenantKind);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
         purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
         invokeCreatePurposeTemplate();
     }
 
     @When("viene creato un nuovo purpose template destinato a enti {string} indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali")
     public void createPurposeTemplateWithEditablePolicy(String tenantType) {
-        prepareCreationRequest(true);
         String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(true, tenantKind);
         RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
         templateSeed.getAnswers().get("policyProvided").setValues(Collections.emptyList());
         templateSeed.getAnswers().get("policyProvided").setEditable(true);
@@ -225,6 +224,11 @@ RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalys
 
     private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue) {
         return prepareCreationRequest(handlePersonalDataValue, TargetTenantKind.PA);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, String tenantKind) {
+        TargetTenantKind targetTenantKind = "PA".equals(tenantKind) ? TargetTenantKind.PA : TargetTenantKind.PRIVATE;
+        return prepareCreationRequest(handlePersonalDataValue, null, targetTenantKind);
     }
 
     private PurposeTemplateSeed prepareCreationRequest(DataTable answersTable) {
@@ -422,8 +426,8 @@ RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalys
 
     @When("l'utente tenta di effettuare la modifica del purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
     public void updatePurposeTemplateRequest(String tenantType) {
-        prepareCreationRequest(true);
         String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(true, tenantKind);
         RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
         RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed().editable(false).suggestedValues(List.of("https://www.example.com/privacy-" + RandomStringUtils.insecure().nextAlphanumeric(3)));
         templateSeed.getAnswers().put("policyProvidedOnlineLink", answerSeed);
