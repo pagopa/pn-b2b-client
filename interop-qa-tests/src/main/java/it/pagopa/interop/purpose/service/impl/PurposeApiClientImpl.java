@@ -196,11 +196,6 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     @Override
-    public PurposeVersionResource patchPurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPayload) {
-        return purposesApi.patchUpdatePurposeFromTemplate(purposeTemplateId, purposeId, patchPayload);
-    }
-
-    @Override
     public void setBearerToken(String bearerToken) {
         this.purposesApi.setApiClient(createApiClient(bearerToken));
     }

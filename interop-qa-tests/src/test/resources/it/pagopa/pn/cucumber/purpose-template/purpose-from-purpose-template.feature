@@ -238,8 +238,8 @@ Feature: finalità agevolata, purpose from purpose template
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And l'utente è un "admin" di "PA1"
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "GSP"
     And viene creato un nuovo purpose template destinato a enti "GSP" indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali
     And il purpose template creato viene spostato in stato PUBLISHED
     #And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali

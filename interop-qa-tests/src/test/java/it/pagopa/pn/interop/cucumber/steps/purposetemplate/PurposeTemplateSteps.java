@@ -1388,7 +1388,7 @@ public class PurposeTemplateSteps {
 
         riskAnalysisForm.setAnswers(answers);
         httpCallExecutor.performCall(
-               () -> clientTokenConfigurator.getPurposeApiClient().patchPurposeFromTemplate(
+               () -> clientTokenConfigurator.getPurposeApiClient().patchUpdatePurposeFromTemplate(
                        sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId(),
                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                        new PatchPurposeUpdateFromTemplateContent()
