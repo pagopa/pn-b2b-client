@@ -48,6 +48,7 @@ Feature: Creazione finalità per e-service in erogazione diretta
   # BUG validation in corso: https://pagopa.atlassian.net/browse/QA-18048
   @nrt-minimal
   @purpose_creation_deliver1
+  @privacy-policy-url
   Scenario Outline: [CREAZIONE_FINALITA_DELIVER_INFORMATIVA_1] Un utente può specificare un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
     Given l'utente è un "admin" di "<ente>"
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true

@@ -231,6 +231,7 @@ Feature: finalità agevolata, purpose from purpose template
       | GSP2    | PA          |
       | Privato | PA          |
 
+  @privacy-policy-url
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL_01] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true

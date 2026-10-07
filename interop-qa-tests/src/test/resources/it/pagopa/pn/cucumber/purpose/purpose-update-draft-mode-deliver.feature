@@ -22,6 +22,7 @@ Feature: Aggiornamento bozza nuova finalità in erogazione diretta
   @sad-path
   @nrt-minimal
   @purpose_update_draft_mode_deliver1
+  @privacy-policy-url
   Scenario: [PURPOSE_UPDATE_DRAFT_MODE_DELIVER_INFORMATIVA_1] Un utente può aggiornare una finalità in bozza indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true

@@ -15,6 +15,7 @@ Feature: finalità agevolata, purpose template GET
       | support  |
       | security |
 
+  @privacy-policy-url
   @purposeTemplate @purposeTemplateCreate
   Scenario Outline: [PURPOSE_TEMPLATE_CREATE_WITH_URL] Creazione di una finalità agevolata indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Given l'utente è un "admin" di "PA1"

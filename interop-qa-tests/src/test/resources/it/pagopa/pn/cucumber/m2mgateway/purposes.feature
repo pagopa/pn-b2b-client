@@ -754,6 +754,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @privacy-policy-url @m2m-privacy-policy-url
   @purposeTemplate @purposeTemplateUpdate
   Scenario: [M2M_PURPOSES_PATCH_URL] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
@@ -1017,6 +1018,7 @@ Feature: Gestione purposes attraverso APIs M2M V2
     Then si ottiene lo status code 403
     And la finalità non ha subito modifiche
 
+  @privacy-policy-url @m2m-privacy-policy-url
   Scenario Outline: [M2MG_PURPOSES_CREATE_01] Un utente può specificare un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
     Given l'utente è un "admin" di "<ente>"
     And "PA2" ha già creato e pubblicato 1 e-service con personalData true
