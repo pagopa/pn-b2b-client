@@ -432,7 +432,7 @@ public class PurposeTemplateSteps {
         RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed().editable(false).suggestedValues(List.of("https://www.example.com/privacy-" + RandomStringUtils.insecure().nextAlphanumeric(3)));
         templateSeed.getAnswers().put("policyProvidedOnlineLink", answerSeed);
         purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
-        purposeTemplateClient.updatePurposeTemplate(createdPurposeTemplate.getId(), purposeTemplateCreationRequest);
+        httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(createdPurposeTemplate.getId(), purposeTemplateCreationRequest));
     }
 
     @When("si aggiorna il purpose template {exists} con errore di tipo {purposeTemplateError}")
