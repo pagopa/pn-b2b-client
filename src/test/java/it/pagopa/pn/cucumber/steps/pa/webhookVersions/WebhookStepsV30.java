@@ -2,6 +2,9 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalNotificationStatusHistoryElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalTimelineElementV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV30;
@@ -33,7 +36,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,7 +71,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         sharedSteps = webhookSteps.getSharedSteps();
         b2bClient = webhookSteps.getB2bClient();
         streamVersion = StreamVersion.V30;
-        progressResponseElementList = new LinkedList<>();
+        progressResponseElementList = new ArrayList<>();
     }
 
     @Override
@@ -98,7 +100,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public void createStreamRequest(List<String> filterValues, int number, String title, String eventType) {
-        streamCreationRequestList = new LinkedList<>();
+        streamCreationRequestList = new ArrayList<>();
         for (int i = 0; i < number; i++) {
             StreamCreationRequestV30 streamRequest = new StreamCreationRequestV30();
             streamRequest.setTitle(title + "_" + i);
@@ -205,9 +207,18 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere null").isNotNull();
         assertThat(progressResponseElementList).as("La lista di progressResponseElement non dev'essere vuota").isNotEmpty();
         boolean isStatus = type.equals(STREAM_EVENT_TYPE_STATUS);
-        progressResponseElement = isStatus ?
-                progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null)
-                : progressResponseElementList.stream().filter(x -> x.getElement().getCategory().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null);
+
+        progressResponseElement = null;
+        if (sharedSteps.isLegalNotification()) {
+            progressResponseElement = isStatus ?
+                    progressResponseElementList.stream().filter(x -> x.getNewStatus().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null)
+                    : progressResponseElementList.stream().filter(x -> x.getElement().getCategory().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null);
+        } else {
+            progressResponseElement = isStatus ?
+                    progressResponseElementList.stream().filter(x -> x.getInformalNewStatus().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null)
+                    : progressResponseElementList.stream().filter(x -> x.getInformalElement().getCategory().getValue().equals(timelineCategoryOrStatus)).findFirst().orElse(null);
+        }
+
         String filter = isStatus ? "status" : "category";
         if (contains) {
             assertThat(progressResponseElement)
@@ -325,7 +336,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
-        if (eventStreamList == null) eventStreamList = new LinkedList<>();
+        if (eventStreamList == null) eventStreamList = new ArrayList<>();
         for (StreamCreationRequestV30 request : streamCreationRequestList) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
                 request.setFilterValues(filteredValues);
@@ -340,7 +351,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
             request.setCommunicationType(communicationType);
             StreamMetadataResponseV30 eventStream = webhookClient.createEventStreamV30(request);
             if (streamIdToReplace != null) {
-                eventStreamList = new LinkedList<>();
+                eventStreamList = new ArrayList<>();
             }
             eventStreamList.add(eventStream);
             webhookSteps.getPaStreamOwner().add(pa);
@@ -465,6 +476,10 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public boolean checkTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        return sharedSteps.isLegalNotification() ? checkTimelineLegal(timelineForStream) : checkTimelineInformal(timelineForStream);
+    }
+
+    private boolean checkTimelineLegal(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.valueOf(((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory()).name());
         boolean finish = false;
         for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
@@ -486,8 +501,34 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         return finish;
     }
 
+    private boolean checkTimelineInformal(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
+        InformalTimelineElementCategoryV1 timelineElementInternalCategory = InformalTimelineElementCategoryV1.valueOf(((InformalTimelineElementCategoryV1) timelineForStream.getTimelineElementCategory()).name());
+        boolean finish = false;
+        for (int i = 0; i < timelineForStream.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineForStream.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+            FullSentInformalNotificationV1 fullSentNotification = null;//TODO MATTEO
+            InformalTimelineElementV1 timelineElement = fullSentNotification.getTimeline().stream().filter(
+                            elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                    .findAny()
+                    .orElse(null);
+            if (timelineElement != null) {
+                finish = true;
+                break;
+            }
+        }
+        return finish;
+    }
+
     @Override
     public boolean checkStatus(AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
+        return sharedSteps.isLegalNotification() ? checkStatusLegal(statusForStream) : checkStatusInformal(statusForStream);
+    }
+
+    private boolean checkStatusLegal(AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         NotificationStatusV26 notificationInternalStatus = NotificationStatusV26.valueOf(((NotificationStatusV26) statusForStream.getNotificationStatus()).name());
         boolean found = false;
         for (int i = 0; i < statusForStream.getNumCheck(); i++) {
@@ -499,6 +540,26 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
             FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
             NotificationStatusHistoryElementV26 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
                     elem -> elem.getStatus().getValue().equals(notificationInternalStatus.getValue())).findAny().orElse(null);
+            if (notificationStatusHistoryElement != null) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    private boolean checkStatusInformal(AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
+        InformalNotificationStatusV1 informalNotificationStatus = InformalNotificationStatusV1.valueOf(((InformalNotificationStatusV1) statusForStream.getNotificationStatus()).name());
+        boolean found = false;
+        for (int i = 0; i < statusForStream.getNumCheck(); i++) {
+            try {
+                Thread.sleep(statusForStream.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+            FullSentInformalNotificationV1 fullSentNotification = null;//TODO MATTEO
+            InformalNotificationStatusHistoryElementV1 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
+                    elem -> elem.getStatus().getValue().equals(informalNotificationStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
                 found = true;
                 break;
@@ -675,7 +736,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
 
     @Override
     public List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B() {
-        List<Object> resultList = new LinkedList<>();
+        List<Object> resultList = new ArrayList<>();
 
         TimelineElementV28 teWebhook = progressResponseElement.getElement();
         assertThat(teWebhook).as("L'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();

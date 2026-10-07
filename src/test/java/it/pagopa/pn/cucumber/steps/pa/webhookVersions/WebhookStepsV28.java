@@ -21,7 +21,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,7 +52,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
         sharedSteps = webhookSteps.getSharedSteps();
         b2bClient = webhookSteps.getB2bClient();
         streamVersion = StreamVersion.V28;
-        progressResponseElementList = new LinkedList<>();
+        progressResponseElementList = new ArrayList<>();
     }
 
     @Override
@@ -81,7 +81,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public void createStreamRequest(List<String> filterValues, int number, String title, String eventType) {
-        streamCreationRequestList = new LinkedList<>();
+        streamCreationRequestList = new ArrayList<>();
         for (int i = 0; i < number; i++) {
             StreamCreationRequestV28 streamRequest = new StreamCreationRequestV28();
             streamRequest.setTitle(title + "_" + i);
@@ -307,7 +307,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
-        if (eventStreamList == null) eventStreamList = new LinkedList<>();
+        if (eventStreamList == null) eventStreamList = new ArrayList<>();
         for (StreamCreationRequestV28 request : streamCreationRequestList) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
                 request.setFilterValues(filteredValues);
@@ -321,7 +321,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
             request.setWaitForAccepted(waitForAccepted);
             StreamMetadataResponseV28 eventStream = webhookClient.createEventStreamV28(request);
             if (streamIdToReplace != null) {
-                eventStreamList = new LinkedList<>();
+                eventStreamList = new ArrayList<>();
             }
             eventStreamList.add(eventStream);
             webhookSteps.getPaStreamOwner().add(pa);
@@ -571,7 +571,7 @@ public class WebhookStepsV28 implements WebhookStepsInterface {
 
     @Override
     public List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B() {
-        List<Object> resultList = new LinkedList<>();
+        List<Object> resultList = new ArrayList<>();
 
         TimelineElementV27 teWebhook = progressResponseElement.getElement();
         assertThat(teWebhook).as("L'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();
