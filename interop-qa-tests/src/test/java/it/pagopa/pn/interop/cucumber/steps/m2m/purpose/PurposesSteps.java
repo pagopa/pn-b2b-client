@@ -23,13 +23,12 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataP
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.PurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.assistant.ReversePurposePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose.enums.PurposeOperation;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -572,6 +571,22 @@ public class PurposesSteps {
                                 .riskAnalysisForm(riskAnalysisByExample)
                 )
         );
+    }
+
+    @When("l'utente m2m tenta di effettuare la modifica parziale della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void patchPurposeTemplateWithURLPolicy() {
+        RandomStringUtils randomUtils = RandomStringUtils.insecure();
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+        Map<String, List<String>> answers = riskAnalysisForm.getAnswers();
+        answers.put("policyProvidedOnlineLink", List.of("www.altrapolicy-%s.it".formatted(randomUtils.nextAlphanumeric(3))));
+
+        riskAnalysisForm.setAnswers(answers);
+        PurposePatchRequest purposePatchRequest = purposePatchAssistant.buildDefaultPatchRequest();
+        purposePatchRequest.setRiskAnalysisForm(riskAnalysisForm);
+        purposePatchAssistant.patchResource(purposePatchRequest);
     }
 
     private void performPurposeAction(PurposeOperation action, EntityIdType entityIdType) {

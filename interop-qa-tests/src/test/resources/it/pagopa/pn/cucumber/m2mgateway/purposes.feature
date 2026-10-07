@@ -754,6 +754,18 @@ Feature: Gestione purposes attraverso APIs M2M V2
     And la finalità restituita è coerente con le modifiche effettuate
     And la finalità è stata parzialmente modificata correttamente
 
+  @purposeTemplate @purposeTemplateUpdate
+  Scenario: [M2M_PURPOSES_PATCH_URL] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente m2m tenta di effettuare la modifica parziale della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene response status code 200
+    And la finalità restituita è coerente con le modifiche effettuate
+    And la finalità è stata parzialmente modificata correttamente
+
   @m2m-patch
   @purpose-m2m-patch
   Scenario Outline: [M2M_PATCH_DRAFT_PURPOSE_1.1] - Casi negativi
