@@ -54,34 +54,42 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
-    Given "PA2" ha già creato un attributo verificato
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
-    And "PA2" ha già approvato quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2"
-    When l'utente revoca l'attributo precedentemente verificato
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata dalla Piattaforma] La Piattaforma PDND sospende e riattiva la richiesta di fruizione del fruitore al cambiamento dei requisiti
+
+    # Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha già verificato l'attributo verificato a "PA2"
+    And "PA1" ha già approvato quella richiesta di fruizione
+    And l'utente revoca l'attributo precedentemente verificato
+    # La piattaforma richiede un tempo extra per operare i suoi controlli e interventi
+    # e per distanziare il successivo evento di perdita dei requisiti
+    And si attendono 20 secondi
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha sospeso la richiesta di fruizione del fruitore $CONTEXT(consumerName) per il tuo
     e-service $CONTEXT(eServiceName), in quanto l'ente fruitore non dispone più dei requisiti per poter fruire
     di questi dati.
     """
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    """
+    La Piattaforma PDND ha sospeso la richiesta di fruizione formulata dal tuo ente per l'e-service
+    $CONTEXT(eServiceName), in quanto non risultano più soddisfatti i requisiti necessari.
+    """
 
-  Scenario: [Notifica richiesta fruizione riattivata dalla Piattaforma] La Piattaforma PDND riattiva la richiesta di fruizione del fruitore per riottenimento dei requisiti
-    Given "PA2" ha già creato un attributo verificato
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
-    And "PA2" ha già approvato quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2"
-    And l'utente revoca l'attributo precedentemente verificato
-    When "PA2" ha già verificato l'attributo verificato a "PA1"
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    # Scenario: [Notifica richiesta fruizione riattivata dalla Piattaforma] La Piattaforma PDND riattiva la richiesta di fruizione del fruitore al riottenimento dei requisiti
+    When "PA1" ha già verificato l'attributo verificato a "PA2"
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione del fruitore $CONTEXT(consumerName) per
     il tuo e-service $CONTEXT(eServiceName), precedentemente sospesa.
+    """
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    """
+    La Piattaforma PDND ha riattivato la richiesta di fruizione formulata dal tuo ente per l'e-service
+    $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
   Scenario: [Notifica richiesta fruizione archiviata] Il fruitore archivia la richiesta di fruizione per l'e-service dell'erogatore
