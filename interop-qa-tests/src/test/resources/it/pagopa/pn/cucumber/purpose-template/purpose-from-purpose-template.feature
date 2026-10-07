@@ -231,6 +231,10 @@ Feature: finalità agevolata, purpose from purpose template
       | GSP2    | PA          |
       | Privato | PA          |
 
+  # NOTE 07/10/2026 si è rilevato che l'utilizzo dello step
+  #  And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+  # (cioè crenado la finalità senza partire dal template) produce lo stesso comportamento che si ha creando la finalità a partire dal template.
+  # Dunque, al momento pare non sia fondamentale dove creare la finalità dal template per poterla modificarla successivamente indicando il template.
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
@@ -238,6 +242,7 @@ Feature: finalità agevolata, purpose from purpose template
     And l'utente è un "admin" di "PA1"
     And viene creato un nuovo purpose template destinato a enti "GSP" indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali
     And il purpose template creato viene spostato in stato PUBLISHED
-    And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
-    When l'utente tenta di effettuare la modifica parziale della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    #And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    And l'utente crea con successo una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    When l'utente tenta di effettuare la modifica parziale della finalità creata da template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
     Then si ottiene response status code 200

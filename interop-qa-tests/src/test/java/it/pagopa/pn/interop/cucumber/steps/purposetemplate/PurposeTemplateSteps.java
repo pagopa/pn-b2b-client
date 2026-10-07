@@ -1369,29 +1369,29 @@ public class PurposeTemplateSteps {
         patchAssistant.patchResource(request);
     }
 
-    @When("l'utente tenta di effettuare la modifica parziale della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    @When("l'utente tenta di effettuare la modifica parziale della finalità creata da template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
     public void patchPurposeTemplateWithURLPolicy() {
         RandomStringUtils randomUtils = RandomStringUtils.insecure();
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String tenantType = sharedStepsContext.getTenantType();
         String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
-         RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
-         Map<String, List<String>> answers = new HashMap<>();
-         answers.put("institutionalPurpose", List.of("Answer1"));
-         answers.put("policyProvided", List.of("YES"));
-         answers.put("policyProvidedMedium", List.of("ONLINE"));
-         answers.put("policyProvidedOnlineLink", List.of("www.altrapolicy-%s.it".formatted(randomUtils.nextAlphanumeric(3))));
+        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+        Map<String, List<String>> answers = new HashMap<>();
+        answers.put("institutionalPurpose", List.of("Answer1"));
+        answers.put("policyProvided", List.of("YES"));
+        answers.put("policyProvidedMedium", List.of("ONLINE"));
+        answers.put("policyProvidedOnlineLink", List.of("www.altrapolicy-%s.it".formatted(randomUtils.nextAlphanumeric(3))));
 
-         riskAnalysisForm.setAnswers(answers);
-         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().patchPurposeFromTemplate(
-                        sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId(),
-                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
-                        new PatchPurposeUpdateFromTemplateContent()
-                                .title("some new title - " + randomUtils.nextAlphanumeric(3))
-                                .riskAnalysisForm(riskAnalysisForm)
-                                .dailyCalls(49)
-                )
+        riskAnalysisForm.setAnswers(answers);
+        httpCallExecutor.performCall(
+               () -> clientTokenConfigurator.getPurposeApiClient().patchPurposeFromTemplate(
+                       sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId(),
+                       UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                       new PatchPurposeUpdateFromTemplateContent()
+                               .title("some new title - " + randomUtils.nextAlphanumeric(3))
+                               .riskAnalysisForm(riskAnalysisForm)
+                               .dailyCalls(49)
+               )
         );
     }
 

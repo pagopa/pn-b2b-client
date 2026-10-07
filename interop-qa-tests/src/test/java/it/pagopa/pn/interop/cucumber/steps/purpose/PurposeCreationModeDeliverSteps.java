@@ -70,7 +70,6 @@ public class PurposeCreationModeDeliverSteps {
         UUID consumerId = identityService.getOrganizationId(tenantType);
         String kind = identityService.getKind(tenantType);
         RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
-
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
                         new PurposeSeed()
@@ -280,6 +279,44 @@ public class PurposeCreationModeDeliverSteps {
         );
 
         savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeFromTemplateWithPolicyURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+        UUID purposeTemplateId = sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId();
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurposeFromTemplate(
+                        purposeTemplateId,
+                        new PurposeFromTemplateSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .dailyCalls(49)
+                )
+        );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea con successo una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void successfullyCreatePurposeFromTemplateWithPolicyURL() {
+        createPurposeFromTemplateWithPolicyURL();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                                ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId()
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "Purpose not found"
+        );
+        Purpose purpose = (Purpose) sharedStepsContext.getHttpCallExecutor().getResponse();
+
+        sharedStepsContext.getPurposeCommonContext().setPurposeId(purpose.getId().toString());
+        sharedStepsContext.getPurposeCommonContext().setVersionId(purpose.getCurrentVersion().getId().toString());
     }
 
 }
