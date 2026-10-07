@@ -7,14 +7,18 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLog
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusUpdateEvent;
 import java.time.OffsetDateTime;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
 
 public interface IPnDowntimeLogsClient {
     PnStatusResponse currentStatus() throws RestClientException;
     LegalFactDownloadMetadataResponse getLegalFact(String legalFactId) throws RestClientException;
+    ResponseEntity<LegalFactDownloadMetadataResponse> getLegalFactWithHttpInfo(String legalFactId) throws RestClientException;
     PnStatusResponse status() throws RestClientException;
     PnDowntimeHistoryResponse statusHistory(OffsetDateTime fromTime, OffsetDateTime toTime, List<PnFunctionality> functionality, String page, String size) throws RestClientException;
+    ResponseEntity<PnDowntimeHistoryResponse> statusHistoryWithHttpInfo(OffsetDateTime fromTime, OffsetDateTime toTime, List<PnFunctionality> functionality, String page, String size) throws RestClientException;
     void addStatusChangeEvent(String xPagopaPnUid, List<PnStatusUpdateEvent> pnStatusUpdateEvent) throws RestClientException;
     PnDowntimeHistoryResponse getResolved(Integer year, Integer month) throws RestClientException;
+    ResponseEntity<PnDowntimeHistoryResponse> getResolvedWithHttpInfo(Integer year, Integer month) throws RestClientException;
 }
