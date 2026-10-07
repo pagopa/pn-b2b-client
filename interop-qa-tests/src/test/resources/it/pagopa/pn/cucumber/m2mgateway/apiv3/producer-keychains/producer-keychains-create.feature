@@ -151,6 +151,7 @@ Feature: Creazione dei producer keychains - API v3
       | %random | %random     | []      | m2m       |
       | %random | %random     | []      | m2m-admin |
 
+  @producer-keychain-member-not-exists
   Scenario Outline: [CREATE_PRODUCER_KEYCHAINS_7] La creazione di nuovo portachiavi erogatore specificando un utente casuale non deve concludersi con successo
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente tenta di creare un portachiavi erogatore per il tenant "PA1" con:
