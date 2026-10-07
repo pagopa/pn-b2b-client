@@ -304,10 +304,11 @@ public class PurposeCreationModeDeliverSteps {
     @When("l'utente crea con successo una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
     public void successfullyCreatePurposeFromTemplateWithPolicyURL() {
         createPurposeFromTemplateWithPolicyURL();
+        UUID purposeId = ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
         sharedStepsContext.getPollingService().makePolling(
                 () -> sharedStepsContext.getHttpCallExecutor().performCall(
                         () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
-                                ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId()
+                                purposeId
                         )
                 ),
                 HttpStatus::is2xxSuccessful,
