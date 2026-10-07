@@ -233,7 +233,7 @@ Feature: finalità agevolata, purpose from purpose template
 
   # NOTE 07/10/2026 si è rilevato che l'utilizzo dello step
   #  And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
-  # (cioè crenado la finalità senza partire dal template) produce lo stesso comportamento che si ha creando la finalità a partire dal template.
+  # (cioè creando la finalità senza partire dal template) produce lo stesso comportamento che si ha creando la finalità a partire dal template.
   # Dunque, al momento pare non sia fondamentale dove creare la finalità dal template per poterla modificarla successivamente indicando il template.
   @purposeTemplate @purposeFromPurposeTemplate
   Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
