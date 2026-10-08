@@ -82,7 +82,28 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>3.0.2</version>
+            <version>3.0.3</version>
+        </dependency>
+
+        <!--
+            pdfcompare 1.2.8: motore di visual-diff pixel-level per PDF.
+            La libreria porta in transitivo pdfbox 2.x; la escludiamo per evitare
+            version-shadow con il nostro pdfbox 3.0.3 sul classpath.
+        -->
+        <dependency>
+            <groupId>de.redsix</groupId>
+            <artifactId>pdfcompare</artifactId>
+            <version>1.2.8</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.pdfbox</groupId>
+                    <artifactId>pdfbox</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.pdfbox</groupId>
+                    <artifactId>fontbox</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>

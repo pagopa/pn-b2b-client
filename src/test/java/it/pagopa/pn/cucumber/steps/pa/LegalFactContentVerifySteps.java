@@ -43,7 +43,12 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
+@Getter
 public class LegalFactContentVerifySteps {
     private final PnParserService pnParserService;
     private final SharedSteps sharedSteps;
