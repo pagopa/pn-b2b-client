@@ -4,10 +4,7 @@ import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.PurposeTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.purpose.service.IM2MPurposeTemplateClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Primary;
@@ -74,5 +71,10 @@ public class M2MPurposeTemplateClientImpl extends AbstractClient implements
     @Override
     public FileDownloadMultipart getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID documentId) {
         return this.purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, documentId);
+    }
+
+    @Override
+    public RiskAnalysisFormTemplate replacePurposeTemplateRiskAnalysis(UUID templateId, RiskAnalysisFormTemplateSeed updateSeed) {
+        return this.purposesTemplateApi.replacePurposeTemplateRiskAnalysis(templateId, updateSeed);
     }
 }

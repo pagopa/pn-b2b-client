@@ -8,6 +8,14 @@ Feature: finalità agevolata, purpose template UPDATE
     When si aggiorna il purpose template creato
     Then si ottiene lo status code 200
 
+  @privacy-policy-url
+  @purposeTemplate @purposeTemplateUpdate
+  Scenario: [UPDATE_PURPOSE_TEMPLATE_URL] Modifica di una finalità agevolata indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Given l'utente è un "admin" di "PA1"
+    And viene creato un nuovo purpose template destinato a enti "GSP" indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    When l'utente tenta di effettuare la modifica del purpose template destinato a enti "GSP" indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene lo status code 200
+
   #11(KO)
   @purposeTemplate @purposeTemplateUpdate
   Scenario: [UPDATE_PURPOSE_TEMPLATE_ERROR_NO_PERSONAL_DATA_ANSWER] Modifica di una finalità agevolata senza specificare nell'analisi del rischio alcun valore per la risposta usesPersonalData (error 400)

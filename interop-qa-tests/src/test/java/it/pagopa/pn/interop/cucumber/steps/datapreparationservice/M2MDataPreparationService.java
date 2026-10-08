@@ -1,27 +1,26 @@
 package it.pagopa.pn.interop.cucumber.steps.datapreparationservice;
 
-import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
-
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.attribute.service.IM2MCertifiedAttributeClient;
-import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.e_service_template.IM2MEServiceTemplateClient;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateSeed;
+import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
+import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAndCheckAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.SubmitAgreementOperation;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreementState;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate.RiskAnalysisExample;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-import java.util.Optional;
-import java.util.UUID;
-import javax.annotation.Nullable;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+
+import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.UUID;
+
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.UpperAgreement.from;
 
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -32,10 +31,12 @@ public class M2MDataPreparationService {
     private final IM2MEServiceTemplateClient eserviceTemplateClient;
     private final DataPreparationServiceTemplate templateService;
     private final SharedStepsContext sharedStepsContext;
+    private final RiskAnalysisMapper riskAnalysisMapper;
 
     public M2MDataPreparationService(ClientTokenConfigurator clientTokenConfigurator,
                                   SharedStepsContext sharedStepsContext,
-                                  CommonUtils commonUtils) {
+                                  CommonUtils commonUtils,
+                                  RiskAnalysisMapper riskAnalysisMapper) {
         this.agreementClient = clientTokenConfigurator.getM2mAgreementClient();
         this.attributeClient = clientTokenConfigurator.getM2mCertifiedAttributeClient();
         this.eserviceClient = clientTokenConfigurator.getM2meServiceClient();
@@ -46,6 +47,7 @@ public class M2MDataPreparationService {
             commonUtils
         );
         this.sharedStepsContext = sharedStepsContext;
+        this.riskAnalysisMapper = riskAnalysisMapper;
     }
 
     public Optional<UUID> createAgreement(UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
@@ -96,5 +98,13 @@ public class M2MDataPreparationService {
 
     public EServiceTemplateVersions getEServiceTemplateVersions(UUID eServiceTemplateId) {
         return eserviceTemplateClient.getEserviceTemplateVersions(eServiceTemplateId);
+    }
+
+    public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String tenantKind, @NonNull RiskAnalysisExample example) {
+        return riskAnalysisMapper.mapBFFToM2M(templateService.getRiskAnalysisByExample(tenantKind, example));
+    }
+
+    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull RiskAnalysisExample example) {
+        return riskAnalysisMapper.mapBFFToM2M(templateService.getRiskAnalysisTemplateByExample(suffix, example));
     }
 }
