@@ -783,7 +783,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   @over-quota-thresholds
   Scenario: [Notifica soglia fruitore superata] La soglia giornaliera per fruitore definita nell'e-service è stata superata
     Given l'utente è un "admin" di "PA1"
-    And PA1 ha già creato 2 attributi CERTIFIED
+    And PA1 ha già creato 1 attributo CERTIFIED
     And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
     And l'utente è un "admin" di "PA2"
