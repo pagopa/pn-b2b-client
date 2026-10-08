@@ -44,8 +44,8 @@ public final class PdfVisualComparator {
     /** Fattore di conversione: punti PDF (72pt=1in) → pixel al DPI scelto. */
     private static final float PDF_PT_TO_PIXEL = RENDER_DPI / 72.0f;
 
-    /** Soglia tolleranza differenze pixel (0.02%) per assorbire antialiasing e variazioni cross-platform. */
-    private static final double ALLOWED_DIFF_PERCENT = 0.02;
+    /** Soglia tolleranza differenze pixel (0.001%) per assorbire antialiasing e variazioni cross-platform. */
+    private static final double ALLOWED_DIFF_PERCENT = 0.001;
 
     /** Margine (pixel) aggiunto alle maschere per assorbire l'anti-aliasing dei bordi dei glifi. */
     private static final int ANTIALIAS_MARGIN_PX = 2;

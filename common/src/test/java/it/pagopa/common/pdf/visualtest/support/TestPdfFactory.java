@@ -79,6 +79,14 @@ public final class TestPdfFactory {
         private boolean drawTableBorders = true;
         private int pageCount = 1;
         private boolean omitIdField = false;
+        private int pageRotation = 0;
+        private String ownerPassword = null;
+        private String userPassword = null;
+        private boolean blankPage = false;
+        private boolean duplicateIdField = false;
+        private String extraTextNearId = null;
+        private float extraTextOffsetX = 0f;
+        private float extraTextOffsetY = 0f;
 
         public Spec id(String v) { this.id = v; return this; }
         public Spec date(String v) { this.date = v; return this; }
@@ -91,21 +99,52 @@ public final class TestPdfFactory {
         public Spec drawTableBorders(boolean v) { this.drawTableBorders = v; return this; }
         public Spec pageCount(int v) { this.pageCount = v; return this; }
         public Spec omitIdField() { this.omitIdField = true; return this; }
+        public Spec pageRotation(int degrees) { this.pageRotation = degrees; return this; }
+        public Spec password(String userPwd, String ownerPwd) {
+            this.userPassword = userPwd;
+            this.ownerPassword = ownerPwd;
+            return this;
+        }
+        public Spec blankPage(boolean blank) { this.blankPage = blank; return this; }
+        public Spec duplicateIdField(boolean duplicate) { this.duplicateIdField = duplicate; return this; }
+        public Spec extraTextNearId(String text, float offsetX, float offsetY) {
+            this.extraTextNearId = text;
+            this.extraTextOffsetX = offsetX;
+            this.extraTextOffsetY = offsetY;
+            return this;
+        }
 
         public byte[] build() {
             try (PDDocument doc = new PDDocument()) {
+                if (userPassword != null || ownerPassword != null) {
+                    org.apache.pdfbox.pdmodel.encryption.AccessPermission ap =
+                            new org.apache.pdfbox.pdmodel.encryption.AccessPermission();
+                    org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy spp =
+                            new org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy(
+                                    ownerPassword != null ? ownerPassword : "owner",
+                                    userPassword != null ? userPassword : "",
+                                    ap);
+                    doc.protect(spp);
+                }
+
                 PDType1Font regular = new PDType1Font(Standard14Fonts.FontName.HELVETICA);
                 PDType1Font bold = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
                 PDImageXObject logo = LosslessFactory.createFromImage(doc, logoImage(logoColor));
 
                 for (int p = 0; p < pageCount; p++) {
                     PDPage page = new PDPage(PDRectangle.A4);
+                    if (pageRotation != 0) {
+                        page.setRotation(pageRotation);
+                    }
                     doc.addPage(page);
-                    try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
-                        if (p == 0) {
-                            drawFirstPage(cs, regular, bold, logo);
-                        } else {
-                            text(cs, regular, 11, LABEL_X, 780, "Pagina aggiuntiva " + (p + 1));
+
+                    if (!blankPage) {
+                        try (PDPageContentStream cs = new PDPageContentStream(doc, page)) {
+                            if (p == 0) {
+                                drawFirstPage(cs, regular, bold, logo);
+                            } else {
+                                text(cs, regular, 11, LABEL_X, 780, "Pagina aggiuntiva " + (p + 1));
+                            }
                         }
                     }
                 }
@@ -127,11 +166,18 @@ public final class TestPdfFactory {
 
             if (!omitIdField) {
                 labelValue(cs, bold, regular, LABEL_ID, id, ID_Y + dy);
+                if (extraTextNearId != null) {
+                    text(cs, regular, 10, VALUE_X + extraTextOffsetX, ID_Y + dy + extraTextOffsetY, extraTextNearId);
+                }
             }
             labelValue(cs, bold, regular, LABEL_DATE, date, DATE_Y + dy);
             labelValue(cs, bold, regular, LABEL_AMOUNT, amount, AMOUNT_Y + dy);
 
             drawTable(cs, regular, 50, 520 + dy);
+
+            if (duplicateIdField) {
+                labelValue(cs, bold, regular, LABEL_ID, id, 400f + dy);
+            }
         }
 
         private void labelValue(PDPageContentStream cs, PDType1Font bold, PDType1Font regular,
