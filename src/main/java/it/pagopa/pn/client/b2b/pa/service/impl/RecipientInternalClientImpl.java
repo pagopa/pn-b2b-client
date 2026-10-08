@@ -16,7 +16,6 @@ import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -185,7 +184,7 @@ public class RecipientInternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactId) throws RestClientException {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model.CxTypeAuthFleet cxType =
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.model.CxTypeAuthFleet.fromValue(xPagopaPnCxType.getValue());
         return deepCopy(

@@ -11,7 +11,6 @@ import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.NotificationSearchParam;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
@@ -34,7 +33,7 @@ public interface IPnWebRecipientClient extends SettableBearerToken {
 
     FullNotificationSearchResponse searchReceivedNotification(Destinatario destinatario, NotificationSearchParam param) throws RestClientException;
 
-    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException;
+    LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactId) throws RestClientException;
 
     List<BffLegalFactId> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException;
 

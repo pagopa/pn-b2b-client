@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PreLoadRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PreLoadResponse;
@@ -17,6 +16,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactCategoryV20;
 import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
@@ -283,7 +283,7 @@ public abstract class B2bUtils {
     }
 
     public static LegalFactDownloadMetadataResponse getLegalFact(IPnPaB2bClient b2bClient, String iun, String legalFactsId) {
-        return b2bClient.getLegalFact(iun, LegalFactCategory.SENDER_ACK, URLEncoder.encode(legalFactsId, StandardCharsets.UTF_8));
+        return b2bClient.getLegalFact(iun, URLEncoder.encode(legalFactsId, StandardCharsets.UTF_8));
     }
 
     /**

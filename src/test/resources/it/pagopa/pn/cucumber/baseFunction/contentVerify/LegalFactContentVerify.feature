@@ -178,15 +178,14 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
 
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_11] Data una notifica analogica, in seguito al completamento del relativo workflow, si verifica l'esistenza del legalFact generato se sia di tipo MANCATO RECAPITO
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica GA cucumber |
-#      | senderDenomination | Comune di palermo          |
-#    And destinatario Gherkin Irreperibile e:
-#      | digitalDomicile         | NULL                      |
-#      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    Given imposto lo iun di SharedSteps a "ERMQ-EMYU-QDPW-202610-W-1" e la pa a "Comune_Multi"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
     Then si verifica se il legalFact contiene i campi
@@ -207,7 +206,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    Then ricerca ed effettua download del legalFact con la categoria "ANALOG_DELIVERY_FAILURE"
+    Then ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
     Then si verifica se il legalFact contiene i campi
       | TITLE                                     | Attestazione opponibile a terzi: mancato recapito analogico                                                |

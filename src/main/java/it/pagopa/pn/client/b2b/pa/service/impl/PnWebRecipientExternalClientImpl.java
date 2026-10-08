@@ -18,7 +18,6 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.api.LegalFactsApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -206,7 +205,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactId) throws RestClientException {
         BffDocumentDownloadMetadataResponse bffDocumentDownloadMetadataResponse = notificationReceivedApi.getReceivedNotificationDocumentV1(iun, BffDocumentType.LEGAL_FACT, null, null, legalFactId);
         return deepCopy(bffDocumentDownloadMetadataResponse, LegalFactDownloadMetadataResponse.class);
     }

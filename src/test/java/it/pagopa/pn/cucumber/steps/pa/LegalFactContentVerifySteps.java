@@ -19,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResp
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.common.util.PDFUtility;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactCategoryV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -502,13 +503,13 @@ public class LegalFactContentVerifySteps {
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
         Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
         Assertions.assertEquals(categories.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
-        LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
+        LegalFactCategoryV20 categorySearch = LegalFactCategoryV20.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = getKeyLegalFact(key);
 
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-                sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, keySearch);
+                sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), keySearch);
 
         Assertions.assertNotNull(legalFactDownloadMetadataResponse);
 
@@ -547,13 +548,12 @@ public class LegalFactContentVerifySteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categories.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
 
             if (pa) {
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = Assertions.assertDoesNotThrow(() ->
-                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, finalKeySearch));
+                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), finalKeySearch));
                 return legalFactDownloadMetadataResponse.getUrl();
             }
 //            if (appIO) {
@@ -564,8 +564,6 @@ public class LegalFactContentVerifySteps {
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
                                 sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
-                                        sharedSteps.deepCopy(categorySearch,
-                                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
                                         finalKeySearch
                                 ));
                 System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
@@ -615,11 +613,7 @@ public class LegalFactContentVerifySteps {
 //                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                Assertions.assertDoesNotThrow(() -> sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
-                        finalKeySearch
-                ));
+                Assertions.assertDoesNotThrow(() -> sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(), finalKeySearch));
             }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -657,7 +651,7 @@ public class LegalFactContentVerifySteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(category.getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
+            LegalFactCategoryV20 categorySearch = LegalFactCategoryV20.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String keySearch = null;
             //TODO Verificare....
@@ -676,7 +670,7 @@ public class LegalFactContentVerifySteps {
             String finalKeySearch = keySearch;
             if (pa) {
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, finalKeySearch);
+                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), finalKeySearch);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -684,10 +678,7 @@ public class LegalFactContentVerifySteps {
 
             if (webRecipient) {
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-                        sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
-                                sharedSteps.deepCopy(categorySearch,
-                                        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
-                                finalKeySearch);
+                        sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(), finalKeySearch);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -724,7 +715,7 @@ public class LegalFactContentVerifySteps {
         sharedSteps.setPA("Comune_Multi");
         String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
         try {
-            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
+            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, legalFactId10years);
         } catch (HttpStatusCodeException excApiPubblica) {
             log.info(excApiPubblica.getMessage());
             assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
