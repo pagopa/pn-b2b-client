@@ -45,7 +45,7 @@ public class InformalDataTestV1 {
                     .recIndex(recIndex != null ? Integer.valueOf(recIndex) : null)
                     .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                     .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
-                    .digitalAddress(digitalAddress) // todo t bonarie
+                    .digitalAddress(digitalAddress)
                     .isAvailable(isAvailable != null ? Boolean.valueOf(isAvailable) : null)
                     .isTosAccepted(isTosAccepted != null ? Boolean.valueOf(isTosAccepted) : null)
                     .sentAttemptMade(sentAttemptMade != null ? Integer.valueOf(sentAttemptMade) : null)
