@@ -3,6 +3,7 @@ package it.pagopa.common.pdf.visualtest;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.slf4j.Logger;
@@ -108,14 +109,15 @@ public final class PdfTextExtractor {
 
             for (TextPosition tp : textPositions) {
                 float x = tp.getXDirAdj();
-                float y = tp.getYDirAdj();
                 float w = tp.getWidthDirAdj();
-                float h = tp.getHeightDir();
+                // getYDirAdj() è la baseline con origine in alto: la convertiamo in origine basso-sinistra
+                float baseline = tp.getPageHeight() - tp.getYDirAdj();
+                float[] ascDesc = ascentDescent(tp);
 
                 minX = Math.min(minX, x);
-                minY = Math.min(minY, y);
+                minY = Math.min(minY, baseline - ascDesc[1]);
                 maxXEnd = Math.max(maxXEnd, x + w);
-                maxYTop = Math.max(maxYTop, y + h);
+                maxYTop = Math.max(maxYTop, baseline + ascDesc[0]);
             }
 
             String trimmed = text.trim();
@@ -128,6 +130,26 @@ public final class PdfTextExtractor {
                         maxYTop - minY,
                         pageIndex));
             }
+        }
+
+        /**
+         * Restituisce {ascent, descent} (valori positivi, in punti PDF) del glifo, così che il
+         * bounding-box copra l'intera altezza visibile del testo (inclusi i discendenti).
+         */
+        private static float[] ascentDescent(TextPosition tp) {
+            float size = tp.getFontSizeInPt();
+            float ascent = 0.8f * size;
+            float descent = 0.25f * size;
+            PDFontDescriptor fd = tp.getFont() != null ? tp.getFont().getFontDescriptor() : null;
+            if (fd != null) {
+                if (fd.getAscent() > 0) {
+                    ascent = fd.getAscent() / 1000f * size;
+                }
+                if (fd.getDescent() < 0) {
+                    descent = -fd.getDescent() / 1000f * size;
+                }
+            }
+            return new float[]{Math.max(ascent, tp.getHeightDir()), descent};
         }
     }
 
