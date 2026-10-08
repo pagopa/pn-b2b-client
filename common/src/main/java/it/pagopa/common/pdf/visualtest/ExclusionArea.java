@@ -26,27 +26,28 @@ public record ExclusionArea(int pageIndex, float x, float y, float width, float 
      * @param pageWidthPt  larghezza della pagina in punti (necessaria per FULL_LINE)
      */
     public static ExclusionArea from(TextFragment fragment, MaskStrategy strategy, float pageWidthPt) {
+        final float paddingPt = 3.0f;
         return switch (strategy) {
             case TIGHT_BOX -> new ExclusionArea(
                     fragment.pageIndex(),
-                    fragment.x(),
-                    fragment.y(),
-                    fragment.width(),
-                    fragment.height());
+                    Math.max(0, fragment.x() - paddingPt),
+                    Math.max(0, fragment.y() - paddingPt),
+                    fragment.width() + (paddingPt * 2),
+                    fragment.height() + (paddingPt * 2));
 
             case FULL_LINE -> new ExclusionArea(
                     fragment.pageIndex(),
                     0,
-                    fragment.y() - 2,     // piccolo padding verticale
+                    Math.max(0, fragment.y() - 2 - paddingPt),
                     pageWidthPt,
-                    fragment.height() + 4);
+                    fragment.height() + 4 + (paddingPt * 2));
 
             case FULL_TABLE_CELL -> new ExclusionArea(
                     fragment.pageIndex(),
-                    Math.max(0, fragment.x() - 6),
-                    Math.max(0, fragment.y() - 4),
-                    fragment.width() + 12,
-                    fragment.height() + 8);
+                    Math.max(0, fragment.x() - 6 - paddingPt),
+                    Math.max(0, fragment.y() - 4 - paddingPt),
+                    fragment.width() + 12 + (paddingPt * 2),
+                    fragment.height() + 8 + (paddingPt * 2));
         };
     }
 

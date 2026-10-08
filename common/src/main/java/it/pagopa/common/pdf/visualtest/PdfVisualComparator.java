@@ -32,12 +32,15 @@ public final class PdfVisualComparator {
 
     /**
      * DPI di rendering per il confronto visivo.
-     * 150 DPI offre un buon equilibrio qualità/velocità per documenti A4.
+     * 300 DPI garantisce alta fedeltà e stabilità di rendering.
      */
-    private static final int RENDER_DPI = 150;
+    private static final int RENDER_DPI = 300;
 
     /** Fattore di conversione: punti PDF (72pt=1in) → pixel al DPI scelto. */
     private static final float PDF_PT_TO_PIXEL = RENDER_DPI / 72.0f;
+
+    /** Soglia tolleranza differenze pixel (0.02%) per assorbire antialiasing e variazioni cross-platform. */
+    private static final double ALLOWED_DIFF_PERCENT = 0.02;
 
     private PdfVisualComparator() {
     }
@@ -80,9 +83,14 @@ public final class PdfVisualComparator {
         try (ByteArrayInputStream expectedStream = new ByteArrayInputStream(expectedPdf);
              ByteArrayInputStream actualStream   = new ByteArrayInputStream(actualPdf)) {
 
+            de.redsix.pdfcompare.env.SimpleEnvironment env = new de.redsix.pdfcompare.env.SimpleEnvironment();
+            env.setDPI(RENDER_DPI);
+            env.setAllowedDiffInPercent(ALLOWED_DIFF_PERCENT);
+
             // Costruisce il comparatore: i due stream sono passati al costruttore (API 1.2.8)
             PdfComparator<CompareResultImpl> comparator =
-                    new PdfComparator<>(expectedStream, actualStream, new CompareResultImpl());
+                    new PdfComparator<>(expectedStream, actualStream, new CompareResultImpl())
+                            .withEnvironment(env);
 
             // Aggiunge le aree di esclusione convertendo le coordinate in pixel
             for (ExclusionArea ex : exclusions) {

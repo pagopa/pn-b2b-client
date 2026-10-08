@@ -76,12 +76,12 @@ public final class SendFieldValidators {
     }
 
     /**
-     * Validatore data in formato italiano leggibile (es. {@code 31/01/2024}).
+     * Validatore data in formato italiano leggibile con orario opzionale (es. {@code 31/01/2024} o {@code 08/10/2026 18:08}).
      */
     public static FieldValidator dataItaliana() {
         return FieldValidators.regex(
-                Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}\\b"),
-                "data italiana (dd/MM/yyyy)");
+                Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}(?:\\s+(?:[01]\\d|2[0-3]):[0-5]\\d)?\\b"),
+                "data italiana (dd/MM/yyyy [HH:mm])");
     }
 
     /**

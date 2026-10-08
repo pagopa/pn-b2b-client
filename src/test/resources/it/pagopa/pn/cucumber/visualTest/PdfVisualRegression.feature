@@ -6,23 +6,15 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @senderAck
   Scenario: [VRT-01] Verifica visual regression del SENDER_ACK – singolo destinatario digitale
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT SENDER_ACK |
-      | senderDenomination | Comune di palermo              |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Given imposto lo iun di SharedSteps a "TVND-HALK-WHJD-202610-H-1" e la pa a "Comune_Multi"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verifica la conformità visiva del PDF con il template "SENDER_ACK"
 
   @visualTest @senderAck @smoke
   Scenario: [VRT-02] Verifica solo campi dinamici del SENDER_ACK (senza golden master – smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT SENDER_ACK smoke |
-      | senderDenomination | Comune di palermo                   |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Given imposto lo iun di SharedSteps a "TVND-HALK-WHJD-202610-H-1" e la pa a "Comune_Multi"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verificano i campi dinamici del PDF con il template "SENDER_ACK"
 
