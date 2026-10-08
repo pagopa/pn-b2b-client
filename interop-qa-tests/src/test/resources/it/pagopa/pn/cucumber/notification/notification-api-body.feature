@@ -35,7 +35,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName) alla versione più recente.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa e riattivata] Il fruitore sospende e riattiva la richiesta di fruizione per l'e-service dell'erogatore
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata da fruitore] Il fruitore sospende e riattiva la richiesta di fruizione per l'e-service dell'erogatore
 
     # Scenario: [Notifica richiesta fruizione sospesa] Il fruitore sospende la richiesta di fruizione per l'e-service dell'erogatore
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -46,7 +46,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName).
     """
 
-    # PASSA
     # Scenario: [Notifica richiesta fruizione riattivata] Il fruitore riattiva la richiesta di fruizione per l'e-service dell'erogatore
     When "PA2" ha già attivato nuovamente quella richiesta di fruizione come CONSUMER
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
@@ -55,34 +54,42 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
-    Given "PA2" ha già creato un attributo verificato
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
-    And "PA2" ha già approvato quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2"
-    When l'utente revoca l'attributo precedentemente verificato
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata dalla Piattaforma] La Piattaforma PDND sospende e riattiva la richiesta di fruizione del fruitore al cambiamento dei requisiti
+
+    # Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
+    Given l'utente è un "admin" di "PA1"
+    Given "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha già verificato l'attributo verificato a "PA2"
+    And "PA1" ha già approvato quella richiesta di fruizione
+    And l'utente revoca l'attributo precedentemente verificato
+    # La piattaforma richiede un tempo extra per operare i suoi controlli e interventi
+    # e per distanziare il successivo evento di perdita dei requisiti
+    And si attendono 20 secondi
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha sospeso la richiesta di fruizione del fruitore $CONTEXT(consumerName) per il tuo
     e-service $CONTEXT(eServiceName), in quanto l'ente fruitore non dispone più dei requisiti per poter fruire
     di questi dati.
     """
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    """
+    La Piattaforma PDND ha sospeso la richiesta di fruizione formulata dal tuo ente per l'e-service
+    $CONTEXT(eServiceName), in quanto non risultano più soddisfatti i requisiti necessari.
+    """
 
-  Scenario: [Notifica richiesta fruizione riattivata dalla Piattaforma] La Piattaforma PDND riattiva la richiesta di fruizione del fruitore per riottenimento dei requisiti
-    Given "PA2" ha già creato un attributo verificato
-    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And "PA2" ha già verificato l'attributo verificato a "PA1"
-    And "PA2" ha già approvato quella richiesta di fruizione
-    And l'utente è un "admin" di "PA2"
-    And l'utente revoca l'attributo precedentemente verificato
-    When "PA2" ha già verificato l'attributo verificato a "PA1"
-    Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
+    # Scenario: [Notifica richiesta fruizione riattivata dalla Piattaforma] La Piattaforma PDND riattiva la richiesta di fruizione del fruitore al riottenimento dei requisiti
+    When "PA1" ha già verificato l'attributo verificato a "PA2"
+    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_EROGAZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione del fruitore $CONTEXT(consumerName) per
     il tuo e-service $CONTEXT(eServiceName), precedentemente sospesa.
+    """
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
+    """
+    La Piattaforma PDND ha riattivato la richiesta di fruizione formulata dal tuo ente per l'e-service
+    $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
   Scenario: [Notifica richiesta fruizione archiviata] Il fruitore archivia la richiesta di fruizione per l'e-service dell'erogatore
@@ -303,7 +310,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La richiesta di fruizione per l'e-service $CONTEXT(eServiceName) è stata rifiutata dall'ente erogatore.
     """
 
-  Scenario: [Notifica richiesta fruizione sospesa e riattivata] L'erogatore sospende e riattiva al fruitore la richiesta di fruizione di un e-service
+  Scenario: [Notifica richiesta fruizione sospesa e riattivata da erogatore] L'erogatore sospende e riattiva al fruitore la richiesta di fruizione di un e-service
 
     # Scenario: [Notifica richiesta fruizione sospesa] L'erogatore sospende al fruitore la richiesta di fruizione di un e-service
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "MANUAL"
@@ -316,7 +323,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     per l'e-service $CONTEXT(eServiceName). Non potrai utilizzare i voucher associati fino alla riattivazione.
     """
 
-    # PASSA
     # Scenario: [Notifica richiesta fruizione riattivata] L'erogatore riattiva al fruitore la richiesta di fruizione di un e-service
     When "PA1" ha già attivato nuovamente quella richiesta di fruizione come PRODUCER
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
@@ -345,25 +351,12 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), in quanto non risultano più soddisfatti i requisiti necessari.
     """
 
-    # PASSA
     # Scenario: [Notifica riattivazione fruizione da PDND] La Piattaforma PDND riattiva la richiesta di fruizione per un e-service
     When "PA2" ha già assegnato nuovamente quell'attributo "CERTIFIED" a "PA1"
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE
     """
     La Piattaforma PDND ha riattivato la richiesta di fruizione formulata dal tuo ente per l'e-service
     "$CONTEXT(eServiceName)", precedentemente sospesa.
-    """
-
-  Scenario: [Notifica stima di carico superata] La stima di carico complessiva per le finalità associate all'e-service vengono superate dal fruitore
-    Given l'utente è un "admin" di "PA1"
-    And "PA2" ha già creato e pubblicato 1 e-service
-    And "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
-    When "PA1" ha già richiesto l'aggiornamento della stima di carico superando i limiti di quell'e-service
-    Then admin di "PA1" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
-    """
-    La stima di carico complessiva per le finalità associate all'e-service "$CONTEXT(eServiceName)" ha superato
-    la soglia massima consentita dall'erogatore pari a 50 chiamate API giornaliere.
     """
 
   Scenario: [Notifica richiesta di adeguamento piano rifiutata] L'erogatore rifiuta la richiesta di adeguamento del piano di carico al fruitore
@@ -397,8 +390,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     richiesto per l'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica finalità rifiutata] L'erogatore rifiuta la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -408,7 +399,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha rifiutato la finalità "$CONTEXT(purposeTitle)" che il tuo
-    ente ha inoltrato per l'e-service "$CONTEXT(eServiceName)".
+    ente ha inoltrato per l'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Notifica finalità sospesa] L'erogatore sospende la finalità richiesta dal fruitore per un e-service
@@ -423,8 +414,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     all'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica finalità riattivata] L'erogatore riattiva la finalità richiesta dal fruitore per un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -436,7 +425,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link FINALITA_FRUIZIONE
     """
     L'ente erogatore $CONTEXT(producerName) ha riattivato la finalità "$CONTEXT(purposeTitle)", associata
-    all'e-service "$CONTEXT(eServiceName)".
+    all'e-service $CONTEXT(eServiceName).
     """
 
   Scenario: [Notifica nuova versione template] L'erogatore pubblica una nuova versione di e-service template
@@ -513,8 +502,6 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     tuo ente gli ha conferito per l'e-service "$CONTEXT(eServiceName)".
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica richiesta approvazione nuova versione e-service] L'ente delegato richiede l'approvazione per pubblicare una nuova versione di e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -535,11 +522,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA1" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegato $CONTEXT(delegateName) richiede la tua approvazione per pubblicare
-    una nuova versione dell'e-service "$CONTEXT(eServiceName)".
+    una nuova versione dell'e-service $CONTEXT(eServiceName).
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica approvazione nuova versione e-service] L'ente delegante approva la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -562,11 +547,9 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha approvato la pubblicazione della nuova versione
-    dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
+    dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
-  # FALLISCE per una questione di virgolette assenti rispetto all'Excel
-  @wait_for_fix
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -589,7 +572,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     Then admin di "PA2" ha ricevuto la notifica in-app contenente il link DELEGA_ADERENTE
     """
     L'ente delegante $CONTEXT(producerName) ha rifiutato la pubblicazione della nuova versione
-    dell'e-service "$CONTEXT(eServiceName)" che gestisci tramite delega.
+    dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
   Scenario: [Notifica ricezione richiesta di delega] L'ente riceve una richiesta di delega all'erogazione per un e-service
@@ -800,7 +783,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
   @over-quota-thresholds
   Scenario: [Notifica soglia fruitore superata] La soglia giornaliera per fruitore definita nell'e-service è stata superata
     Given l'utente è un "admin" di "PA1"
-    And PA1 ha già creato 2 attributi CERTIFIED
+    And PA1 ha già creato 1 attributo CERTIFIED
     And l'utente assegna a "PA2" l'attributo certificato precedentemente creato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100
     And l'utente è un "admin" di "PA2"

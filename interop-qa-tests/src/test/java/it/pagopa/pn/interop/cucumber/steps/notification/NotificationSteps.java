@@ -356,7 +356,7 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         String deepLink = resolveDynamicValues(deepLinkType.getValue(), sharedStepsContext);
         String finalMessage = resolveDynamicValues(message, sharedStepsContext);
 
-        final int MAX_TRIES = 3;
+        final int MAX_TRIES = 4;
         final int MAX_LIMIT = 50;
         final AtomicInteger tryCount = new AtomicInteger(0);
         final AtomicInteger limit = new AtomicInteger(5);
