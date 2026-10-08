@@ -2,9 +2,9 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalNotificationStatusHistoryElementV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationStatusHistoryElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV30;
@@ -510,7 +510,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentInformalNotificationV1 fullSentNotification = null;//TODO MATTEO
+            FullSentInformalNotificationV1 fullSentNotification = sharedSteps.getSentInformalSentNotificationLastVersion();
             InformalTimelineElementV1 timelineElement = fullSentNotification.getTimeline().stream().filter(
                             elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
                     .findAny()
@@ -557,7 +557,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-            FullSentInformalNotificationV1 fullSentNotification = null;//TODO MATTEO
+            FullSentInformalNotificationV1 fullSentNotification = sharedSteps.getSentInformalSentNotificationLastVersion();
             InformalNotificationStatusHistoryElementV1 notificationStatusHistoryElement = fullSentNotification.getNotificationStatusHistory().stream().filter(
                     elem -> elem.getStatus().getValue().equals(informalNotificationStatus.getValue())).findAny().orElse(null);
             if (notificationStatusHistoryElement != null) {
@@ -572,28 +572,58 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     public <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
         try {
             assertThat(progressResponseElement).as(NOT_NULL_P_R_E).isNotNull();
-            TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.valueOf(((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory()).name());
-
-            FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 elementToCheck = fullSentNotification.getTimeline().stream()
-                    .filter(elem -> elem.getCategory() != null)
-                    .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
-                    .findAny()
-                    .orElse(null);
-            ProgressResponseElementV30 convertedProgressResponseElement = ((ProgressResponseElementV30) progressResponseElement);
-            assertThat(elementToCheck)
-                    .as("La ricerca sulla fullSentNotification di elementi con category = " + timelineElementInternalCategory + " deve restituire almeno un elemento")
-                    .isNotNull();
-            assertThat(elementToCheck.getTimestamp()).as("Il timestamp dell'elemento restituito da b2b non dev'essere null").isNotNull();
-            assertThat(convertedProgressResponseElement.getElement()).as(NOT_NULL_P_R_E).isNotNull();
-            assertThat(convertedProgressResponseElement.getElement().getTimestamp()).as("Il timestamp del progressResponseElement non dev'essere null").isNotNull();
-            assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
-                    .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
-                    .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
-            log.info("EventProgress: " + progressResponseElement);
+            if (sharedSteps.isLegalNotification()) {
+                verifyAssertionsTimelineLegal(timelineForStream, progressResponseElement);
+            } else {
+                verifyAssertionsTimelineInformal(timelineForStream, progressResponseElement);
+            }
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+    }
+
+    private <T> void verifyAssertionsTimelineLegal(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+        TimelineElementCategoryV28 timelineElementInternalCategory = TimelineElementCategoryV28.valueOf(((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory()).name());
+
+        FullSentNotificationV29 fullSentNotification = getFullSentNotificationVersioned();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28 elementToCheck = fullSentNotification.getTimeline().stream()
+                .filter(elem -> elem.getCategory() != null)
+                .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                .findAny()
+                .orElse(null);
+        ProgressResponseElementV30 convertedProgressResponseElement = ((ProgressResponseElementV30) progressResponseElement);
+        assertThat(elementToCheck)
+                .as("La ricerca sulla fullSentNotification di elementi con category = " + timelineElementInternalCategory + " deve restituire almeno un elemento")
+                .isNotNull();
+        assertThat(elementToCheck.getTimestamp()).as("Il timestamp dell'elemento restituito da b2b non dev'essere null").isNotNull();
+        assertThat(convertedProgressResponseElement.getElement()).as(NOT_NULL_P_R_E).isNotNull();
+        assertThat(convertedProgressResponseElement.getElement().getTimestamp()).as("Il timestamp del progressResponseElement non dev'essere null").isNotNull();
+        assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
+                .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
+                .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        log.info("EventProgress: " + progressResponseElement);
+    }
+
+    private <T> void verifyAssertionsTimelineInformal(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement) {
+        InformalTimelineElementCategoryV1 timelineElementInternalCategory = InformalTimelineElementCategoryV1.valueOf(((InformalTimelineElementCategoryV1) timelineForStream.getTimelineElementCategory()).name());
+
+        FullSentInformalNotificationV1 fullSentNotification = sharedSteps.getSentInformalSentNotificationLastVersion();
+        InformalTimelineElementV1 elementToCheck = fullSentNotification.getTimeline().stream()
+                .filter(elem -> elem.getCategory() != null)
+                .filter(elem -> elem.getCategory().getValue().equals(timelineElementInternalCategory.getValue()))
+                .findAny()
+                .orElse(null);
+        ProgressResponseElementV30 convertedProgressResponseElement = ((ProgressResponseElementV30) progressResponseElement);
+        assertThat(elementToCheck)
+                .as("La ricerca sulla fullSentNotification di elementi con category = " + timelineElementInternalCategory + " deve restituire almeno un elemento")
+                .isNotNull();
+        assertThat(elementToCheck.getTimestamp()).as("Il timestamp dell'elemento restituito da b2b non dev'essere null").isNotNull();
+        assertThat(convertedProgressResponseElement.getInformalElement()).as(NOT_NULL_P_R_E).isNotNull();
+        assertThat(convertedProgressResponseElement.getInformalElement().getTimestamp()).as("Il timestamp del progressResponseElement non dev'essere null").isNotNull();
+        assertThat(convertedProgressResponseElement.getInformalElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
+                .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
+                .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        log.info("EventProgress: " + progressResponseElement);
     }
 
     @Override

@@ -146,14 +146,17 @@ public class PnPollingServiceWebhookV30 extends PnPollingTemplate<PnPollingRespo
 
     private Predicate<ProgressResponseElementV30> toCheckCondition(PnPollingParameter pnPollingParameter) {
         return progressResponseElement ->
-                progressResponseElement.getIun() != null
-                        && progressResponseElement.getIun().equals(iun)
+                (progressResponseElement.getIun() != null && progressResponseElement.getIun().equals(iun))
+                        && (progressResponseElement.getElement() != null
                         && progressResponseElement.getElement().getCategory() != null
-                        && progressResponseElement.getElement().getCategory().equals(
-                        pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV30())
-                        || progressResponseElement.getIun() != null
-                        && progressResponseElement.getIun().equals(iun)
-                        && (progressResponseElement.getNewStatus() != null
-                        && (progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV30())));
+                        && progressResponseElement.getElement().getCategory().equals(pnPollingParameter.getPnPollingWebhook().getTimelineElementCategoryV30())
+                        || (progressResponseElement.getNewStatus() != null
+                        && progressResponseElement.getNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getNotificationStatusV30()))
+
+                        || progressResponseElement.getInformalElement() != null
+                        && progressResponseElement.getInformalElement().getCategory() != null
+                        && progressResponseElement.getInformalElement().getCategory().equals(pnPollingParameter.getPnPollingWebhook().getInformalTimelineElementCategoryV1())
+                        || progressResponseElement.getInformalNewStatus() != null
+                        && progressResponseElement.getInformalNewStatus().equals(pnPollingParameter.getPnPollingWebhook().getInformalNotificationStatusV1()));
     }
 }
