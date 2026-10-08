@@ -5,6 +5,8 @@ import it.pagopa.common.pdf.visualtest.MaskStrategy;
 import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
 import it.pagopa.pn.cucumber.steps.visualtest.SendFieldValidators;
 
+import java.util.regex.Pattern;
+
 import static it.pagopa.common.pdf.visualtest.FieldValidators.present;
 
 /**
@@ -33,27 +35,25 @@ public final class SenderAckTemplate {
      */
     public static PdfDocumentTemplate build() {
         return PdfDocumentTemplate.builder(KEY)
-                // Il documento di presa in carico è tipicamente su 1 pagina;
-                // rimosso il vincolo per tollerare versioni multi-pagina con molti destinatari.
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.regex(Pattern.compile("\\b[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d\\b")),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data emissione",
-                        FieldLocators.labelProximity("data", 200f, 15f),
+                        FieldLocators.regex(Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}\\b")),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale mittente",
-                        FieldLocators.labelProximity("C.F.", 200f, 15f),
-                        present(),
+                        FieldLocators.regex(Pattern.compile("\\b\\d{11}\\b")),
+                        SendFieldValidators.codiceFiscalePg(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
+                        FieldLocators.regex(Pattern.compile("\\b[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]\\b")),
+                        SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

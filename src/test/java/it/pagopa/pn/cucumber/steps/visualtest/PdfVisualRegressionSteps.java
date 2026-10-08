@@ -34,6 +34,7 @@ public class PdfVisualRegressionSteps {
     private final SharedSteps sharedSteps;
     private final DocumentTemplateRegistry registry;
     private final it.pagopa.pn.cucumber.steps.pa.LegalFactContentVerifySteps legalFactContentVerifySteps;
+    private final it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineSteps templateEngineSteps;
 
     /** Ultimo PDF scaricato (in byte) per poterlo riusare in step successivi. */
     private byte[] lastDownloadedPdf;
@@ -44,15 +45,28 @@ public class PdfVisualRegressionSteps {
     @Autowired
     public PdfVisualRegressionSteps(SharedSteps sharedSteps,
                                     DocumentTemplateRegistry registry,
-                                    it.pagopa.pn.cucumber.steps.pa.LegalFactContentVerifySteps legalFactContentVerifySteps) {
+                                    it.pagopa.pn.cucumber.steps.pa.LegalFactContentVerifySteps legalFactContentVerifySteps,
+                                    @org.springframework.context.annotation.Lazy it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineSteps templateEngineSteps) {
         this.sharedSteps = sharedSteps;
         this.registry    = registry;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;
+        this.templateEngineSteps = templateEngineSteps;
     }
 
     // -----------------------------------------------------------------------
     // Step: download PDF e confronto ibrido in un unico passo
     // -----------------------------------------------------------------------
+
+    /**
+     * Confronta il PDF generato nell'ultimo step di Template Engine con il golden master.
+     */
+    @Then("si verifica la conformità visiva del PDF generato dal template engine con il template {string}")
+    public void verificaConformitaVisivaTemplateEngine(String templateKey) {
+        Assertions.assertNotNull(templateEngineSteps, "TemplateEngineSteps non disponibile");
+        byte[] actualPdf = templateEngineSteps.getLatestPdfBytes();
+        Assertions.assertNotNull(actualPdf, "Nessun PDF generato dal Template Engine disponibile per la verifica");
+        verificaConformitaVisiva(actualPdf, templateKey);
+    }
 
     /**
      * Scarica il PDF dall'URL fornito e lo confronta con il golden master
@@ -100,6 +114,15 @@ public class PdfVisualRegressionSteps {
         String url = resolveLastLegalFactUrl();
         byte[] actualPdf = B2bUtils.downloadFile(url);
         this.lastDownloadedPdf = actualPdf;
+        String folder = templateKey.toLowerCase().replace('_', '-');
+        try {
+            Path targetPath = Paths.get("src/test/resources/it/pagopa/pn/cucumber/visualtest/expected-pdfs", folder, "expected.pdf");
+            Files.createDirectories(targetPath.getParent());
+            Files.write(targetPath, actualPdf);
+            log.info("PdfVisualRegressionSteps: salvato Golden Master per '{}' in {}", templateKey, targetPath.toAbsolutePath());
+        } catch (IOException e) {
+            log.warn("PdfVisualRegressionSteps: impossibile salvare expected.pdf per '{}': {}", templateKey, e.getMessage());
+        }
 
         PdfDocumentTemplate template = registry.getOrThrow(templateKey);
 

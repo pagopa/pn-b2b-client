@@ -413,7 +413,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
-        DelayerSkipSenderLimitService.class
+        DelayerSkipSenderLimitService.class,
+        it.pagopa.pn.cucumber.steps.visualtest.PdfVisualTestConfiguration.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -66,6 +66,17 @@ public class TemplateEngineSteps {
     private TemplateEngineResult result;
     private final List<HtmlEscapeFuzzExecution> htmlEscapeFuzzExecutions = new ArrayList<>();
 
+    public byte[] getLatestPdfBytes() {
+        if (result != null && result.getTemplateFileReturned() != null) {
+            try {
+                return result.getTemplateFileReturned().getInputStream().readAllBytes();
+            } catch (Exception e) {
+                log.warn("Impossibile leggere i byte del PDF dal templateFileReturned: {}", e.getMessage());
+            }
+        }
+        return null;
+    }
+
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
     private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();

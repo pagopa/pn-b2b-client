@@ -775,6 +775,12 @@ Feature: Template engine
       | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                                                                                 |
       | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
 
+  @templateEngine @htmlEscape @visualRegression @senderAckVisualFuzz
+  Scenario: [TEMPLATE-ENGINE_VISUAL_FUZZ] Verifica visual regression su SENDER_ACK con campi fuzzed da HTML escaping
+    When eseguo il fuzzing HTML escaping sull'endpoint "notification-received-legal-fact" in lingua "italiana" sui campi "subject,notification.sender.paDenomination"
+    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "pdf"
+    And si verifica la conformità visiva del PDF generato dal template engine con il template "SENDER_ACK"
+
   @templateEngine @htmlEscape @fuzzing
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
     When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"

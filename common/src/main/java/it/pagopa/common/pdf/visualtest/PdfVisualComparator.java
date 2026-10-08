@@ -102,8 +102,8 @@ public final class PdfVisualComparator {
             int diffPageCount = result.getNumberOfPages();
             Path savedDiff = null;
             if (diffOutputPath != null) {
-                try {
-                    result.writeTo(diffOutputPath.toString());
+                try (java.io.OutputStream os = java.nio.file.Files.newOutputStream(diffOutputPath)) {
+                    result.writeTo(os);
                     savedDiff = diffOutputPath;
                     log.info("PdfVisualComparator: diff salvato in {}", diffOutputPath);
                 } catch (Exception e) {
