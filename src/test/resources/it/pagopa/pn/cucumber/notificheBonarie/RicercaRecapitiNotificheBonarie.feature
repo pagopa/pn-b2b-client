@@ -1160,6 +1160,47 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   # possibile con il supporto dei DEV.
 # ***********************************************
 
+
+  Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_09_1_D] Come ente mittente invio una notifica bonaria verso PF CON pec speciale e con pec di piattaforma, il destinatario rimuove la pec ma il flusso non varia il percorso.
+    Given si predispone addressbook per l'utente "GherkinSrl"
+    Then l'utente "GherkinSrl" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "tullio.test@virgilio.it" per il comune "default"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "GherkinSrl"
+    When viene richiesto l'inserimento del numero di telefono "+393214210000", e passo la lingua selezionata dal destinatario "IT"
+    Then l'inserimento va a buon fine e NON ha prodotto un errore
+    And viene attivato il servizio SERCQ SEND per la PA "default"
+    And viene verificato che Sercq sia "abilitato" per la PA "default"
+      # NO tos v3 xx
+    Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | CampaignOnlyPEC          |
+      | messageId       | ${NEW-IT}                |
+      | subject         | Test Serch Contact       |
+      | recipientType   | PG                       |
+      | taxId           | 12666810299              |
+      | denomination    | Gherkin  srl             |
+      | email           | NULL                     |
+      | digitalDomicile | example@OK-pecSuccess.it |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      | details_channel              | PEC      |
+      | details_digitalAddressSource | PLATFORM |
+      | details_isAvailable          | true     |
+#    Then viene disabilitato il servizio SERCQ SEND per la PA "default"
+#    And viene verificato che Sercq sia "disabilitato" per la PA "default"
+#    And vengono rimossi eventuali recapiti presenti per l'utente
+#controlli xxx
+    And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
+      | details_digitalAddress_type | EMAIL |
+#    And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
+#      | details_digitalAddress_type | SMS |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
+      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel | PEC |
+
   @informalNotificationsSearchDigitalAddress @addressBook1 @informalRunAlone
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_09_1_A] Come ente mittente invio una notifica bonaria verso PF SENZA pec speciale e con pec di piattaforma, il destinatario rimuove la pec ma il flusso non varia il percorso.
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -1213,7 +1254,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | true     |
     And vengono rimossi eventuali recapiti presenti per l'utente
-# xxx controllo prograss feedback
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -1227,13 +1267,13 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "tullio.test@virgilio.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
       # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels       |
+      | campaignId      | CampaignOnlyPEC          |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PF                       |
@@ -1250,6 +1290,10 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
 #controlli xxx
+    And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
+      | details_digitalAddress_type | EMAIL |
+#    And non è presente l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
+#      | details_digitalAddress_type | SMS |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
       | details_channel | PEC |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
@@ -1863,8 +1907,8 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel                | EMAIL              |
-      | details_digitalAddressSource   | SPECIAL            |
+      | details_channel                | EMAIL                   |
+      | details_digitalAddressSource   | SPECIAL                 |
       | details_digitalAddress_address | tullio.test@virgilio.it |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
@@ -2088,7 +2132,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels       |
+      | campaignId      | CampaignOnlyPEC          |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PF                       |
@@ -2101,12 +2145,15 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
       | details_isTosAccepted        | false    |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel                | PEC                      |
+      | details_digitalAddressSource   | SPECIAL                  |
+      | details_digitalAddress_address | example@OK-pecSuccess.it |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
@@ -2118,7 +2165,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels       |
+      | campaignId      | CampaignOnlyPEC          |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PG                       |
@@ -2136,13 +2183,16 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel                | PEC                      |
+      | details_digitalAddressSource   | SPECIAL                  |
+      | details_digitalAddress_address | example@OK-pecSuccess.it |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
 #!speciale-piattaforma=skip
 
-  #@informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_05_1_B] Come ente mittente in mancanza dell accettazione dei tos, invio una notifica bonaria verso PF SENZA pec speciale e pec di piattaforma, il servizio skippa il canale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -2150,7 +2200,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -2168,9 +2218,10 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      | details_isTosAccepted        | false   |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      | details_channel              | PEC     |
+      | details_digitalAddressSource | GENERAL |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
@@ -2182,7 +2233,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     #NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2200,15 +2251,16 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      | details_isTosAccepted        | false   |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      | details_channel              | PEC     |
+      | details_digitalAddressSource | GENERAL |
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
 #!speciale+sercQ=skip
 
-  #@informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_05_1_C] Come ente mittente in mancanza dell accettazione dei tos, invio una notifica bonaria verso PF SENZA pec speciale e sercq attivo, il servizio skippa il canale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
@@ -2219,7 +2271,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene verificato che Sercq sia "abilitato" per la PA "default"
       # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -2237,12 +2289,10 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      | details_isTosAccepted        | false   |
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
-#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-#      | details_channel | PEC |
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 
@@ -2259,7 +2309,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
     # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2276,20 +2326,18 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
-      | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
+      | details_isAvailable          | false   |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
-#    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
-#      | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "PUBLIC_REGISTRY_CALL" della notifica bonaria
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
 
 
  #speciale+sercq=speciale
 
-  #@informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_05_1_D] Come ente mittente in mancanza dell accettazione dei tos, invio una notifica bonaria verso PF con sercq attivo e pec speciale, il servizio utilizzerà la pec speciale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
@@ -2300,7 +2348,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene verificato che Sercq sia "abilitato" per la PA "default"
       # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels       |
+      | campaignId      | CampaignOnlyPEC          |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PF                       |
@@ -2314,12 +2362,10 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
       | details_isTosAccepted        | false    |
-     #indirizzo assente senza tos
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
 
@@ -2329,8 +2375,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Given si predispone addressbook per l'utente "CucumberSpa"
     Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And l'utente "CucumberSpa" controlla l'accettazione "positiva" dei tos per sercq
-    #And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
-    #And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
@@ -2338,7 +2382,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And viene verificato che Sercq sia "abilitato" come indirizzo di "default"
     # NO tos v3 xx
     Then l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels       |
+      | campaignId      | CampaignOnlyPEC          |
       | messageId       | ${NEW-IT}                |
       | subject         | Test Serch Contact       |
       | recipientType   | PG                       |
@@ -2352,22 +2396,23 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
       | details_isTosAccepted        | false    |
-    #indirizzo assente senza tos
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true    |
-      | details_isTosAccepted        | false   |
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
+      | details_channel              | PEC     |
+      | details_digitalAddressSource | SPECIAL |
     And viene disabilitato il servizio SERCQ SEND come indirizzo di "default"
     And viene verificato che Sercq sia "disabilitato" come indirizzo di "default"
 
  #!speciale+!piatt=skip
 
-  #@informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
+  @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalON @informalNotTos
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PF_05_1_E] Come ente mittente in mancanza dell accettazione dei tos, invio una notifica bonaria verso PF senza pec speciale ne recapiti di piattaforma, il servizio skippa il canale
     # NO tos v3 xx
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PF                 |
@@ -2380,7 +2425,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      | details_isTosAccepted        | false   |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
@@ -2393,7 +2437,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_05_1_E] Come ente mittente in mancanza dell accettazione dei tos, invio una notifica bonaria verso PG senza pec speciale ne recapiti di piattaforma, il servizio skippa il canale
     # NO tos v3 xx
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | BonarieAllChannels |
+      | campaignId      | CampaignOnlyPEC    |
       | messageId       | ${NEW-IT}          |
       | subject         | Test Serch Contact |
       | recipientType   | PG                 |
@@ -2406,7 +2450,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC     |
       | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | false   |
-      | details_isTosAccepted        | false   |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
