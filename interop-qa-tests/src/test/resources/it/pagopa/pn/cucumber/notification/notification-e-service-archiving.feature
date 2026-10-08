@@ -39,14 +39,14 @@ Feature: Notifiche relative all'archiviazione manuale di un e-service
     """
 
   Scenario: [MANUAL_ARCHIVING_ESERVICE_NOTIFICATION_1.3] L'utente erogatore NON riceve una notifica nel momento in cui avvia il processo di archiviazione dell'intero e-service se le notifiche per il cambio di stato dell'e-service sono disabilitate
-    Given l'utente è un "admin" di "PA1"
-    And admin di "PA1" attiva le notifiche in-app eccetto:
+    Given l'utente è un "admin" di "PA3"
+    And admin di "PA3" attiva le notifiche in-app eccetto:
     | eserviceStateChangedToProducer |
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA3" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA1" ha già pubblicato una nuova versione per quell'e-service
+    And "PA3" ha già pubblicato una nuova versione per quell'e-service
     When l'utente avvia il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
-    Then admin di "PA1" non ha ricevuto la notifica in-app
+    Then admin di "PA3" non ha ricevuto la notifica in-app
     """
     Il tuo e-service $CONTEXT(eServiceName) è in fase di archiviazione, ma risulta ancora attivo.
     L'archiviazione avverrà il giorno $EUROPE_DATE_ADD(+61D).
