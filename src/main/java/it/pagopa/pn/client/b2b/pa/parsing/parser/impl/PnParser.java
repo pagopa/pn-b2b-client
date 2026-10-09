@@ -23,42 +23,45 @@ public class PnParser implements IPnParserService, IPnParser {
 
 
     @Autowired
-    public PnParser(PnLegalFactTokens pnLegalFactTokens)  {
+    public PnParser(PnLegalFactTokens pnLegalFactTokens) {
         this.parserLegalFact = new PnParserLegalFact(pnLegalFactTokens);
     }
 
     @Override
     public IPnParserResponse extractSingleField(byte[] source, PnParserParameter parserParameter) {
         PnParserLegalFactResponse pnParserLegalFactResponse = (PnParserLegalFactResponse) extractAllField(source, parserParameter);
-        if(pnParserLegalFactResponse == null)
+        if (pnParserLegalFactResponse == null)
             return null;
 
         IPnParserLegalFact.LegalFactField field = parserParameter.getLegalFactField();
-        if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaDowntime notificaDowntime) {
+        if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaDowntime notificaDowntime) {
             pnParserLegalFactResponse.getResponse().setField(notificaDowntime.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
-        } else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaDigitale notificaDigitale) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaDigitale notificaDigitale) {
             pnParserLegalFactResponse.getResponse().setField(notificaDigitale.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
-        } else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaMancatoRecapito notificaMancatoRecapito) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaMancatoRecapito notificaMancatoRecapito) {
             pnParserLegalFactResponse.getResponse().setField(notificaMancatoRecapito.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
-        }else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaPresaInCaricoMultiDestinatario notificaPresaInCaricoMultiDestinatario) {
-            if(parserParameter.getMultiDestinatarioPosition() == 0) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaPresaInCaricoMultiDestinatario notificaPresaInCaricoMultiDestinatario) {
+            if (parserParameter.getMultiDestinatarioPosition() == 0) {
                 pnParserLegalFactResponse.getResponse().setField(notificaPresaInCaricoMultiDestinatario.getAllLegalFactValues().fieldValue().get(field));
             } else {
-                PnParserRecord.PnParserFieldValues parserFieldValues = notificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(parserParameter.getMultiDestinatarioPosition()-1).getAllDestinatarioValues();
+                PnParserRecord.PnParserFieldValues parserFieldValues = notificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(parserParameter.getMultiDestinatarioPosition() - 1).getAllDestinatarioValues();
                 pnParserLegalFactResponse.getResponse().setField(parserFieldValues.fieldValue().get(field));
             }
             return pnParserLegalFactResponse;
-        } else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaPresaInCarico notificaPresaInCarico) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaPresaInCarico notificaPresaInCarico) {
             pnParserLegalFactResponse.getResponse().setField(notificaPresaInCarico.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
-        } else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaAvvenutoAccessoDelegato notificaAvvenutoAccessoDelegato) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaAvvenutoAccessoDelegato notificaAvvenutoAccessoDelegato) {
             pnParserLegalFactResponse.getResponse().setField(notificaAvvenutoAccessoDelegato.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
-        } else if(pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaAvvenutoAccesso notificaAvvenutoAccesso) {
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificaAvvenutoAccesso notificaAvvenutoAccesso) {
             pnParserLegalFactResponse.getResponse().setField(notificaAvvenutoAccesso.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificationCancelled notificationCancelled) {
+            pnParserLegalFactResponse.getResponse().setField(notificationCancelled.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
         }
         return null;
@@ -67,7 +70,7 @@ public class PnParser implements IPnParserService, IPnParser {
     @Override
     public IPnParserResponse extractAllField(byte[] source, PnParserParameter parserParameter) {
         IPnLegalFact legalFact = parse(source, parserParameter);
-        if(legalFact == null) {
+        if (legalFact == null) {
             return null;
         }
         return new PnParserLegalFactResponse(new PnLegalFactResponse(legalFact));
@@ -77,24 +80,26 @@ public class PnParser implements IPnParserService, IPnParser {
     public IPnLegalFact parse(byte[] source, PnParserParameter parserParameter) {
         LegalFactType legalFactType = parserParameter.getLegalFactType();
         PnParserRecord.PnParserContent content = parserLegalFact.extractContent(source, legalFactType);
-        if(content == null) {
+        if (content == null) {
             return null;
         }
 
-        if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_DOWNTIME)) {
+        if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_DOWNTIME)) {
             return parserLegalFact.getLegalFactNotificaDowntime(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_DIGITALE)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_DIGITALE)) {
             return parserLegalFact.getLegalFactNotificaDigitale(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_MANCATO_RECAPITO)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_MANCATO_RECAPITO)) {
             return parserLegalFact.getLegalFactNotificaMancatoRecapito(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO)) {
             return parserLegalFact.getLegalFactNotificaPresaInCarico(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO)) {
             return parserLegalFact.getLegalFactNotificaPresaInCaricoMultiDestinatario(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO)) {
             return parserLegalFact.getLegalFactNotificaAvvenutoAccesso(content);
-        } else if(legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO)) {
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO)) {
             return parserLegalFact.getLegalFactNotificaAvvenutoAccessoDelegato(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICATION_CANCELLED)) {
+            return parserLegalFact.getLegalFactNotificationCancelled(content);
         } else {
             return null;
         }

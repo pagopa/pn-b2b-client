@@ -33,7 +33,7 @@ public class PnParserLegalFact extends PnLegalFactContent implements IPnParserLe
         return PnLegalFactNotificaDigitale.builder()
                 .title(getTitle(content))
                 .iun(getIun(content, false))
-                .pnDestinatario((PnDestinatarioDigitale) getDestinatario(content, true, false,true, false))
+                .pnDestinatario((PnDestinatarioDigitale) getDestinatario(content, true, false, true, false))
                 .dataAttestazioneOpponibile(getDataAttestazioneOpponibile(content, false, false, false, true, false))
                 .build();
     }
@@ -44,7 +44,7 @@ public class PnParserLegalFact extends PnLegalFactContent implements IPnParserLe
         return PnLegalFactNotificaMancatoRecapito.builder()
                 .title(getTitle(content))
                 .iun(getIun(content, false))
-                .pnDestinatario((PnDestinatario) getDestinatario(content, true, false,false, false))
+                .pnDestinatario((PnDestinatario) getDestinatario(content, true, false, false, false))
                 .primaData(getPrimaData(content))
                 .secondaData(getSecondaData(content))
                 .dataAttestazioneOpponibile(getDataAttestazioneOpponibile(content, false, false, false, false, true))
@@ -58,7 +58,7 @@ public class PnParserLegalFact extends PnLegalFactContent implements IPnParserLe
                 .title(getTitle(content))
                 .iun(getIun(content, false))
                 .dataAttestazioneOpponibile(getDataAttestazioneOpponibile(content, true, false, false, false, false))
-                .pnDestinatario((PnDestinatario) getDestinatario(content, false, false,false, false))
+                .pnDestinatario((PnDestinatario) getDestinatario(content, false, false, false, false))
                 .build();
     }
 
@@ -83,7 +83,7 @@ public class PnParserLegalFact extends PnLegalFactContent implements IPnParserLe
                 .mittente(getMittente(content))
                 .cfMittente(getCfMittente(content))
                 .iun(getIun(content, true))
-                .pnDestinatario((PnDestinatario) getDestinatario(content, false,true, false, false))
+                .pnDestinatario((PnDestinatario) getDestinatario(content, false, true, false, false))
                 .build();
     }
 
@@ -96,8 +96,19 @@ public class PnParserLegalFact extends PnLegalFactContent implements IPnParserLe
                 .mittente(getMittente(content))
                 .cfMittente(getCfMittente(content))
                 .iun(getIun(content, true))
-                .pnDestinatario((PnDestinatario) getDestinatario(content, false,true, false, true))
+                .pnDestinatario((PnDestinatario) getDestinatario(content, false, true, false, true))
                 .destinatariAnalogici(getDestinatariAnalogici(content))
+                .build();
+    }
+
+    @Override
+    public IPnLegalFact getLegalFactNotificationCancelled(PnParserRecord.PnParserContent content) {
+        log.info("PnParserContent: {}", content);
+        return PnLegalFactNotificationCancelled.builder()
+                .title(getTitle(content))
+                .dataAttestazioneOpponibile(getDataAttestazioneOpponibile(content, false, false, true, false, false))
+                .iun(getIun(content, true))
+                .pnDestinatario((PnDestinatario) getDestinatario(content, false, true, false, true))
                 .build();
     }
 }

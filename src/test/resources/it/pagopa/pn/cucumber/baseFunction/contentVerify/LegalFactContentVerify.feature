@@ -174,3 +174,21 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi al "workflow notifiche"
     When viene individuato se presente l'evento più recente
     Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
+
+  @legalFact
+  Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_11] Data una notifica digitale, in seguito al completamento del relativo workflow ed a presa visione da parte del destinatario, si verifica l'esistenza del legalFact generato se sia di tipo MANCATO RECAPITO
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica GA cucumber |
+#      | senderDenomination | Comune di palermo          |
+#    And destinatario Mario Gherkin
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    Given imposto lo iun di SharedSteps a "EGNV-KWEV-JPTX-202610-W-1" e la pa a "Comune_Multi"
+    And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICATION_CANCELLED"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Dichiarazione annullamento notifica sulla piattaforma SEND |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                              |
+      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                           |
+      | MITTENTE                                  | Comune di palermo                                          |

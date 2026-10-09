@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.parsing.parser;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserRecord;
 import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,15 +15,17 @@ public interface IPnParserLegalFact {
     enum LegalFactTypeTitle {
         TYPE_TITLE_NOTIFICA_DOWNTIME(LegalFactType.LEGALFACT_NOTIFICA_DOWNTIME, "Attestazione opponibile a terzi: malfunzionamento e ripristino"),
         TYPE_TITLE_NOTIFICA_DIGITALE(LegalFactType.LEGALFACT_NOTIFICA_DIGITALE, "Attestazione opponibile a terzi: notifica digitale"),
-        TYPE_TITLE_NOTIFICA_MANCATO_RECAPITO(LegalFactType.LEGALFACT_NOTIFICA_MANCATO_RECAPITO,"Attestazione opponibile a terzi: mancato recapito digitale"),
-        TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO,"Attestazione opponibile a terzi: notifica presa in carico"),
-        TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO,"Attestazione opponibile a terzi: notifica presa in carico"),
-        TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO,"Attestazione opponibile a terzi: avvenuto accesso"),
-        TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO,"Attestazione opponibile a terzi: avvenuto accesso");
+        TYPE_TITLE_NOTIFICA_MANCATO_RECAPITO(LegalFactType.LEGALFACT_NOTIFICA_MANCATO_RECAPITO, "Attestazione opponibile a terzi: mancato recapito digitale"),
+        TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO, "Attestazione opponibile a terzi: notifica presa in carico"),
+        TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO, "Attestazione opponibile a terzi: notifica presa in carico"),
+        TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO, "Attestazione opponibile a terzi: avvenuto accesso"),
+        TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO, "Attestazione opponibile a terzi: avvenuto accesso"),
+        TYPE_TITLE_NOTIFICATION_CANCELLED(LegalFactType.LEGALFACT_NOTIFICATION_CANCELLED, "Dichiarazione annullamento notifica sulla piattaforma SEND");
 
         private final LegalFactType type;
         private final String title;
-        LegalFactTypeTitle(LegalFactType type, String title){
+
+        LegalFactTypeTitle(LegalFactType type, String title) {
             this.type = type;
             this.title = title;
         }
@@ -106,10 +109,19 @@ public interface IPnParserLegalFact {
                 LegalFactField.DELEGATO_CODICE_FISCALE,
                 LegalFactField.DELEGATO_DOMICILIO_DIGITALE,
                 LegalFactField.DELEGATO_TIPO_DOMICILIO_DIGITALE,
-                LegalFactField.DELEGATO_INDIRIZZO_FISICO);
+                LegalFactField.DELEGATO_INDIRIZZO_FISICO),
+        LEGALFACT_NOTIFICATION_CANCELLED(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DATA_ATTESTAZIONE_OPPONIBILE,
+                LegalFactField.DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE,
+                LegalFactField.MITTENTE
+        );
 
         private final List<LegalFactField> legalFactFieldList;
-        LegalFactType(LegalFactField... field){
+
+        LegalFactType(LegalFactField... field) {
             this.legalFactFieldList = List.of(field);
         }
     }
@@ -137,16 +149,25 @@ public interface IPnParserLegalFact {
         DELEGATO_INDIRIZZO_FISICO("delegatoIndirizzoFisico");
 
         private final String field;
-        LegalFactField(String field){
+
+        LegalFactField(String field) {
             this.field = field;
         }
     }
 
     IPnLegalFact getLegalFactNotificaDowntime(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaDigitale(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaMancatoRecapito(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaAvvenutoAccesso(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaAvvenutoAccessoDelegato(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaPresaInCarico(PnParserRecord.PnParserContent content);
+
     IPnLegalFact getLegalFactNotificaPresaInCaricoMultiDestinatario(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactNotificationCancelled(PnParserRecord.PnParserContent content);
 }
