@@ -1645,9 +1645,11 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'e-service è in stato "<eserviceState>"
     And l'utente è un "admin" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 204
+    And la delega in erogazione è ancora associata all'e-service oggetto della duplicazione
     And l'e-service è stato clonato con successo
 
     Examples:

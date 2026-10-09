@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.IProducerClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
@@ -101,6 +102,41 @@ public class EServiceCloneSteps {
         }
 
         loadClonedEServiceFromResponse();
+    }
+
+    @Then("la delega in erogazione è ancora associata all'e-service oggetto della duplicazione")
+    public void verifySourceEServiceDelegationUnchanged() {
+        UUID eserviceId = eServicesCommonContext.getEserviceId();
+        UUID descriptorId = eServicesCommonContext.getDescriptorId();
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        Assertions.assertThat(delegationId)
+                .as("Deve essere presente l'ID della delega in erogazione attesa")
+                .isNotNull();
+
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        httpCallExecutor.snapshot();
+        try {
+            HttpStatus status = httpCallExecutor.performCall(
+                    () -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)
+            );
+            Assertions.assertThat(status)
+                    .as("Il recupero del descrittore dell'e-service oggetto della duplicazione deve avere successo")
+                    .isEqualTo(HttpStatus.OK);
+            Assertions.assertThat(httpCallExecutor.getResponse())
+                    .isInstanceOf(ProducerEServiceDescriptor.class);
+
+            ProducerEServiceDescriptor descriptor =
+                    (ProducerEServiceDescriptor) httpCallExecutor.getResponse();
+            Assertions.assertThat(descriptor.getDelegation())
+                    .as("L'e-service oggetto della duplicazione deve mantenere la delega in erogazione")
+                    .isNotNull();
+            Assertions.assertThat(descriptor.getDelegation().getId())
+                    .as("La delega in erogazione associata all'e-service %s deve essere la medesima", eserviceId)
+                    .isEqualTo(delegationId);
+        } finally {
+            httpCallExecutor.resetFormSnapshot();
+        }
     }
 
     @Then("l'e-service è stato clonato con successo")
