@@ -30,6 +30,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
@@ -43,6 +44,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
@@ -184,6 +186,9 @@ public class SharedSteps {
     private final IPnPaB2bClient b2bClient;
 
     @Getter
+    private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
+
+    @Getter
     private final PnPollingFactory pollingFactory;
 
     @Getter
@@ -252,14 +257,16 @@ public class SharedSteps {
     @Getter
     private final ObjectMapper objMapper;
 
-    private boolean checkAuditLogDisabled;
-
     @Getter
     private final DynamoDbService dynamoDbService;
 
     private final CacheManager<String, String> senderTaxIdCacheManager;
 
     private final SendSharedContext sendSharedContext;
+
+    @Getter
+    @Setter
+    private String informalSenderId;
 
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
@@ -319,6 +326,7 @@ public class SharedSteps {
     @Autowired
     public SharedSteps(ApplicationContext context,
                        IPnPaB2bClient b2bClient,
+                       PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
                        PnPollingFactory pollingFactory,
                        IPnWebPaClient webPaClient,
                        PnWebRecipientExternalClientImpl webRecipientClient,
@@ -337,6 +345,7 @@ public class SharedSteps {
     ) {
         this.context = context;
         this.b2bClient = b2bClient;
+        this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
         this.pollingFactory = pollingFactory;
         this.webPaClient = webPaClient;
         this.webRecipientClient = webRecipientClient;
@@ -393,11 +402,18 @@ public class SharedSteps {
     }
 
     /**
-     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * Restituisce lo FullSentNotification di una notifica legale aggiornata all'ultima versione
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
     public FullSentNotificationV29 getSentNotificationLastVersion() {
         return b2bClient.getSentNotificationV29(notificationIun);
+    }
+
+    /**
+     * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
+     */
+    public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
+        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
     }
 
     /**
@@ -408,6 +424,14 @@ public class SharedSteps {
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
     public FullSentNotificationV29 getSentNotificationLastVersionByIun(String iun) {
         return b2bClient.getSentNotificationV29(iun);
+    }
+
+
+    /**
+     * In base al notificationIun settato stabilisce se si tratta di una notifica legale o bonaria (le legali terminano con 1, le bonarie con la lettera)
+     */
+    public boolean isLegalNotification() {
+        return notificationIun != null && notificationIun.endsWith("1");
     }
 
     public NotificationVersion getNotificationVersion(String version) {
