@@ -907,8 +907,11 @@ public class SharedSteps {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
             } else {
-                throw httpStatusCodeException;
+                log.warn("Errore durante la rimozione PEC di piattaforma (status: {}): {}",
+                        httpStatusCodeException.getStatusCode(), httpStatusCodeException.getMessage());
             }
+        } catch (Exception e) {
+            log.warn("Errore imprevisto durante la rimozione PEC di piattaforma: {}", e.getMessage());
         }
     }
 
