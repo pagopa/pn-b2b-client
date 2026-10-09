@@ -219,6 +219,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationAar
   Scenario: [VRT-09] Verifica visual regression del NOTIFICATION_AAR
+    #TODO: cambiare, genera AAR RADD
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT NOTIFICATION_AAR |
       | senderDenomination | Comune di palermo                   |
@@ -227,11 +228,12 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    And ricerca ed effettua download del legalFact con la categoria "AAR_GENERATION"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
     Then si verifica la conformità visiva del PDF con il template "NOTIFICATION_AAR"
 
   @visualTest @notificationAar @smoke
   Scenario: [VRT-09-SMOKE] Verifica solo campi dinamici del NOTIFICATION_AAR (smoke)
+    #TODO: cambiare, genera AAR RADD
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT NOTIFICATION_AAR smoke |
       | senderDenomination | Comune di palermo                         |
@@ -240,7 +242,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    And ricerca ed effettua download del legalFact con la categoria "AAR_GENERATION"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_AAR"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -257,7 +259,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    And ricerca ed effettua download del legalFact con la categoria "AAR_GENERATION" con DetailCode "RADD_ALT"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
     Then si verifica la conformità visiva del PDF con il template "NOTIFICATION_AAR_RADD_ALT"
 
   @visualTest @notificationAarRaddAlt @smoke
@@ -270,7 +272,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    And ricerca ed effettua download del legalFact con la categoria "AAR_GENERATION" con DetailCode "RADD_ALT"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_AAR_RADD_ALT"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -309,26 +311,38 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @informalAnalogCommunication
   Scenario: [VRT-12] Verifica visual regression del INFORMAL_ANALOG_COMMUNICATION
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT INFORMAL_ANALOG |
-      | senderDenomination | Comune di palermo                  |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "INFORMAL_COMMUNICATION"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | FattOrd                           |
+      | messageId       | ${NEW-IT}                         |
+      | subject         | Test workflow                     |
+      | recipientType   | PF                                |
+      | taxId           | FRMTTR76M06B715E                  |
+      | denomination    | Ettore Fieramosca                 |
+      | email           | complaint@simulator.amazonses.com |
+      | digitalDomicile | NULL                              |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M006  |
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And ricerca ed effettua download del legalFact con la categoria "INFORMAL_ANALOG_COMMUNICATION"
     Then si verifica la conformità visiva del PDF con il template "INFORMAL_ANALOG_COMMUNICATION"
 
   @visualTest @informalAnalogCommunication @smoke
   Scenario: [VRT-12-SMOKE] Verifica solo campi dinamici del INFORMAL_ANALOG_COMMUNICATION (smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT INFORMAL_ANALOG smoke |
-      | senderDenomination | Comune di palermo                        |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "INFORMAL_COMMUNICATION"
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | FattOrd                           |
+      | messageId       | ${NEW-IT}                         |
+      | subject         | Test workflow                     |
+      | recipientType   | PF                                |
+      | taxId           | FRMTTR76M06B715E                  |
+      | denomination    | Ettore Fieramosca                 |
+      | email           | complaint@simulator.amazonses.com |
+      | digitalDomicile | NULL                              |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
+      | details_channel            | EMAIL |
+      | details_deliveryDetailCode | M006  |
+    And si attende che la notifica bonaria passi in stato "COMPLETED_REACHED"
     And ricerca ed effettua download del legalFact con la categoria "INFORMAL_ANALOG_COMMUNICATION"
     Then si verificano i campi dinamici del PDF con il template "INFORMAL_ANALOG_COMMUNICATION"
