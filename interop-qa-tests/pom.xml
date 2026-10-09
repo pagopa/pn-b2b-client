@@ -31,7 +31,7 @@
         <junit-jupiter.version>5.12.1</junit-jupiter.version>
         <junit.platform.version>1.12.1</junit.platform.version>
         <cucumber.version>7.22.0</cucumber.version>
-        <nimbus.version>9.37.3</nimbus.version>
+        <nimbus.version>9.37.4</nimbus.version>
 
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
     </properties>
