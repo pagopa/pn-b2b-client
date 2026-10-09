@@ -108,8 +108,6 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachmentName, Integer attachmentIdx);
 
-    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId);
-
     LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId);
 
     void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException;

@@ -8,7 +8,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
   Scenario: [VRT-01] Verifica visual regression del SENDER_ACK – singolo destinatario digitale
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT SENDER_ACK |
-      | senderDenomination | Comune di palermo             |
+      | senderDenomination | Comune di palermo              |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -87,7 +87,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                      |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere correttamente recuperata da "Mario Gherkin"
+    And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And ricerca ed effettua download del legalFact con la categoria "RECIPIENT_ACCESS"
     Then si verifica la conformità visiva del PDF con il template "NOTIFICATION_VIEWED"
@@ -99,7 +99,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                            |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica può essere correttamente recuperata da "Mario Gherkin"
+    And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And ricerca ed effettua download del legalFact con la categoria "RECIPIENT_ACCESS"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_VIEWED"
@@ -113,9 +113,9 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT ANALOG_FAILURE |
       | senderDenomination | Comune di palermo                 |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
@@ -126,9 +126,9 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT ANALOG_FAILURE smoke |
       | senderDenomination | Comune di palermo                       |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
@@ -145,7 +145,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                         |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica viene annullata tramite api b2b
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
     Then si verifica la conformità visiva del PDF con il template "NOTIFICATION_CANCELLED"
@@ -157,7 +157,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                               |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica viene annullata tramite api b2b
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_CANCELLED"
@@ -189,9 +189,9 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT ANALOG_TIMEOUT |
       | senderDenomination | Comune di palermo                 |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "ANALOG_FAILURE_WORKFLOW" con DetailCode "TIMEOUT"
@@ -202,9 +202,9 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT ANALOG_TIMEOUT smoke |
       | senderDenomination | Comune di palermo                       |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "ANALOG_FAILURE_WORKFLOW" con DetailCode "TIMEOUT"
