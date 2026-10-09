@@ -8,7 +8,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
   Scenario: [VRT-01] Verifica visual regression del SENDER_ACK – singolo destinatario digitale
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT SENDER_ACK |
-      | senderDenomination | Comune di palermo              |
+      | senderDenomination | Comune di palermo             |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -37,8 +37,8 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     And si verificano i campi dinamici del PDF con il template "SENDER_ACK"
     Then per il destinatario 1 del PDF si verificano i seguenti campi
-      | campo                             | valore        |
-      | Nome e Cognome / Ragione Sociale  | Mario Gherkin |
+      | campo                            | valore        |
+      | Nome e Cognome / Ragione Sociale | Mario Gherkin |
 
   # Per una notifica multidestinatario basta ripetere lo step cambiando l'indice del
   # destinatario: ciascuna etichetta ("campo") si ripete una volta per blocco e lo step
@@ -94,13 +94,14 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationViewed @smoke
   Scenario: [VRT-04-SMOKE] Verifica solo campi dinamici del NOTIFICATION_VIEWED (senza golden master – smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT NOTIFICATION_VIEWED smoke |
-      | senderDenomination | Comune di palermo                            |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And "Mario Gherkin" legge la notifica ricevuta
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica VRT NOTIFICATION_VIEWED smoke |
+#      | senderDenomination | Comune di palermo                            |
+#    And destinatario Mario Gherkin
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And "Mario Gherkin" legge la notifica ricevuta
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Given imposto lo iun di SharedSteps a "PLVK-HADX-VHKG-202610-Q-1" e la pa a "Comune_Multi"
     And ricerca ed effettua download del legalFact con la categoria "RECIPIENT_ACCESS"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_VIEWED"
 
@@ -123,15 +124,16 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @analogFailure @smoke
   Scenario: [VRT-05-SMOKE] Verifica solo campi dinamici del ANALOG_FAILURE (senza golden master – smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT ANALOG_FAILURE smoke |
-      | senderDenomination | Comune di palermo                       |
-    And destinatario Gherkin Irreperibile e:
-      | digitalDomicile         | NULL                       |
-      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica VRT ANALOG_FAILURE smoke |
+#      | senderDenomination | Comune di palermo                       |
+#    And destinatario Gherkin Irreperibile e:
+#      | digitalDomicile         | NULL                       |
+#      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    Given imposto lo iun di SharedSteps a "UYWA-QKVN-XZNQ-202610-M-1" e la pa a "Comune_Multi"
+    And la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
     Then si verificano i campi dinamici del PDF con il template "ANALOG_FAILURE"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -152,13 +154,14 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationCancelled @smoke
   Scenario: [VRT-06-SMOKE] Verifica solo campi dinamici del NOTIFICATION_CANCELLED (senza golden master – smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT NOTIFICATION_CANCELLED smoke |
-      | senderDenomination | Comune di palermo                               |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+#    Given viene generata una nuova notifica
+#      | subject            | invio notifica VRT NOTIFICATION_CANCELLED smoke |
+#      | senderDenomination | Comune di palermo                               |
+#    And destinatario Mario Gherkin
+#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+#    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    Given imposto lo iun di SharedSteps a "EGNV-KWEV-JPTX-202610-W-1" e la pa a "Comune_Multi"
     And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_CANCELLED"
 

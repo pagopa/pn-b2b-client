@@ -5,13 +5,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffDocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
-import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV28;
-import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV28;
+import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFact;
+import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
@@ -20,6 +21,7 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResp
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.common.util.PDFUtility;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactCategoryV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -50,7 +52,7 @@ import lombok.Getter;
 public class LegalFactContentVerifySteps {
     private final PnParserService pnParserService;
     private final SharedSteps sharedSteps;
-    private final PnTimelineAndLegalFactV28 pnTimelineAndLegalFactV28;
+    private final PnTimelineAndLegalFact pnTimelineAndLegalFact;
     @Setter
     private String legalFactUrl;
     @Setter
@@ -68,7 +70,7 @@ public class LegalFactContentVerifySteps {
         this.sharedSteps = sharedSteps;
         /*TODO al rilascio di una nuova versione di timelineElement e LegalFactCategory, creare nuova classe sul modello di quelle esistenti
            e sostituire a questa */
-        this.pnTimelineAndLegalFactV28 = new PnTimelineAndLegalFactV28();
+        this.pnTimelineAndLegalFact = new PnTimelineAndLegalFact();
     }
 
     @Then("si verifica se il legalFact è di tipo {string}")
@@ -385,7 +387,7 @@ public class LegalFactContentVerifySteps {
             throw new RuntimeException(exc);
         }
 
-        PnTimelineLegalFactV28 categories = pnTimelineAndLegalFactV28.getCategory(legalFactCategory);
+        PnTimelineLegalFact categories = pnTimelineAndLegalFact.getCategory(legalFactCategory);
         TimelineElementV28 timelineElement = sharedSteps.getSentNotificationLastVersion().getTimeline().stream().filter(elem ->
                         elem.getCategory().getValue().equals(categories.getTimelineElementInternalCategory().getValue()))
                 .findAny()
@@ -489,7 +491,7 @@ public class LegalFactContentVerifySteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-        PnTimelineLegalFactV28 categories = pnTimelineAndLegalFactV28.getCategory(legalFactCategory);
+        PnTimelineLegalFact categories = pnTimelineAndLegalFact.getCategory(legalFactCategory);
         TimelineElementV28 timelineElement = null;
 
         for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
@@ -528,7 +530,7 @@ public class LegalFactContentVerifySteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-        PnTimelineLegalFactV28 categories = pnTimelineAndLegalFactV28.getCategory(legalFactCategory);
+        PnTimelineLegalFact categories = pnTimelineAndLegalFact.getCategory(legalFactCategory);
         TimelineElementV28 timelineElement = null;
 
         for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
@@ -554,7 +556,7 @@ public class LegalFactContentVerifySteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categories.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
+            LegalFactCategoryV20 categorySearch = LegalFactCategoryV20.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
 
@@ -568,13 +570,9 @@ public class LegalFactContentVerifySteps {
 //                  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
 //            }
             if (webRecipient) {
-                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                BffDocumentDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
-                                sharedSteps.getWebRecipientClient().getLegalFact(sharedSteps.getNotificationIun(),
-                                        sharedSteps.deepCopy(categorySearch,
-                                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory.class),
-                                        finalKeySearch
-                                ));
+                                sharedSteps.getWebRecipientClient().downloadLegalFactById(sharedSteps.getNotificationIun(), finalKeySearch, null));
                 System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
                 return legalFactDownloadMetadataResponse.getUrl();
             }
@@ -590,7 +588,7 @@ public class LegalFactContentVerifySteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-        PnTimelineLegalFactV28 categories = pnTimelineAndLegalFactV28.getCategory(legalFactCategory);
+        PnTimelineLegalFact categories = pnTimelineAndLegalFact.getCategory(legalFactCategory);
         TimelineElementV28 timelineElement = null;
 
         for (TimelineElementV28 element : sharedSteps.getSentNotificationLastVersion().getTimeline()) {
