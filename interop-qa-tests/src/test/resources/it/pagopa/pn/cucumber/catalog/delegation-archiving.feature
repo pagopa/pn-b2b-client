@@ -1755,6 +1755,13 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'e-service è stato clonato con successo
 
   @sad-path
+  Scenario: [DELEGATION_ARCHIVING_CLONING_1.5] L'ente delegante NON può duplicare una versione in stato WAITING_FOR_APPROVAL di un e-service in delega in erogazione
+    Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    And l'utente è un "admin" di "PA1"
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 409
+
+  @sad-path
   Scenario Outline: [DELEGATION_MANUAL_ARCHIVING_CONTRACT_1.1] Specificando parametri errati o mancanti, un ente delegato NON può richiedere al delegante di avviare il processo di archiviazione di un e-service in delega
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
