@@ -61,6 +61,75 @@ public final class FieldLocators {
     }
 
     // -----------------------------------------------------------------------
+    // 1b. LabelProximityOccurrenceLocator
+    // -----------------------------------------------------------------------
+
+    /**
+     * Variante di {@link #labelProximity(String, float, float)} che considera solo
+     * l'N-esima occorrenza dell'etichetta nel documento (1-based), nell'ordine in cui
+     * compare nel testo estratto.
+     *
+     * <p>Utile per documenti in cui un blocco di campi si ripete più volte (es. un blocco
+     * di dati per ciascun destinatario in una notifica multidestinatario): passando
+     * l'indice del destinatario come {@code occurrenceIndex} si recupera il valore del
+     * campo relativo a quel solo destinatario.</p>
+     *
+     * <p>Il valore è tutto il testo che segue l'etichetta nella colonna a destra (stessa
+     * riga e righe successive), anche su più righe, fino a quando il testo rientra nella
+     * colonna dell'etichetta: quel rientro segnala l'inizio di una nuova etichetta.
+     * Nessuna distanza va calibrata: il confine è dato dalla posizione dell'etichetta
+     * stessa, quindi la stessa chiamata funziona su documenti con margini diversi.</p>
+     *
+     * <p>A differenza di {@link #labelProximity(String, float, float)}, il confronto con
+     * {@code labelText} richiede una corrispondenza esatta (ignorando maiuscole/minuscole e
+     * spazi iniziali/finali) dell'intero frammento, non una semplice sottostringa: questo
+     * evita falsi positivi quando il testo dell'etichetta compare per caso all'interno di
+     * un paragrafo discorsivo del documento.</p>
+     *
+     * @param labelText       testo esatto dell'etichetta, così come appare nel PDF
+     * @param occurrenceIndex indice 1-based dell'occorrenza dell'etichetta da considerare
+     */
+    public static FieldLocator labelProximityOccurrence(String labelText, int occurrenceIndex) {
+        if (occurrenceIndex < 1) {
+            throw new IllegalArgumentException("occurrenceIndex deve essere >= 1 (1-based)");
+        }
+        return allFragments -> {
+            int occurrence = 0;
+
+            for (int i = 0; i < allFragments.size(); i++) {
+                TextFragment candidate = allFragments.get(i);
+                if (!candidate.text().trim().equalsIgnoreCase(labelText.trim())) continue;
+
+                occurrence++;
+                if (occurrence != occurrenceIndex) continue;
+
+                return valueColumnAfter(candidate, allFragments, i);
+            }
+            return List.of();
+        };
+    }
+
+    /**
+     * Scorre i frammenti successivi all'etichetta (in ordine di lettura) raccogliendo
+     * quelli nella colonna del valore (a destra dell'etichetta), anche su più righe.
+     * Si ferma non appena un frammento torna nella colonna dell'etichetta (nuova
+     * etichetta) o finisce la pagina.
+     */
+    private static List<TextFragment> valueColumnAfter(TextFragment label, List<TextFragment> allFragments, int labelPosition) {
+        List<TextFragment> results = new ArrayList<>();
+        float labelXEnd = label.xEnd();
+
+        for (int i = labelPosition + 1; i < allFragments.size(); i++) {
+            TextFragment other = allFragments.get(i);
+            if (other.pageIndex() != label.pageIndex()) break;
+            if (other.x() < labelXEnd) break; // rientrato nella colonna dell'etichetta: fine del valore
+
+            results.add(other);
+        }
+        return results;
+    }
+
+    // -----------------------------------------------------------------------
     // 2. RegexLocator
     // -----------------------------------------------------------------------
 

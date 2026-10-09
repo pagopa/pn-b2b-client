@@ -78,6 +78,28 @@ graph TD
 2. **Mascheramento Intelligente:** Per ciascun campo individuato viene calcolata un'area di esclusione (bounding box con padding) secondo la `MaskStrategy` configurata (`TIGHT_BOX` o `FULL_LINE`).
 3. **Confronto Visivo:** `PdfVisualComparator` confronta `expected.pdf` e `actualPdf` escludendo dal confronto pixel solo le coordinate dinamiche variabili, garantendo zero falsi positivi su data, ora e IUN.
 
+### 3.1 Verifica Testuale Esplicita per Destinatario (`contains`)
+
+Oltre al confronto pixel-level e alla validazione di formato dei campi dinamici, è disponibile un terzo livello di verifica, utile quando il valore atteso di un campo è **già noto allo scenario Gherkin** (es. il nome del destinatario appena creato).
+
+Per i documenti dove un blocco di campi (nome, codice fiscale, domicilio digitale, ...) **si ripete una volta per ciascun destinatario** (notifiche multidestinatario), è disponibile uno step con `DataTable` che riusa direttamente `FieldLocators.labelProximityOccurrence` (variante di `labelProximity` già usato nei template): per ogni riga della tabella, cerca l'etichetta indicata in `campo` e ne prende la N-esima occorrenza nel documento, dove N è l'indice del destinatario passato allo step (1-based).
+
+```gherkin
+Then per il destinatario 1 del PDF si verificano i seguenti campi
+  | campo                             | valore           |
+  | Nome e Cognome / Ragione Sociale  | Mario Gherkin    |
+  | Codice Fiscale                    | BRGLRZ80D58H501Q |
+  | Domicilio digitale                | prova@pec.it     |
+
+Then per il destinatario 2 del PDF si verificano i seguenti campi
+  | campo                             | valore           |
+  | Nome e Cognome / Ragione Sociale  | Luigi Cucumber   |
+```
+
+`campo` deve corrispondere al testo dell'etichetta così come appare nel PDF (es. `Nome e Cognome / Ragione Sociale`, `Codice Fiscale`, `Domicilio digitale`, `Tipologia di domicilio digitale`); `valore` è il testo atteso, verificato come sottostringa del valore trovato.
+
+Lo step opera sull'ultimo PDF scaricato/generato (`lastDownloadedPdf`), quindi va eseguito dopo uno step che lo renda disponibile (es. `si verifica la conformità visiva...` o `si verificano i campi dinamici...`).
+
 ---
 
 ## 4. I Documenti Supportati (11 Template)

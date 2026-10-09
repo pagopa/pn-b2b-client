@@ -44,8 +44,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
@@ -512,13 +510,12 @@ public class LegalFactContentVerifySteps {
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
         Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
         Assertions.assertEquals(categories.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
-        LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = getKeyLegalFact(key);
 
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-                sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, keySearch);
+                sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getNotificationIun(), keySearch);
 
         Assertions.assertNotNull(legalFactDownloadMetadataResponse);
 
@@ -563,7 +560,7 @@ public class LegalFactContentVerifySteps {
 
             if (pa) {
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = Assertions.assertDoesNotThrow(() ->
-                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, finalKeySearch));
+                        sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch));
                 return legalFactDownloadMetadataResponse.getUrl();
             }
 //            if (appIO) {
@@ -686,7 +683,7 @@ public class LegalFactContentVerifySteps {
             String finalKeySearch = keySearch;
             if (pa) {
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-                        sharedSteps.getB2bClient().getLegalFact(sharedSteps.getNotificationIun(), categorySearch, finalKeySearch);
+                        sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getNotificationIun(), finalKeySearch);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertTrue(legalFactDownloadMetadataResponse.getFilename().contains(".eml"));
@@ -734,7 +731,7 @@ public class LegalFactContentVerifySteps {
         sharedSteps.setPA("Comune_Multi");
         String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
         try {
-            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
+            sharedSteps.getB2bClient().getDownloadLegalFact(notificationIun10years, legalFactId10years);
         } catch (HttpStatusCodeException excApiPubblica) {
             log.info(excApiPubblica.getMessage());
             assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
