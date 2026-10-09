@@ -52,7 +52,7 @@ public final class Poller {
     public static <T> T pollUntil(Supplier<T> call, Predicate<T> stopCondition, PollingConfig config,
                                   Function<T, String> onTimeoutMessage) {
         return pollUntil(call, stopCondition, config, onTimeoutMessage, System::nanoTime,
-                duration -> Thread.sleep(duration.toMillis()));
+                duration -> Thread.sleep(duration.toMillis(), duration.getNano() % 1_000_000));
     }
 
     static <T> T pollUntil(Supplier<T> call, Predicate<T> stopCondition, PollingConfig config,

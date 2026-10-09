@@ -179,15 +179,29 @@ class PollerTest {
     }
 
     @Test
+    void subMillisecondIntervalDoesNotExhaustAttemptsPrematurely() {
+        PollingConfig config = PollingConfig.of(Duration.ofMillis(2), Duration.ofNanos(500_000));
+
+        assertEquals(5, config.maxAttempts());
+        assertEquals("OK", poll(sequence("WAIT", "WAIT", "WAIT", "OK"), "OK"::equals, config));
+        assertEquals(Duration.ofNanos(1_500_000), Duration.ofNanos(time.nanos));
+        assertEquals(3, time.sleeps.size());
+    }
+
+    @Test
     void configOfComputesSafetyCap() {
         assertEquals(11, PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(1)).maxAttempts());
         assertEquals(3, PollingConfig.of(Duration.ofMillis(2500), Duration.ofSeconds(1)).maxAttempts());
         assertEquals(1, PollingConfig.of(Duration.ZERO, Duration.ofSeconds(1)).maxAttempts());
         assertEquals(121, PollingProfile.SLOW.toConfig().maxAttempts());
+        assertEquals(4, PollingConfig.of(Duration.ofMillis(5), Duration.ofNanos(1_500_000)).maxAttempts());
     }
 
     @Test
     void configRejectsInvalidValues() {
+        assertThrows(IllegalArgumentException.class, () -> PollingConfig.of(Duration.ofSeconds(1), Duration.ZERO));
+        assertThrows(IllegalArgumentException.class, () -> new PollingConfig(Duration.ofSeconds(1), Duration.ZERO, 1));
+        assertThrows(IllegalArgumentException.class, () -> PollingConfig.of(Duration.ofSeconds(1), Duration.ofNanos(-1)));
         assertThrows(IllegalArgumentException.class, () -> PollingConfig.of(Duration.ofSeconds(-1), Duration.ofSeconds(1)));
         assertThrows(IllegalArgumentException.class, () -> new PollingConfig(Duration.ofSeconds(1), Duration.ofSeconds(1), 0));
         assertThrows(NullPointerException.class, () -> PollingConfig.of(null, Duration.ofSeconds(1)));
