@@ -617,5 +617,30 @@ public class PaperTrackerSteps {
                             .as("Deve essere presente 1 evento RECRN013 (Retry 2)")
                             .isEqualTo(1);
                 });
+
+        // 3. Verificare che l'ultimo tracking (PCRETRY_4) su PaperTracker sia in stato KO
+        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
+        TrackingsResponse response = paperTrackerClient.retrieveTrackerEvents(request);
+        assertThat(response).as("La risposta di PaperTracker non deve essere nulla").isNotNull();
+        assertThat(response.getTrackings()).as("I trackings non devono essere vuoti").isNotEmpty();
+
+        Tracking lastTracking = response.getTrackings().stream()
+                .filter(t -> t.getTrackingId() != null && t.getTrackingId().endsWith(".PCRETRY_4"))
+                .findFirst()
+                .orElse(null);
+
+        assertThat(lastTracking)
+                .as("Il tracking relativo a PCRETRY_4 deve essere presente")
+                .isNotNull();
+
+        assertThat(lastTracking.getState())
+                .as("L'ultimo tracking al raggiungimento del max retry deve terminare in stato KO (attualmente risulta %s)", lastTracking.getState())
+                .isEqualTo(Tracking.StateEnum.KO);
+    }
+
+    @io.cucumber.java.en.Given("viene riutilizzata la notifica con iun {string} per il prodotto: {string}")
+    public void reuseNotificationByIun(String iun, String productType) {
+        sharedSteps.setNotificationIun(iun);
+        generateTrackingIdForProduct(productType);
     }
 }

@@ -232,3 +232,4 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che la notifica rimanga bloccata in stato DELIVERING al superamento del max retry
 
+
