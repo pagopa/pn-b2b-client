@@ -1651,6 +1651,7 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 204
     And la delega in erogazione è ancora associata all'e-service oggetto della duplicazione
     And l'e-service è stato clonato con successo
+    And l'e-service clonato non ha ereditato la delega in erogazione dall'e-service oggetto della duplicazione
 
     Examples:
       | eserviceState |
