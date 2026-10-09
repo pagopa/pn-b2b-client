@@ -1685,6 +1685,17 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     And l'e-service è stato clonato con successo
 
   @sad-path
+  Scenario: [DELEGATION_ARCHIVING_CLONING_REVOCATION_1.1] L'ente ex-delegato NON può duplicare un e-service in stato PUBLISHED dopo la revoca della delega in erogazione precedentemente attiva
+    Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 403
+
+  @sad-path
   Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.2] L'ente delegato NON può duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
