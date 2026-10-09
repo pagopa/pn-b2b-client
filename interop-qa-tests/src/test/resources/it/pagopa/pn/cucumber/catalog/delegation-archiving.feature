@@ -1617,21 +1617,39 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 400
 
   @sad-path
-  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato PUBLISHED
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] L'ente delegato NON può duplicare un e-service in delega in erogazione in stato PUBLISHED
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
-    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "<tenant>"
+    And l'utente è un "admin" di "PA2"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 403
 
     Examples:
-      | tenant |
-      | PA1    |
-      | PA2    |
+      | eserviceState |
+      | PUBLISHED     |
+      | SUSPENDED     |
+
+  @happy-path
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_2.1] L'ente delegante può duplicare un e-service in delega in erogazione in stato PUBLISHED o SUSPENDED
+    Given l'ente delegato "PA2"
+    And l'ente delegante "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA1"
+    When l'utente tenta di clonare quell'e-service
+    Then si ottiene response status code 204
+    And l'e-service è stato clonato con successo
+
+    Examples:
+      | eserviceState |
+      | PUBLISHED     |
+      | SUSPENDED     |
 
   @sad-path
   Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
