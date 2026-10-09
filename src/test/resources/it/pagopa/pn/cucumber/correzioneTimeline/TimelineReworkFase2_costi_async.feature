@@ -217,7 +217,7 @@ Feature: Correzione timeline fase 2 costi
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
     Then il baseCost è uguale rispetto a prima del rework
 
-  @timelineReworkF2_costi_async
+  @timelineReworkF2_costi_asyncTMP
   #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -270,7 +270,7 @@ Feature: Correzione timeline fase 2 costi
     When post rework verifico che per il destinatario 0 i record su Pn-NotificationDeliveryCost siano stati modificati e correttamente valorizzati fino all'attempt 0
     Then il baseCost è uguale rispetto a prima del rework
 
-  @timelineReworkF2_costi_async
+  @timelineReworkF2_costi_asyncTMP
   #deceduto, rework porta a KO all'attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_FLATRATE_ASYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(flat rate sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -888,7 +888,7 @@ Feature: Correzione timeline fase 2 costi
     And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
-  @timelineReworkF2_costi_async
+  @timelineReworkF2_costi_asyncTMP
   #deceduto, rework porta a OK all'attempt0
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DECEDUTO_AR_2] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -946,7 +946,7 @@ Feature: Correzione timeline fase 2 costi
     And il record recuperato su pn-CostComponents è uguale rispetto a prima del rework
     And il valore del notification cost dei record su pn-CostUpdateResult è uguale rispetto a prima del rework
 
-  @timelineReworkF2_costi_async
+  @timelineReworkF2_costi_asyncTMP
   #deceduto, rework porta a KO all' attempt0 e OK all'attempt1
   Scenario: [TR3_PAYMENTS_REWORK_DELIVERY_MODE_ASYNC_FAIL_DECEDUTO_AR_3] Invio di una notifica mono-destinatario con pagamento/i PagoPA(delivery mode sync) e controllo della corretta valorizzazione dei dati su pn-notificationDeliveryCost in seguito al rework
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
