@@ -37,22 +37,22 @@ public final class SenderAckTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.regex(Pattern.compile("\\b[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d\\b")),
+                        FieldLocators.aboveY(500f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data emissione",
-                        FieldLocators.regex(Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}(?:\\s+(?:[01]\\d|2[0-3]):[0-5]\\d)?\\b")),
+                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("in data", 150f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale mittente",
-                        FieldLocators.regex(Pattern.compile("\\b\\d{11}\\b")),
+                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("C.F.", 150f)),
                         SendFieldValidators.codiceFiscalePg(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.regex(Pattern.compile("\\b[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]\\b")),
+                        FieldLocators.aboveY(350f, FieldLocators.labelSameLine("Codice Fiscale", 250f)),
                         SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();

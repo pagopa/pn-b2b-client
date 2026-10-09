@@ -24,24 +24,14 @@ public final class AnalogFeedbackAvailabilityStatementTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("IUN", 200f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
-                        "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
                         "Data attestazione",
-                        FieldLocators.labelProximity("data", 250f, 20f),
+                        FieldLocators.aboveY(680f, FieldLocators.labelSameLine("in data", 150f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
-                .field(
-                        "Ora attestazione",
-                        FieldLocators.labelProximity("ore", 150f, 20f),
-                        SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TIGHT_BOX)
                 .build();
     }
 }

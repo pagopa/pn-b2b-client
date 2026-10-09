@@ -116,15 +116,7 @@ public class PdfVisualRegressionSteps {
         String url = resolveLastLegalFactUrl();
         byte[] actualPdf = B2bUtils.downloadFile(url);
         this.lastDownloadedPdf = actualPdf;
-        String folder = templateKey.toLowerCase().replace('_', '-');
-        try {
-            Path targetPath = Paths.get("src/test/resources/it/pagopa/pn/cucumber/visualtest/expected-pdfs", folder, "expected.pdf");
-            Files.createDirectories(targetPath.getParent());
-            Files.write(targetPath, actualPdf);
-            log.info("PdfVisualRegressionSteps: salvato Golden Master per '{}' in {}", templateKey, targetPath.toAbsolutePath());
-        } catch (IOException e) {
-            log.warn("PdfVisualRegressionSteps: impossibile salvare expected.pdf per '{}': {}", templateKey, e.getMessage());
-        }
+        saveDownloadedPdfArtifacts(templateKey, actualPdf);
 
         PdfDocumentTemplate template = registry.getOrThrow(templateKey);
 
@@ -224,6 +216,7 @@ public class PdfVisualRegressionSteps {
 
     private void verificaConformitaVisiva(byte[] actualPdf, String templateKey) {
         this.lastDownloadedPdf = actualPdf;
+        saveDownloadedPdfArtifacts(templateKey, actualPdf);
 
         PdfDocumentTemplate template = registry.getOrThrow(templateKey);
         byte[] expectedPdf          = loadGoldenMaster(templateKey);
@@ -236,6 +229,36 @@ public class PdfVisualRegressionSteps {
 
         log.info("PdfVisualRegressionSteps: report per template '{}': {}", templateKey, report);
         report.assertCompliant();
+    }
+
+    private void saveDownloadedPdfArtifacts(String templateKey, byte[] pdfBytes) {
+        String folder = templateKey.toLowerCase().replace('_', '-');
+        String iun = (sharedSteps != null && sharedSteps.getNotificationIun() != null)
+                ? sharedSteps.getNotificationIun()
+                : "NO_IUN";
+
+        // 1. Salva in target/downloaded-pdfs/
+        try {
+            Path targetDir = Paths.get("target", "downloaded-pdfs", folder);
+            Files.createDirectories(targetDir);
+            Path actualFile = targetDir.resolve("actual.pdf");
+            Path iunFile = targetDir.resolve(iun + "_" + folder + ".pdf");
+            Files.write(actualFile, pdfBytes);
+            Files.write(iunFile, pdfBytes);
+            log.info("PdfVisualRegressionSteps: salvato PDF scaricato in {}", actualFile.toAbsolutePath());
+        } catch (IOException e) {
+            log.warn("PdfVisualRegressionSteps: impossibile salvare in target/downloaded-pdfs: {}", e.getMessage());
+        }
+
+        // 2. Salva in expected-pdfs (aggiornamento automatico golden master)
+        try {
+            Path expectedPath = Paths.get("src/test/resources/it/pagopa/pn/cucumber/visualtest/expected-pdfs", folder, "expected.pdf");
+            Files.createDirectories(expectedPath.getParent());
+            Files.write(expectedPath, pdfBytes);
+            log.info("PdfVisualRegressionSteps: aggiornato Golden Master in {}", expectedPath.toAbsolutePath());
+        } catch (IOException e) {
+            log.warn("PdfVisualRegressionSteps: impossibile salvare in expected-pdfs: {}", e.getMessage());
+        }
     }
 
     /**

@@ -24,18 +24,18 @@ public final class NotificationCancelledTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data annullamento",
-                        FieldLocators.labelProximity("data", 200f, 20f),
+                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("in data", 200f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("Codice fiscale", 250f)),
+                        SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

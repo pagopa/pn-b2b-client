@@ -67,13 +67,8 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @pecDelivery @smoke
   Scenario: [VRT-03-SMOKE] Verifica solo campi dinamici del PEC_DELIVERY (senza golden master – smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT PEC_DELIVERY smoke |
-      | senderDenomination | Comune di palermo                     |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY"
+    Given imposto lo iun di SharedSteps a "GMAD-UTRV-GAUT-202610-Z-1" e la pa a "Comune_Multi"
+    And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
     Then si verificano i campi dinamici del PDF con il template "PEC_DELIVERY"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -154,15 +149,8 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationCancelled @smoke
   Scenario: [VRT-06-SMOKE] Verifica solo campi dinamici del NOTIFICATION_CANCELLED (senza golden master – smoke)
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica VRT NOTIFICATION_CANCELLED smoke |
-#      | senderDenomination | Comune di palermo                               |
-#    And destinatario Mario Gherkin
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Given imposto lo iun di SharedSteps a "EGNV-KWEV-JPTX-202610-W-1" e la pa a "Comune_Multi"
-    And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
+    And la PA richiede il download dell'attestazione opponibile "NOTIFICATION_CANCELLED"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_CANCELLED"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -233,16 +221,8 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationAar @smoke
   Scenario: [VRT-09-SMOKE] Verifica solo campi dinamici del NOTIFICATION_AAR (smoke)
-    #TODO: cambiare, genera AAR RADD
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT NOTIFICATION_AAR smoke |
-      | senderDenomination | Comune di palermo                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
+    Given imposto lo iun di SharedSteps a "XTXW-RZGW-UAJZ-202610-U-1" e la pa a "Comune_Multi"
+    And download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_AAR"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -264,15 +244,8 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @notificationAarRaddAlt @smoke
   Scenario: [VRT-10-SMOKE] Verifica solo campi dinamici del NOTIFICATION_AAR_RADD_ALT (smoke)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica VRT NOTIFICATION_AAR_RADD_ALT smoke |
-      | senderDenomination | Comune di palermo                                  |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
+    Given imposto lo iun di SharedSteps a "DAXP-PZEW-WNPW-202610-N-1" e la pa a "Comune_Multi"
+    And download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_AAR_RADD_ALT"
 
   # ─────────────────────────────────────────────────────────────────────────

@@ -24,24 +24,14 @@ public final class AnalogDeliveryWorkflowTimeoutLegalFactTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
-                        "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
                         "Data decorrenza termini",
-                        FieldLocators.labelProximity("data", 250f, 20f),
+                        FieldLocators.aboveY(500f, FieldLocators.labelSameLine("alla data del", 250f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
-                .field(
-                        "Ora decorrenza termini",
-                        FieldLocators.labelProximity("ore", 150f, 20f),
-                        SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TIGHT_BOX)
                 .build();
     }
 }

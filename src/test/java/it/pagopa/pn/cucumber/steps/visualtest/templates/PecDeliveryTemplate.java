@@ -26,24 +26,23 @@ public final class PecDeliveryTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Indirizzo PEC",
-                        FieldLocators.regex(Pattern.compile(
-                                "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}")),
+                        FieldLocators.aboveY(500f, FieldLocators.labelSameLine("Domicilio digitale", 300f)),
                         SendFieldValidators.indirizzoEmail(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data/ora risposta PEC",
-                        FieldLocators.labelProximity("data", 250f, 20f),
-                        and(SendFieldValidators.dataItaliana(), present()),
+                        FieldLocators.aboveY(450f, FieldLocators.labelSameLine("in data", 250f)),
+                        SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
                 .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
+                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("Codice Fiscale", 250f)),
+                        SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

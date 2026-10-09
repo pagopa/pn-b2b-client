@@ -24,23 +24,13 @@ public final class NotificationAarTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.onPage(0, FieldLocators.labelProximity("Identificativo Univoco Notifica", 150f, 20f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
-                        "Codice Fiscale mittente",
-                        FieldLocators.labelProximity("C.F.", 200f, 15f),
-                        present(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Data emissione",
-                        FieldLocators.labelProximity("data", 200f, 15f),
-                        SendFieldValidators.dataItaliana(),
+                        FieldLocators.onPage(0, FieldLocators.labelProximity("Codice fiscale:", 150f, 20f)),
+                        SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

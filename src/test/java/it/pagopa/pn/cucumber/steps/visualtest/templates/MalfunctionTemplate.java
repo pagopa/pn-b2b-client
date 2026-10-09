@@ -24,12 +24,12 @@ public final class MalfunctionTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "Data inizio downtime",
-                        FieldLocators.labelProximity("inizio", 250f, 20f),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("a decorrere dalla data del", 200f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
                 .field(
                         "Data fine downtime",
-                        FieldLocators.labelProximity("fine", 250f, 20f),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("e sino alla data", 200f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
                 .build();

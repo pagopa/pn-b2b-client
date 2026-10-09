@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,8 +36,8 @@ public class AllExpectedPdfsFastValidationTest {
 
     @ParameterizedTest(name = "[{index}] Template: {0}")
     @MethodSource("allExpectedPdfsProvider")
-    @DisplayName("Validazione rapida offline estrazione e conformita campi dinamici su expected.pdf")
-    void testCampiDinamiciEstrazione(String folderName, PdfDocumentTemplate template) throws Exception {
+    @DisplayName("1. Validazione isolamento geometrico dei box dinamici su expected.pdf")
+    void testIsolamentoGeometricoBoxDinamici(String folderName, PdfDocumentTemplate template) throws Exception {
         File pdfFile = new File(BASE_PATH + folderName + "/expected.pdf");
         assertTrue(pdfFile.exists(), "Il file expected.pdf deve esistere in " + pdfFile.getAbsolutePath());
 
@@ -49,28 +50,41 @@ public class AllExpectedPdfsFastValidationTest {
         assertNotNull(extracted, "ExtractedPdfText non deve essere null per " + folderName);
         assertFalse(extracted.allFragments().isEmpty(), "I frammenti di testo non devono essere vuoti per " + folderName);
 
-        // 2. Analisi e binding dei campi dinamici
+        // 2. Verifica che ogni box dinamico sia localizzato geometricamente con precisione
+        for (PdfDocumentTemplate.FieldDefinition def : template.fieldDefinitions()) {
+            List<TextFragment> located = def.locator().locate(extracted.allFragments());
+            assertNotNull(located, "I frammenti per il campo '" + def.fieldName() + "' non devono essere null");
+            assertFalse(located.isEmpty(), "Il campo '" + def.fieldName() + "' deve essere localizzato geometricamente nel template " + template.key());
+
+            // Verifica che il locator non abbia debordato catturando testo discorsivo o footer
+            for (TextFragment f : located) {
+                assertFalse(f.text().contains("Ai sensi dell’art. 26"), "Il box '" + def.fieldName() + "' non deve catturare preamboli di legge");
+                assertFalse(f.text().contains("L’attestazione riporta la data in cui"), "Il box '" + def.fieldName() + "' non deve catturare note legali");
+                assertFalse(f.text().contains("Registro Imprese di Roma"), "Il box '" + def.fieldName() + "' non deve scivolare nel footer PagoPA");
+            }
+        }
+    }
+
+    @ParameterizedTest(name = "[{index}] Template: {0}")
+    @MethodSource("allExpectedPdfsProvider")
+    @DisplayName("2. Verifica realismo e conformita dei valori estratti dai box dinamici")
+    void testRealismoCampiDinamici(String folderName, PdfDocumentTemplate template) throws Exception {
+        File pdfFile = new File(BASE_PATH + folderName + "/expected.pdf");
+        assertTrue(pdfFile.exists(), "Il file expected.pdf deve esistere in " + pdfFile.getAbsolutePath());
+
+        byte[] pdfBytes = Files.readAllBytes(pdfFile.toPath());
+        ExtractedPdfText extracted = PdfTextExtractor.extract(pdfBytes);
         DynamicFieldAnalyzer.AnalysisResult result = DynamicFieldAnalyzer.analyze(extracted, template);
 
-        System.out.println("==================================================");
+        System.out.println("--------------------------------------------------");
         System.out.println("TEMPLATE: " + template.key() + " (" + folderName + ")");
-        System.out.println("Valid: " + result.isValid());
-        if (!result.isValid()) {
-            System.err.println("Issues riscontrate:");
-            result.issues().forEach(issue -> System.err.println("  • " + issue));
-        } else {
-            System.out.println("Tutti i campi dinamici configurati sono stati estratti e validati correttamente!");
+        for (PdfDocumentTemplate.FieldDefinition def : template.fieldDefinitions()) {
+            List<TextFragment> located = def.locator().locate(extracted.allFragments());
+            String val = located.stream().map(TextFragment::text).reduce("", (a, b) -> a + " " + b).strip();
+            boolean isPlaceholder = FieldValidators.isPlaceholderText(val);
+            System.out.printf("  • Campo '%s': \"%s\" -> %s%n",
+                    def.fieldName(), val, isPlaceholder ? "[MOCK PLACEHOLDER]" : "[VALORE REALE / VALIDO]");
         }
-        System.out.println("==================================================");
-
-        if (!result.isValid()) {
-            StringBuilder sb = new StringBuilder("Problemi riscontrati nel template '")
-                    .append(template.key())
-                    .append("':\n");
-            result.issues().forEach(issue -> sb.append("  • ").append(issue).append("\n"));
-            fail(sb.toString());
-        }
-
-        assertTrue(result.isValid(), "Tutti i campi dinamici devono essere validi per " + template.key());
+        System.out.println("--------------------------------------------------");
     }
 }

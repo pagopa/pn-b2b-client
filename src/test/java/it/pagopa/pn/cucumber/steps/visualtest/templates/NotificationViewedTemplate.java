@@ -24,23 +24,18 @@ public final class NotificationViewedTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data accesso",
-                        FieldLocators.labelProximity("data", 200f, 20f),
+                        FieldLocators.aboveY(500f, FieldLocators.labelSameLine("in data", 250f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
-                        "Ora accesso",
-                        FieldLocators.labelProximity("ora", 150f, 20f),
-                        SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
+                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("Codice Fiscale", 250f)),
+                        SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

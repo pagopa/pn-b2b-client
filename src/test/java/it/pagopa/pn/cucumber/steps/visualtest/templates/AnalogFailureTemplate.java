@@ -24,22 +24,22 @@ public final class AnalogFailureTemplate {
         return PdfDocumentTemplate.builder(KEY)
                 .field(
                         "IUN",
-                        FieldLocators.labelProximity("IUN", 300f, 15f),
+                        FieldLocators.aboveY(680f, FieldLocators.labelSameLine("IUN", 300f)),
                         SendFieldValidators.iun(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Codice Fiscale destinatario",
-                        FieldLocators.labelProximity("Codice fiscale", 250f, 15f),
-                        present(),
+                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("CF:", 200f)),
+                        SendFieldValidators.codiceFiscalePg(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data fine workflow",
-                        FieldLocators.labelProximity("data", 250f, 20f),
+                        FieldLocators.aboveY(620f, FieldLocators.labelSameLine("in data", 250f)),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.FULL_LINE)
                 .field(
                         "Ora fine workflow",
-                        FieldLocators.labelProximity("ore", 150f, 20f),
+                        FieldLocators.aboveY(620f, FieldLocators.labelSameLine("alle ore", 150f)),
                         SendFieldValidators.oraHHmm(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
