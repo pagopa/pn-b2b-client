@@ -212,8 +212,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      | details_isTosAccepted        | xx       |
-    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | false   |
@@ -1193,14 +1192,12 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
-      | details_digitalAddress_type | EMAIL |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE" della notifica bonaria con dettagli
-      | details_channel | PEC |
-    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_PROGRESS" della notifica bonaria con dettagli
-      | details_channel | PEC |
+      | details_digitalAddress_type | SERCQ |
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_channel | PEC |
+    And si attende che venga prodotto l'elemento "SEND_COURTESY_MESSAGE" della notifica bonaria con dettagli
+      | details_digitalAddress_type | EMAIL |
 
 
 # ***********************************************
