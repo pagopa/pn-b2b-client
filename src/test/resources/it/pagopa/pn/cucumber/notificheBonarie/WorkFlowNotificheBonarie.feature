@@ -562,7 +562,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Ettore Fieramosca                       |
       | email                    | suppressionlist@simulator.amazonses.com |
       | digitalDomicile          | NULL                                    |
-      | physical_address_address | Via@OK_RIS                              |
+      | physical_address_address | Via@OK_RS                              |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
@@ -582,7 +582,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RIS                 |
+      | physical_address_address | Via@OK_RS                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "COVERPAGE_CREATION_REQUEST" della notifica bonaria
     And si attende che venga prodotto l'elemento "PREPARE_ANALOG_DELIVERY" della notifica bonaria
@@ -694,7 +694,7 @@ Feature: Workflow di una notifica bonaria.
 
 
   @informalNotificationsWorkFlow @informalNotMVP
-  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non..
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_5_B] Come ente mittente invio una notifica bonaria verso PF ricevo feedback desiderato ma non recapitato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | QADigital                |
       | messageId       | ${NEW-IT}                |
@@ -726,7 +726,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RIS                 |
+      | physical_address_address | Via@OK_RS                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | OK |
