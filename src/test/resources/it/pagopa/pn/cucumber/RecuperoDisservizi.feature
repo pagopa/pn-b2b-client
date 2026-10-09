@@ -1,22 +1,22 @@
 Feature: Recupero Disservizi
 
   #RECUPERO_DISSERVIZI_10
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario: [RECUPERO_DISSERVIZI_1] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi e verificare la presenza del nuovo campo fileAvailableTimestamp correttamente valorizzato
     Given si chiama l'api di recupero elenco disservizi nell'anno e mese corrente
     Then viene restituito l'elenco dei disservizi del mese e dell'anno corrente
 
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario: [RECUPERO_DISSERVIZI_2] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi senza i query params
     Given si chiama l'api di recupero elenco disservizi con mese e anno vuoti
     Then viene restituito l'elenco dei disservizi del mese e dell'anno corrente
 
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario: [RECUPERO_DISSERVIZI_3] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi specificando un periodo antecedente a gennaio 2023
     Given si chiama l'api di recupero elenco disservizi nell'anno 2022 e mese 12
     Then si controlla che l'api restituisce un codice di errore 400
 
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario Outline: [RECUPERO_DISSERVIZI_4] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi successivo alla data in cui avviene la chiamata oppure una data compresa tra gennaio 2023 e giugno 2023
     Given si chiama l'api di recupero elenco disservizi nell'anno <year> e mese <month>
     Then viene restituito un elenco di disservizi vuoto
@@ -25,7 +25,7 @@ Feature: Recupero Disservizi
       | 2023 | 1     |
       | 2065 | 10    |
 
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario: [RECUPERO_DISSERVIZI_5] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi specificando un mese errato
     Given si chiama l'api di recupero elenco disservizi nell'anno 2023 e mese 13
     Then si controlla che l'api restituisce un codice di errore 400
@@ -35,7 +35,7 @@ Feature: Recupero Disservizi
     Given viene chiamata l’API per il download dell'atto opponibile ai terzi con id "CORRETTO"
     Then viene scaricato l'atto opponibile ai terzi di malfunzionamento e ripristino
 
-  @recuperoDisservizi
+  @recuperoDisservizi @recuperoDisserviziHttp
   Scenario Outline: [RECUPERO_DISSERVIZI_7] Richiamare l’API per il download dell'atto opponibile ai terzi di malfunzionamento e ripristino specificando un id inesistente o errato
     Given viene chiamata l’API per il download dell'atto opponibile ai terzi con id "<idType>"
     Then si controlla che l'api restituisce un codice di errore 400

@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.cucumber.steps.config.SendHttpCallExecutorConfiguration;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
@@ -204,6 +205,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
+        SendHttpCallExecutorConfiguration.class,
         JacksonAutoConfiguration.class,
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
