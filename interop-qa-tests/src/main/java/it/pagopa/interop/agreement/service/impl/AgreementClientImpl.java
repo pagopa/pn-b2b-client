@@ -217,8 +217,8 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q) {
-        return agreementsApi.getAgreementsProducerEServicesWithHttpInfo(offset, limit, q);
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q, List<AgreementState> states) {
+        return agreementsApi.getAgreementsProducerEServicesWithHttpInfo(offset, limit, q, states);
     }
 
     @Override
