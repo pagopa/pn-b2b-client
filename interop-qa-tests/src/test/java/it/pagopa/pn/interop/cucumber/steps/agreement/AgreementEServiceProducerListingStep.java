@@ -4,6 +4,8 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 
+import java.util.List;
+
 public class AgreementEServiceProducerListingStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
@@ -18,14 +20,14 @@ public class AgreementEServiceProducerListingStep {
     public void requireEServiceListingOperation() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 50, null)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 50, null, List.of())
         );
     }
 
     @When("l'utente richiede una operazione di listing degli e-services che hanno una richiesta di fruizione attiva limitata ai primi {int} e-services")
     public void requireEServiceListingOperationWithLimit(int limit) {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, limit, null)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, limit, null, List.of())
         );
     }
 
@@ -33,8 +35,9 @@ public class AgreementEServiceProducerListingStep {
     public void requireEServiceListingOperationWithOffset(int offset) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(offset, 10,
-                        String.valueOf(sharedStepsContext.getTestSeed()))
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(
+                        offset, 10, String.valueOf(sharedStepsContext.getTestSeed()), List.of()
+                )
         );
     }
 
@@ -43,7 +46,7 @@ public class AgreementEServiceProducerListingStep {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         String query = String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword);
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 10, query)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 10, query, List.of())
         );
     }
 }
