@@ -497,6 +497,20 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @webhookV29 @precondition @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_148.A] Creazione di uno stream notifica senza passare gruppi, utilizzando un apikey con gruppi.
+    La creazione deve andare a buon fine e lo stream deve essere creato con i gruppi associati all'apikey utilizzata.
+    Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V29"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    When si crea il nuovo stream con versione "V29" per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+    Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V29"
+    And si cancella lo stream creato per il "Comune_Multi" con versione "V29"
+    And viene verificata la corretta cancellazione con versione "V29"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
   # identico al test sopra, ma stavolta waitForAccepted viene impostato a true
   @webhookV29 @precondition @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_148waitForAccepted] Creazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
