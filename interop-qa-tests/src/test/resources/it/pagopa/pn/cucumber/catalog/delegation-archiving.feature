@@ -1617,21 +1617,23 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Then si ottiene response status code 400
 
   @sad-path
-  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] L'ente delegato NON può duplicare un e-service in delega in erogazione in stato PUBLISHED o SUSPENDED
+  Scenario Outline: [DELEGATION_ARCHIVING_CLONING_1.1] L'ente delegato o un ente terzo NON può duplicare un e-service in stato PUBLISHED o SUSPENDED con delega in erogazione attiva
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "<eserviceState>"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA2"
+    And l'utente è un "admin" di "<tenant>"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 403
 
     Examples:
-      | eserviceState |
-      | PUBLISHED     |
-      | SUSPENDED     |
+      | tenant | eserviceState |
+      | PA2    | PUBLISHED     |
+      | PA2    | SUSPENDED     |
+      | PA3    | PUBLISHED     |
+      | PA3    | SUSPENDED     |
 
   @happy-path
   Scenario Outline: [DELEGATION_ARCHIVING_CLONING_2.1] L'ente delegante può duplicare un e-service in delega in erogazione in stato PUBLISHED o SUSPENDED
