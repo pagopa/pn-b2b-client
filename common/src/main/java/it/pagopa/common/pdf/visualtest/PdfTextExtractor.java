@@ -98,19 +98,60 @@ public final class PdfTextExtractor {
 
         @Override
         protected void writeString(String text, List<TextPosition> textPositions) {
-            if (text == null || text.isBlank()) {
+            if (text == null || text.isBlank() || textPositions.isEmpty()) {
                 return;
             }
-            // Calcola il bounding-box del gruppo di TextPosition
+
+            // Raggruppiamo i TextPosition in token/parole individuali separati da whitespace
+            // in modo che ogni parola abbia il proprio TextFragment e la propria bounding box esatta.
+            int startIdx = 0;
+            int n = textPositions.size();
+
+            while (startIdx < n) {
+                while (startIdx < n && isWhitespace(textPositions.get(startIdx))) {
+                    startIdx++;
+                }
+                if (startIdx >= n) {
+                    break;
+                }
+
+                int endIdx = startIdx;
+                while (endIdx < n && !isWhitespace(textPositions.get(endIdx))) {
+                    endIdx++;
+                }
+
+                TextFragment wordFrag = createFragment(textPositions.subList(startIdx, endIdx));
+                if (wordFrag != null && !wordFrag.text().isBlank()) {
+                    fragments.add(wordFrag);
+                }
+
+                startIdx = endIdx;
+            }
+        }
+
+        private static boolean isWhitespace(TextPosition tp) {
+            String unicode = tp.getUnicode();
+            return unicode == null || unicode.isBlank();
+        }
+
+        private TextFragment createFragment(List<TextPosition> wordPositions) {
+            if (wordPositions.isEmpty()) {
+                return null;
+            }
+
+            StringBuilder sb = new StringBuilder();
             float minX = Float.MAX_VALUE;
             float minY = Float.MAX_VALUE;
             float maxXEnd = Float.MIN_VALUE;
             float maxYTop = Float.MIN_VALUE;
 
-            for (TextPosition tp : textPositions) {
+            for (TextPosition tp : wordPositions) {
+                String u = tp.getUnicode();
+                if (u != null) {
+                    sb.append(u);
+                }
                 float x = tp.getXDirAdj();
                 float w = tp.getWidthDirAdj();
-                // getYDirAdj() è la baseline con origine in alto: la convertiamo in origine basso-sinistra
                 float baseline = tp.getPageHeight() - tp.getYDirAdj();
                 float[] ascDesc = ascentDescent(tp);
 
@@ -120,16 +161,18 @@ public final class PdfTextExtractor {
                 maxYTop = Math.max(maxYTop, baseline + ascDesc[0]);
             }
 
-            String trimmed = text.trim();
-            if (!trimmed.isEmpty()) {
-                fragments.add(new TextFragment(
-                        trimmed,
-                        minX,
-                        minY,
-                        maxXEnd - minX,
-                        maxYTop - minY,
-                        pageIndex));
+            String wordText = sb.toString().trim();
+            if (wordText.isEmpty()) {
+                return null;
             }
+
+            return new TextFragment(
+                    wordText,
+                    minX,
+                    minY,
+                    maxXEnd - minX,
+                    maxYTop - minY,
+                    pageIndex);
         }
 
         /**

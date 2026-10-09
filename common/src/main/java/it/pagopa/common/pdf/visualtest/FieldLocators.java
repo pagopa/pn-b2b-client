@@ -22,31 +22,51 @@ public final class FieldLocators {
      * Localizza il campo cercando un'etichetta testuale e restituendo i frammenti
      * immediatamente alla destra o sotto di essa nella stessa area di prossimità.
      *
-     * @param labelText      testo dell'etichetta (ricerca case-insensitive, sottostringa)
+     * @param labelText      testo dell'etichetta (ricerca case-insensitive)
      * @param maxOffsetPtX   distanza massima orizzontale (punti PDF) tra etichetta e valore
      * @param maxOffsetPtY   distanza massima verticale (punti PDF) tra etichetta e valore
      */
     public static FieldLocator labelProximity(String labelText, float maxOffsetPtX, float maxOffsetPtY) {
         return allFragments -> {
             List<TextFragment> results = new ArrayList<>();
-            String lowerLabel = labelText.toLowerCase(java.util.Locale.ROOT);
+            String[] labelWords = labelText.trim().toLowerCase(java.util.Locale.ROOT).split("\\s+");
+            if (labelWords.length == 0 || labelWords[0].isEmpty()) {
+                return results;
+            }
 
             for (int i = 0; i < allFragments.size(); i++) {
-                TextFragment candidate = allFragments.get(i);
-                if (candidate.text().toLowerCase(java.util.Locale.ROOT).contains(lowerLabel)) {
-                    // Cerca frammenti a destra o sotto l'etichetta trovata
-                    float labelXEnd = candidate.xEnd();
-                    float labelY    = candidate.y();
+                // Controlla se a partire dall'indice i c'è la sequenza di parole dell'etichetta
+                boolean match = true;
+                for (int w = 0; w < labelWords.length; w++) {
+                    if (i + w >= allFragments.size()) {
+                        match = false;
+                        break;
+                    }
+                    TextFragment tf = allFragments.get(i + w);
+                    String cleanTfText = tf.text().toLowerCase(java.util.Locale.ROOT).replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", "");
+                    String cleanLabelWord = labelWords[w].replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", "");
+                    if (!cleanTfText.equalsIgnoreCase(cleanLabelWord) && !tf.text().toLowerCase(java.util.Locale.ROOT).contains(labelWords[w])) {
+                        match = false;
+                        break;
+                    }
+                }
 
-                    for (TextFragment other : allFragments) {
-                        if (other == candidate) continue;
-                        if (other.pageIndex() != candidate.pageIndex()) continue;
+                if (match) {
+                    TextFragment lastLabelFrag = allFragments.get(i + labelWords.length - 1);
+                    float labelXEnd = lastLabelFrag.xEnd();
+                    float labelY    = lastLabelFrag.y();
+                    int pageIdx     = lastLabelFrag.pageIndex();
 
-                        boolean toTheRight = other.x() >= labelXEnd
+                    for (int j = 0; j < allFragments.size(); j++) {
+                        if (j >= i && j < i + labelWords.length) continue;
+                        TextFragment other = allFragments.get(j);
+                        if (other.pageIndex() != pageIdx) continue;
+
+                        boolean toTheRight = other.x() >= labelXEnd - 2.0f
                                 && other.x() <= labelXEnd + maxOffsetPtX
                                 && Math.abs(other.y() - labelY) <= maxOffsetPtY;
 
-                        boolean below = other.x() <= candidate.xEnd() + maxOffsetPtX
+                        boolean below = other.x() <= lastLabelFrag.xEnd() + maxOffsetPtX
                                 && other.y() < labelY
                                 && labelY - other.y() <= maxOffsetPtY;
 
@@ -166,5 +186,90 @@ public final class FieldLocators {
                         && f.x() >= x && f.xEnd() <= xEnd
                         && f.y() >= y && f.yTop() <= yTop)
                 .toList();
+    }
+    // -----------------------------------------------------------------------
+    // 4. Modificatori e filtri geometrici
+    // -----------------------------------------------------------------------
+
+    /**
+     * Filtra i frammenti localizzati per includere solo quelli appartenenti alla pagina indicata (0-based).
+     */
+    public static FieldLocator onPage(int pageIndex, FieldLocator delegate) {
+        return allFragments -> delegate.locate(allFragments).stream()
+                .filter(f -> f.pageIndex() == pageIndex)
+                .toList();
+    }
+
+    /**
+     * Filtra i frammenti per escludere quelli al di sotto di una coordinata Y minima (es. per escludere il footer).
+     */
+    public static FieldLocator aboveY(float minY, FieldLocator delegate) {
+        return allFragments -> delegate.locate(allFragments).stream()
+                .filter(f -> f.y() >= minY)
+                .toList();
+    }
+
+    /**
+     * Localizza i frammenti di testo che contengono una determinata sottostringa (case-insensitive).
+     */
+    public static FieldLocator lineContaining(String substring) {
+        String lower = substring.toLowerCase(java.util.Locale.ROOT);
+        return allFragments -> allFragments.stream()
+                .filter(f -> f.text().toLowerCase(java.util.Locale.ROOT).contains(lower))
+                .toList();
+    }
+
+    /**
+     * Localizza un valore posizionato sulla stessa riga dell'etichetta (tolleranza verticale stretta <= 4.0pt),
+     * immediatamente a destra dell'etichetta entro {@code maxOffsetPtX}, oppure il frammento stesso se racchiude
+     * sia l'etichetta che il valore in un'unica riga.
+     * Evita di catturare testo su righe successive o disclaimer sottostanti.
+     */
+    public static FieldLocator labelSameLine(String labelText, float maxOffsetPtX) {
+        return allFragments -> {
+            List<TextFragment> results = new ArrayList<>();
+            String[] labelWords = labelText.trim().toLowerCase(java.util.Locale.ROOT).split("\\s+");
+            if (labelWords.length == 0 || labelWords[0].isEmpty()) {
+                return results;
+            }
+
+            for (int i = 0; i < allFragments.size(); i++) {
+                boolean match = true;
+                for (int w = 0; w < labelWords.length; w++) {
+                    if (i + w >= allFragments.size()) {
+                        match = false;
+                        break;
+                    }
+                    TextFragment tf = allFragments.get(i + w);
+                    String tfText = tf.text().toLowerCase(java.util.Locale.ROOT);
+                    if (!tfText.contains(labelWords[w])) {
+                        match = false;
+                        break;
+                    }
+                }
+
+                if (match) {
+                    TextFragment lastLabelFrag = allFragments.get(i + labelWords.length - 1);
+                    float labelXEnd = lastLabelFrag.xEnd();
+                    float labelY = lastLabelFrag.y();
+                    int pageIdx = lastLabelFrag.pageIndex();
+
+                    for (int j = 0; j < allFragments.size(); j++) {
+                        if (j >= i && j < i + labelWords.length) continue;
+                        TextFragment other = allFragments.get(j);
+                        if (other.pageIndex() != pageIdx) continue;
+
+                        boolean sameLine = other.x() >= labelXEnd - 2.0f
+                                && other.x() <= labelXEnd + maxOffsetPtX
+                                && Math.abs(other.y() - labelY) <= 4.0f;
+
+                        if (sameLine) {
+                            results.add(other);
+                        }
+                    }
+                }
+            }
+            return List.copyOf(results);
+        };
     }
 }

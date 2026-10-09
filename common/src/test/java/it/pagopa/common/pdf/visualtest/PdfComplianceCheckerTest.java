@@ -83,24 +83,28 @@ class PdfComplianceCheckerTest {
         return PdfDocumentTemplate.builder("LEGAL_FACT")
                 .expectedPageCount(1)
                 .field("IUN",
-                        FieldLocators.regex(IUN),
-                        FieldValidators.regex(IUN, "IUN (XXXX-XXXX-XXXX-YYYYMM-X-N)"),
+                        FieldLocators.regex(Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d")),
+                        FieldValidators.regex(Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d"), "IUN (XXXX-XXXX-XXXX-YYYYMM-X-N)"),
                         MaskStrategy.TIGHT_BOX)
                 .field("nome cognome",
                         FieldLocators.labelProximity("Ragione Sociale", 300f, 20f),
                         FieldValidators.present(),
-                        MaskStrategy.FULL_LINE)
+                        MaskStrategy.TIGHT_BOX)
                 .field("codice fiscale",
-                        FieldLocators.regex(CODICE_FISCALE),
-                        FieldValidators.regex(CODICE_FISCALE, "codice fiscale PF/PG"),
+                        FieldLocators.regex(Pattern.compile("(?:[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]|\\d{11})")),
+                        FieldValidators.regex(Pattern.compile("(?:[A-Z]{6}\\d{2}[A-Z]\\d{2}[A-Z]\\d{3}[A-Z]|\\d{11})"), "codice fiscale PF/PG"),
                         MaskStrategy.TIGHT_BOX)
                 .field("domicilio digitale",
-                        FieldLocators.regex(EMAIL),
-                        FieldValidators.regex(EMAIL, "indirizzo PEC/email"),
+                        FieldLocators.regex(Pattern.compile("[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}")),
+                        FieldValidators.regex(Pattern.compile("[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}"), "indirizzo PEC/email"),
                         MaskStrategy.TIGHT_BOX)
                 .field("data",
-                        FieldLocators.regex(DATA_IT),
-                        FieldValidators.regex(DATA_IT, "data dd/MM/yyyy"),
+                        FieldLocators.regex(Pattern.compile("(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}")),
+                        FieldValidators.regex(Pattern.compile("(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}"), "data dd/MM/yyyy"),
+                        MaskStrategy.TIGHT_BOX)
+                .field("orario",
+                        FieldLocators.regex(Pattern.compile("\\b(?:[01]\\d|2[0-3]):[0-5]\\d\\b")),
+                        FieldValidators.regex(Pattern.compile("\\b(?:[01]\\d|2[0-3]):[0-5]\\d\\b"), "orario HH:mm"),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

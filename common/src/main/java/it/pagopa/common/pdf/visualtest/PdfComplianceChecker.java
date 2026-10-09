@@ -72,8 +72,18 @@ public final class PdfComplianceChecker {
         // ── 4. Confronto visivo pixel-level ───────────────────────────────
         PdfVisualComparator.VisualDiffResult visualResult = null;
         if (structuralErrors.isEmpty()) {
+            List<ExclusionArea> allExclusions = new ArrayList<>(analysis.exclusions());
+            // Estrai esclusioni anche dall'expectedPdf per mascherare i valori dinamici presenti nel documento di riferimento
+            try {
+                ExtractedPdfText expectedExtracted = PdfTextExtractor.extract(expectedPdf);
+                DynamicFieldAnalyzer.AnalysisResult expectedAnalysis = DynamicFieldAnalyzer.analyze(expectedExtracted, template);
+                allExclusions.addAll(expectedAnalysis.exclusions());
+            } catch (Exception e) {
+                log.debug("Impossibile estrarre aree di esclusione dall'expectedPdf: {}", e.getMessage());
+            }
+
             visualResult = PdfVisualComparator.compare(
-                    expectedPdf, actualPdf, analysis.exclusions(), diffOutputPath);
+                    expectedPdf, actualPdf, List.copyOf(allExclusions), diffOutputPath);
         } else {
             log.warn("PdfComplianceChecker: confronto visivo saltato a causa di errori strutturali");
         }

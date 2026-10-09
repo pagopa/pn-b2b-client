@@ -152,6 +152,45 @@ public final class FieldValidators {
     }
 
     /**
+     * Valida che il campo non contenga valori segnaposto fittizi
+     * (es. "string", "inserire", "placeholder", "TODO", "recipient_taxId", "null", "N/D").
+     */
+    public static FieldValidator nonPlaceholder() {
+        return locatedFragments -> {
+            if (locatedFragments == null || locatedFragments.isEmpty()) {
+                return "Campo non trovato nel documento";
+            }
+            for (TextFragment f : locatedFragments) {
+                String text = f.text().trim();
+                if (isPlaceholderText(text)) {
+                    return "Valore non realistico / segnaposto fittizio: \"" + text + "\"";
+                }
+            }
+            return null;
+        };
+    }
+
+    /**
+     * Verifica se una stringa è un segnaposto/dummy.
+     */
+    public static boolean isPlaceholderText(String text) {
+        if (text == null || text.isBlank()) return true;
+        String lower = text.toLowerCase(java.util.Locale.ROOT).trim();
+        return lower.equals("string")
+                || lower.matches("^(string\\s*)+$")
+                || lower.equals("inserire")
+                || lower.equals("placeholder")
+                || lower.equals("todo")
+                || lower.equals("null")
+                || lower.equals("n/d")
+                || lower.equals("n.d.")
+                || lower.equals("recipient_taxid")
+                || lower.equals("sender_denomination")
+                || lower.equals("body_primarycontent")
+                || lower.equals("recipient_denomination");
+    }
+
+    /**
      * Combina due validatori in AND logico: entrambi devono passare.
      */
     public static FieldValidator and(FieldValidator first, FieldValidator second) {
