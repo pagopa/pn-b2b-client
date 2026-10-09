@@ -765,7 +765,7 @@ Feature: Template engine
 
     Examples:
       | endpoint                                    | fields                                                                                                                                                                                 |
-      | notification-received-legal-fact            | subject,notification.sender.paDenomination,notification.recipients.denomination,notification.recipients.physicalAddressAndDenomination,notification.recipients.digitalDomicile.address |
+      | notification-received-legal-fact            | subject,notification.sender.paDenomination,notification.recipients.denomination,notification.recipients.digitalDomicile.address |
       | pec-delivery-workflow-legal-fact            | deliveries.denomination,deliveries.address                                                                                                                                              |
       | notification-viewed-legal-fact              | recipient.denomination,delegate.denomination                                                                                                                                            |
       | notification-cancelled-legal-fact           | notification.sender.paDenomination,notification.recipients.denomination                                                                                                                 |
