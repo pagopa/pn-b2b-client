@@ -1,0 +1,162 @@
+package it.pagopa.pn.cucumber.steps.ioMock;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.common.util.StringUtils;
+import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public class IOMockProfilesSteps {
+
+    private final IoMockScenarioContext context;
+    private final IOMockCommonSteps commonSteps;
+    private final org.springframework.core.env.Environment environment;
+    private final ObjectMapper objectMapper;
+
+    @Autowired
+    public IOMockProfilesSteps(IoMockScenarioContext context, IOMockCommonSteps commonSteps, org.springframework.core.env.Environment environment, ObjectMapper objectMapper) {
+        this.context = context;
+        this.commonSteps = commonSteps;
+        this.environment = environment;
+        this.objectMapper = objectMapper;
+    }
+
+    private String resolveFiscalCode(String rawFiscalCode) {
+        if (rawFiscalCode == null || rawFiscalCode.isBlank()) {
+            return rawFiscalCode;
+        }
+        String trimmed = rawFiscalCode.trim();
+        String resolved = null;
+        if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
+            resolved = environment.resolvePlaceholders(trimmed);
+        } else if (trimmed.startsWith("$")) {
+            String propKey = trimmed.substring(1);
+            resolved = environment.getProperty(propKey);
+        } else {
+            resolved = environment.getProperty(trimmed);
+        }
+        if (resolved == null || resolved.isBlank()) {
+            resolved = StringUtils.resolveValue(trimmed);
+        }
+        if (resolved != null) {
+            resolved = resolved.trim();
+            if (resolved.startsWith("[") && resolved.endsWith("]")) {
+                try {
+                    JsonNode node = objectMapper.readTree(resolved);
+                    if (node.isArray() && !node.isEmpty()) {
+                        resolved = node.get(0).asText();
+                    }
+                } catch (Exception e) {
+                    resolved = resolved.replaceAll("[\\[\\]\"']", "").split(",")[0].trim();
+                }
+            }
+        }
+        return resolved;
+    }
+
+    //-----------------------------------------------------------------------------------------
+    // PROFILES DOMAIN GIVEN STEPS
+    //-----------------------------------------------------------------------------------------
+
+    @Given("un destinatario con codice fiscale in blacklist {string}")
+    @Given("un destinatario abilitato al routing reale {string}")
+    @Given("un destinatario con codice fiscale ordinario {string}")
+    @Given("un destinatario non registrato ad App IO {string}")
+    public void prepareProfileRequestWithFiscalCode(String fiscalCode) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("fiscal_code", resolveFiscalCode(fiscalCode));
+        context.setRequestPayload(payload);
+    }
+
+    @Given("una richiesta di verifica profilo con payload non conforme {string}")
+    public void prepareProfileRequestWithAnomaly(String anomalyType) {
+        Map<String, Object> payload = new HashMap<>();
+        switch (anomalyType) {
+            case "SENZA_FISCAL_CODE":
+                // Payload JSON vuoto {}
+                break;
+            case "JSON_MALFORMATO":
+                context.setRawPayloadString("{ invalid_json_payload: ");
+                return;
+            case "FISCAL_CODE_NULL":
+                payload.put("fiscal_code", null);
+                break;
+            default:
+                payload.put("fiscal_code", StringUtils.resolveValue(anomalyType));
+                break;
+        }
+        context.setRequestPayload(payload);
+    }
+
+    //-----------------------------------------------------------------------------------------
+    // PROFILES DOMAIN WHEN STEPS
+    //-----------------------------------------------------------------------------------------
+
+    @When("viene richiesta la verifica del profilo utente")
+    public void requestProfileVerification() {
+        commonSteps.invokeEndpoint("POST /profiles");
+    }
+
+    //-----------------------------------------------------------------------------------------
+    // PROFILES DOMAIN THEN STEPS
+    //-----------------------------------------------------------------------------------------
+
+    @Then("il profilo risulta non abilitato alla ricezione dei messaggi")
+    public void verifyProfileSenderNotAllowed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code per profilo non abilitato deve essere 200 OK")
+                .isEqualTo(HttpStatus.OK.value());
+        checkSenderAllowedField("sender_allowed", false);
+    }
+
+    @Then("il profilo risulta abilitato alla ricezione dei messaggi")
+    public void verifyProfileSenderAllowed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code per profilo abilitato deve essere 200 OK")
+                .isEqualTo(HttpStatus.OK.value());
+        checkSenderAllowedField("sender_allowed", true);
+    }
+
+    @Then("il profilo utente risulta non registrato")
+    public void verifyProfileNotFound() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code per profilo non registrato deve essere 404 Not Found")
+                .isEqualTo(HttpStatus.NOT_FOUND.value());
+    }
+
+    @Then("la richiesta di verifica profilo viene rifiutata per errore di validazione formale")
+    public void verifyProfileValidationFailed() {
+        assertThat(context.getActualStatusCode())
+                .as("Lo status code per richiesta non conforme deve essere 400 Bad Request")
+                .isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    private void checkSenderAllowedField(String fieldName, boolean expectedValue) {
+        assertThat(context.getResponseJson())
+                .as("Il body della risposta non è presente o non è un JSON valido")
+                .isNotNull();
+
+        assertThat(context.getResponseJson().has(fieldName))
+                .as("Il body della risposta non contiene il campo atteso: %s", fieldName)
+                .isTrue();
+
+        assertThat(context.getResponseJson().get(fieldName).asBoolean())
+                .as("Il valore del campo %s non corrisponde a quello atteso (%s)", fieldName, expectedValue)
+                .isEqualTo(expectedValue);
+    }
+}
