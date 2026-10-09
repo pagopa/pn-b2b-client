@@ -26,6 +26,30 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
     And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
     Then si verificano i campi dinamici del PDF con il template "SENDER_ACK"
 
+  @visualTest @senderAck @smoke
+  Scenario: [VRT-02b] Verifica i campi del SENDER_ACK per il destinatario 1
+    Given viene generata una nuova notifica
+      | subject            | invio notifica VRT SENDER_ACK destinatario |
+      | senderDenomination | Comune di palermo                          |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "SENDER_ACK"
+    And si verificano i campi dinamici del PDF con il template "SENDER_ACK"
+    Then per il destinatario 1 del PDF si verificano i seguenti campi
+      | campo                             | valore        |
+      | Nome e Cognome / Ragione Sociale  | Mario Gherkin |
+
+  # Per una notifica multidestinatario basta ripetere lo step cambiando l'indice del
+  # destinatario: ciascuna etichetta ("campo") si ripete una volta per blocco e lo step
+  # prende automaticamente la sua N-esima occorrenza nel documento.
+  #
+  # Then per il destinatario 2 del PDF si verificano i seguenti campi
+  #   | campo                             | valore            |
+  #   | Nome e Cognome / Ragione Sociale  | Luigi Cucumber    |
+  #   | Codice Fiscale                    | RSSMRA80A01H501U  |
+  #   | Domicilio digitale                | luigi@pec.it      |
+
   # ─────────────────────────────────────────────────────────────────────────
   # Template: PEC_DELIVERY – Avvenuta ricezione digitale
   # ─────────────────────────────────────────────────────────────────────────

@@ -18,6 +18,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Step Cucumber per il Visual Regression Testing dei documenti PDF.
@@ -152,8 +154,73 @@ public class PdfVisualRegressionSteps {
     }
 
     // -----------------------------------------------------------------------
+    // Step: verifica campi per destinatario (DataTable campo/valore)
+    // -----------------------------------------------------------------------
+
+    /**
+     * Verifica, per un determinato destinatario, il valore di uno o più campi del PDF.
+     *
+     * <p>Ogni campo è individuato tramite {@link it.pagopa.common.pdf.visualtest.FieldLocators#labelProximityOccurrence}:
+     * si cerca l'etichetta indicata nella colonna {@code campo} e si prende la sua N-esima
+     * occorrenza nel documento, dove N è l'indice del destinatario (1-based). Questo copre
+     * i documenti in cui un blocco di campi (nome, codice fiscale, domicilio digitale, ...)
+     * si ripete una volta per ciascun destinatario.</p>
+     *
+     * <p>Step Gherkin:</p>
+     * <pre>
+     * Then per il destinatario 1 del PDF si verificano i seguenti campi
+     *   | campo                            | valore           |
+     *   | Codice Fiscale                   | BRGLRZ80D58H501Q |
+     *   | Domicilio digitale               | prova@pec.it     |
+     * </pre>
+     */
+    @Then("per il destinatario {int} del PDF si verificano i seguenti campi")
+    public void perIlDestinatarioDelPdfSiVerificanoISeguentiCampi(int recipientIndex, List<Map<String, String>> campiAttesi) {
+        Assertions.assertTrue(recipientIndex >= 1, "L'indice del destinatario deve essere >= 1 (1-based)");
+
+        List<it.pagopa.common.pdf.visualtest.TextFragment> allFragments =
+                it.pagopa.common.pdf.visualtest.PdfTextExtractor.extract(lastDownloadedPdfOrThrow()).allFragments();
+
+        for (Map<String, String> riga : campiAttesi) {
+            String campo = riga.get("campo");
+            String valoreAtteso = riga.get("valore");
+            Assertions.assertNotNull(campo, "Colonna 'campo' mancante nella tabella");
+            Assertions.assertNotNull(valoreAtteso, "Colonna 'valore' mancante nella tabella");
+
+            List<it.pagopa.common.pdf.visualtest.TextFragment> located =
+                    it.pagopa.common.pdf.visualtest.FieldLocators
+                            .labelProximityOccurrence(campo, recipientIndex)
+                            .locate(allFragments);
+
+            Assertions.assertFalse(located.isEmpty(),
+                    "Campo '" + campo + "' non trovato per il destinatario " + recipientIndex);
+
+            String found = located.stream()
+                    .map(it.pagopa.common.pdf.visualtest.TextFragment::text)
+                    .reduce((a, b) -> a + " " + b)
+                    .orElse("");
+
+            Assertions.assertTrue(found.contains(valoreAtteso),
+                    "Campo '" + campo + "' per il destinatario " + recipientIndex
+                            + ": atteso un testo contenente \"" + valoreAtteso + "\" ma trovato \"" + found + "\"");
+        }
+        log.info("PdfVisualRegressionSteps: {} campi verificati per il destinatario {}", campiAttesi.size(), recipientIndex);
+    }
+
+    // -----------------------------------------------------------------------
     // Internals
     // -----------------------------------------------------------------------
+
+    /**
+     * Restituisce l'ultimo PDF scaricato/generato, oppure fallisce con un messaggio chiaro
+     * se nessuno step precedente lo ha ancora reso disponibile.
+     */
+    private byte[] lastDownloadedPdfOrThrow() {
+        Assertions.assertNotNull(lastDownloadedPdf,
+                "Nessun PDF disponibile: eseguire prima uno step che scarichi o generi il PDF "
+                        + "(es. uno step di verifica conformità o di download del legal fact)");
+        return lastDownloadedPdf;
+    }
 
     private void verificaConformitaVisiva(byte[] actualPdf, String templateKey) {
         this.lastDownloadedPdf = actualPdf;
