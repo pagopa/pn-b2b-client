@@ -8,7 +8,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
   Scenario: [VRT-01] Verifica visual regression del SENDER_ACK – singolo destinatario digitale
     Given viene generata una nuova notifica
       | subject            | invio notifica VRT SENDER_ACK |
-      | senderDenomination | Comune di palermo              |
+      | senderDenomination | Comune di palermo             |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -87,6 +87,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                      |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica può essere correttamente recuperata da "Mario Gherkin"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And ricerca ed effettua download del legalFact con la categoria "RECIPIENT_ACCESS"
     Then si verifica la conformità visiva del PDF con il template "NOTIFICATION_VIEWED"
@@ -98,6 +99,7 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | senderDenomination | Comune di palermo                            |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica può essere correttamente recuperata da "Mario Gherkin"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And ricerca ed effettua download del legalFact con la categoria "RECIPIENT_ACCESS"
     Then si verificano i campi dinamici del PDF con il template "NOTIFICATION_VIEWED"
@@ -112,11 +114,11 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | subject            | invio notifica VRT ANALOG_FAILURE |
       | senderDenomination | Comune di palermo                 |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    And ricerca ed effettua download del legalFact con la categoria "ANALOG_FAILURE_DELIVERY"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
     Then si verifica la conformità visiva del PDF con il template "ANALOG_FAILURE"
 
   @visualTest @analogFailure @smoke
@@ -125,11 +127,11 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
       | subject            | invio notifica VRT ANALOG_FAILURE smoke |
       | senderDenomination | Comune di palermo                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
-    And ricerca ed effettua download del legalFact con la categoria "ANALOG_FAILURE_DELIVERY"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And ricerca ed effettua download del legalFact con la categoria "COMPLETELY_UNREACHABLE"
     Then si verificano i campi dinamici del PDF con il template "ANALOG_FAILURE"
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -166,15 +168,17 @@ Feature: Visual Regression Testing dei documenti PDF prodotti da SEND
 
   @visualTest @malfunction
   Scenario: [VRT-07] Verifica visual regression del MALFUNCTION
-    Given viene letto l'evento di disservizio per la funzionalità "creazione notifiche"
-    And ricerca ed effettua download del legalFact con la categoria "LEGAL_FACT_MALFUNCTION"
-    Then si verifica la conformità visiva del PDF con il template "MALFUNCTION"
+    Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi alla "creazione notifiche"
+    When viene individuato se presente l'evento più recente
+    Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
+    And si verifica la conformità visiva del PDF con il template "MALFUNCTION"
 
   @visualTest @malfunction @smoke
   Scenario: [VRT-07-SMOKE] Verifica solo campi dinamici del MALFUNCTION (senza golden master – smoke)
-    Given viene letto l'evento di disservizio per la funzionalità "creazione notifiche"
-    And ricerca ed effettua download del legalFact con la categoria "LEGAL_FACT_MALFUNCTION"
-    Then si verificano i campi dinamici del PDF con il template "MALFUNCTION"
+    Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi alla "creazione notifiche"
+    When viene individuato se presente l'evento più recente
+    Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
+    And si verificano i campi dinamici del PDF con il template "MALFUNCTION"
 
   # ─────────────────────────────────────────────────────────────────────────
   # Template: ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT

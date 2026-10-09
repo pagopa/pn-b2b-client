@@ -3,7 +3,12 @@ package it.pagopa.common.pdf.visualtest;
 import de.redsix.pdfcompare.CompareResultImpl;
 import de.redsix.pdfcompare.PageArea;
 import de.redsix.pdfcompare.PdfComparator;
+import de.redsix.pdfcompare.env.DefaultEnvironment;
+import de.redsix.pdfcompare.env.SimpleEnvironment;
 import it.pagopa.common.util.PDFUtility;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,12 +37,18 @@ public final class PdfVisualComparator {
 
     /**
      * DPI di rendering per il confronto visivo.
-     * 150 DPI offre un buon equilibrio qualità/velocità per documenti A4.
+     * 300 DPI garantisce alta fedeltà e stabilità di rendering.
      */
-    private static final int RENDER_DPI = 150;
+    private static final int RENDER_DPI = 300;
 
     /** Fattore di conversione: punti PDF (72pt=1in) → pixel al DPI scelto. */
     private static final float PDF_PT_TO_PIXEL = RENDER_DPI / 72.0f;
+
+    /** Soglia tolleranza differenze pixel (0.001%) per assorbire antialiasing e variazioni cross-platform. */
+    private static final double ALLOWED_DIFF_PERCENT = 0.001;
+
+    /** Margine (pixel) aggiunto alle maschere per assorbire l'anti-aliasing dei bordi dei glifi. */
+    private static final int ANTIALIAS_MARGIN_PX = 2;
 
     private PdfVisualComparator() {
     }
@@ -80,13 +91,19 @@ public final class PdfVisualComparator {
         try (ByteArrayInputStream expectedStream = new ByteArrayInputStream(expectedPdf);
              ByteArrayInputStream actualStream   = new ByteArrayInputStream(actualPdf)) {
 
+            SimpleEnvironment env = new SimpleEnvironment(DefaultEnvironment.create());
+            env.setDPI(RENDER_DPI);
+            env.setAllowedDiffInPercent(ALLOWED_DIFF_PERCENT);
+
             // Costruisce il comparatore: i due stream sono passati al costruttore (API 1.2.8)
             PdfComparator<CompareResultImpl> comparator =
-                    new PdfComparator<>(expectedStream, actualStream, new CompareResultImpl());
+                    new PdfComparator<>(expectedStream, actualStream, new CompareResultImpl())
+                            .withEnvironment(env);
 
             // Aggiunge le aree di esclusione convertendo le coordinate in pixel
+            float[] pageHeights = pageHeightsPt(actualPdf);
             for (ExclusionArea ex : exclusions) {
-                comparator.withIgnore(toPageArea(ex));
+                comparator.withIgnore(toPageArea(ex, pageHeights));
             }
 
             // Avvia il confronto
@@ -129,15 +146,29 @@ public final class PdfVisualComparator {
 
     /**
      * Converte un'area di esclusione in coordinate PDF (punti, origine basso-sinistra)
-     * in un {@code PageArea} di pdfcompare (pixel, pagine 1-based).
+     * in un {@code PageArea} di pdfcompare (pixel, origine alto-sinistra, pagine 1-based).
      */
-    private static PageArea toPageArea(ExclusionArea ex) {
+    private static PageArea toPageArea(ExclusionArea ex, float[] pageHeightsPt) {
         int page = ex.pageIndex() + 1; // pdfcompare usa pagine 1-based
-        int x1   = toPixel(ex.x());
-        int y1   = toPixel(ex.y());
-        int x2   = toPixel(ex.x() + ex.width());
-        int y2   = toPixel(ex.y() + ex.height());
-        return new PageArea(page, x1, y1, x2, y2);
+        float pageHeight = ex.pageIndex() < pageHeightsPt.length
+                ? pageHeightsPt[ex.pageIndex()]
+                : PDRectangle.A4.getHeight();
+        int x1   = toPixel(ex.x()) - ANTIALIAS_MARGIN_PX;
+        int y1   = toPixel(pageHeight - (ex.y() + ex.height())) - ANTIALIAS_MARGIN_PX;
+        int x2   = toPixel(ex.x() + ex.width()) + ANTIALIAS_MARGIN_PX;
+        int y2   = toPixel(pageHeight - ex.y()) + ANTIALIAS_MARGIN_PX;
+        return new PageArea(page, Math.max(0, x1), Math.max(0, y1), x2, y2);
+    }
+
+    /** Altezza (in punti PDF) della crop-box di ogni pagina, ovvero l'area renderizzata. */
+    private static float[] pageHeightsPt(byte[] pdfContent) throws IOException {
+        try (PDDocument doc = Loader.loadPDF(pdfContent)) {
+            float[] heights = new float[doc.getNumberOfPages()];
+            for (int i = 0; i < heights.length; i++) {
+                heights[i] = doc.getPage(i).getCropBox().getHeight();
+            }
+            return heights;
+        }
     }
 
     private static int toPixel(float ptCoordinate) {

@@ -42,7 +42,7 @@ public final class SenderAckTemplate {
                         MaskStrategy.TIGHT_BOX)
                 .field(
                         "Data emissione",
-                        FieldLocators.regex(Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}\\b")),
+                        FieldLocators.regex(Pattern.compile("\\b(?:0?[1-9]|[12]\\d|3[01])/(?:0?[1-9]|1[0-2])/\\d{4}(?:\\s+(?:[01]\\d|2[0-3]):[0-5]\\d)?\\b")),
                         SendFieldValidators.dataItaliana(),
                         MaskStrategy.TIGHT_BOX)
                 .field(
