@@ -63,6 +63,24 @@ public class PnParser implements IPnParserService, IPnParser {
         } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificationCancelled notificationCancelled) {
             pnParserLegalFactResponse.getResponse().setField(notificationCancelled.getAllLegalFactValues().fieldValue().get(field));
             return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactAnalogFailure analogFailure) {
+            pnParserLegalFactResponse.getResponse().setField(analogFailure.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificationAar notificationAar) {
+            pnParserLegalFactResponse.getResponse().setField(notificationAar.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactNotificationAarRaddAlt notificationAarRaddAlt) {
+            pnParserLegalFactResponse.getResponse().setField(notificationAarRaddAlt.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactAnalogFeedbackAvailabilityStatement analogFeedback) {
+            pnParserLegalFactResponse.getResponse().setField(analogFeedback.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactInformalAnalogCommunication informalAnalog) {
+            pnParserLegalFactResponse.getResponse().setField(informalAnalog.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
+        } else if (pnParserLegalFactResponse.getResponse().getPnLegalFact() instanceof PnLegalFactAnalogDeliveryWorkflowTimeout analogTimeout) {
+            pnParserLegalFactResponse.getResponse().setField(analogTimeout.getAllLegalFactValues().fieldValue().get(field));
+            return pnParserLegalFactResponse;
         }
         return null;
     }
@@ -100,6 +118,18 @@ public class PnParser implements IPnParserService, IPnParser {
             return parserLegalFact.getLegalFactNotificaAvvenutoAccessoDelegato(content);
         } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICATION_CANCELLED)) {
             return parserLegalFact.getLegalFactNotificationCancelled(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_ANALOG_FAILURE)) {
+            return parserLegalFact.getLegalFactAnalogFailure(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICATION_AAR)) {
+            return parserLegalFact.getLegalFactNotificationAar(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_NOTIFICATION_AAR_RADD_ALT)) {
+            return parserLegalFact.getLegalFactNotificationAarRaddAlt(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_ANALOG_FEEDBACK_AVAILABILITY_STATEMENT)) {
+            return parserLegalFact.getLegalFactAnalogFeedbackAvailability(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_INFORMAL_ANALOG_COMMUNICATION)) {
+            return parserLegalFact.getLegalFactInformalAnalogCommunication(content);
+        } else if (legalFactType.equals(LegalFactType.LEGALFACT_ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT)) {
+            return parserLegalFact.getLegalFactAnalogDeliveryWorkflowTimeout(content);
         } else {
             return null;
         }

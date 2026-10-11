@@ -109,10 +109,11 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     And "Mario Cucumber" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
-    # Si verifica in un unico step: il TIPO di legalFact, la presenza di un determinato CAMPO ed il VALUE di quest'ultimo
-    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO" e contiene il campo "TITLE" con value "Attestazione opponibile a terzi: avvenuto accesso"
-    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO" e contiene il campo "DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE" con value "Mario Cucumber"
-    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO" e contiene il campo "DESTINATARIO_CODICE_FISCALE" con value "FRMTTR76M06B715E"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Attestazione opponibile a terzi: avvenuto accesso |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                    |
+      | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                  |
 
   @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_6] Data una notifica digitale, in seguito al completamento del relativo workflow ed a presa visione da parte del delegato, si verifica l'esistenza del legalFact generato se sia di tipo AVVENUTO ACCESSO DELEGATO
@@ -176,15 +177,15 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
 
   @legalFact
-  Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_11] Data una notifica digitale, in seguito al completamento del relativo workflow ed a presa visione da parte del destinatario, si verifica l'esistenza del legalFact generato se sia di tipo MANCATO RECAPITO
-#    Given viene generata una nuova notifica
-#      | subject            | invio notifica GA cucumber |
-#      | senderDenomination | Comune di palermo          |
-#    And destinatario Mario Gherkin
-#    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-#    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-#    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    Given imposto lo iun di SharedSteps a "EGNV-KWEV-JPTX-202610-W-1" e la pa a "Comune_Multi"
+  Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_11] Data una notifica, in seguito all'annullamento da parte del mittente si verifica l'esistenza del legalFact generato se sia di tipo NOTIFICATION_CANCELLED
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber cancellazione |
+      | senderDenomination | Comune di palermo                        |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And la notifica "può" essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    # Given imposto lo iun di SharedSteps a "EGNV-KWEV-JPTX-202610-W-1" e la pa a "Comune_Multi"
     And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_CANCELLED"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICATION_CANCELLED"
     Then si verifica se il legalFact contiene i campi
@@ -192,3 +193,116 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                           |
       | MITTENTE                                  | Comune di palermo                                          |
+
+  @legalFact
+  Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_12] Data una notifica analogica a destinatario irreperibile, in seguito a workflow completato si verifica l'esistenza del legalFact generato se sia di tipo ANALOG_FAILURE
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber irreperibile |
+      | senderDenomination | Comune di palermo                       |
+    And destinatario Gherkin Irreperibile e:
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | Via @FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_ANALOG_FAILURE"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Deposito avviso di avvenuta ricezione |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Gherkin Irreperibile                  |
+      | DESTINATARIO_CODICE_FISCALE               | 02455090981                           |
+
+  @legalFact
+  Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_13] Data una notifica digitale a persona giuridica, in seguito ad avvenuta consegna su PEC si verifica l'esistenza del legalFact generato PEC_RECEIPT se sia di tipo NOTIFICA DIGITALE
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber PEC receipt |
+      | senderDenomination | Comune di palermo                      |
+    And destinatario GherkinSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then la PA richiede il download dell'attestazione opponibile "PEC_RECEIPT"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DIGITALE"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Attestazione opponibile a terzi: notifica digitale |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | GherkinSpa                                         |
+      | DESTINATARIO_CODICE_FISCALE               | 12666810299                                        |
+
+  @legalFact
+  Scenario: [FUTR_NOTIFICATION_AAR] Verifica del legalFact di tipo NOTIFICATION_AAR per Modello 890 standard raccomandata AR
+    Given viene generata una nuova notifica
+      | subject            | invio notifica raccomandata AR |
+      | senderDenomination | Comune di palermo              |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_AAR"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICATION_AAR"
+    And si verifica se il legalFact contiene i campi
+      | TITLE                       | Avviso di avvenuta ricezione |
+      | DESTINATARIO_CODICE_FISCALE | CLMCST42R12D969Z             |
+      | MITTENTE                    | Comune di palermo            |
+    And si verifica se il legalFact contiene al massimo 2 pagine
+
+  @legalFact
+  Scenario: [FUTR_NOTIFICATION_AAR_RADD_ALT] Verifica del legalFact di tipo NOTIFICATION_AAR_RADD_ALT per Avviso di ricezione RADD Alternativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica RADD Alternativo |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "NOTIFICATION_AAR_RADD_ALT"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICATION_AAR_RADD_ALT"
+    And si verifica se il legalFact contiene i campi
+      | TITLE                       | Avviso di avvenuta ricezione |
+      | DESTINATARIO_CODICE_FISCALE | CLMCST42R12D969Z             |
+      | MITTENTE                    | Comune di palermo            |
+    And si verifica se il legalFact contiene al massimo 2 pagine
+
+  @legalFact
+  Scenario: [FUTR_ANALOG_FEEDBACK_AVAILABILITY] Verifica del legalFact di tipo ANALOG_FEEDBACK_AVAILABILITY_STATEMENT per attestazione disponibilità feedback analogico
+    Given viene generata una nuova notifica
+      | subject            | invio notifica feedback analogico |
+      | senderDenomination | Comune di palermo                 |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "ANALOG_FEEDBACK_AVAILABILITY_STATEMENT"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_ANALOG_FEEDBACK_AVAILABILITY_STATEMENT"
+    And si verifica se il legalFact contiene i campi
+      | TITLE       | Dichiarazione data di messa a disposizione dell'esito analogico |
+      | MITTENTE    | Comune di palermo                                               |
+      | CF_MITTENTE | 80016350821                                                     |
+    And si verifica se il legalFact contiene al massimo 2 pagine
+
+  @legalFact
+  Scenario: [FUTR_INFORMAL_ANALOG_COMMUNICATION] Verifica del legalFact di tipo INFORMAL_ANALOG_COMMUNICATION per comunicazione bonaria cartacea
+    Given viene generata una nuova notifica
+      | subject            | invio notifica comunicazione bonaria |
+      | senderDenomination | Comune di palermo                    |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "INFORMAL_ANALOG_COMMUNICATION"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_INFORMAL_ANALOG_COMMUNICATION"
+    And si verifica se il legalFact contiene i campi
+      | TITLE                                     | COMUNICAZIONE DA PARTE DI |
+      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z          |
+      | MITTENTE                                  | Comune di palermo         |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin             |
+    And si verifica se il legalFact contiene al massimo 2 pagine
+
+  @legalFact
+  Scenario: [FUTR_ANALOG_DELIVERY_TIMEOUT] Verifica del legalFact di tipo ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT per mancato recapito per decorrenza termini
+    Given viene generata una nuova notifica
+      | subject            | invio notifica decorrenza termini |
+      | senderDenomination | Comune di palermo                 |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And ricerca ed effettua download del legalFact con la categoria "ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT"
+    And si verifica se il legalFact contiene i campi
+      | TITLE                                     | Attestazione opponibile a terzi: mancata ricezione esiti dall'addetto al recapito estero |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                            |
+      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                         |
+    And si verifica se il legalFact contiene al massimo 2 pagine

@@ -20,7 +20,13 @@ public interface IPnParserLegalFact {
         TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO, "Attestazione opponibile a terzi: notifica presa in carico"),
         TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO, "Attestazione opponibile a terzi: avvenuto accesso"),
         TYPE_TITLE_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO(LegalFactType.LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO_DELEGATO, "Attestazione opponibile a terzi: avvenuto accesso"),
-        TYPE_TITLE_NOTIFICATION_CANCELLED(LegalFactType.LEGALFACT_NOTIFICATION_CANCELLED, "Dichiarazione annullamento notifica sulla piattaforma SEND");
+        TYPE_TITLE_NOTIFICATION_CANCELLED(LegalFactType.LEGALFACT_NOTIFICATION_CANCELLED, "Dichiarazione annullamento notifica sulla piattaforma SEND"),
+        TYPE_TITLE_ANALOG_FAILURE(LegalFactType.LEGALFACT_ANALOG_FAILURE, "Deposito avviso di avvenuta ricezione"),
+        TYPE_TITLE_NOTIFICATION_AAR(LegalFactType.LEGALFACT_NOTIFICATION_AAR, "Avviso di avvenuta ricezione"),
+        TYPE_TITLE_NOTIFICATION_AAR_RADD_ALT(LegalFactType.LEGALFACT_NOTIFICATION_AAR_RADD_ALT, "Avviso di avvenuta ricezione"),
+        TYPE_TITLE_ANALOG_FEEDBACK_AVAILABILITY(LegalFactType.LEGALFACT_ANALOG_FEEDBACK_AVAILABILITY_STATEMENT, "Dichiarazione data di messa a disposizione dell'esito analogico"),
+        TYPE_TITLE_INFORMAL_ANALOG_COMMUNICATION(LegalFactType.LEGALFACT_INFORMAL_ANALOG_COMMUNICATION, "COMUNICAZIONE DA PARTE DI"),
+        TYPE_TITLE_ANALOG_DELIVERY_TIMEOUT(LegalFactType.LEGALFACT_ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT, "Attestazione opponibile a terzi: mancata ricezione esiti dall'addetto al recapito estero");
 
         private final LegalFactType type;
         private final String title;
@@ -117,6 +123,46 @@ public interface IPnParserLegalFact {
                 LegalFactField.DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE,
                 LegalFactField.DESTINATARIO_CODICE_FISCALE,
                 LegalFactField.MITTENTE
+        ),
+        LEGALFACT_ANALOG_FAILURE(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DATA_ATTESTAZIONE_OPPONIBILE,
+                LegalFactField.DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE
+        ),
+        LEGALFACT_NOTIFICATION_AAR(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE,
+                LegalFactField.MITTENTE
+        ),
+        LEGALFACT_NOTIFICATION_AAR_RADD_ALT(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE,
+                LegalFactField.MITTENTE
+        ),
+        LEGALFACT_ANALOG_FEEDBACK_AVAILABILITY_STATEMENT(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DATA_ATTESTAZIONE_OPPONIBILE,
+                LegalFactField.MITTENTE,
+                LegalFactField.CF_MITTENTE
+        ),
+        LEGALFACT_INFORMAL_ANALOG_COMMUNICATION(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE,
+                LegalFactField.MITTENTE,
+                LegalFactField.DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE
+        ),
+        LEGALFACT_ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT(
+                LegalFactField.TITLE,
+                LegalFactField.IUN,
+                LegalFactField.DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE,
+                LegalFactField.DESTINATARIO_CODICE_FISCALE,
+                LegalFactField.DATA_ORA_DECORRENZA
         );
 
         private final List<LegalFactField> legalFactFieldList;
@@ -170,4 +216,16 @@ public interface IPnParserLegalFact {
     IPnLegalFact getLegalFactNotificaPresaInCaricoMultiDestinatario(PnParserRecord.PnParserContent content);
 
     IPnLegalFact getLegalFactNotificationCancelled(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactAnalogFailure(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactNotificationAar(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactNotificationAarRaddAlt(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactAnalogFeedbackAvailability(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactInformalAnalogCommunication(PnParserRecord.PnParserContent content);
+
+    IPnLegalFact getLegalFactAnalogDeliveryWorkflowTimeout(PnParserRecord.PnParserContent content);
 }
