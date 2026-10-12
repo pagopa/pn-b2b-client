@@ -48,6 +48,7 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_NESSUNO;
     public final Destinatario DESTINATARIO_ERRORE_D01;
     public final Destinatario DESTINATARIO_INDIRIZZO_VALIDO_ANPR;
+    public final Destinatario DESTINATARIO_PF_IRREPERIBILE;
 
     private final List<Destinatario> all;
     private final RecipientConfig taxIds;
@@ -142,6 +143,12 @@ public class DestinatarioRegistry {
         DESTINATARIO_INDIRIZZO_VALIDO_ANPR = new Destinatario(UTENZA_CON_INDIRIZZO_VALIDO_ANPR, recipients.getUserIndirizzoValidoAnpr().getTaxId(),
                 recipients.getUserIndirizzoValidoAnpr().getUid(), PF, PEC);
 
+        // Riusa volutamente lo stesso tax-id di DESTINATARIO_ERRORE_D01: anche l'errore D01 sfocia in
+        // COMPLETELY_UNREACHABLE, quindi le due utenze condividono il CF fino a un'eventuale unificazione futura.
+        DESTINATARIO_PF_IRREPERIBILE = new Destinatario(
+                PF_IRREPERIBILE, recipients.getUserIndirizzoNonValidoD01().getTaxId(),
+                recipients.getUserIndirizzoNonValidoD01().getUid(), PF, PEC);
+
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
                 DESTINATARIO_CRISTOFORO_COLOMBO, DESTINATARIO_ETTORE_FIERAMOSCA, DESTINATARIO_LEONARDO_DA_VINCI,
@@ -149,7 +156,7 @@ public class DestinatarioRegistry {
                 DESTINATARIO_GHERKIN_SRL, DESTINATARIO_GHERKIN_SRL_B2B, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
                 DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR,
-                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO
+                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO, DESTINATARIO_PF_IRREPERIBILE
         );
     }
 

@@ -36,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PF_IRREPERIBILE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SIGNOR_CASUALE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SIGNOR_GENERATO;
 import static it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator.generateCF;
@@ -93,6 +94,7 @@ public class RaddFsuSteps {
             case MARIO_CUCUMBER -> this.currentUserCf = sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_CUCUMBER.getTaxId();
             case MARIO_GHERKIN -> this.currentUserCf = sharedSteps.getDestinatarioRegistry().DESTINATARIO_MARIO_GHERKIN.getTaxId();
             case SIGNOR_CASUALE -> this.currentUserCf = getRecipientZeroTaxId();
+            case PF_IRREPERIBILE -> this.currentUserCf = sharedSteps.getDestinatarioRegistry().DESTINATARIO_PF_IRREPERIBILE.getTaxId();
             case SIGNOR_GENERATO -> this.currentUserCf = generateCF(System.nanoTime());
             default -> this.currentUserCf = userName;
         }
@@ -282,6 +284,12 @@ public class RaddFsuSteps {
     @When("Il cittadino Signor Casuale chiede di verificare la presenza di notifiche")
     public void ilCittadinoSignorCasualeChiedeDiVerificareLaPresenzaDiNotifiche() {
         selectUser(SIGNOR_CASUALE);
+        this.aorInquiryResponse = raddFsuClient.aorInquiry(uid, this.currentUserCf, "PF");
+    }
+
+    @When("Il cittadino PF Irreperibile chiede di verificare la presenza di notifiche")
+    public void ilCittadinoPfIrreperibileChiedeDiVerificareLaPresenzaDiNotifiche() {
+        selectUser(PF_IRREPERIBILE);
         this.aorInquiryResponse = raddFsuClient.aorInquiry(uid, this.currentUserCf, "PF");
     }
 

@@ -25,12 +25,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica Signor Casuale chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
+    And la persona fisica PF Irreperibile chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     Then Si recuperano gli atti 100 volte su radd alternative da operatore radd "STANDARD"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative

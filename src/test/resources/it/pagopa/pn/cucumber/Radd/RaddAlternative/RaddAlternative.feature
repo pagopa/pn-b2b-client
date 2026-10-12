@@ -772,12 +772,12 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -794,7 +794,7 @@ Feature: Radd Alternative
       | feePolicy             | DELIVERY_MODE                                |
       | paFee                 | 0                                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR      |
       | payment_pagoPaForm      | SI                            |
@@ -805,7 +805,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                             |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -821,7 +821,7 @@ Feature: Radd Alternative
       | feePolicy             | DELIVERY_MODE                                |
       | paFee                 | 0                                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -832,7 +832,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 2                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -848,7 +848,7 @@ Feature: Radd Alternative
       | feePolicy             | DELIVERY_MODE                                |
       | paFee                 | 0                                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | NULL                                         |
@@ -859,7 +859,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -875,7 +875,7 @@ Feature: Radd Alternative
       | feePolicy             | DELIVERY_MODE                                |
       | paFee                 | 0                                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -885,7 +885,7 @@ Feature: Radd Alternative
       | payment_multy_number    | 1                                            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -918,12 +918,12 @@ Feature: Radd Alternative
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di milano                             |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -939,12 +939,12 @@ Feature: Radd Alternative
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di milano                             |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    And la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    And la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -959,12 +959,12 @@ Feature: Radd Alternative
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di milano                             |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1140,7 +1140,7 @@ Feature: Radd Alternative
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | payment_pagoPaForm      | SI                                           |
@@ -1161,7 +1161,7 @@ Feature: Radd Alternative
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1223,12 +1223,12 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1242,12 +1242,12 @@ Feature: Radd Alternative
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica 2 volte su radd alternative
@@ -1259,12 +1259,12 @@ Feature: Radd Alternative
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di Palermo                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica Signor Casuale chiede di verificare la presenza di notifiche
+    When la persona fisica PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
@@ -1286,7 +1286,8 @@ Feature: Radd Alternative
       | subject               | invio notifica con cucumber radd alternative |
       | senderDenomination    | Comune di Palermo                            |
       | physicalCommunication | AR_REGISTERED_LETTER                         |
-    And destinatario Signor Casuale e:
+    And destinatario
+      | taxId                   | MRGVPC67R10H501Y                             |
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

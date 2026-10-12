@@ -292,7 +292,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                               |
       | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

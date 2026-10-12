@@ -44,6 +44,7 @@ public class DestinatarioParameterTypeConfig {
             NESSUNO + "|" +
             UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
             UTENZA_CON_INDIRIZZO_VALIDO_ANPR + "|" +
+            PF_IRREPERIBILE + "|" +
             ALDA_MERINI + "|" +
             DINO_SAURO
     )

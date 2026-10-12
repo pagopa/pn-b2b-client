@@ -115,9 +115,7 @@ Feature: Radd Alternative Atto Intero
       | physicalCommunication | REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                  |
       | document              | DOC_3_PG;                      |
-    And destinatario
-      | denomination                 | Alessandro Manzoni        |
-      | taxId                        | MNZLSN99E05F205J          |
+    And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                      |
       | physicalAddress_address      | Via@FAIL-IRREPERIBILE_890 |
       | physicalAddress_municipality | VENEZIA                   |

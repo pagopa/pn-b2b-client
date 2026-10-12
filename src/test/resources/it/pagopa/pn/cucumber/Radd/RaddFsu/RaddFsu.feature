@@ -263,12 +263,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+    When Il cittadino PF Irreperibile chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
 
   @radd
@@ -277,12 +277,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+    When Il cittadino PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
@@ -296,12 +296,12 @@ Feature: Radd fsu
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario Signor Casuale e:
+    And destinatario PF Irreperibile e:
       | digitalDomicile         | NULL                                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+    When Il cittadino PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile
@@ -309,13 +309,13 @@ Feature: Radd fsu
 
   @radd
   Scenario: [B2B_RADD_AOR-6] aor per cittadino con 49 notifiche in stato irreperibile
-    Given vengono create 49 notifiche con destinatario Signor Casuale per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    Given vengono create 49 notifiche con destinatario PF Irreperibile per la pa "Comune_Multi" e si aspetta che raggiungano l'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
       | subject                 | invio notifica con cucumber                  |
       | senderDenomination      | Comune di Palermo                            |
       | physicalCommunication   | AR_REGISTERED_LETTER                         |
       | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
       | digitalDomicile         | NULL                                         |
-    When Il cittadino Signor Casuale chiede di verificare la presenza di notifiche
+    When Il cittadino PF Irreperibile chiede di verificare la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente
     And vengono caricati i documento di identità del cittadino
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile

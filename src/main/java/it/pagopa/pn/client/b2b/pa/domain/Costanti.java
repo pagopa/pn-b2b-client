@@ -38,6 +38,7 @@ public class Costanti {
     public static final String MARIO_CREDENZIALI_SCADUTE = "Mario Credenziali Scadute";
     public static final String NESSUNO = "nessuno";
     public static final String UTENZA_CON_INDIRIZZO_NON_VALIDO = "Utenza con Errore D01";
+    public static final String PF_IRREPERIBILE = "PF Irreperibile";
     public static final String UTENZA_CON_INDIRIZZO_VALIDO_ANPR = "Utenza con Indirizzo Valido da ANPR";
     // PA
     public static final String COMUNE_1 = "Comune_1";
