@@ -208,7 +208,7 @@ public class TemplateEngineSteps {
         if (fileType.equals("pdf")) {
             Assertions.assertNotNull(result.getFileTextRetrieved());
             if (field.equals("finale")) {
-                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni con socio unico capitale sociale di euro 1000000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
+                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni capitale sociale di euro 1,000,000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
             } else if (field.equals("delegato")) {
                 Assertions.assertTrue(result.retrieveFormattedText().contains("il " + fieldValue + " ha avuto accesso ai documenti informatici oggetto di notifica"));
             } else {
