@@ -101,8 +101,8 @@ voci per pagina. Rigenerare il catalogo e ricaricare l’HTML dopo la modifica.
 ## Rigenerazione
 
 Dalla root del repository, con Git e Node.js **24** (la versione usata anche
-nel workflow). Il pacchetto dichiara Node.js >=22, ma per le verifiche con le
-dipendenze attuali Node.js 22 deve essere almeno 22.13.0:
+nel workflow). Le dipendenze attuali richiedono almeno Node.js 22.13.0 nella
+serie 22; è supportata anche la versione 24 o successiva:
 
 ```sh
 npm ci --prefix test-catalog --ignore-scripts
@@ -117,8 +117,11 @@ L’installazione iniziale richiede accesso al registry npm; la generazione
 successiva è locale. `npm test` legge anche gli output già generati: eseguirlo
 dopo `generate`, così controlla il catalogo aggiornato.
 
-Versionare insieme sorgenti del generatore, configurazione, lockfile e output
-`generated/index.html` e `generated/catalog.json`. Rigenerare dopo aggiornamenti
+Versionare insieme sorgenti del generatore, configurazione, lockfile e tutti gli
+output in `generated/`: `index.html`, `catalog.json` e i file `service-*.js`.
+La home carica solo un riepilogo; i dati completi vengono caricati aprendo un
+servizio. Tenere i file nella stessa cartella, anche per la consultazione locale.
+Rigenerare dopo aggiornamenti
 del branch sorgente o della configurazione del catalogo.
 
 ## Organizzazione e classificazione
@@ -176,7 +179,7 @@ servizio; il nome Gherkin originale resta nei dettagli tecnici.
   o cambiare l’identità del test può cambiarlo. Gli ID precedenti basati sulla riga
   sono accettati per la riga corrente, senza una mappa storica. Un collegamento non
   più valido mostra una pagina di recupero.
-- L'HTML include i dati di esempio contenuti nei `.feature`: conservarlo negli
+- I file `service-*.js` includono i dati di esempio contenuti nei `.feature`: conservarli negli
   stessi ambiti di accesso del repository.
 
 ## Cronologia, runner e feedback

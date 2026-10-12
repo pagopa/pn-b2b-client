@@ -10,6 +10,7 @@ const consoleErrors=[];
 const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>consoleErrors.push(e.message));
 const dom=new JSDOM(readFileSync(htmlPath,'utf8'),{url:htmlPath.href,runScripts:'dangerously',virtualConsole,beforeParse(w){w.scrollTo=()=>{};}});
 const w=dom.window,d=w.document;
+for(const service of data.services)Object.assign(w.TEST_CATALOG.services.find(s=>s.id===service.id),service);
 function navigate(params){w.location.hash=new URLSearchParams(params).toString();w.dispatchEvent(new w.HashChangeEvent('hashchange'));}
 function follow(selector){const a=d.querySelector(selector);assert.ok(a,selector);navigate(Object.fromEntries(new URLSearchParams(a.hash.slice(1))));}
 test('output completo: ogni file è catalogato o esplicitamente segnalato',()=>{
@@ -18,6 +19,26 @@ test('output completo: ogni file è catalogato o esplicitamente segnalato',()=>{
  for(const s of data.services) assert.equal(s.files,s.features.length+data.emptyFiles.filter(f=>f.service===s.name).length+data.issues.filter(f=>f.service===s.name).length);
  assert.equal(w.TEST_CATALOG.revision,data.revision);
  assert.equal(d.getElementById('catalog-data'),null);
+ assert.ok(w.TEST_CATALOG.services.every(s=>s.scenarioCount>0));
+});
+test('carica solo il servizio richiesto da un link diretto',async()=>{
+ const first=data.services[0],other=data.services[1];
+ const feature=first.features.find(f=>f.scenarios.length),scenario=feature.scenarios[0];
+ const direct=new JSDOM(readFileSync(htmlPath,'utf8'),{url:htmlPath.href+'#'+new URLSearchParams({s:first.id,a:scenario.area,f:feature.id,t:scenario.id}),runScripts:'dangerously',resources:'usable',beforeParse(window){window.scrollTo=()=>{};}});
+ try{
+  await new Promise((resolve,reject)=>{
+   const timer=setTimeout(()=>reject(new Error('Servizio non caricato')),5000);
+   const observer=new direct.window.MutationObserver(()=>{
+    if(direct.window.document.querySelector('h1')?.textContent===scenario.name){clearTimeout(timer);observer.disconnect();resolve();}
+   });
+   observer.observe(direct.window.document.getElementById('main'),{childList:true,subtree:true});
+  });
+  assert.equal(direct.window.TEST_CATALOG.services.find(s=>s.id===other.id).features,undefined);
+  assert.ok(direct.window.TEST_CATALOG.services.find(s=>s.id===first.id).features.length);
+  direct.window.location.hash='';
+  direct.window.dispatchEvent(new direct.window.HashChangeEvent('hashchange'));
+  assert.ok(direct.window.document.querySelector('.section-head .muted').textContent.includes(data.services.reduce((n,s)=>n+s.features.reduce((count,f)=>count+f.scenarios.length,0),0).toLocaleString('it-IT')));
+ }finally{direct.window.close();}
 });
 test('navigazione da servizio a descrizione BDD per tutti i servizi',()=>{
  for(const service of data.services){navigate({s:service.id});assert.equal(d.querySelector('h1').textContent,service.name);
@@ -66,6 +87,12 @@ test('paginazione e collegamenti non validi',()=>{
   assert.ok([...d.querySelectorAll('.test-row')].some(a=>a.hash.includes(target.id)));
  }
  navigate({s:'send',f:'missing'});assert.match(d.body.textContent,/Pagina non disponibile/);
+ navigate({a:'area-inesistente'});assert.match(d.body.textContent,/Pagina non disponibile/);
+ navigate({s:service.id,a:'area-inesistente'});assert.match(d.body.textContent,/Pagina non disponibile/);
+ navigate({s:service.id,a:'area-inesistente',f:feature.id});assert.match(d.body.textContent,/Pagina non disponibile/);
+ const scenario=feature.scenarios[0];
+ navigate({s:service.id,a:'area-inesistente',f:feature.id,t:scenario.id});assert.match(d.body.textContent,/Pagina non disponibile/);
+ navigate({s:service.id,a:scenario.area,f:feature.id,t:scenario.id});assert.match(d.body.textContent,/Comportamento verificato/);
  assert.deepEqual(consoleErrors,[]);
 });
 test.after(()=>dom.window.close());

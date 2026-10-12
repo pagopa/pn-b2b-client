@@ -1,4 +1,4 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir, unlink } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
@@ -30,6 +30,8 @@ const source = JSON.parse(await readFile(resolve(home, 'config/source.json'), 'u
 const branch = source.branch;
 if (typeof branch !== 'string' || !branch || branch.startsWith('-')) throw new Error('Branch sorgente non valido in source.json');
 const git = args => execFileSync('git',args,{cwd:root,encoding:'utf8',maxBuffer:32*1024*1024});
+try { git(['check-ref-format', `refs/heads/${branch}`]); }
+catch { throw new Error('Branch sorgente non valido in source.json'); }
 // Resolve once so every file belongs to the same immutable snapshot.
 let revision;
 for (const ref of [`refs/heads/${branch}`, `refs/remotes/origin/${branch}`]) {
@@ -67,9 +69,16 @@ for (const cfg of activeServices) {
 const template = await readFile(resolve(home,'src/template.html'),'utf8');
 const style = await readFile(resolve(home,'src/style.css'),'utf8');
 const app = await readFile(resolve(home,'src/app.js'),'utf8');
-await mkdir(resolve(home,'generated'),{recursive:true});
-await writeFile(resolve(home,'generated/catalog.json'),JSON.stringify(catalog,null,2)+'\n');
-await writeFile(resolve(home,'generated/index.html'),template.replace('/*STYLE*/',()=>style).replace('/*DATA*/',()=>safeJson(catalog)).replace('/*APP*/',()=>app));
+const output = resolve(home,'generated');
+await mkdir(output,{recursive:true});
+for (const file of await readdir(output)) if (/^service-[a-z0-9-]+\.js$/.test(file)) await unlink(resolve(output,file));
+await writeFile(resolve(output,'catalog.json'),JSON.stringify(catalog,null,2)+'\n');
+for (const service of catalog.services) {
+ await writeFile(resolve(output,`service-${service.id}.js`),`window.TEST_CATALOG_SERVICES[${safeJson(service.id)}]=${safeJson(service)};\n`);
+}
+const summary = {...catalog, services:catalog.services.map(s=>({id:s.id,name:s.name,description:s.description,lastChange:s.lastChange,
+ featureCount:s.features.filter(f=>f.scenarios.length).length,scenarioCount:s.features.reduce((n,f)=>n+f.scenarios.length,0)}))};
+await writeFile(resolve(output,'index.html'),template.replace('/*STYLE*/',()=>style).replace('/*DATA*/',()=>safeJson(summary)).replace('/*APP*/',()=>app));
 for (const s of catalog.services) console.log(`${s.name}: ${s.files} file, ${s.features.length} feature, ${s.features.reduce((n,f)=>n+f.scenarios.length,0)} scenari`);
 console.log(`Segnalazioni: ${catalog.issues.length}`);
 for (const i of catalog.issues) console.log(`${i.path}: ${i.message}`);
