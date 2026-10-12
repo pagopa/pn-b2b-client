@@ -503,14 +503,14 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
   @giacenza890Simplified  @esposizioneCadArcad
   Scenario: [B2B_GIACENZA_890_WI1.1_82] Invio notifica analogica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e secondo controllo per recepire campo foreignState tramite recupero indirizzo da Registro Imprese.
     Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario
-      | denomination            | Vita Nova Sas                |
-      | taxId                   | 12666810299                  |
-      | digitalDomicile         | NULL                         |
-      | physicalAddress_address | via@FAIL-Giacenza-gt10_890   |
-      | recipientType           | PG                           |
+      | denomination            | Vita Nova Sas              |
+      | taxId                   | 12666810299                |
+      | digitalDomicile         | NULL                       |
+      | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
+      | recipientType           | PG                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     # gate a step (come WI1.1_9): non bruciare il budget FEEDBACK su Infocamere/prepare
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
@@ -825,9 +825,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario
+    And destinatario Cucumber Analogic e:
       | denomination            | PF non censito                      |
-      | taxId                   | STTSGT90A01H501J                    |
+#      | taxId                   | STTSGT90A01H501J                    |
       | digitalDomicile         | NULL                                |
       | physicalAddress_address | @FAIL-Giacenza-gt10_890_no_recag012 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
