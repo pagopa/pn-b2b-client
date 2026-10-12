@@ -11,8 +11,9 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.DelegationCommonContext;
-import java.time.OffsetDateTime;
 import org.springframework.http.HttpStatus;
+
+import java.time.OffsetDateTime;
 
 public class DelegationAcceptStep {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -61,7 +62,7 @@ public class DelegationAcceptStep {
             sharedStepsContext.getDelegationCommonContext(),
             pollingService
         );
-        sharedStepsContext.getDelegationCommonContext().setDelegateTenantType(tenantType);
+        sharedStepsContext.getDelegationCommonContext().setDelegateTenant(tenantType);
     }
 
     public static void approveProducerDelegation(

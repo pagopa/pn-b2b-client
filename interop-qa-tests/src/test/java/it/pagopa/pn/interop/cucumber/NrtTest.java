@@ -38,7 +38,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "e-service-async", "e-service-template-async", "voucher_async", "devToolsClientAssertion",
         "manual-archiving-eservice", "notification-manual-archiving-eservice", "certifiedDiscreteAttributeFlagOff",
         "nuovi-operatori","crudNotification", "document-url-description", "document-type-check", "bff-notification",
-        "archiviazione-documentale",
+        "archiviazione-documentale", "delegation-manual-archiving-eservice", "notification-manual-archiving-delegation",
 
         // M2M
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",

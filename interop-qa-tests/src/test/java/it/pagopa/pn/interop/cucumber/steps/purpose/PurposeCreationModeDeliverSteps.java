@@ -60,18 +60,18 @@ public class PurposeCreationModeDeliverSteps {
         UUID consumerId = identityService.getOrganizationId(tenantType);
         RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
 
+        var purposeSeed = new PurposeSeed()
+                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                .consumerId(consumerId)
+                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                .description("description of the purpose - QA")
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("free of charge - QA")
+                .dailyCalls(dailyCalls)
+                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
+
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
-                        new PurposeSeed()
-                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
-                                .consumerId(consumerId)
-                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
-                                .description("description of the purpose - QA")
-                                .isFreeOfCharge(true)
-                                .freeOfChargeReason("free of charge - QA")
-                                .dailyCalls(dailyCalls)
-                                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
-                )
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(purposeSeed)
         );
 
         sharedStepsContext.getPollingService().makePolling(
@@ -87,6 +87,7 @@ public class PurposeCreationModeDeliverSteps {
 
         sharedStepsContext.getPurposeCommonContext().setPurposeId(purpose.getId().toString());
         sharedStepsContext.getPurposeCommonContext().setVersionId(purpose.getCurrentVersion().getId().toString());
+        sharedStepsContext.getPurposeCommonContext().getCreatedPurposes().add(purposeSeed);
     }
 
     @Given("{string} ha già creato una finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
