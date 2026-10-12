@@ -292,6 +292,57 @@ public class TemplateEngineSteps {
         htmlEscapeFuzzExecutions.add(executeFuzzCall(target, language, fuzzedValues));
     }
 
+    @Then("verifico che tutti i valori fuzzed siano rappresentati con HTML escaping disabilitato nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoRappresentatiSenzaEscaping(String format) {
+
+        Assertions.assertFalse(htmlEscapeFuzzExecutions.isEmpty(), "Nessuna esecuzione fuzzing disponibile");
+        String expectedFormat = format.toLowerCase();
+        for (HtmlEscapeFuzzExecution execution : htmlEscapeFuzzExecutions) {
+            Assertions.assertEquals(expectedFormat, execution.getFormat(),
+                    "Il formato dichiarato nello scenario non coincide con quello dell'endpoint "
+                            + execution.getEndpoint());
+
+            String rendered = retrieveFuzzedOutput(execution);
+            Assertions.assertNotNull(rendered,"Output nullo per endpoint " + execution.getEndpoint());
+            String normalizedRendered = normalizeRendered(rendered, execution.getFormat());
+            for (Map.Entry<String, String> entry : execution.getRawValues().entrySet()) {
+                String field = entry.getKey();
+                String rawValue = toSingleLine(entry.getValue());
+                switch (execution.getFormat()) {
+                    case "pdf" ->
+                            assertPdfValueEscapingDisabled(
+                                    execution,
+                                    field,
+                                    rawValue,
+                                    normalizedRendered
+                            );
+
+                    case "html" ->
+                            assertHtmlValueEscapingDisabled(
+                                    execution,
+                                    field,
+                                    rawValue,
+                                    normalizedRendered
+                            );
+
+                    case "text" ->
+                            assertTextValue(
+                                    execution,
+                                    field,
+                                    rawValue,
+                                    normalizedRendered
+                            );
+
+                    default ->
+                            throw new IllegalArgumentException(
+                                    "Formato non supportato: "
+                                            + execution.getFormat()
+                            );
+                }
+            }
+        }
+    }
+
     /**
      * Esegue sul medesimo campo il corpus minimo richiesto usando marker univoci,
      * così le asserzioni negative non collidono con i caratteri strutturali del template HTML.
@@ -969,6 +1020,61 @@ public class TemplateEngineSteps {
             return value;
         }
         return Character.toLowerCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private void assertPdfValueEscapingDisabled(
+            HtmlEscapeFuzzExecution execution,
+            String field,
+            String rawValue,
+            String rendered
+    ) {
+
+        String renderedWithoutEscaping = rawValue
+                .replace("<b>", "")
+                .replace("</b>", "");
+
+        assertThat(rendered)
+                .as(
+                        "Con escaping disabilitato il PDF dell'endpoint %s "
+                                + "non contiene il valore renderizzato del campo %s. Atteso: %s",
+                        execution.getEndpoint(),
+                        field,
+                        renderedWithoutEscaping
+                )
+                .contains(renderedWithoutEscaping);
+
+        assertThat(rendered)
+                .as(
+                        "Con escaping disabilitato il markup del campo %s "
+                                + "non dovrebbe essere mostrato letteralmente nel PDF dell'endpoint %s",
+                        field,
+                        execution.getEndpoint()
+                )
+                .doesNotContain(rawValue);
+    }
+
+    private void assertHtmlValueEscapingDisabled(
+            HtmlEscapeFuzzExecution execution,
+            String field,
+            String rawValue,
+            String rendered
+    ) {
+
+        assertThat(rendered)
+                .as("Con escaping disabilitato il valore raw del campo %s non è presente nell'HTML dell'endpoint %s",
+                        field,
+                        execution.getEndpoint()
+                )
+                .contains(rawValue);
+
+        String escapedValue = toSingleLine(escapeExpected(rawValue));
+
+        assertThat(rendered)
+                .as("Con escaping disabilitato il campo % risulta ancora escapato nell'HTML dell'endpoint %s",
+                        field,
+                        execution.getEndpoint()
+                )
+                .doesNotContain(escapedValue);
     }
 
 }
