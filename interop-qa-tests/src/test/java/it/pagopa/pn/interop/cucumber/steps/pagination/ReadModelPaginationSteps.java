@@ -34,7 +34,7 @@ public class ReadModelPaginationSteps {
         this.context = context;
     }
 
-    @Given("PIN-7134 il read model {string} espone {int} risultati con i filtri:")
+    @Given("si attende che la ricerca in {string} restituisca {int} risultati con i filtri:")
     public void awaitReadModel(String domain, int expected, DataTable table) {
         Assertions.assertTrue(expected > 0 && expected < 50,
                 "Readiness richiede una fixture positiva interamente contenuta nella pagina di 50 elementi");
@@ -52,12 +52,12 @@ public class ReadModelPaginationSteps {
             stable.set(ready ? (ids.equals(previous.get()) ? stable.get() + 1 : 1) : 0);
             previous.set(List.copyOf(ids));
             return stable.get() >= 2;
-        }, Boolean.TRUE::equals, "PIN-7134: fixture non proiettata per " + domain + ", filtri " + filters);
+        }, Boolean.TRUE::equals, "Fixture non proiettata per " + domain + ", filtri " + filters);
         baselines.put(key(domain, filters), List.copyOf(snapshot().ids()));
         lastQueriedResponse = null;
     }
 
-    @When("PIN-7134 l'utente interroga {string} con offset {int} e limit {int} e i filtri:")
+    @When("l'utente interroga {string} con offset {int} e limit {int} e i filtri:")
     public void list(String domain, int offset, int limit, DataTable table) {
         Assertions.assertTrue(offset >= 0 && limit > 0);
         Map<String, String> filters = filters(domain, table);
@@ -67,7 +67,7 @@ public class ReadModelPaginationSteps {
         lastQueriedResponse = context.getHttpCallExecutor().getResponse();
     }
 
-    @Then("PIN-7134 la risposta contiene {int} risultati distinti e totalCount {int} con offset {int} e limit {int}")
+    @Then("la risposta contiene {int} risultati distinti e totalCount {int} con offset {int} e limit {int}")
     public void assertPage(int count, int total, int offset, int limit) {
         Snapshot page = snapshot();
         Assertions.assertEquals(count, page.ids().size(), "results.size");
