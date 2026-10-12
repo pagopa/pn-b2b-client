@@ -17,6 +17,12 @@ public interface IPnSafeStoragePrivateClient extends SettableApiKey {
 
     ResponseEntity<FileDownloadResponse> getFileWithHttpInfo(String fileKey, String cxId, Boolean metadataOnly, Boolean tags) throws RestClientException;
 
+    OperationResultCodeResponse updateFileMetadata(String fileKey, UpdateFileMetadataRequest updateFileMetadataRequest) throws RestClientException;
+
+    ResponseEntity<OperationResultCodeResponse> updateFileMetadataWithHttpInfo(String fileKey, String cxId, UpdateFileMetadataRequest updateFileMetadataRequest) throws RestClientException;
+
+    void setClientId(String clientId);
+
     AdditionalFileTagsGetResponse additionalFileTagsGet(String fileKey) throws RestClientException;
 
     ResponseEntity<AdditionalFileTagsGetResponse> additionalFileTagsGetWithHttpInfo(String fileKey, String cxId) throws RestClientException;
