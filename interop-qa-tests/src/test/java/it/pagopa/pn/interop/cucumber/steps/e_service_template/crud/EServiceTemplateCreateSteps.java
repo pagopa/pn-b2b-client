@@ -111,6 +111,24 @@ public class EServiceTemplateCreateSteps {
         this.createEServiceTemplate(templateSeed);
     }
 
+    @When("l'utente effettua la creazione di un e-service template con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
+    public void createEServiceTemplate(Integer dailyCallsConsumer, Integer dailyCallsTotal) {
+        EServiceTemplateSeed templateSeed = this.getEServiceTemplateSeed(EServiceMode.DELIVER);
+        templateSeed.getVersion()
+                .dailyCallsPerConsumer(dailyCallsConsumer)
+                .dailyCallsTotal(dailyCallsTotal);
+        this.createEServiceTemplate(templateSeed);
+    }
+
+    @When("l'e-service template creato ha una dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
+    public void createEServiceTemplateWithDailyCalls(int dailyCallsConsumer, int dailyCallsTotal) {
+        Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful());
+        EServiceTemplateVersionDetails eServiceTemplateVersionDetails = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
+
+        Assertions.assertEquals(dailyCallsTotal, eServiceTemplateVersionDetails.getDailyCallsPerConsumer());
+        Assertions.assertEquals(dailyCallsConsumer, eServiceTemplateVersionDetails.getDailyCallsPerConsumer());
+    }
+
     @When("l'utente effettua la creazione di un e-service template {isAsynchronous} in modalità {eServiceMode} con tecnologia {string} in stato di {eServiceTemplateVersionState}")
     public void createEServiceTemplate(Boolean isAsync, EServiceMode eServiceMode, String technology, EServiceTemplateVersionState desiredState) {
         EServiceTechnology technology1 = EServiceTechnology.fromValue(technology);
@@ -280,6 +298,7 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
+    // TODO
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
