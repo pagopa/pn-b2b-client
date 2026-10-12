@@ -1697,7 +1697,7 @@ public class ApiServiceDeskSteps {
                         return statusOperationResponse;
                     },
                     status::equalsIgnoreCase,
-                    PollingProfile.RAPID);
+                    it.pagopa.common.polling.PollingConfig.of(java.time.Duration.ofMinutes(5), java.time.Duration.ofMillis(500)));
         } catch (PollingTimeoutException e) {
             // L'esito viene verificato da checkOperationActStatus sull'ultimo stato letto
             log.warn("Stato {} non raggiunto per operationId {}, ultimo stato: {}. {}",
