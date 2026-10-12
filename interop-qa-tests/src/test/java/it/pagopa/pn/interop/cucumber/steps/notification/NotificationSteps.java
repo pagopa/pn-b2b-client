@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
+import static it.pagopa.common.util.StringUtils.resolveDynamicValues;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import io.cucumber.java.en.Given;
@@ -7,6 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
+import it.pagopa.interop.common.enums.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationsCountBySection;
 import it.pagopa.interop.notification.NotificationClientImpl;
@@ -20,15 +22,9 @@ import it.pagopa.pn.interop.cucumber.utility.FeatureLifecycleManager;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore.NotificationUser;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
@@ -354,83 +350,67 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
         return "viene".equals(assertion);
     }
 
-    /* 14 01 2026: versione iniziale di quando si stava tentando di effettuare dei check puntuali caso-per-caso*/
-    /*@Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
-    public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
-        clientTokenConfigurator.setBearerToken(
-            getContext().getIdentityService().getToken(tenant, role));
-
-        PollingService pollingService = getContext().getPollingService();
-
-        List<Notification> notifications = pollingService.makePolling(
-            this.notificationClient::getAll,
-            list -> !IterableUtils.isEmpty(list),
-            "Non è stata restituita alcuna notifica");
-
-        assertThat(notifications)
-            .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
-            .anySatisfy(notif -> {
-                assertThat(notif.getBody()).matches(bodyRegex);
-                assertThat(notif.getDeepLink()).matches(deepLinkRegex);
-            });
-
-        clientTokenConfigurator.setBearerToken(this.getContext().getUserToken());
-    }*/
-
-    /* 14 01 2026: seconda versione in cui si tenta di innescare tutti le notifiche con una Nrt e visionare quindi le notifiche a posteriori */
-   /* @Then("per l'utente {string} di {string} è presente una notifica in-app in cui messaggio e deepLink aderiscono rispettivamente ai pattern {string} e {string}")
-    public void checkInAppNotificationBody(String role, String tenant, String bodyRegex, String deepLinkRegex){
-        Set<Notification> notifications = notificationStore.get(NotificationUser.of(role, tenant));
-
-         //FIXME per prove locali, rimuovere
-        List<Notification> notificationStream = notifications.stream()
-            .filter(a -> a.getBody().contains("stata rimossa dal client")).toList();
-        notificationStream.forEach(notification -> System.out.println(notification.getBody()));
-
-        assertThat(notifications)
-            .as("Verifica che almeno una notifica soddisfi i pattern di body e deepLink")
-            .anySatisfy(notif -> {
-                assertThat(notif.getBody()).matches(bodyRegex);
-                assertThat(notif.getDeepLink()).matches(deepLinkRegex);
-            });
-    }
-    */
-
-    /* 08 05 2026: terza versione */
-    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
-    public void checkInAppNotificationBody(String role, String tenant, DeepLinkType deepLinkType, String message) {
+    @Then("{userRole} di {string} ha ricevuto la notifica in-app contenente il link {deepLink}")
+    public void checkInAppNotificationBody(UserRole role, String tenant, DeepLinkType deepLinkType, String message) {
         message = message.replace("\n", " ");
-        String deepLink = resolveLabelsWithSharedContext(deepLinkType.getValue());
-        String finalMessage = resolveLabelsWithSharedContext(message);
+        String deepLink = resolveDynamicValues(deepLinkType.getValue(), sharedStepsContext);
+        String finalMessage = resolveDynamicValues(message, sharedStepsContext);
+
+        final int MAX_TRIES = 3;
+        final int MAX_LIMIT = 50;
+        final AtomicInteger tryCount = new AtomicInteger(0);
+        final AtomicInteger limit = new AtomicInteger(5);
+        final AtomicBoolean foundBody = new AtomicBoolean(false);
 
         PollingService.makePolling(
-                () -> (notificationStore.get(NotificationUser.of(role, tenant))),
+                () -> (notificationStore.getLastNotifications(
+                        limit.accumulateAndGet(2, (x, y) -> Math.min(x * y, MAX_LIMIT)),
+                        NotificationUser.of(role.getValue(), tenant))
+                ),
                 all -> {
                     try {
                         assertThat(all)
                                 .as("Check in-app body message and deep link")
                                 .anySatisfy(notif -> {
-                                    assertThat(notif.getBody()).isEqualTo(finalMessage);
-                                    if (!deepLink.isEmpty()) assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                                    assertThat(notif.getBody().trim()).isEqualTo(finalMessage);
+                                    log.info("Found notification: \"" + finalMessage + "\"");
+                                    foundBody.set(true);
+                                    if (!deepLink.isEmpty()) {
+                                        log.info("Checking deep link...");
+                                        assertThat(notif.getDeepLink()).isEqualTo(deepLink);
+                                        log.info("Found deep link: " + deepLink);
+                                    }
                                 });
                         return true;
                     } catch (AssertionError e) {
+                        if (tryCount.incrementAndGet() == MAX_TRIES) {
+                            if (!foundBody.get()) {
+                                if (all.isEmpty()) {
+                                    log.warn("No notification received at all before failing");
+                                } else {
+                                    log.warn("Last retrieved notifications before failing:");
+                                    for (int i = all.size() - 1; i >= 0; i--) {
+                                        log.warn(all.get(i).getBody());
+                                    }
+                                }
+                            }
+                        }
                         return false;
                     }
                 },
                 "Not Found expected notification: \"" + finalMessage + "\" with DeepLink " + deepLink,
-                3,
+                MAX_TRIES,
                 3000
         );
     }
 
-    @Then("l'utente {string} di {string} ha ricevuto la notifica in-app")
-    public void checkInAppNotificationBody(String role, String tenant, String message) {
+    @Then("{userRole} di {string} ha ricevuto la notifica in-app")
+    public void checkInAppNotificationBody(UserRole role, String tenant, String message) {
         checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
     }
 
-    @Then("l'utente {string} di {string} non ha ricevuto la notifica in-app")
-    public void checkNoInAppNotificationBody(String role, String tenant, String message) {
+    @Then("{userRole} di {string} non ha ricevuto la notifica in-app")
+    public void checkNoInAppNotificationBody(UserRole role, String tenant, String message) {
         try {
             checkInAppNotificationBody(role, tenant, DeepLinkType.NO_DEEP_LINK, message);
             Assertions.fail("Found not expected notification");
@@ -441,50 +421,5 @@ public class NotificationSteps extends AbstractCommonSteps<Notification, UUID> {
                     " Actual reason: " + e.getMessage()
             );
         }
-    }
-
-    private String resolveLabelsWithSharedContext(String textTemplate) {
-        StringBuilder text = new StringBuilder();
-        String functionName = "$DA_CONTESTO(";
-        int reachedIndex = 0;
-        int labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
-        int labelEndIndex;
-        while (labelStartIndex > -1) {
-            text.append(textTemplate.substring(reachedIndex, labelStartIndex));
-            labelStartIndex += functionName.length();
-            labelEndIndex = textTemplate.indexOf(')', labelStartIndex);
-            String label = textTemplate.substring(labelStartIndex, labelEndIndex);
-            // Il valore deve essere risolto dalla funzione comune // sharedStepsContext
-            String value = ".+";
-            int gracePeriod = 0;
-            switch (label) {
-                case "agreementId": value = sharedStepsContext.getAgreementId().toString(); break;
-                case "eServiceName": value = sharedStepsContext.getEServicesCommonContext().getName(); break;
-                case "eServiceId": value = sharedStepsContext.getEServicesCommonContext().getEserviceId().toString(); break;
-                case "descriptorId": value = sharedStepsContext.getEServicesCommonContext().getDescriptorId().toString(); break;
-                case "oldDescriptorId": value = sharedStepsContext.getEServicesCommonContext().getOldDescriptorId().toString(); break;
-                case "producerName": value = sharedStepsContext.getEServicesCommonContext().getProducerName(); break;
-                case "delegateName": value = sharedStepsContext.getIdentityService().getTenantName(sharedStepsContext.getDelegationCommonContext().getDelegateTenantType()); break;
-                case "TODAY": value = LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")); break;
-                case "TODAY+GRACE_PERIOD": gracePeriod = 2; break;
-                default:
-                    if (label.startsWith("TODAY+")) {
-                        gracePeriod = Integer.parseInt(label.substring("TODAY+".length())) + 1;
-                    }
-                    break;
-            }
-            if (gracePeriod > 0) {
-                value = LocalDate.now().plusDays(gracePeriod).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            }
-            text.append(value);
-            // Controlla se c'è un prossimo placeholder
-            reachedIndex = labelEndIndex + 1;
-            labelStartIndex = textTemplate.indexOf(functionName, reachedIndex);
-            if (labelStartIndex == -1) {
-                text.append(textTemplate.substring(reachedIndex));
-            }
-        }
-        if (text.isEmpty()) text.append(textTemplate);
-        return text.toString();
     }
 }
