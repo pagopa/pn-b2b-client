@@ -464,6 +464,24 @@ Feature: Workflow di una notifica bonaria.
     And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
     And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
 
+  @informalNotificationsWorkFlow @informalNotMVP
+  Scenario: [NOTIFICHE_BONARIE_WORKFLOW_BFIX_01] Come ente mittente invio una notifica bonaria verso PF senza alcun recapito trovato
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
+      | campaignId      | CampaignOnlyEMAIL |
+      | messageId       | ${NEW-IT}         |
+      | subject         | Test workflow     |
+      | recipientType   | PG                |
+      | taxId           | 20517490320       |
+      | denomination    | Acme spa          |
+      | email           | NULL              |
+      | digitalDomicile | NULL              |
+      | phone_number    | NULL              |
+    When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
+      | details_channel | EMAIL |
+    And si attende che la notifica bonaria passi in stato "UNDELIVERABLE"
+    And si attende che venga prodotto l'elemento "WORKFLOW_ENDED_UNDELIVERABLE" della notifica bonaria
+
 
   @informalNotificationsWorkFlow
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_6] Come ente mittente invio una notifica bonaria ricevendo solo feddback negativi e visualizzazione
@@ -562,7 +580,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Ettore Fieramosca                       |
       | email                    | suppressionlist@simulator.amazonses.com |
       | digitalDomicile          | NULL                                    |
-      | physical_address_address | Via@OK_RS                              |
+      | physical_address_address | Via@OK_RS                               |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
@@ -582,7 +600,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RS                 |
+      | physical_address_address | Via@OK_RS                  |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "COVERPAGE_CREATION_REQUEST" della notifica bonaria
     And si attende che venga prodotto l'elemento "PREPARE_ANALOG_DELIVERY" della notifica bonaria
@@ -726,7 +744,7 @@ Feature: Workflow di una notifica bonaria.
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RS                 |
+      | physical_address_address | Via@OK_RS                  |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | OK |
