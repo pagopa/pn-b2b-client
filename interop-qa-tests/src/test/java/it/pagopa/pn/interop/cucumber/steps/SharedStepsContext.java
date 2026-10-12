@@ -171,7 +171,9 @@ public class SharedStepsContext implements ISharedContext {
 
     @Override
     public String getPurposeTitle() {
-        return this.purposeCommonContext.getCreatedPurposes().get(0).getTitle();
+        return this.purposeCommonContext.getCreatedPurposes().get(
+                this.purposeCommonContext.getCreatedPurposes().size() - 1
+        ).getTitle();
     }
 
     @Override
@@ -251,7 +253,8 @@ public class SharedStepsContext implements ISharedContext {
 
     @Override
     public String getDelegateName() {
-        return identityService.getTenantName(this.delegationCommonContext.getDelegateTenant());
+        String tenantAbbreviation = this.delegationCommonContext.getDelegateTenant();
+        return identityService.getTenantName(tenantAbbreviation);
     }
 
     @Override

@@ -33,7 +33,7 @@ public class NotificationSearchCriteriaMapper {
     }
 
     private List<String> resolveValues(String rawValues, TokenResolver tokenResolver) {
-        return Arrays.stream(rawValues.split(","))
+        return Arrays.stream(rawValues.split("[,;]"))
                 .map(String::trim)
                 .map(StringUtils::resolveValue)
                 .map(DateUtils::resolveDate)
