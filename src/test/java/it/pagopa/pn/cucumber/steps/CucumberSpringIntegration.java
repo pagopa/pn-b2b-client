@@ -194,6 +194,7 @@ import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.streamversion.context.StreamVersionContext;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -384,6 +385,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerSevice.class,
         DelayerValidator.class,
         DelayerContext.class,
+        StreamVersionContext.class,
         DelayerSuiteContext.class,
         DelayerPaperDeliveryUtils.class,
         DelayerCsvLoader.class,

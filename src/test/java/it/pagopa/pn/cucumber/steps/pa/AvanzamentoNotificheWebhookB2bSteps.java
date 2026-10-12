@@ -26,6 +26,8 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.webhookVersions.*;
+import it.pagopa.pn.cucumber.streamversion.context.StreamVersionContext;
+import it.pagopa.pn.cucumber.streamversion.context.StreamVersionResolver;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
 import lombok.Getter;
@@ -63,8 +65,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Setter
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
+    private String streamEventType;
 
     private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = new HashMap<>();
+    private final StreamVersionContext streamVersionContext;
 
     private static final Map<String, SettableApiKey.ApiKeyType> paForStream = Map.of(
             COMUNE_1, SettableApiKey.ApiKeyType.MVP_1,
@@ -79,13 +83,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             IPnWebhookB2bClient webhookClientForClean,
             SharedSteps sharedSteps,
             TimingForPolling timingForPolling,
-            PnPollingFactory pollingFactory) {
+            PnPollingFactory pollingFactory,
+            StreamVersionContext streamVersionContext) {
 
         this.webhookB2bClient = webhookB2bClient;
         this.webhookClientForClean = webhookClientForClean;
         this.sharedSteps = sharedSteps;
         this.timingForPolling = timingForPolling;
         this.pollingFactory = pollingFactory;
+        this.streamVersionContext = streamVersionContext;
     }
 
     public IPnPaB2bClient getB2bClient() {
@@ -135,11 +141,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //        }
     }
 
+    /**
+     * Negli step la versione è facoltativa (ParameterType {versione} e simili): se manca, vale quella definita dalla suite.
+     */
     private StreamVersion getStreamVersion(String version) {
-        if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V29;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
-        }
-        return StreamVersion.valueOf(version.trim().toUpperCase());
+        return StreamVersionResolver.resolve(version, streamVersionContext);
     }
 
     private WebhookStepsInterface getWebhookStep(String version) {
@@ -207,14 +213,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         getWebhookStep(version).checkLegalFactId();
     }
 
-    @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string} con versione {string}")
+    @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string}{versione}")
     public void setUpStreamsWithEventType(int number, String title, String eventType, String version) {
         requestNumber = number;
+        streamEventType = eventType;
         StreamVersion streamVersion = getStreamVersion(version);
         createStreamRequest(streamVersion, new LinkedList<>(), number, title, eventType);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string}")
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string}{versione}")
     public void createStream(String pa, String version) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -222,14 +229,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, null, false, null, false, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro di timeline {string}")
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string}{versione} e filtro di timeline {string}")
     public void createStreamWithFilteredTimeline(String pa, String version, String filter) {
         setPaWebhook(pa);
         StreamVersion streamVersion = getStreamVersion(version);
         createStream(pa, streamVersion, null, false, List.of(filter), false, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string}{versione} e filtro status {string}")
     public void createStreamWithFilteredStatus(String pa, String version, String filter) {
         String[] filterValues = new String[]{filter};
         if (filter.contains(",")) {
@@ -241,22 +248,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, null, false, Arrays.asList(filterValues), false, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con un gruppo disponibile {string}")
+    @When("si crea(no) i(l) nuov(o)(i) stream{versione} per il {string} con un gruppo disponibile {string}")
     public void createStreamWithGroups(String version, String pa, String position) {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
+        // PN-STREAM accetta il placeholder DEFAULT solo per gli stream TIMELINE (PN-21406): gli stream STATUS
+        // mantengono il filtro impostato in fase di predisposizione (nessun filtro = tutti gli stati della versione)
+        List<String> filterValues = STREAM_EVENT_TYPE_STATUS.equalsIgnoreCase(streamEventType) ? null : List.of("DEFAULT");
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, filterValues, false, null);
     }
 
-    @And("si crea il nuovo stream con versione {string} per il {string} \\(caso errato)")
+    @And("si crea il nuovo stream{versione} per il {string} \\(caso errato)")
     public void createStreamForced(String version, String pa) {
         setPaWebhook(pa);
         StreamVersion streamVersion = getStreamVersion(version);
         createStream(pa, streamVersion, null, false, null, true, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con un gruppo disponibile {string} \\(caso errato)")
+    @When("si crea(no) i(l) nuov(o)(i) stream{versione} per il {string} con un gruppo disponibile {string} \\(caso errato)")
     public void createStreamWithGroupsForced(String version, String pa, String position) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -264,7 +274,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, true, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con replaceId con un gruppo disponibile {string} \\(caso errato)")
+    @When("si crea(no) i(l) nuov(o)(i) stream{versione} per il {string} con replaceId con un gruppo disponibile {string} \\(caso errato)")
     public void createStreamWithGroupsForcedWithReplaceId(String version, String pa, String position) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -272,7 +282,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, getGroupForStream(position, pa), true, null, true, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream con versione {string} per il {string} con replaceId con un gruppo disponibile {string}")
+    @When("si crea(no) i(l) nuov(o)(i) stream{versione} per il {string} con replaceId con un gruppo disponibile {string}")
     public void createStreamWithGroupsAndReplaceId(String version, String pa, String position) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -280,7 +290,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, getGroupForStream(position, pa), true, null, false, null);
     }
 
-    @When("si crea il nuovo stream con versione {string} per il {string} con un gruppo disponibile {string} con replaceId dello stream creato con la versione {string} - Cross Versioning")
+    @When("si crea il nuovo stream{versione} per il {string} con un gruppo disponibile {string} con replaceId dello stream creato con la versione {string} - Cross Versioning")
     public void createStreamWithGroupsAndReplaceIdCrossVersion(String version, String pa, String position, String crossVersion) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -296,18 +306,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("si cancella(no) (lo)(gli) stream creat(o)(i) per il {string} con versione {string}")
+    @And("si cancella(no) (lo)(gli) stream creat(o)(i) per il {string}{versione}")
     public void deleteStream(String pa, String version) {
         getWebhookStep(version).deleteStreams(pa);
     }
 
-    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string} e apiKey aggiornata")
+    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i){versione} e apiKey aggiornata")
     public void updateStreamUpdateApiKey(String version) {
         updateApiKeyForStream();
         updateStream(version);
     }
 
-    @And("si {string} un gruppo allo stream creat(o)(i) con versione {string} per il comune {string} e apiKey aggiornata")
+    @And("si {string} un gruppo allo stream creat(o)(i){versione} per il comune {string} e apiKey aggiornata")
     public void updateGroupsStreamUpdateApiKey(String action, String version, String pa) {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
@@ -318,19 +328,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStream(streamVersion.toString());
     }
 
-    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string} con un gruppo che non appartiene al comune {string}")
+    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i){versione} con un gruppo che non appartiene al comune {string}")
     public void updateStreamWithGroupsNoPA(String version, String pa) {
         StreamVersion streamVersion = getStreamVersion(version);
         updateStreamByGroupsPA(streamVersion, pa, false);
     }
 
-    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string} con un gruppo che appartiene al comune {string}")
+    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i){versione} con un gruppo che appartiene al comune {string}")
     public void updateStreamWithGroupsPA(String version, String pa) {
         StreamVersion streamVersion = getStreamVersion(version);
         updateStreamByGroupsPA(streamVersion, pa, true);
     }
 
-    @Given("(allo)(agli) stream versione {string} si setta il campo waitForAccepted introdotto con la versione {int} a {string}")
+    @Given("(allo)(agli) stream{versioneStream} si setta il campo waitForAccepted introdotto con la versione {int} a {string}")
     public void setWaitForAccepted(String version, int introducingVersion, String waitForAccepted) {
         StreamVersion streamVersion = getStreamVersion(version);
         assumeThat(streamVersion.getValue())
@@ -357,7 +367,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStream(streamVersion.toString());
     }
 
-    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string} invocando la versione {string} - Cross Versioning")
+    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i){versione} invocando la {versioneEsplicitaOSuite} - Cross Versioning")
     public void updateStreamCrossVersioning(String rightVersion, String wrongVersion) {
         if (sharedSteps.getResponseNewApiKey() != null) {
             webhookB2bClient.setApiKey(sharedSteps.getResponseNewApiKey().getApiKey());
@@ -375,7 +385,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string}")
+    @And("si aggiorna(no) (lo)(gli) stream creat(o)(i){versione}")
     public void updateStream(String version) {
         try {
             getWebhookStep(version).updateStreams();
@@ -386,7 +396,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni
-    @And("si disabilita(no) (lo)(gli) stream creat(o)(i) per il comune {string} con versione {string} e apiKey aggiornata")
+    @And("si disabilita(no) (lo)(gli) stream creat(o)(i) per il comune {string}{versione} e apiKey aggiornata")
     public void disableAllStreamsUpdateApiKey(String pa, String version) {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
@@ -396,7 +406,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         disableStreams(streamVersion);
     }
 
-    @And("si disabilita(no) (lo)(gli) stream {string} creat(o)(i) per il comune {string}")
+    @And("si disabilita(no) (lo)(gli) stream{versioneTraVirgolette} creat(o)(i) per il comune {string}")
     public void disableAllStreams(String version, String pa) {
         StreamVersion streamVersion = getStreamVersion(version);
         assumeThat(streamVersion.getValue())
@@ -405,7 +415,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         disableStreams(streamVersion);
     }
 
-    @And("si disabilita(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
+    @And("si disabilita(no) (lo)(gli) stream che non esist(e)(ono){laVersione} e apiKey aggiornata")
     public void disableStreamThatNotExist(String version) {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
@@ -423,7 +433,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni
-    @And("si cancella(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
+    @And("si cancella(no) (lo)(gli) stream che non esist(e)(ono){laVersione} e apiKey aggiornata")
     public void deleteStreamThatNotExist(String version) {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
@@ -436,7 +446,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni
-    @And("si consuma(no) (lo)(gli) stream che non esist(e)(ono) con la versione {string} e apiKey aggiornata")
+    @And("si consuma(no) (lo)(gli) stream che non esist(e)(ono){laVersione} e apiKey aggiornata")
     public void consumeStreamThatNotExist(String version) {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
@@ -449,7 +459,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni, tranne V26
-    @And("si legg(e)(ono) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata con versione {string}")
+    @And("si legg(e)(ono) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata{versione}")
     public void readStreamThatNotExist(String version) {
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
@@ -466,7 +476,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni
-    @And("si aggiorna(no) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata con versione {string}")
+    @And("si aggiorna(no) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata{versione}")
     public void updateStreamNotExist(String version) {
         updateApiKeyForStream();
         try {
@@ -484,20 +494,20 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("viene verificata la corretta cancellazione con versione {string}")
+    @And("viene verificata la corretta cancellazione{versione}")
     public void verifiedTheCorrectDeletion(String version) {
         getWebhookStep(version).checkCorrectCancellation();
     }
 
     //Usato da tutte le versioni, tranne V26
-    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione {string} e apiKey aggiornata")
+    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id{versione} e apiKey aggiornata")
     public void streamBeenCreatedAndCorrectlyRetrievedByStreamIdUpdateApiKey(String version) {
         updateApiKeyForStream();
         streamBeenCreatedAndCorrectlyRetrievedByStreamId(version);
     }
 
     //Usato prevalentemente con V23 e V10, e due casi con la V25. Molti potrebbero essere sostituiti da "più recente"
-    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione {string}")
+    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id{versione}")
     public void streamBeenCreatedAndCorrectlyRetrievedByStreamId(String version) {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
         UUID streamId = webhookStepsInterface.getStreamId();
@@ -505,7 +515,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //Usato da tutte le versioni, tranne V26
-    @When("lo stream viene recuperato dal sistema tramite stream id con versione {string} e apiKey aggiornata")
+    @When("lo stream viene recuperato dal sistema tramite stream id{versione} e apiKey aggiornata")
     public void streamBeenRetrievedByStreamIdUpdateApiKey(String version) {
         updateApiKeyForStream();
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
@@ -518,7 +528,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("vengono letti gli eventi dello stream versione {string}")
+    @And("vengono letti gli eventi dello stream{versioneStream}")
     public void readStreamEvents(String version) {
         readStreamElement(version, version);
     }
@@ -682,12 +692,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return progressResponseElement;
     }
 
-    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con la versione {string}")
+    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string}{laVersione}")
     public void readStreamTimelineElementBasic(String pa, String timelineEventCategory, String version) {
         readStreamTimeline(version, pa, timelineEventCategory, 0, null);
     }
 
-    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con la versione {string} e apiKey aggiornata con position {int}")
+    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string}{laVersione} e apiKey aggiornata con position {int}")
     public void readStreamTimelineElementWithUpdateApiKeyAndPosition(String pa, String timelineEventCategory, String version, int position) {
         updateApiKeyForStream();
         readStreamTimeline(version, pa, timelineEventCategory, position, null);
@@ -699,7 +709,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //V10, 23 and V27 only
-    @Then("Si verifica che l'elemento di timeline {string} {string} il timestamp uguale a quello di {string} presente nel webhook con la versione {string}")
+    @Then("Si verifica che l'elemento di timeline {string} {string} il timestamp uguale a quello di {string} presente nel webhook{laVersione}")
     public void compareTimestampWebhook(String timelineElementCategory, String equal, String webhookElementCategory, String version) {
         boolean mustBeEqual = equal.trim().equalsIgnoreCase("ABBIA");
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
@@ -757,12 +767,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione {string}")
+    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string}{laVersione}")
     public void readStreamStatusBasic(String pa, String status, String version) {
         readStreamStatus(pa, status, version, 0, false);
     }
 
-    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string} con la versione {string} e apiKey aggiornata con position {int}")
+    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string}{laVersione} e apiKey aggiornata con position {int}")
     public void readStreamStatusWithPositionAndUpdatedApiKey(String pa, String status, String version, Integer position) {
         readStreamStatus(pa, status, version, position, true);
     }
@@ -800,7 +810,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         getWebhookStep(version).verificaPresenzaSercQ(isPresent);
     }
 
-    @Then("si verifica che non siano presenti eventi nello stream con versione {string} del {string}")
+    @Then("si verifica che non siano presenti eventi nello stream{versione} del {string}")
     public void readStreamTimelineElementNotPresent(String version, String pa) {
         setPaWebhook(pa);
         updateApiKeyForStream();
@@ -896,13 +906,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         && (webhookStepsV10.getEventStreamList().size() == (requestNumber - 1)));
     }
 
-    @Given("vengono cancellati tutti gli stream presenti del {string} con versione {string}")
+    @Given("vengono cancellati tutti gli stream presenti del {string}{versione}")
     public void deleteAll(String pa, String version) {
         setPaWebhook(pa);
         getWebhookStep(version).deleteStreamsBeforeTest(pa);
     }
 
-    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati {string}")
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati{versioneTraVirgolette}")
     public void verifyIncrementalAndUniqueProgressResponseElementId(String version) {
         getWebhookStep(version).verifyIncrementalEventId();
     }
@@ -912,7 +922,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         getWebhookStep(version).consumeEventStreamAndCheckNumEvents(numEventi);
     }
 
-    @And("verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione {string}")
+    @And("verifica corrispondenza tra i detail del webhook e quelli della timeline{laVersione}")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version) throws JsonProcessingException {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
 
@@ -952,12 +962,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return result;
     }
 
-    @Then("verifica deanonimizzazione degli eventi di timeline versione {string} {with} delega {isDigital}")
+    @Then("verifica deanonimizzazione degli eventi di timeline{versioneStream} {with} delega {isDigital}")
     public void verificaDeanonimizzazioneDegliEventiDiTimelineDigitale(String version, boolean withDelega, boolean isDigital) {
         getWebhookStep(version).verificaDeanonimizzazioneEventiTimeline(isDigital, withDelega);
     }
 
-    @When("vengono letti gli eventi di timeline dello stream con versione {string} nonostante sia stato creato con la {string} - Cross Versioning")
+    @When("vengono letti gli eventi di timeline dello stream{versione} nonostante sia stato creato con la {versioneEsplicitaOSuite} - Cross Versioning")
     public void vengonoLettiGliEventiDiTimelineDelloStreamDel(String versionRead, String versionCreate) {
         updateApiKeyForStream();
         WebhookStepsInterface webhookStepsInterfaceCreate = getWebhookStep(versionCreate);
