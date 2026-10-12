@@ -600,7 +600,7 @@ Feature: Resa al mittente di una notifica
       | digitalDomicile         | NULL              |
     Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
-    And si crea il nuovo stream per il "Comune_1" con versione "più recente" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_1" con versione "più recente" e filtro timeline "DEFAULT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con la versione "più recente"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "ANALOG_WORKFLOW_RECIPIENT_DECEASED" con la versione "più recente"
 
@@ -623,7 +623,7 @@ Feature: Resa al mittente di una notifica
   @fix14834 @returnedToSender @webhookV23 @cleanWebhook @webhook3
   Scenario: [RETURNED-TO-SENDER_STREAM_V23_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
-    And si crea il nuovo stream per il "Comune_2" con versione "V23" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_2" con versione "V23" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -663,7 +663,7 @@ Feature: Resa al mittente di una notifica
   @fix14834 @returnedToSender @webhookV25 @cleanWebhook @webhook3
   Scenario: [RETURNED-TO-SENDER_STREAM_V25_WITH_FILTER] Invio notifica e controllo che stream con eventType DEFAULT e versione differente da V26 non contenga elemento ANALOG_WORKFLOW_RECIPIENT_DECEASED
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V25" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

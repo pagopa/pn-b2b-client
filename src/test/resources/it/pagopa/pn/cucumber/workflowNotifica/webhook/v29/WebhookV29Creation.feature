@@ -29,7 +29,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si creano i nuovi stream per il "Comune_Multi" con versione "V29" e filtro status "DEFAULT"
+    When si creano i nuovi stream per il "Comune_Multi" con versione "V29" e filtro timeline "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V29"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V29"
     And viene verificata la corretta cancellazione con versione "V29"
@@ -37,13 +37,13 @@ Feature: verifica creazione stream
     And l'apiKey viene cancellata
 
   #https://pagopa.atlassian.net/browse/PN-19952
-  # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro status che non contiene DEFAULT o REQUEST_ACCEPTED allora lo stream non viene creato
+  # Test che verifica che se viene creato uno stream con waitForAccepted a true e filtro status che non contiene REQUEST_ACCEPTED allora lo stream non viene creato
   # e viene ritornato un errore 403
   @webhookV29 @precondition @cleanWebhook @webhook3
-  Scenario: [B2B-STREAM_PN_19952_1_KO] Creazione di uno stream con waitForAccepted a true e filtro status che non contiene DEFAULT o REQUEST_ACCEPTED.
+  Scenario: [B2B-STREAM_PN_19952_1_KO] Creazione di uno stream con waitForAccepted a true e filtro status che non contiene REQUEST_ACCEPTED.
   Si verifica che la creazione dello stream ritorni un errore 403.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V29"
-    And si predispongono 5 nuovi stream denominati "stream-test" con eventType "TIMELINE" con versione "V29"
+    And si predispongono 5 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V29"
     And agli stream versione "V29" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -401,7 +401,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream per il "Comune_Multi" con versione "V29" e filtro status "DEFAULT"
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V29"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V29"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V29"
     And viene verificata la corretta cancellazione con versione "V29"
@@ -440,7 +440,7 @@ Feature: verifica creazione stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
-    When si crea il nuovo stream per il "Comune_Multi" con versione "V29" e filtro status "DEFAULT"
+    When si crea il nuovo stream per il "Comune_Multi" con versione "V29" e filtro timeline "DEFAULT"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V29"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V29"
     And viene verificata la corretta cancellazione con versione "V29"

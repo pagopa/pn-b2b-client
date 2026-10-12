@@ -396,7 +396,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV23 @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -559,7 +559,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV25 @webhook1 @precondition
   Scenario: [TIMELINE_REWORK_13B] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
-    And si crea il nuovo stream per il "Comune_1" con versione "V25" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_1" con versione "V25" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -584,7 +584,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV28 @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13C] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
-    And si crea il nuovo stream per il "Comune_2" con versione "V28" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_2" con versione "V28" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -609,7 +609,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13D] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
