@@ -27,7 +27,12 @@ public record PollingConfig(Duration timeout, Duration interval, int maxAttempts
         // Numero massimo di tentativi che possono partire all'interno della finestra temporale
         // Valida prima della divisione, mantenendo la stessa precisione dell'attesa.
         new PollingConfig(timeout, interval, 1);
-        long intervals = timeout.dividedBy(interval);
+        long intervals;
+        try {
+            intervals = timeout.dividedBy(interval);
+        } catch (ArithmeticException e) {
+            intervals = Long.MAX_VALUE;
+        }
         int safetyCap = (int) Math.min(intervals, Integer.MAX_VALUE - 1L) + 1;
         return new PollingConfig(timeout, interval, safetyCap);
     }

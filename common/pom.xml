@@ -18,6 +18,7 @@
         <junit.version>5.9.1</junit.version>
         <cucumber.version>7.8.1</cucumber.version>
         <spring.boot-version>2.5.2</spring.boot-version>
+        <awaitility.version>4.2.0</awaitility.version>
     </properties>
 
     <dependencyManagement>
@@ -83,6 +84,11 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

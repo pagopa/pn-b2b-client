@@ -18,7 +18,7 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegrat
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.common.polling.Poller;
-import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingProfile;
 import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +37,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -93,7 +92,6 @@ public class ApiServiceDeskSteps {
     private final String ticketOperationIdVuoto = null;
     private static final Integer DELAY = 420000;
     private static final Integer WORK_FLOW_WAIT_DEFAULT = 31000;
-    private static final PollingConfig OPERATION_STATUS_POLLING = PollingConfig.of(Duration.ofMinutes(5), Duration.ofMillis(500));
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
@@ -1686,11 +1684,11 @@ public class ApiServiceDeskSteps {
 
     @And("viene atteso lo stato {string} dell'operazione")
     public void pollOperationActStatus(String status) {
-        pollByStatus(status, OPERATION_STATUS_POLLING);
+        pollByStatus(status);
         checkOperationActStatus(status);
     }
 
-    public void pollByStatus(String status, PollingConfig pollingConfig) {
+    public void pollByStatus(String status) {
         try {
             Poller.pollUntil(
                     () -> {
@@ -1699,11 +1697,11 @@ public class ApiServiceDeskSteps {
                         return statusOperationResponse;
                     },
                     status::equalsIgnoreCase,
-                    pollingConfig,
-                    lastStatus -> "Stato " + status + " non raggiunto per operationId " + operationId + ", ultimo stato: " + lastStatus);
+                    PollingProfile.RAPID);
         } catch (PollingTimeoutException e) {
             // L'esito viene verificato da checkOperationActStatus sull'ultimo stato letto
-            log.warn(e.getMessage());
+            log.warn("Stato {} non raggiunto per operationId {}, ultimo stato: {}. {}",
+                    status, operationId, e.getLastValue(), e.getMessage());
         }
     }
 

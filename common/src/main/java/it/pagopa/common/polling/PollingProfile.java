@@ -7,8 +7,8 @@ import java.time.Duration;
  * Per tempi dipendenti dall'ambiente o dall'elemento atteso costruire un {@link PollingConfig} dedicato.
  */
 public enum PollingProfile {
-    EXTRA_RAPID(Duration.ofMillis(200), Duration.ofSeconds(3)),
-    RAPID(Duration.ofMillis(500), Duration.ofSeconds(10)),
+    EXTRA_RAPID(Duration.ofMillis(500), Duration.ofSeconds(10)),
+    RAPID(Duration.ofSeconds(1), Duration.ofSeconds(30)),
     SLOW(Duration.ofSeconds(15), Duration.ofMinutes(30));
 
     private final Duration interval;
