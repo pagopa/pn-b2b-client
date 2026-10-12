@@ -18,12 +18,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDesc
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptorVerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorAttributesGroupSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedAttributesGroup;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDeclaredAttributes;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorDeclaredAttributesGroup;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorVerifiedAttributes;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorVerifiedAttributesGroup;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.List;
@@ -124,6 +119,26 @@ public class M2MV3EserviceAttributeClientImpl extends AbstractDPoPClient impleme
             .attribute(attribute.getAttribute())
             .groupIndex(attribute.getGroupIndex())
             .build();
+    }
+
+    @Override
+    public EServiceDescriptorCertifiedDiscreteAttributesGroup createEServiceDescriptorCertifiedDiscreteAttributesGroup(UUID eserviceId, UUID descriptorId, EServiceDescriptorCertifiedDiscreteAttributesGroupSeed eserviceDescriptorCertifiedDiscreteAttributesGroupSeed) {
+        return this.eservicesApi.createEServiceDescriptorCertifiedDiscreteAttributesGroup(eserviceId, descriptorId, eserviceDescriptorCertifiedDiscreteAttributesGroupSeed);
+    }
+
+    @Override
+    public EServiceDescriptorCertifiedDiscreteAttributes getEServiceDescriptorCertifiedDiscreteAttributes(UUID eserviceId, UUID descriptorId, Integer offset, Integer limit) {
+        return this.eservicesApi.getEServiceDescriptorCertifiedDiscreteAttributes(eserviceId, descriptorId, offset, limit);
+    }
+
+    @Override
+    public Object assignEServiceDescriptorCertifiedDiscreteAttributesToGroup(UUID eserviceId, UUID descriptorId, Integer groupIndex, EServiceDescriptorCertifiedDiscreteAttributesGroupSeed eserviceDescriptorCertifiedDiscreteAttributesGroupSeed) {
+        return this.eservicesApi.assignEServiceDescriptorCertifiedDiscreteAttributesToGroup(eserviceId, descriptorId, groupIndex, eserviceDescriptorCertifiedDiscreteAttributesGroupSeed);
+    }
+
+    @Override
+    public Object deleteEServiceDescriptorCertifiedDiscreteAttributeFromGroup(UUID eserviceId, UUID descriptorId, Integer groupIndex, UUID attributeId) {
+        return this.eservicesApi.deleteEServiceDescriptorCertifiedDiscreteAttributeFromGroup(eserviceId, descriptorId, groupIndex, attributeId);
     }
 
     @Override

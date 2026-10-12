@@ -70,8 +70,8 @@ public class TenantRevokeCertifiedAttributeSteps {
         );
     }
 
-    @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente creato e assegnato")
-    public void revokeCertifiedDiscreteAttribute(String tenantType) {
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente creato e assegnato")
+    public void tryRevokeCertifiedDiscreteAttribute(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID tenantId = identityService.getOrganizationId(tenantType);
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
@@ -81,13 +81,30 @@ public class TenantRevokeCertifiedAttributeSteps {
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedDiscreteAttribute(tenantId, lastAttributeId)
         );
+    }
+
+    @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente creato e assegnato")
+    public void revokeCertifiedDiscreteAttribute(String tenantType) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+
+        ensureAttributeHasBeenAssignedToTenant(tenantId, lastAttributeId);
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedDiscreteAttribute(tenantId, lastAttributeId)
+                ),
+                HttpStatus::is2xxSuccessful,
+                "There was an error while revoking the attribute"
+        );
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             ensureAttributeHasBeenRevokedToTenant(tenantId, lastAttributeId);
         }
     }
 
-    @When("l'utente revoca a {string} l'attributo certificato discreto precedentemente creato ma non associato")
+    @When("l'utente tenta di revocare a {string} l'attributo certificato discreto precedentemente creato ma non associato")
     public void revokeAttributePreviouslyCreatedButNotAssociated(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
@@ -99,7 +116,7 @@ public class TenantRevokeCertifiedAttributeSteps {
         );
     }
 
-    @When("l'utente revoca l'attributo certificato discreto precedentemente creato ad un ente non esistente")
+    @When("l'utente tenta di revocare l'attributo certificato discreto precedentemente creato ad un ente non esistente")
     public void revokeAttributePreviouslyCreatedToNonExistingEntity() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         UUID lastAttributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();

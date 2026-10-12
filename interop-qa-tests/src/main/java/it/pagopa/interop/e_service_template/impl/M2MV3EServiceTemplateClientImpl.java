@@ -151,6 +151,7 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
                 .mode(vMapper.mapToV3(patchRequest.getMode()))
                 .intendedTarget(patchRequest.getIntendedTarget())
                 .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+                .personalData(patchRequest.getPersonalData())
         ));
     }
 

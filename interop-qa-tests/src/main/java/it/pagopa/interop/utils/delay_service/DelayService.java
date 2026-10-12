@@ -1,4 +1,4 @@
-package it.pagopa.pn.interop.cucumber.utility.delay_service;
+package it.pagopa.interop.utils.delay_service;
 
 import java.time.Duration;
 

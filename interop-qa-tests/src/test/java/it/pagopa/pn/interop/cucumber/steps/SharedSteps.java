@@ -1,7 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.en.And;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.AllArgsConstructor;
 
 /* Racchiude steps non associabili a nessuna entità specifica. */
