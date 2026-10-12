@@ -72,3 +72,23 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then per i cf "29527800386" e "10433218194" non risulta alcuna richiesta INIPEC
+
+
+  @inipecGestionePuntuale
+  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_HF_01] Notifica multidestinatario di cui uno non recupera pec su inipec e quindi avrà fallback su inad
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | denomination    | Test digitale fallback INAD |
+      | recipientType   | PG                          |
+      | taxId           | 28223913097                 |
+      | digitalDomicile | NULL                        |
+    And destinatario
+      | taxId           | 00845483379 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    And salvo il timestamp corrente
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then risulta una richiesta INAD per il cf "28223913097"

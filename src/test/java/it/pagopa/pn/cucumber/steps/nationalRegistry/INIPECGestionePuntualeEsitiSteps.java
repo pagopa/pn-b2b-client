@@ -1,9 +1,11 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
@@ -31,24 +33,46 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class INIPECGestionePuntualeEsitiSteps {
 
-    /** Valori del campo {@code sendStatus} sull'indice usato dalla query su pn-batchRequests. */
+    @ParameterType("INIPEC|INAD")
+    public Eservice eservice(String value) {
+        return Eservice.valueOf(value);
+    }
+
+    /**
+     * Valori del campo {@code sendStatus} sull'indice usato dalla query su pn-batchRequests.
+     */
     private enum SendStatus {
         SENT, NOT_SENT
     }
 
+    public enum Eservice {
+        INIPEC, INAD
+    }
+
+    private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
+
     private final DynamoDbService dynamoDbService;
+    private final SharedSteps sharedSteps;
     private String notificationSentTimestamp;
 
-    /** Tempo massimo di attesa che il dato venga scritto/aggiornato sul DB. */
+    /**
+     * Tempo massimo di attesa che il dato venga scritto/aggiornato sul DB.
+     */
     private static final Duration DB_POLL_TIMEOUT = Duration.ofMinutes(2);
-    /** Intervallo fra un tentativo di lettura e il successivo. */
+    /**
+     * Intervallo fra un tentativo di lettura e il successivo.
+     */
     private static final Duration DB_POLL_INTERVAL = Duration.ofSeconds(5);
-    /** Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto"). */
+    /**
+     * Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto").
+     */
     private static final Duration DB_ABSENCE_STABILITY = Duration.ofSeconds(30);
 
-    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService) {
+    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService, SharedSteps sharedSteps) {
         this.dynamoDbService = dynamoDbService;
+        this.sharedSteps = sharedSteps;
     }
+
 
     @Then("la richiesta INIPEC per il cf {string} risulta INVIATA al primo tentativo")
     public void requestSentWithoutRetry(String cf) {
@@ -116,13 +140,17 @@ public class INIPECGestionePuntualeEsitiSteps {
         notificationSentTimestamp = java.time.OffsetDateTime.now().minusHours(2).minusMinutes(1).toString();
     }
 
-    /** Numero totale di richieste per il CF, sia SENT sia NOT_SENT, nella finestra temporale. */
+    /**
+     * Numero totale di richieste per il CF, sia SENT sia NOT_SENT, nella finestra temporale.
+     */
     private int countAnySendStatus(String cf) {
         return retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT).size()
                 + retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT).size();
     }
 
-    /** Legge il contatore di retry da un item di pn-batchRequests. */
+    /**
+     * Legge il contatore di retry da un item di pn-batchRequests.
+     */
     private static int retryOf(Map<String, AttributeValue> item) {
         return Integer.parseInt(item.get("retry").n());
     }
@@ -148,4 +176,31 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .toList();
     }
 
+    @Then("risulta una richiesta {eservice} per il cf {string}")
+    public void verifyRegistryRequestExists(Eservice eservice, String cf) {
+
+        String iun = sharedSteps.getNotificationIun();
+
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+
+            List<Map<String, AttributeValue>> items = retrieveRegistryRequests(cf, eservice, iun);
+            assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty();
+        });
+    }
+
+    private List<Map<String, AttributeValue>> retrieveRegistryRequests(String cf, Eservice eservice, String iun) {
+
+        Map<String, AttributeValue> attributeValues = Map.of(
+                ":v_sendStatus", AttributeValue.builder().s(SendStatus.SENT.name()).build(),
+                ":v_lastReserved", AttributeValue.builder().s(MIN_LAST_RESERVED).build()
+        );
+        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS, attributeValues);
+
+        return items.stream()
+                .filter(item -> cf.equals(item.get("cf").s()))
+                .filter(item -> eservice.name().equals(item.get("eservice").s()))
+                .filter(item -> item.get("correlationId").s().contains(iun))
+                .toList();
+    }
 }
+
