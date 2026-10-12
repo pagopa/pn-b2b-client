@@ -87,7 +87,7 @@ Feature: Aggiornamento di un e-service non pubblicato
 
   @happy-path
   @nrt-minimal
-  @eservice_updating4
+  @eservice_updating5
   Scenario: [ESERVICE_UPDATING_05] Richiesta di pubblicazione di una versione di un e-service da template concesso in delega, se la richiesta è in pending, viene eliminata con la revoca della delega
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
