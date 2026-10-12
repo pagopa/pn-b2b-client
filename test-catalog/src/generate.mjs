@@ -31,7 +31,12 @@ const branch = source.branch;
 if (typeof branch !== 'string' || !branch || branch.startsWith('-')) throw new Error('Branch sorgente non valido in source.json');
 const git = args => execFileSync('git',args,{cwd:root,encoding:'utf8',maxBuffer:32*1024*1024});
 // Resolve once so every file belongs to the same immutable snapshot.
-const revision = git(['rev-parse','--verify',`refs/heads/${branch}^{commit}`]).trim();
+let revision;
+for (const ref of [`refs/heads/${branch}`, `refs/remotes/origin/${branch}`]) {
+  try { revision = git(['rev-parse','--quiet','--verify',`${ref}^{commit}`]).trim(); break; }
+  catch { /* Try the remote-tracking branch when no local branch exists. */ }
+}
+if (!revision) throw new Error(`Branch sorgente non trovato: ${branch}`);
 const treePaths = git(['ls-tree','-r','--name-only','-z',revision]).split('\0');
 const sourceUrl = path => `${source.repositoryUrl}/blob/${revision}/${path.split('/').map(encodeURIComponent).join('/')}`;
 const paths = treePaths.filter(path => path.endsWith('.feature') && !path.split('/').some(p => ['target','node_modules','.git'].includes(p))).sort();

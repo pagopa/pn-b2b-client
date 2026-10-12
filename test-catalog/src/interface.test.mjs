@@ -16,7 +16,8 @@ test('output completo: ogni file è catalogato o esplicitamente segnalato',()=>{
  assert.equal(data.issues.length,0);
  assert.deepEqual(data.services.map(s=>s.id).sort(),Object.keys(enabled).filter(id=>enabled[id]).sort());
  for(const s of data.services) assert.equal(s.files,s.features.length+data.emptyFiles.filter(f=>f.service===s.name).length+data.issues.filter(f=>f.service===s.name).length);
- assert.equal(JSON.parse(d.getElementById('catalog-data').textContent).revision,data.revision);
+ assert.equal(w.TEST_CATALOG.revision,data.revision);
+ assert.equal(d.getElementById('catalog-data'),null);
 });
 test('navigazione da servizio a descrizione BDD per tutti i servizi',()=>{
  for(const service of data.services){navigate({s:service.id});assert.equal(d.querySelector('h1').textContent,service.name);

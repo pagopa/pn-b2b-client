@@ -1,5 +1,5 @@
 'use strict';
-const catalog=JSON.parse(document.getElementById('catalog-data').textContent);
+const catalog=window.TEST_CATALOG;
 const main=document.getElementById('main');
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const url=p=>'#'+new URLSearchParams(Object.entries(p).filter(([,v])=>v!==undefined&&v!==null&&v!=='')).toString();
