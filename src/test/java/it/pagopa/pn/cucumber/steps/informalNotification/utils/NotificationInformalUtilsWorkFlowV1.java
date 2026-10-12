@@ -48,7 +48,7 @@ public class NotificationInformalUtilsWorkFlowV1 {
         if (expectedDetails.getChannel() != null) {
             assertEquals(expectedDetails.getChannel(), actualDetails.getChannel());
         }
-//todo t bonarie
+
         if (expectedDetails.getIsAvailable() != null) {
             assertEquals(expectedDetails.getIsAvailable(), actualDetails.getIsAvailable());
         }
