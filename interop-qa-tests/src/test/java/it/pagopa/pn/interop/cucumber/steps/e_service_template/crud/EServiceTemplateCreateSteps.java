@@ -125,7 +125,7 @@ public class EServiceTemplateCreateSteps {
         Assertions.assertTrue(httpCallExecutor.getResponseStatus().is2xxSuccessful());
         EServiceTemplateVersionDetails eServiceTemplateVersionDetails = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
 
-        Assertions.assertEquals(dailyCallsTotal, eServiceTemplateVersionDetails.getDailyCallsPerConsumer());
+        Assertions.assertEquals(dailyCallsTotal, eServiceTemplateVersionDetails.getDailyCallsTotal());
         Assertions.assertEquals(dailyCallsConsumer, eServiceTemplateVersionDetails.getDailyCallsPerConsumer());
     }
 
@@ -298,7 +298,6 @@ public class EServiceTemplateCreateSteps {
         testAssistant.mutateLastVersionState(desiredState);
     }
 
-    // TODO
     private void createEServiceTemplate(EServiceTemplateSeed templateSeed) {
         String userToken = sharedStepsContext.getUserToken();
         clientTokenConfigurator.setBearerToken(userToken);
