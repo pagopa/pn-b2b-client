@@ -502,7 +502,7 @@ Feature: Comunicazioni bonarie
     Then verifico che la chiamata sia andata in "400" error
 
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [COMBO_TEMPLATE_ENGINE_HTML-ESCAPE_1] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint coinvolti
     When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
     Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "<format>"
@@ -513,6 +513,5 @@ Feature: Comunicazioni bonarie
       | informal/email-communication-body          | html   | subject,sender.denomination,sender.service,recipient.denomination |
       | informal/pec-communication-body            | html   | subject,sender.denomination,sender.service,recipient.denomination |
       | informal/io-communication                  | text   | sender.denomination,recipient.denomination                        |
-#NON ESISTE      | informal/courtesy-email-communication-body | html   | subject,sender.denomination,sender.service,recipient.denomination |
 
 
