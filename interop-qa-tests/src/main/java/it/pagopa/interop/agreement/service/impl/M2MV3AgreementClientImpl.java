@@ -126,6 +126,11 @@ public class M2MV3AgreementClientImpl extends AbstractDPoPClient implements IM2M
     }
 
     @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Agreement archiveAgreement(UUID agreementId) {
+        return this.agreementsApi.archiveAgreement(agreementId);
+    }
+
+    @Override
     public void setBearerToken(String bearerToken) {
         throw new UnsupportedOperationException(V3_UNSUPPORTED_BEARER_MSG);
     }

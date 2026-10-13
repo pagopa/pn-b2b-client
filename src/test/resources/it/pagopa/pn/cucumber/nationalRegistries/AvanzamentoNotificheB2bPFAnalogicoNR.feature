@@ -419,6 +419,7 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | details                | NOT_NULL                             |
       | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
+  # QA-17189 / PN-20973: verifica del rifiuto B2B; i risultati per indirizzo di Address Manager richiedono una verifica distinta.
   @validazioneDeduplica
   Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_14] Validazione VAS multidestinatario con un indirizzo estero incompleto
     Given viene generata una nuova notifica
@@ -437,9 +438,9 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
       | physicalAddress | NULL                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
     Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
-      | loadTimeline                | true                                                                     |
-      | details                     | NOT_NULL                                                                 |
-      | details_refusalReasons      | [{"recIndex": 0, "errorCode": "NOT_VALID_ADDRESS"}, {"recIndex": 1, "errorCode": "NOT_VALID_ADDRESS"}] |
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
 
 #  seguono test sulla deduplica su ANPR reale - solo ambiente UAT
