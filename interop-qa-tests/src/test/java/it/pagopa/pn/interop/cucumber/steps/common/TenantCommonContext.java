@@ -13,4 +13,5 @@ import org.springframework.stereotype.Component;
 public class TenantCommonContext {
     private Boolean isTenantDelegationsAllowed;
     private String consumerTenantName;
+    private String consumerTenantType;
 }

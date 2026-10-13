@@ -82,6 +82,29 @@ public class DataPreparationServiceTemplate {
         );
     }
 
+    public void rejectAgreement(UUID agreementId) {
+        String currentTenantType = sharedStepsContext.getTenantCommonContext().getConsumerTenantType();
+        // Imposta il token del tenant principale
+        clientTokenConfigurator.setBearerToken(
+                sharedStepsContext.getIdentityService().getToken(sharedStepsContext.getTenantType(), null)
+        );
+        httpCallExecutor.performCall(() -> agreementClient.rejectAgreement(
+                agreementId,
+                new AgreementRejectionPayload().reason("Agreement rejected during QA"))
+        );
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> agreementClient.getAgreementById(agreementId),
+                res -> res.getState().equals(AgreementState.REJECTED),
+                "There was an error while rejecting the agreement"
+        );
+        // Ripristina il token del tenant corrent
+        clientTokenConfigurator.setBearerToken(
+                sharedStepsContext.getIdentityService().getToken(currentTenantType, null)
+        );
+    }
+
     public UUID createAgreementWithGivenState(CreateAgreementWithStateOperation op, UpperAgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
         // agreement in state DRAFT
         UUID agreementId = createAndCheckAgreement(op.getCreateAndCheckAgreementOperation(), eServiceID, descriptorId, delegationId);
