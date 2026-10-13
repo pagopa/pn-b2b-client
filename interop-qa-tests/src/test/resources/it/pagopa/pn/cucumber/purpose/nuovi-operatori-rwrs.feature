@@ -251,3 +251,4 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       Then si ottiene status code 200 e la finalità in stato "ACTIVE"
       And lo stato della compilazione dell'analisi del rischio è "SIGNED"
 
+

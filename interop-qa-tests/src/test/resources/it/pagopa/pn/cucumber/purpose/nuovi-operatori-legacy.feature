@@ -17,3 +17,4 @@ Feature: Verifiche legacy della feature Nuovi Operatori su finalita senza workfl
 	  | ACTIVE        |
 	  | SUSPENDED     |
 
+

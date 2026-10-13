@@ -42,3 +42,4 @@ Feature: Funzionalità della feature Nuovi Operatori in caso di feature flag dis
 	Given l'utente è un "reviewer" di "PA2"
 	When tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
 	Then si ottiene status code 501
+
