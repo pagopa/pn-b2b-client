@@ -2,6 +2,7 @@
 Feature: Clonazione di un e-service
   Tutti gli utenti autorizzati di enti erogatori possono clonare un proprio e-service e il relativo descrittore in stato PUBLISHED, SUSPENDED
 
+  @delegation-duplication
   @nrt-minimal
   @eservice_cloning1
   @nrt-minimal
