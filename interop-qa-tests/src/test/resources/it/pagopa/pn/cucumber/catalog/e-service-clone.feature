@@ -85,7 +85,7 @@ Feature: Clonazione di un e-service
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'e-service è in stato "<eserviceState>"
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 204
     And la delega in erogazione è ancora associata all'e-service oggetto della duplicazione
@@ -93,20 +93,30 @@ Feature: Clonazione di un e-service
     And l'e-service clonato non ha ereditato la delega in erogazione dall'e-service oggetto della duplicazione
 
     Examples:
-      | eserviceState |
-      | PUBLISHED     |
-      | SUSPENDED     |
+      | eserviceState | ruolo        |
+      | PUBLISHED     | admin        |
+      | PUBLISHED     | api          |
+      | PUBLISHED     | api,security |
+      | SUSPENDED     | admin        |
+      | SUSPENDED     | api          |
+      | SUSPENDED     | api,security |
 
   @happy-path
   @delegation-duplication
-  Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_1.2] L'ente delegante può duplicare un e-service in stato PUBLISHED con richiesta di delega in erogazione pending
+  Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_1.2] L'ente delegante può duplicare un e-service in stato PUBLISHED con richiesta di delega in erogazione pending
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   @delegation-duplication
@@ -139,15 +149,19 @@ Feature: Clonazione di un e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
 
     Examples:
-      | eserviceState |
-      | PUBLISHED     |
-      | SUSPENDED     |
+      | eserviceState | ruolo        |
+      | PUBLISHED     | admin        |
+      | PUBLISHED     | api          |
+      | PUBLISHED     | api,security |
+      | SUSPENDED     | admin        |
+      | SUSPENDED     | api          |
+      | SUSPENDED     | api,security |
 
   @sad-path
   @delegation-duplication
@@ -168,7 +182,7 @@ Feature: Clonazione di un e-service
 
   @happy-path
   @delegation-duplication
-  Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.4] L'ente delegante può duplicare la vecchia versione in stato DEPRECATED di un e-service in delega in erogazione
+  Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.4] L'ente delegante può duplicare la vecchia versione in stato DEPRECATED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -179,10 +193,16 @@ Feature: Clonazione di un e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   @delegation-duplication
@@ -202,7 +222,7 @@ Feature: Clonazione di un e-service
 
   @happy-path
   @delegation-duplication
-  Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.6] L'ente delegante può duplicare la vecchia versione in stato ARCHIVED di un e-service in delega in erogazione
+  Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.6] L'ente delegante può duplicare la vecchia versione in stato ARCHIVED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -212,10 +232,16 @@ Feature: Clonazione di un e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   @delegation-duplication
@@ -257,16 +283,22 @@ Feature: Clonazione di un e-service
 
   @happy-path
   @delegation-duplication
-  Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_REVOCATION_1.1] L'erogatore può duplicare un e-service in stato PUBLISHED dopo aver revocato la delega in erogazione precedentemente attiva
+  Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_REVOCATION_1.1] L'erogatore può duplicare un e-service in stato PUBLISHED dopo aver revocato la delega in erogazione precedentemente attiva
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And l'ente "PA1" con ruolo "admin" revoca la delega in erogazione con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   @delegation-duplication
@@ -293,15 +325,21 @@ Feature: Clonazione di un e-service
 
   @happy-path
   @delegation-duplication
-  Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_REJECTION_1.2] L'erogatore può duplicare un e-service in stato PUBLISHED dopo il rifiuto della richiesta di delega in erogazione da parte del potenziale delegato
+  Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_REJECTION_1.2] L'erogatore può duplicare un e-service in stato PUBLISHED dopo il rifiuto della richiesta di delega in erogazione da parte del potenziale delegato
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" rifiuta la delega in erogazione con successo
-    And l'utente è un "admin" di "PA1"
+    And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 200
     And l'e-service è stato clonato con successo
+
+    Examples:
+      | ruolo        |
+      | admin        |
+      | api          |
+      | api,security |
 
   @sad-path
   @delegation-duplication
