@@ -439,7 +439,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
 
   @informalNotificationsMonitorCampaign
   Scenario Outline: [NOTIFICHE_BONARIE_MONITOR_CAMPAGNA_02_1]
-    Given il recupero dei dati statistici della campagna "<id_campagna>" fallisce con errore 400
+    Given la pa "Comune_Multi" tenta il recupero dei dati statistici della campagna "<id_campagna>" con errore 404
     Examples:
       | id_campagna |
       | 123         |

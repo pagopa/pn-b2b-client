@@ -46,8 +46,8 @@ public class InformalDataTestV1 {
                     .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                     .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
                     .digitalAddress(digitalAddress)
-                    .isAvailable(isAvailable != null ? Boolean.valueOf(isAvailable) : null)
-                    .isTosAccepted(isTosAccepted != null ? Boolean.valueOf(isTosAccepted) : null)
+                    .isAvailable(parseBooleanStrict(isAvailable))
+                    .isTosAccepted(parseBooleanStrict(isTosAccepted))
                     .sentAttemptMade(sentAttemptMade != null ? Integer.valueOf(sentAttemptMade) : null)
                     .sourceElementId(sourceElementId)
                     .channel(channel)
@@ -66,5 +66,18 @@ public class InformalDataTestV1 {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Boolean parseBooleanStrict(String value) {
+        if (value == null) {
+            return null;
+        }
+        if ("true".equalsIgnoreCase(value)) {
+            return true;
+        }
+        if ("false".equalsIgnoreCase(value)) {
+            return false;
+        }
+        throw new IllegalArgumentException("Invalid boolean value: '" + value + "'. Expected 'true' or 'false'.");
     }
 }

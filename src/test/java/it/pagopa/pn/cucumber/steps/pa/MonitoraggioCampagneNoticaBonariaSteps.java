@@ -3,7 +3,6 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model.CampaignStatisticsResponse;
-import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.data.CampaignCounter;
@@ -39,17 +38,16 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
     @Given("vengono salvati i dati statistici attuali della campagna {string} associata all' ente {string}")
     public void saveCampaignStatistics(String campaignId, String paName) {
 
-        SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
-        this.currentCxId = paInfo.getSenderId();
+        this.currentCxId = sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
         initialCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
         assertNotNull(initialCampaignStatistics);
     }
 
-    @Then("il recupero dei dati statistici della campagna {string} fallisce con errore {int}")
-    public void getCampaignStatisticsExpectError(String campaignId, int expectedStatus) {
+    @Then("la pa {string} tenta il recupero dei dati statistici della campagna {string} con errore {int}")
+    public void getCampaignStatisticsExpectError(String paName, String campaignId, int expectedStatus) {
 
         try {
-            pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
+            pnPaB2bInternalInformalClientImpl.getCampaignStatistics(sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId(), campaignId);
             fail("Atteso errore " + expectedStatus + " ma la richiesta è andata a buon fine");
 
         } catch (HttpClientErrorException ex) {
@@ -94,16 +92,20 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
             int currentValue = finalCampaignStatistics != null ? counter.extract(finalCampaignStatistics.getStats()) : -1;
             fail(String.format(
                     """
-                    Timeout verifica contatore.
-                    Campagna=%s
-                    IUN=%s
-                    Counter=%s
-                    Initial=%d
-                    Current=%d
-                    Expected=%d
-                    """,
+                            Timeout verifica contatore.
+                            Campagna=%s
+                            IUN=%s
+                            Counter=%s
+                            Initial=%d
+                            Current=%d
+                            Expected=%d
+                            """,
                     campaignId, sharedSteps.getNotificationIun(), counterName, initialValue, currentValue, initialValue + increment));
         }
+    }
+
+    private String getSenderId(String paName) {
+        return sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
     }
 }
 

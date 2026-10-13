@@ -46,13 +46,13 @@ Feature: Comunicazioni bonarie
   Scenario: [COMBO_TEMPLATE_ENGINE_03_2_A] Richiamare l’API per il recupero del template relativo al oggetto di avviso di cortesia dell'EMAIL
     When recupero il template per "email subject avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "text"
-    And il corpo del messaggio contiene il testo "Per avere maggiori informazioni **prendi visione degli allegati**, che possono fornirti dettagli importanti. Ma ricorda: saranno disponibili online per 180 giorni, quindi salvali sul tuo dispositivo."
+    And il corpo del messaggio contiene il testo "Hai ricevuto una comunicazione da senderDenomination con oggetto: subject"
 
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-body
   Scenario: [COMBO_TEMPLATE_ENGINE_03_2_B] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'EMAIL
     When recupero il template per "email body avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
-    Then verifico che il template è in formato "text"
-    And il corpo del messaggio contiene il testo "recipientDenomination ha ricevuto una comunicazione da senderDenomination con oggetto: subject"
+    Then verifico che il template è in formato "htlm"
+    And il corpo del messaggio contiene il testo "Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti."
 
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
     Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS

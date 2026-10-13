@@ -58,9 +58,9 @@ public class TemplateConfiguration {
         map.put(TemplateType.COMUNICAZIONE_BONARIA_IO, new InformalIOCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.COMUNICAZIONE_BONARIA_SMS, new InformalSmsCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
 
-        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_BODY, new InformalPecCommunicationSubjectStrategy(templateEngineClient, templateEngineConfigBean));
-        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_SUBJECT, new InformalIOCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
-        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_SMS, new InformalSmsCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_BODY, new InformalEmailCourtesyBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_SUBJECT, new InformalEmailCourtesySubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_SMS, new InformalSmsCourtesyStrategy(templateEngineClient, templateEngineConfigBean));
 
         return map;
     }
