@@ -181,7 +181,7 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         String iun = sharedSteps.getNotificationIun();
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+        await().atMost(Duration.ofSeconds(30)).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
 
             List<Map<String, AttributeValue>> items = retrieveRegistryRequests(cf, eservice, iun);
             assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty();
