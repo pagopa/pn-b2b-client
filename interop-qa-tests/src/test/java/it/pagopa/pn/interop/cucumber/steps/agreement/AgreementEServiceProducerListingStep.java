@@ -68,13 +68,16 @@ public class AgreementEServiceProducerListingStep {
     @Then("^l'utente recupera la lista di e-service in erogazione e (non |)contiene il (vecchio|nuovo) e-service creato con filtro:$")
     public void getProducerEServiceListWithName(String operation, String eServiceRef, DataTable data) {
         List<AgreementState> stateFilterList;
+        String namePart;
         if (data != null) {
             Map<String, String> filterMap = data.asMap(String.class, String.class);
             stateFilterList = Arrays.stream(filterMap.get("agreementState").split(","))
                     .map(AgreementState::valueOf)
                     .toList();
+            namePart = filterMap.getOrDefault("namePart", null);
         } else {
             stateFilterList = new ArrayList<>();
+            namePart = null;
         }
 
         String checkName = ("vecchio".equals(eServiceRef)) ?
@@ -87,14 +90,14 @@ public class AgreementEServiceProducerListingStep {
         // offset avrà uno scarto di 10 e-service, tra max limit 50 e -40 al conteggio totale
         // perché facendo più tentativo, se viene creato qualche nuovo e-service, non si perderà
         httpCallExecutor.performCall(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 1, null, stateFilterList)
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(0, 1, namePart, stateFilterList)
         );
         Assertions.assertEquals(HttpStatus.valueOf(200), httpCallExecutor.getResponseStatus());
         int count = ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getPagination().getTotalCount();
         int offset = Math.max((count - 40), 0);
 
         PollingService.makePolling(
-                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(offset, 50, null, stateFilterList),
+                () -> clientTokenConfigurator.getAgreementClient().getAgreementEServiceProducers(offset, 50, namePart, stateFilterList),
                 res -> {
                     List<CompactEServiceLight> list = res.getBody().getResults();
                     boolean found = false;
