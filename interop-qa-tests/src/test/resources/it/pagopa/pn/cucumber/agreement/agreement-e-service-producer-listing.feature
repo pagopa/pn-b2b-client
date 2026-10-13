@@ -10,8 +10,12 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "<ente>" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
     When "PA1" ha una richiesta di fruizione in stato "DRAFT" per quell'e-service
-    Then l'utente recupera la lista di e-service in erogazione e contiene il vecchio e-service creato
-    And l'utente recupera la lista di e-service in erogazione e non contiene il nuovo e-service creato
+    And l'utente è un "<ruolo>" di "<ente>"
+    And l'utente recupera la lista di e-service in erogazione e contiene il nuovo e-service creato
+    Then l'utente recupera la lista di e-service in erogazione e contiene il vecchio e-service creato con filtro:
+      | agreementState | ACTIVE |
+    And l'utente recupera la lista di e-service in erogazione e non contiene il nuovo e-service creato con filtro:
+      | agreementState | ACTIVE |
 
     Examples: 
       | ente | ruolo        |
