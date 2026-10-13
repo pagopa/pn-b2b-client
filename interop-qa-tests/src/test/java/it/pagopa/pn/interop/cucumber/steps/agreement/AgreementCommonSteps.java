@@ -226,12 +226,20 @@ public class AgreementCommonSteps {
 
     @Given("{string} ha già creato un e-service in stato {string} con approvazione {string}")
     public void tenantHasAlreadyCreatedEServiceWithStatusAndApproval(String tenantType, String descriptorState, String agreementApprovalPolicy) {
+        tenantHasAlreadyCreatedEServiceWithStatusAndApproval(tenantType, "e-service", descriptorState, agreementApprovalPolicy);
+    }
+
+    @Given("{string} ha già creato un e-service con prefisso {string} in stato {string} con approvazione {string}")
+    public void tenantHasAlreadyCreatedEServiceWithStatusAndApproval(String tenantType, String prefix, String descriptorState, String agreementApprovalPolicy) {
         sharedStepsContext.getEServicesCommonContext().setOldName(sharedStepsContext.getEServicesCommonContext().getName());
 
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
-        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(),
-                new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(agreementApprovalPolicy)));
+        EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
+                new EServiceSeed(),
+                new UpdateEServiceDescriptorSeed().agreementApprovalPolicy(AgreementApprovalPolicy.valueOf(agreementApprovalPolicy)),
+                prefix
+        );
 
         dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(descriptorState), false);
