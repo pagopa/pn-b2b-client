@@ -29,7 +29,7 @@ Feature: produzione del documento di annullamento notifica
     Then tra gli elementi di timeline versione "V24" di categoria "NOTIFICATION_CANCELLED" non sono presenti legalFacts con categoria "NOTIFICATION_CANCELLED"
     Then tra gli elementi di timeline versione "V23" di categoria "NOTIFICATION_CANCELLED" non sono presenti legalFacts con categoria "NOTIFICATION_CANCELLED"
 
-  @attestatoAnnullamentoNotifica @precondition @webhook2 @cleanWebhook
+  @attestatoAnnullamentoNotifica @precondition @webhook3 @cleanWebhook
     # NOTA: il nuovo elemento di Timeline NOTIFICATION_CANCELLED_DOCUMENT_CREATION_REQUEST è nascosto lato API.
       # In fase di test manuale, commentare l'annotation @cleanWebhook per consentire al tester di avere il tempo materiale di controllare a DB la versione degli stream
   Scenario: [ATTESTATO_ANNULLAMENTO_WEBHOOK]

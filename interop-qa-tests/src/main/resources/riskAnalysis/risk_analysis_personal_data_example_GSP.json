@@ -1,0 +1,53 @@
+{
+  "version": "2.1",
+  "answers": {
+    "purpose": [
+      "INSTITUTIONAL"
+    ],
+    "institutionalPurpose": [
+      "asdasdasdasd"
+    ],
+    "usesPersonalData": [
+      "YES"
+    ],
+    "personalDataTypes": [
+      "WITH_NON_IDENTIFYING_DATA"
+    ],
+    "legalBasis": [
+      "CONSENT"
+    ],
+    "knowsDataQuantity": [
+      "NO"
+    ],
+    "deliveryMethod": [
+      "CLEARTEXT"
+    ],
+    "policyProvided": [
+      "YES"
+    ],
+    "policyProvidedMedium": [
+      "ONLINE"
+    ],
+    "policyProvidedOnlineLink": [
+      "www.informativa.it"
+    ],
+    "confirmPricipleIntegrityAndDiscretion": [
+      "true"
+    ],
+    "doneDpia": [
+      "NO"
+    ],
+    "dataDownload": [
+      "NO"
+    ],
+    "purposePursuit": [
+      "MERE_CORRECTNESS"
+    ],
+    "checkedExistenceMereCorrectnessInteropCatalogue": [
+      "true"
+    ],
+    "declarationConfirmGDPR": [
+      "true"
+    ]
+  }
+}

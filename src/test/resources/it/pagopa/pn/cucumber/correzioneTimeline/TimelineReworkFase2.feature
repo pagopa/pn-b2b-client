@@ -581,7 +581,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V25" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V25"
 
-  @timelineReworkF2 @cleanWebhook @webhookV28 @webhook2 @precondition
+  @timelineReworkF2 @cleanWebhook @webhookV28 @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13C] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
     And si crea il nuovo stream per il "Comune_2" con versione "V28" e filtro status "DEFAULT"
@@ -606,7 +606,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V28" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V28"
 
-  @timelineReworkF2 @cleanWebhook @webhook2 @precondition
+  @timelineReworkF2 @cleanWebhook @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13D] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro status "DEFAULT"

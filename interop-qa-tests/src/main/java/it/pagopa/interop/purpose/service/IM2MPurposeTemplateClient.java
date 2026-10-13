@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import java.util.UUID;
 
 public interface IM2MPurposeTemplateClient extends SettableBearerToken {
+
     @Data
     @Builder
     class PurposeTemplatePatchRequest {
@@ -24,4 +25,5 @@ public interface IM2MPurposeTemplateClient extends SettableBearerToken {
     PurposeTemplate patchPurposeTemplate(UUID id, PurposeTemplateDraftUpdateSeed purposePatchSeed);
     Document uploadRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID answerId, String prettyName, Resource file);
     FileDownloadMultipart getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID documentId);
+    RiskAnalysisFormTemplate replacePurposeTemplateRiskAnalysis(UUID templateId, RiskAnalysisFormTemplateSeed updateSeed);
 }
