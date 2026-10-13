@@ -16,6 +16,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -27,18 +28,52 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final BFFDataPreparationService dataPreparationService;
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
+    private final PurposeRiskAnalysisAssignSteps assignmentSteps;
     private RiskAnalysis compiledRiskAnalysis;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
             SharedStepsContext sharedStepsContext,
-            BFFDataPreparationService dataPreparationService
+            BFFDataPreparationService dataPreparationService,
+            PurposeRiskAnalysisAssignSteps assignmentSteps
     ) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.identityService = sharedStepsContext.getIdentityService();
+        this.assignmentSteps = assignmentSteps;
+    }
+
+    /** Richiede una finalità esistente senza workflow e l'amministratore del fruitore selezionato. */
+    @Given("si ha una compilazione dell'analisi del rischio in modalità {riskAnalysisReviewMode} in stato {string}")
+    public void prepareRiskAnalysisCompilation(RiskAnalysisReviewMode mode, String state) {
+        RiskAnalysisSigningState desiredState = RiskAnalysisSigningState.valueOf(state.toUpperCase(Locale.ROOT));
+        boolean adminWrites = mode == RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
+        List<RiskAnalysisSigningState> allowedStates = adminWrites
+                ? List.of(RiskAnalysisSigningState.DRAFT, RiskAnalysisSigningState.SUBMITTED,
+                          RiskAnalysisSigningState.SIGNED, RiskAnalysisSigningState.REJECTED)
+                : List.of(RiskAnalysisSigningState.ASSIGNED, RiskAnalysisSigningState.SIGNED);
+        if (!allowedStates.contains(desiredState)) {
+            throw new IllegalArgumentException("Stato " + state + " non ammesso per la modalità " + mode);
+        }
+
+        assignmentSteps.userAssignsReviewerWithModeSuccessfully(
+                adminWrites ? "AdminWritesReviewerSigns" : "ReviewerWritesReviewerSigns");
+        if (adminWrites) {
+            compilesRiskAnalysisViaGenericEndpointSuccessfully();
+            if (desiredState != RiskAnalysisSigningState.DRAFT) {
+                userSubmitsRiskAnalysisSuccessfully();
+            }
+        } else {
+            assignedReviewerCompilesRiskAnalysisSuccessfully();
+        }
+        if (desiredState == RiskAnalysisSigningState.SIGNED) {
+            assignedReviewerSignsRiskAnalysisSuccessfully();
+        } else if (desiredState == RiskAnalysisSigningState.REJECTED) {
+            assignedReviewerRejectsRiskAnalysisSuccessfully();
+        }
+        verifyRiskAnalysisSigningState(desiredState.name());
     }
 
     @When("il valutatore assegnato compila l'analisi del rischio della finalità")

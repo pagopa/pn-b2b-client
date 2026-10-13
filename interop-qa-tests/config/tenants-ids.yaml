@@ -13,7 +13,7 @@ userRoles:
   security: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
   "api,security": [ "e490f02e-9429-4b38-bb11-ddb8a561fb62" ]
   support: [ "e0477bcc-3baf-4755-aa31-375c051acb44" ]
-  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf" ]
+  reviewer: [ "f8cda410-622d-47a6-9365-506b361258cf", "6813bc84-8650-4e24-9ba2-f4c04fb5f5f2" ]
   viewer: [ "46af2a8a-6c77-4b95-83a1-9748b4c64cc4" ]
 tenantName:
   dev: "PagoPA S.p.A."

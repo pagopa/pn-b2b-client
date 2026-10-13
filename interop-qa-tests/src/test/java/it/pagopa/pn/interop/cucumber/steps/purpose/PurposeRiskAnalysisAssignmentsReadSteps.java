@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.Purposes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSigningState;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
 
 import java.util.HashSet;
 import java.util.List;
@@ -145,6 +146,81 @@ public class PurposeRiskAnalysisAssignmentsReadSteps {
                 .as("La risposta delle assegnazioni deve contenere 0 risultati")
                 .isNotNull()
                 .isEmpty();
+    }
+
+    @Then("ai valutatori assegnati risulta correttamente assegnata la finalità")
+    public void verifyPurposeAssignedToAllReviewers() {
+        List<AssignedReviewerActorRef> reviewers = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
+        assertThat(reviewers)
+                .as("Nel contesto devono essere presenti i valutatori assegnati")
+                .isNotEmpty();
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        String previousToken = sharedStepsContext.getUserToken();
+        try {
+            clientTokenConfigurator.setBearerToken(previousToken);
+            UUID eserviceId = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getEservice().getId();
+            for (AssignedReviewerActorRef reviewer : reviewers) {
+                clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(
+                        reviewer.tenantType(), reviewer.role(), reviewer.index()));
+                sharedStepsContext.getPollingService().makePolling(
+                        () -> isPurposeAssigned(purposeId, eserviceId),
+                        Boolean.TRUE::equals,
+                        String.format("La finalità %s dell'e-service %s non risulta assegnata al valutatore (%s,%s,%d)",
+                                purposeId, eserviceId, reviewer.tenantType(), reviewer.role(), reviewer.index())
+                );
+            }
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
+    }
+
+    @Then("i valutatori rimossi nel passaggio da {integerList} a {integerList} non vedono più la finalità nelle assegnazioni")
+    public void verifyPurposeNotAssignedToRemovedReviewers(List<Integer> initialReviewers, List<Integer> finalReviewers) {
+        assertThat(initialReviewers).allMatch(index -> index > 0);
+        assertThat(finalReviewers).allMatch(index -> index > 0);
+        Set<Integer> removedReviewers = new HashSet<>(initialReviewers);
+        finalReviewers.forEach(removedReviewers::remove);
+        if (removedReviewers.isEmpty()) {
+            return; // Nei casi di sola aggiunta non ci sono valutatori rimossi.
+        }
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        String tenantType = sharedStepsContext.getTenantType();
+        String previousToken = sharedStepsContext.getUserToken();
+        try {
+            clientTokenConfigurator.setBearerToken(previousToken);
+            UUID eserviceId = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getEservice().getId();
+            for (int reviewer : removedReviewers) {
+                clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(
+                        tenantType, "reviewer", reviewer - 1));
+                sharedStepsContext.getPollingService().makePolling(
+                        () -> isPurposeAssigned(purposeId, eserviceId),
+                        Boolean.FALSE::equals,
+                        String.format("La finalità %s risulta ancora assegnata al valutatore rimosso %s di %s",
+                                purposeId, reviewer, tenantType)
+                );
+            }
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
+    }
+
+    private boolean isPurposeAssigned(UUID purposeId, UUID eserviceId) {
+        int limit = 50;
+        for (int offset = 0; ; offset += limit) {
+            Purposes assignments = clientTokenConfigurator.getPurposeApiClient().getRiskAnalysisAssignments(
+                    offset, limit, List.of(eserviceId), null);
+            assertThat(assignments).as("La risposta delle assegnazioni non deve essere nulla").isNotNull();
+            List<Purpose> results = assignments.getResults();
+            assertThat(results).as("I risultati delle assegnazioni non devono essere nulli").isNotNull();
+            if (results.stream().anyMatch(purpose -> purposeId.equals(purpose.getId()))) {
+                return true;
+            }
+            if (results.size() < limit) {
+                return false;
+            }
+        }
     }
 
     private void queryAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states) {
