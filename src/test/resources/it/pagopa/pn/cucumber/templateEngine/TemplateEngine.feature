@@ -758,7 +758,7 @@ Feature: Template engine
   # HTML ESCAPE FUZZING
   # ---------------------------------------------------------------------------
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_A] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint PDF
     When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
     Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "pdf"
@@ -775,7 +775,7 @@ Feature: Template engine
       | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                                                                                 |
       | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
     When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
     Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "html"
@@ -787,7 +787,7 @@ Feature: Template engine
       | notification-aar-for-pec                   | notification.subject,notification.sender.paDenomination           |
       | notification-cce-for-email                 | denomination                                                      |
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_2] Verifica escaping dei singoli caratteri e delle combinazioni sui diversi formati
     When eseguo il corpus di fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sul campo "<field>"
     Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "<format>"
