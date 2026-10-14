@@ -474,7 +474,7 @@ public class BFFDataPreparationService {
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, String eServicePrefix) {
         EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format(eServicePrefix + " %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+.name(String.format("%s %d", eServicePrefix, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
