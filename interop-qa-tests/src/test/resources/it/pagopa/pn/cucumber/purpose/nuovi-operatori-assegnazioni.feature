@@ -165,6 +165,16 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
       | support  |
       | security |
 
+  # PST: https://pagopa.atlassian.net/wiki/x/KAH_x
+  # CDT 1.1: variazioni dei valutatori e della modalità.
+  # CDT 7.2 (Examples M2M): aggiunta a un'assegnazione esistente, 1 -> 1,2
+  # e 1,2 -> 1,2,3,4, mantenendo tutti i valutatori già assegnati.
+  # Prime assegnazioni singole e multiple in M2M_RA_REVIEW_01.
+  # CDT 7.3 (Examples M2M), copertura parziale: rimozione singola 1,2 -> 1.
+  # La sostituzione 1 -> 2 verifica l'esclusione del precedente valutatore,
+  # ma non copre la precondizione del CDT 7.3 di più valutatori iniziali.
+  # TODO CDT 7.3: rimozione simultanea di più valutatori (es. 1,2,3,4 -> 1,2)
+  # e sostituzione completa di un gruppo (es. 1,2 -> 3,4).
   Scenario Outline: [ASSIGN_MORE_REVIEWERS_01] <apiSet> - <caso> da <modeIniziale>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -199,14 +209,22 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
       | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
       | M2M    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
       | M2M    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
+      # CDT 7.4: modifica prima della firma in mode 2, stato DRAFT.
       | M2M    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
       | M2M    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
       | M2M    | Aggiunta - singolo a multipli           | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 1,2            | ReviewerWritesReviewerSigns |
       | M2M    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
+      # CDT 7.4: modifica prima della firma in mode 3, stato ASSIGNED.
+      # Verificare che mode 2 (AdminWritesReviewerSigns) non preveda lo stato ASSIGNED.
       | M2M    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
       | M2M    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
+      # CDT 7.2: più valutatori già assegnati nel Given; aggiunta di 3 e 4 senza rimuovere 1 e 2.
+      | M2M    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
+      | M2M    | Aggiunta multipla a gruppo esistente    | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1,2,3,4        | ReviewerWritesReviewerSigns |
 
-  # Caso di test 7.4: modifica consentita prima di firma o pubblicazione.
+  # CDT 7.2: prima assegnazione singola e multipla via M2M.
+  # CDT 7.4: mode 1 non pubblicata e mode 2 in SUBMITTED/REJECTED.
+  # Mode 2 DRAFT e mode 3 ASSIGNED sono coperti dagli Examples M2M di ASSIGN_MORE_REVIEWERS_01.
   @m2m-ra-review
   Scenario Outline: [M2M_RA_REVIEW_01] Modifica assegnazione prima di firma o pubblicazione - <caso>
     Given "PA1" ha già creato e pubblicato 1 e-service
@@ -215,18 +233,17 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And l'utente è un "admin" di "GSP"
     And si ha un'analisi del rischio non firmata in modalità <modeIniziale> in stato "<statoIniziale>"
     When l'utente è un amministratore del profilo API M2M dell'ente "GSP"
-    And l'utente tenta di assegnare i valutatori 2 alla finalità in modalità <modeFinale>
+    And l'utente tenta di assegnare i valutatori <reviewerFinali> alla finalità in modalità <modeFinale>
     Then si ottiene status code 204
     And l'utente è un "admin" di "GSP"
-    And alla finalità sono associati esclusivamente i valutatori 2 in modalità <modeFinale>
+    And alla finalità sono associati esclusivamente i valutatori <reviewerFinali> in modalità <modeFinale>
     And ai valutatori assegnati risulta correttamente assegnata la finalità
 
     Examples:
-      | caso                                     | modeIniziale                 | statoIniziale | modeFinale                  |
-      | Mode 1 non pubblicata verso mode 2      | AdminWritesAdminSigns        | DRAFT         | AdminWritesReviewerSigns    |
-      | Mode 1 non pubblicata verso mode 3      | AdminWritesAdminSigns        | DRAFT         | ReviewerWritesReviewerSigns |
-      | Mode 2 DRAFT - sostituzione reviewer    | AdminWritesReviewerSigns     | DRAFT         | AdminWritesReviewerSigns    |
-      | Mode 2 SUBMITTED - sostituzione reviewer | AdminWritesReviewerSigns    | SUBMITTED     | AdminWritesReviewerSigns    |
-      | Mode 2 REJECTED - sostituzione reviewer  | AdminWritesReviewerSigns    | REJECTED      | AdminWritesReviewerSigns    |
-      # Verificare che mode 2 (AdminWritesReviewerSigns) non preveda lo stato ASSIGNED.
-      | Mode 3 ASSIGNED - sostituzione reviewer  | ReviewerWritesReviewerSigns | ASSIGNED      | ReviewerWritesReviewerSigns |
+      | caso                                           | modeIniziale                | statoIniziale | reviewerFinali | modeFinale                  |
+      | Mode 1 non pubblicata verso mode 2              | AdminWritesAdminSigns       | DRAFT         | 2              | AdminWritesReviewerSigns    |
+      | Mode 1 non pubblicata verso mode 3              | AdminWritesAdminSigns       | DRAFT         | 2              | ReviewerWritesReviewerSigns |
+      | Prima assegnazione multipla verso mode 2        | AdminWritesAdminSigns       | DRAFT         | 1,2            | AdminWritesReviewerSigns    |
+      | Prima assegnazione multipla verso mode 3        | AdminWritesAdminSigns       | DRAFT         | 1,2            | ReviewerWritesReviewerSigns |
+      | Mode 2 SUBMITTED - sostituzione reviewer        | AdminWritesReviewerSigns    | SUBMITTED     | 2              | AdminWritesReviewerSigns    |
+      | Mode 2 REJECTED - sostituzione reviewer         | AdminWritesReviewerSigns    | REJECTED      | 2              | AdminWritesReviewerSigns    |
