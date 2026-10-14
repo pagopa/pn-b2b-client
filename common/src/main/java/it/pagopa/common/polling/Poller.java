@@ -125,7 +125,7 @@ public final class Poller {
 
     private static void checkInterrupted() {
         if (Thread.currentThread().isInterrupted()) {
-            throw new PollingExecutionException("Polling interrotto", new InterruptedException());
+            throw new PollingExecutionException("Polling stopped", new InterruptedException());
         }
     }
 }
