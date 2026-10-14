@@ -12,12 +12,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Motore di polling comune a SEND e Interop basato su Awaitility.
+ * Motore di polling comune a SEND e Interop, basato su Awaitility.
  * <p>
  * La chiamata viene eseguita subito, sul thread chiamante, e poi ripetuta a ogni {@code interval}
  * finche' la condizione di stop non e' soddisfatta, oppure finche' non si esauriscono
- * {@code timeout} o {@code maxAttempts}. Nessun nuovo tentativo parte a timeout scaduto;
- * se il prossimo intervallo non rientra nel tempo residuo, il polling termina senza attendere.
+ * {@code timeout} o {@code maxAttempts}.
  * <ul>
  *     <li>condizione mai soddisfatta: {@link PollingTimeoutException} con l'ultimo valore letto;</li>
  *     <li>eccezione della chiamata o della condizione, thread interrotto: {@link PollingExecutionException}.</li>
