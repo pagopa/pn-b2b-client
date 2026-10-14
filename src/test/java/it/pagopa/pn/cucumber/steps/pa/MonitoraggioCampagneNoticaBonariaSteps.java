@@ -103,8 +103,30 @@ public class MonitoraggioCampagneNoticaBonariaSteps {
         }
     }
 
-    private String getSenderId(String paName) {
-        return sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
+    @Then("il contatore {string} della campagna {string} non ha avuto incrementi")
+    public void verifyCounterNotIncremented(String counterName, String campaignId) {
+
+        CampaignCounter counter = CampaignCounter.valueOf(counterName);
+        int initialValue = counter.extract(initialCampaignStatistics.getStats());
+
+        await()
+                .during(Duration.ofSeconds(30))
+                .atMost(Duration.ofMinutes(2))
+                .pollInterval(Duration.ofSeconds(5))
+                .until(() -> {
+
+                    finalCampaignStatistics = pnPaB2bInternalInformalClientImpl.getCampaignStatistics(currentCxId, campaignId);
+                    int currentValue = counter.extract(finalCampaignStatistics.getStats());
+                    log.info(
+                            "Campagna={}, IUN={}, Counter={}, Initial={}, Current={}",
+                            campaignId,
+                            sharedSteps.getNotificationIun(),
+                            counterName,
+                            initialValue,
+                            currentValue);
+
+                    return currentValue == initialValue;
+                });
     }
 }
 

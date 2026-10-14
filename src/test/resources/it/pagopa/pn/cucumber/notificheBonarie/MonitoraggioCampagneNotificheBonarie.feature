@@ -138,7 +138,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
     Then il contatore "NOTIFICHE_TOTALI" della campagna "ReminderMonitor" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_EMAIL" della campagna "ReminderMonitor" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "ReminderMonitor" risulta incrementato di 1
-    Then il contatore "NOTIFICHE_CONSEGNATE_EMAIL" della campagna "ReminderMonitor" risulta incrementato di 0
+    Then il contatore "NOTIFICHE_CONSEGNATE_EMAIL" della campagna "ReminderMonitor" non ha avuto incrementi
     Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "ReminderMonitor" risulta incrementato di 1
 
 
@@ -163,7 +163,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
     Then il contatore "NOTIFICHE_TOTALI" della campagna "ReminderMonitor" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "ReminderMonitor" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "ReminderMonitor" risulta incrementato di 1
-    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "ReminderMonitor" risulta incrementato di 0
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "ReminderMonitor" non ha avuto incrementi
     Then il contatore "NOTIFICHE_INVIATE_SU_CANALE" della campagna "ReminderMonitor" risulta incrementato di 1
 
 
@@ -229,7 +229,7 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | details_responseStatus | OK  |
     Then il contatore "NOTIFICHE_INVIATE_SMS" della campagna "ReminderMonitor" risulta incrementato di 1
     Then il contatore "NOTIFICHE_INVIATE_PEC" della campagna "ReminderMonitor" risulta incrementato di 1
-    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "ReminderMonitor" risulta incrementato di 0
+    Then il contatore "NOTIFICHE_CONSEGNATE_PEC" della campagna "ReminderMonitor" non ha avuto incrementi
 
 
   @informalNotificationsMonitorCampaign
