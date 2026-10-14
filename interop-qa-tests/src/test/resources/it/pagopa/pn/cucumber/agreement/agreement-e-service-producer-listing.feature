@@ -101,7 +101,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     And l'utente assegna a "PA2" gli attributi certificati precedentemente creati
     And "PA1" ha già creato un e-service con prefisso "listing7" in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC"
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    When l'utente revoca l'attributo precedentemente creato e assegnato
+    When l'utente revoca l'attributo precedentemente creato e assegnato a PA2
     And "PA1" ha già creato un e-service con prefisso "listing7" in stato "PUBLISHED" con approvazione "AUTOMATIC"
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And l'utente è un "admin" di "PA1"
