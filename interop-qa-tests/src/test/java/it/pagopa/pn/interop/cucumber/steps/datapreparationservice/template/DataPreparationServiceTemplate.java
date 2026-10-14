@@ -96,7 +96,8 @@ public class DataPreparationServiceTemplate {
     }
 
     public void rejectAgreement(UUID agreementId) {
-        String currentTenantType = sharedStepsContext.getTenantCommonContext().getConsumerTenantType();
+        String previousToken = clientTokenConfigurator.getLastToken();
+
         // Imposta il token del tenant principale
         clientTokenConfigurator.setBearerToken(
                 sharedStepsContext.getIdentityService().getToken(sharedStepsContext.getTenantType(), null)
@@ -112,10 +113,8 @@ public class DataPreparationServiceTemplate {
                 res -> res.getState().equals(AgreementState.REJECTED),
                 "There was an error while rejecting the agreement"
         );
-        // Ripristina il token del tenant corrent
-        clientTokenConfigurator.setBearerToken(
-                sharedStepsContext.getIdentityService().getToken(currentTenantType, null)
-        );
+        // Ripristina il token del tenant corrente se era impostato
+        if (previousToken != null) clientTokenConfigurator.setBearerToken(previousToken);
     }
 
     public UUID createAgreementWithGivenState(CreateAgreementWithStateOperation op, UpperAgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
