@@ -153,7 +153,7 @@ Feature: verifica consume stream
       | denomination             | Acme spa                   |
       | email                    | NULL                       |
       | digitalDomicile          | example@FAIL-pecFirstKO.it |
-      | physical_address_address | Via@OK_RIS                 |
+      | physical_address_address | Via@OK_RS                  |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "COVERPAGE_CREATION_REQUEST" della notifica bonaria
     And si attende che venga prodotto l'elemento "PREPARE_ANALOG_DELIVERY" della notifica bonaria
