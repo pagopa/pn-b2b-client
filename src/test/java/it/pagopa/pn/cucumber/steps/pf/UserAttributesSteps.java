@@ -3,55 +3,47 @@ package it.pagopa.pn.cucumber.steps.pf;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.common.http.HttpCallExecutor;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
 
-    private final IPnWebUserAttributesClient webUserAttributesClient;//B2B
-    private Consent consent;
-    private HttpStatusCodeException consentError;
+    private final PnWebUserAttributesInternalClientImpl webUserAttributesClient;
+    private final HttpCallExecutor httpCallExecutor;
 
 
     @Autowired
-    public UserAttributesSteps(PnWebUserAttributesInternalClientImpl webUserAttributesClient) {
+    public UserAttributesSteps(PnWebUserAttributesInternalClientImpl webUserAttributesClient, HttpCallExecutor httpCallExecutor) {
         this.webUserAttributesClient = webUserAttributesClient;
+        this.httpCallExecutor = httpCallExecutor;
     }
 
     @Given("Viene richiesto l'ultimo consenso di tipo {string}")
     public void vieneRichiestoUltimoConsensoTipo(String type) {
-        ConsentType consentType = null;
-        switch (type) {
-            case "TOS":
-                consentType = ConsentType.TOS;
-                break;
-            case "DATAPRIVACY":
-                consentType = ConsentType.DATAPRIVACY;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-        try {
-            consent = this.webUserAttributesClient.getConsentByType(consentType, null);
-            System.out.println("CONSENT: " + consent);
-        } catch (HttpStatusCodeException e) {
-            this.consentError = e;
-        }
+        httpCallExecutor.callForEntity(() -> {
+            ConsentType consentType = switch (type) {
+                case "TOS" -> ConsentType.TOS;
+                case "DATAPRIVACY" -> ConsentType.DATAPRIVACY;
+                default -> throw new IllegalArgumentException("Tipo di consenso non supportato");
+            };
+            return webUserAttributesClient.getConsentByTypeWithHttpInfo(consentType, null);
+        });
     }
 
     @Then("Il recupero del consenso non ha prodotto errori")
     public void recuperoDelConsensoNonHaProdottoErrori() {
-        Assertions.assertNull(consentError);
+        Assertions.assertTrue(httpCallExecutor.isSuccessful(),
+                "Il recupero del consenso non ha prodotto un esito HTTP di successo");
     }
 
     @And("Il consenso è accettato")
     public void ilConsensoAccettato() {
+        recuperoDelConsensoNonHaProdottoErrori();
+        Consent consent = httpCallExecutor.getResponseBody(Consent.class);
         Assertions.assertEquals(Boolean.TRUE, consent.getAccepted());
     }
 }
