@@ -175,30 +175,34 @@ public class PurposeRiskAnalysisAssignmentsReadSteps {
         }
     }
 
-    @Then("i valutatori rimossi nel passaggio da {integerList} a {integerList} non vedono più la finalità nelle assegnazioni")
-    public void verifyPurposeNotAssignedToRemovedReviewers(List<Integer> initialReviewers, List<Integer> finalReviewers) {
-        assertThat(initialReviewers).allMatch(index -> index > 0);
-        assertThat(finalReviewers).allMatch(index -> index > 0);
-        Set<Integer> removedReviewers = new HashSet<>(initialReviewers);
-        finalReviewers.forEach(removedReviewers::remove);
+    @Then("i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni")
+    public void verifyRemovedInitialReviewers() {
+        List<AssignedReviewerActorRef> initialActors = sharedStepsContext.getRiskAnalysisCommonContext().getInitialReviewerActors();
+        assertThat(initialActors).as("Il setup deve memorizzare i reviewer iniziali").isNotNull();
+        List<AssignedReviewerActorRef> finalActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
+        assertThat(finalActors).isNotNull();
+        verifyPurposeNotAssignedToRemovedReviewers(initialActors.stream()
+                .filter(actor -> !finalActors.contains(actor)).toList());
+    }
+
+    private void verifyPurposeNotAssignedToRemovedReviewers(List<AssignedReviewerActorRef> removedReviewers) {
         if (removedReviewers.isEmpty()) {
             return; // Nei casi di sola aggiunta non ci sono valutatori rimossi.
         }
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        String tenantType = sharedStepsContext.getTenantType();
         String previousToken = sharedStepsContext.getUserToken();
         try {
             clientTokenConfigurator.setBearerToken(previousToken);
             UUID eserviceId = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getEservice().getId();
-            for (int reviewer : removedReviewers) {
+            for (AssignedReviewerActorRef reviewer : removedReviewers) {
                 clientTokenConfigurator.setBearerToken(sharedStepsContext.getIdentityService().getToken(
-                        tenantType, "reviewer", reviewer - 1));
+                        reviewer.tenantType(), reviewer.role(), reviewer.index()));
                 sharedStepsContext.getPollingService().makePolling(
                         () -> isPurposeAssigned(purposeId, eserviceId),
                         Boolean.FALSE::equals,
                         String.format("La finalità %s risulta ancora assegnata al valutatore rimosso %s di %s",
-                                purposeId, reviewer, tenantType)
+                                purposeId, reviewer.index() + 1, reviewer.tenantType())
                 );
             }
         } finally {

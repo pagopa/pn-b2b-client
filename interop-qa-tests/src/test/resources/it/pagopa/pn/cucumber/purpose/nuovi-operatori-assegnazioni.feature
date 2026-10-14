@@ -186,7 +186,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And l'utente è un "admin" di "GSP"
     And alla finalità sono associati esclusivamente i valutatori <reviewerFinali> in modalità <modeFinale>
     And ai valutatori assegnati risulta correttamente assegnata la finalità
-    And i valutatori rimossi nel passaggio da <reviewerIniziali> a <reviewerFinali> non vedono più la finalità nelle assegnazioni
+    And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
     # Con quattro reviewer, i cambi di cardinalità singolo/multipli restano distinti
     # dalle aggiunte/rimozioni multiple che mantengono un gruppo e dalle sostituzioni di gruppo.
@@ -252,8 +252,11 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And l'utente è un "admin" di "GSP"
     And alla finalità sono associati esclusivamente i valutatori <reviewerFinali> in modalità <modeFinale>
     And ai valutatori assegnati risulta correttamente assegnata la finalità
+    And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
     Examples:
+      # Il controllo dei rimossi usa lo snapshot iniziale: lista vuota nei quattro casi mode 1.
+      # Le sostituzioni SUBMITTED/REJECTED verificano anche l'assenza del reviewer 1.
       | caso                                           | modeIniziale                | statoIniziale | reviewerFinali | modeFinale                  |
       | Mode 1 non pubblicata verso mode 2              | AdminWritesAdminSigns       | DRAFT         | 2              | AdminWritesReviewerSigns    |
       | Mode 1 non pubblicata verso mode 3              | AdminWritesAdminSigns       | DRAFT         | 2              | ReviewerWritesReviewerSigns |

@@ -169,8 +169,7 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
 
     @Override
     public void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentRequest payload) throws RestClientException {
-        Object request = payload.toM2MRequest();
-        // TODO: Implementare non appena saranno rilasciate le specifiche della API.
+        purposesApi.assignRiskAnalysisReviewer(purposeId, payload.toM2MRequest());
     }
 
     @Override

@@ -31,6 +31,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final IdentityService identityService;
     private final PurposeRiskAnalysisAssignSteps assignmentSteps;
     private RiskAnalysis compiledRiskAnalysis;
+    private RiskAnalysisFormSeed lastCompiledForm;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -79,6 +80,7 @@ public class PurposeRiskAnalysisCompilationSteps {
             assignedReviewerRejectsRiskAnalysisSuccessfully();
         }
         verifyRiskAnalysisSigningState(desiredState.name());
+        sharedStepsContext.getRiskAnalysisCommonContext().rememberInitialReviewers();
     }
 
     @Given("si ha un'analisi del rischio non firmata in modalità {riskAnalysisReviewMode} in stato {string}")
@@ -87,12 +89,10 @@ public class PurposeRiskAnalysisCompilationSteps {
             if (!"DRAFT".equals(state)) {
                 throw new IllegalArgumentException("Il flusso admin richiede una finalità DRAFT non pubblicata");
             }
-            verifyNoReviewerWorkflowInProgress();
+            assignmentSteps.assignWithoutReviewersSuccessfully(mode);
             compilesRiskAnalysisViaGenericEndpoint();
-            org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
-                    .as("La compilazione dell'analisi del rischio deve riuscire")
-                    .isTrue();
-            sharedStepsContext.getRiskAnalysisCommonContext().setAssignedReviewerActors(List.of());
+            verifyCompilationSuccessful();
+            assignmentSteps.verifyNoReviewersAndMode(mode);
             return;
         }
         if ("SIGNED".equalsIgnoreCase(state)) {
@@ -110,6 +110,7 @@ public class PurposeRiskAnalysisCompilationSteps {
                     .version(riskAnalysis.getRiskAnalysisForm().getVersion())
                     .answers(riskAnalysis.getRiskAnalysisForm().getAnswers());
             UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            lastCompiledForm = riskAnalysisForm;
             httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
         });
     }
@@ -129,6 +130,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     @Given("il valutatore assegnato compila l'analisi del rischio della finalità con successo")
     public void assignedReviewerCompilesRiskAnalysisSuccessfully() {
         assignedReviewerCompilesRiskAnalysis();
+        verifyCompilationSuccessful();
         verifyRiskAnalysisSigningState("ASSIGNED");
     }
 
@@ -252,6 +254,7 @@ public class PurposeRiskAnalysisCompilationSteps {
 
         compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
         riskAnalysisModifier.accept(compiledRiskAnalysis);
+        lastCompiledForm = compiledRiskAnalysis.getRiskAnalysisForm();
 
         // Use generic purpose update endpoint instead of dedicated risk analysis form endpoint
         PurposeUpdateContent updateContent = new PurposeUpdateContent()
@@ -266,7 +269,27 @@ public class PurposeRiskAnalysisCompilationSteps {
     @Given("compila l'analisi del rischio tramite endpoint generico con successo")
     public void compilesRiskAnalysisViaGenericEndpointSuccessfully() {
         compilesRiskAnalysisViaGenericEndpoint();
+        verifyCompilationSuccessful();
         verifyRiskAnalysisSigningState("DRAFT");
+    }
+
+    private void verifyCompilationSuccessful() {
+        org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus())
+                .as("La compilazione deve restituire uno status HTTP")
+                .isNotNull();
+        org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("Status HTTP della compilazione: %s", httpCallExecutor.getResponseStatus())
+                .isTrue();
+        org.assertj.core.api.Assertions.assertThat(lastCompiledForm).isNotNull();
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId),
+                purpose -> purpose.getRiskAnalysisForm() != null
+                        && java.util.Objects.equals(lastCompiledForm.getVersion(), purpose.getRiskAnalysisForm().getVersion())
+                        && java.util.Objects.equals(lastCompiledForm.getAnswers(), purpose.getRiskAnalysisForm().getAnswers()),
+                "Il form compilato dell'analisi del rischio non risulta persistito"
+        );
     }
 
     @Then("la variazione nell'analisi del rischio è stata persistita")

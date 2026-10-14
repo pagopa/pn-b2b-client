@@ -19,7 +19,12 @@ public class RiskAnalysisCommonContext {
     UUID riskAnalysisId;
     Integer dailyCalls = 1;
     List<AssignedReviewerActorRef> assignedReviewerActors = new ArrayList<>();
+    List<AssignedReviewerActorRef> initialReviewerActors;
     RiskAnalysisFormSeed riskAnalysisVariation;
+
+    public void rememberInitialReviewers() {
+        initialReviewerActors = List.copyOf(assignedReviewerActors);
+    }
 
     public record AssignedReviewerActorRef(String tenantType, String role, int index) {
     }

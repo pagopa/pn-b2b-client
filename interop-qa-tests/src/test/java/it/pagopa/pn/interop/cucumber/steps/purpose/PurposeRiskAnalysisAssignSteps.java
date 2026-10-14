@@ -155,6 +155,22 @@ public class PurposeRiskAnalysisAssignSteps {
         assignReviewersAndMode(reviewers, mode);
         verifyAssignmentResponseSuccessful();
         verifyReviewersAndMode(reviewers, mode);
+        sharedStepsContext.getRiskAnalysisCommonContext().rememberInitialReviewers();
+    }
+
+    @When("l'utente tenta di assegnare la finalità senza valutatori in modalità {riskAnalysisReviewMode}")
+    public void assignWithoutReviewers(RiskAnalysisReviewMode mode) {
+        assignReviewersAndMode(List.of(), mode);
+    }
+
+    @Given("l'utente assegna con successo la finalità senza valutatori in modalità {riskAnalysisReviewMode}")
+    public void assignWithoutReviewersSuccessfully(RiskAnalysisReviewMode mode) {
+        assignReviewersAndModeSuccessfully(List.of(), mode);
+    }
+
+    @Then("alla finalità non sono associati valutatori e la modalità è {riskAnalysisReviewMode}")
+    public void verifyNoReviewersAndMode(RiskAnalysisReviewMode mode) {
+        verifyReviewersAndMode(List.of(), mode);
     }
 
     private void verifyAssignmentResponseSuccessful() {
@@ -179,11 +195,20 @@ public class PurposeRiskAnalysisAssignSteps {
                 () -> purposeApiClient.getPurpose(purposeId),
                 purpose -> {
                     var workflow = purpose.getReviewerWorkflow();
-                    return workflow != null && workflow.getReviewMode() != null
-                            && workflow.getReviewMode().getValue().equals(mode.getValue())
-                            && workflow.getReviewerIds() != null
-                            && workflow.getReviewerIds().size() == expectedIds.size()
-                            && new HashSet<>(workflow.getReviewerIds()).equals(new HashSet<>(expectedIds));
+                    if (purpose.getRiskAnalysisReviewMode() == null
+                            || !purpose.getRiskAnalysisReviewMode().getValue().equals(mode.getValue())) {
+                        return false;
+                    }
+                    if (workflow == null) {
+                        return mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS && expectedIds.isEmpty();
+                    }
+                    if (workflow.getReviewers() == null) {
+                        return mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS && expectedIds.isEmpty();
+                    }
+                    List<UUID> actualIds = workflow.getReviewers().stream()
+                            .map(reviewer -> reviewer.getUserId()).toList();
+                    return actualIds.size() == expectedIds.size()
+                            && new HashSet<>(actualIds).equals(new HashSet<>(expectedIds));
                 },
                 "Reviewer o modalità non corrispondenti alla nuova assegnazione: " + reviewers + ", " + mode
         );
@@ -215,7 +240,7 @@ public class PurposeRiskAnalysisAssignSteps {
         IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         IM2MV3PurposeClient m2mV3PurposeClient = clientTokenConfigurator.getM2mV3PurposeClient();
 
-        if (assignedReviewerActors != null && !assignedReviewerActors.isEmpty()) {
+        if (assignedReviewerActors != null) {
             sharedStepsContext.getRiskAnalysisCommonContext().setAssignedReviewerActors(List.copyOf(assignedReviewerActors));
         }
 
