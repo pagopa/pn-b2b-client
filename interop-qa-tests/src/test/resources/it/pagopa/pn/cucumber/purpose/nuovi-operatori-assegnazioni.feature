@@ -184,41 +184,49 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     # Con due reviewer, aggiunta e singolo -> multipli coincidono;
     # analogamente, rimozione e multipli -> singolo coincidono.
     Examples: BFF
-      | apiSet | caso                                 | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
-      | BFF    | Aggiunta - singolo a multipli         | AdminWritesReviewerSigns    | DRAFT         | 1               | 1,2            | AdminWritesReviewerSigns    |
-      | BFF    | Rimozione - multipli a singolo        | AdminWritesReviewerSigns    | DRAFT         | 1,2             | 1              | AdminWritesReviewerSigns    |
-      | BFF    | Sostituzione completa                | AdminWritesReviewerSigns    | DRAFT         | 1               | 2              | AdminWritesReviewerSigns    |
-      | BFF    | Cambio contemporaneo reviewer e mode | AdminWritesReviewerSigns    | DRAFT         | 1               | 2              | ReviewerWritesReviewerSigns |
-      | BFF    | Aggiunta - singolo a multipli         | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 1,2            | ReviewerWritesReviewerSigns |
-      | BFF    | Rimozione - multipli a singolo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2             | 1              | ReviewerWritesReviewerSigns |
-      | BFF    | Sostituzione completa                | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 2              | ReviewerWritesReviewerSigns |
-      | BFF    | Cambio contemporaneo reviewer e mode | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 2              | AdminWritesReviewerSigns    |
+      | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
+      | BFF    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
+      | BFF    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
+      | BFF    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
+      | BFF    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
+      | BFF    | Aggiunta - singolo a multipli           | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 1,2            | ReviewerWritesReviewerSigns |
+      | BFF    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
+      | BFF    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
+      | BFF    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
 
     @m2m-ra-review
     Examples: M2M
-      | apiSet | caso                                 | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
-      | M2M    | Aggiunta - singolo a multipli         | AdminWritesReviewerSigns    | DRAFT         | 1               | 1,2            | AdminWritesReviewerSigns    |
-      | M2M    | Rimozione - multipli a singolo        | AdminWritesReviewerSigns    | DRAFT         | 1,2             | 1              | AdminWritesReviewerSigns    |
-      | M2M    | Sostituzione completa                | AdminWritesReviewerSigns    | DRAFT         | 1               | 2              | AdminWritesReviewerSigns    |
-      | M2M    | Cambio contemporaneo reviewer e mode | AdminWritesReviewerSigns    | DRAFT         | 1               | 2              | ReviewerWritesReviewerSigns |
-      | M2M    | Aggiunta - singolo a multipli         | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 1,2            | ReviewerWritesReviewerSigns |
-      | M2M    | Rimozione - multipli a singolo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2             | 1              | ReviewerWritesReviewerSigns |
-      | M2M    | Sostituzione completa                | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 2              | ReviewerWritesReviewerSigns |
-      | M2M    | Cambio contemporaneo reviewer e mode | ReviewerWritesReviewerSigns | ASSIGNED      | 1               | 2              | AdminWritesReviewerSigns    |
+      | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
+      | M2M    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
+      | M2M    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
+      | M2M    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
+      | M2M    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
+      | M2M    | Aggiunta - singolo a multipli           | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 1,2            | ReviewerWritesReviewerSigns |
+      | M2M    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
+      | M2M    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
+      | M2M    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
 
-  # FIXME temporaneo, rimuovere
-  Scenario Outline: [ASSIGN_MORE_REVIEWERS_01] Test nuovo step per ogni stato
+  # Caso di test 7.4: modifica consentita prima di firma o pubblicazione.
+  @m2m-ra-review
+  Scenario Outline: [M2M_RA_REVIEW_01] Modifica assegnazione prima di firma o pubblicazione - <caso>
     Given "PA1" ha già creato e pubblicato 1 e-service
-    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-    And l'utente è un "admin" di "PA2"
-    And si ha una compilazione dell'analisi del rischio in modalità <mode> in stato "<stato>"
-    # TODO
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "GSP"
+    And si ha un'analisi del rischio non firmata in modalità <modeIniziale> in stato "<statoIniziale>"
+    When l'utente è un amministratore del profilo API M2M dell'ente "GSP"
+    And l'utente tenta di assegnare i valutatori 2 alla finalità in modalità <modeFinale>
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "GSP"
+    And alla finalità sono associati esclusivamente i valutatori 2 in modalità <modeFinale>
+    And ai valutatori assegnati risulta correttamente assegnata la finalità
+
     Examples:
-      | mode                         | stato     |
-      | AdminWritesReviewerSigns     | DRAFT     |
-      | ReviewerWritesReviewerSigns  | ASSIGNED  |
-      | AdminWritesReviewerSigns     | SUBMITTED |
-      | AdminWritesReviewerSigns     | SIGNED    |
-      | ReviewerWritesReviewerSigns  | SIGNED    |
-      | AdminWritesReviewerSigns     | REJECTED  |
+      | caso                                     | modeIniziale                 | statoIniziale | modeFinale                  |
+      | Mode 1 non pubblicata verso mode 2      | AdminWritesAdminSigns        | DRAFT         | AdminWritesReviewerSigns    |
+      | Mode 1 non pubblicata verso mode 3      | AdminWritesAdminSigns        | DRAFT         | ReviewerWritesReviewerSigns |
+      | Mode 2 DRAFT - sostituzione reviewer    | AdminWritesReviewerSigns     | DRAFT         | AdminWritesReviewerSigns    |
+      | Mode 2 SUBMITTED - sostituzione reviewer | AdminWritesReviewerSigns    | SUBMITTED     | AdminWritesReviewerSigns    |
+      | Mode 2 REJECTED - sostituzione reviewer  | AdminWritesReviewerSigns    | REJECTED      | AdminWritesReviewerSigns    |
+      # Verificare che mode 2 (AdminWritesReviewerSigns) non preveda lo stato ASSIGNED.
+      | Mode 3 ASSIGNED - sostituzione reviewer  | ReviewerWritesReviewerSigns | ASSIGNED      | ReviewerWritesReviewerSigns |

@@ -9,6 +9,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
@@ -48,6 +49,10 @@ public class PurposeRiskAnalysisCompilationSteps {
     /** Richiede una finalità esistente senza workflow e l'amministratore del fruitore selezionato. */
     @Given("si ha una compilazione dell'analisi del rischio in modalità {riskAnalysisReviewMode} in stato {string}")
     public void prepareRiskAnalysisCompilation(RiskAnalysisReviewMode mode, String state) {
+        if (mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS) {
+            prepareUnsignedRiskAnalysis(mode, state);
+            return;
+        }
         RiskAnalysisSigningState desiredState = RiskAnalysisSigningState.valueOf(state.toUpperCase(Locale.ROOT));
         boolean adminWrites = mode == RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
         List<RiskAnalysisSigningState> allowedStates = adminWrites
@@ -74,6 +79,26 @@ public class PurposeRiskAnalysisCompilationSteps {
             assignedReviewerRejectsRiskAnalysisSuccessfully();
         }
         verifyRiskAnalysisSigningState(desiredState.name());
+    }
+
+    @Given("si ha un'analisi del rischio non firmata in modalità {riskAnalysisReviewMode} in stato {string}")
+    public void prepareUnsignedRiskAnalysis(RiskAnalysisReviewMode mode, String state) {
+        if (mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS) {
+            if (!"DRAFT".equals(state)) {
+                throw new IllegalArgumentException("Il flusso admin richiede una finalità DRAFT non pubblicata");
+            }
+            verifyNoReviewerWorkflowInProgress();
+            compilesRiskAnalysisViaGenericEndpoint();
+            org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                    .as("La compilazione dell'analisi del rischio deve riuscire")
+                    .isTrue();
+            sharedStepsContext.getRiskAnalysisCommonContext().setAssignedReviewerActors(List.of());
+            return;
+        }
+        if ("SIGNED".equalsIgnoreCase(state)) {
+            throw new IllegalArgumentException("L'analisi del rischio deve essere non firmata");
+        }
+        prepareRiskAnalysisCompilation(mode, state);
     }
 
     @When("il valutatore assegnato compila l'analisi del rischio della finalità")

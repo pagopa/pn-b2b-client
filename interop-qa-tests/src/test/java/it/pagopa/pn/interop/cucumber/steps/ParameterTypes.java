@@ -3,7 +3,7 @@ package it.pagopa.pn.interop.cucumber.steps;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
@@ -107,9 +107,10 @@ public class ParameterTypes {
         return result;
     }
 
-    @ParameterType("ReviewerWritesReviewerSigns|AdminWritesReviewerSigns")
+    @ParameterType("ReviewerWritesReviewerSigns|AdminWritesReviewerSigns|AdminWritesAdminSigns")
     public static RiskAnalysisReviewMode riskAnalysisReviewMode(String mode) {
         return switch (mode) {
+            case "AdminWritesAdminSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
             case "ReviewerWritesReviewerSigns" -> RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
             case "AdminWritesReviewerSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
             default -> throw new IllegalArgumentException("Modalita di review non supportata: " + mode);

@@ -6,7 +6,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.RiskAnalysisAssignmentRequest;
@@ -179,7 +179,8 @@ public class PurposeRiskAnalysisAssignSteps {
                 () -> purposeApiClient.getPurpose(purposeId),
                 purpose -> {
                     var workflow = purpose.getReviewerWorkflow();
-                    return workflow != null && workflow.getReviewMode() == mode
+                    return workflow != null && workflow.getReviewMode() != null
+                            && workflow.getReviewMode().getValue().equals(mode.getValue())
                             && workflow.getReviewerIds() != null
                             && workflow.getReviewerIds().size() == expectedIds.size()
                             && new HashSet<>(workflow.getReviewerIds()).equals(new HashSet<>(expectedIds));
@@ -228,6 +229,7 @@ public class PurposeRiskAnalysisAssignSteps {
 
     private RiskAnalysisReviewMode toRiskAnalysisReviewMode(String mode) {
         return switch (mode) {
+            case "AdminWritesAdminSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
             case "ReviewerWritesReviewerSigns" -> RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
             case "AdminWritesReviewerSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
             default -> throw new IllegalArgumentException("Modalita di review non supportata: " + mode);
