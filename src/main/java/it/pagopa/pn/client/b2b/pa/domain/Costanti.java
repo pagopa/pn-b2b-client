@@ -128,6 +128,10 @@ public class Costanti {
     // TimelineElementCategoryV28
     public static final String NOTIFICATION_TIMELINE_REWORKED = "NOTIFICATION_TIMELINE_REWORKED";
 
+    //CommunicationType
+    public static final String COMM_TYPE_LEGAL = "LEGAL";
+    public static final String COMM_TYPE_INFORMAL = "INFORMAL";
+
     //TimelineEquality errors
     public static final String EQUALITY_DIGITAL_ADDRESS = "digitalAddress";
     public static final String EQUALITY_REC_INDEX = "recIndex";
