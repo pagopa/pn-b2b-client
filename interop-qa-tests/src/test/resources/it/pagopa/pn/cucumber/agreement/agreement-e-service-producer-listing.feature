@@ -107,7 +107,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     And l'utente è un "admin" di "PA1"
     Then l'utente recupera la lista di e-service in erogazione e contiene il vecchio e-service creato con filtro:
       | agreementState | MISSING_CERTIFIED_ATTRIBUTES |
-      | namePart       | listing6 |
+      | namePart       | listing7 |
     And l'utente recupera la lista di e-service in erogazione e non contiene il nuovo e-service creato con filtro:
       | agreementState | MISSING_CERTIFIED_ATTRIBUTES |
-      | namePart       | listing6 |
+      | namePart       | listing7 |
