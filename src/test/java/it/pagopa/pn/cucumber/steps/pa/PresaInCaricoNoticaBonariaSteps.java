@@ -43,8 +43,8 @@ import java.util.stream.IntStream;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.jsoup.helper.Validate.fail;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @Slf4j
 public class PresaInCaricoNoticaBonariaSteps {

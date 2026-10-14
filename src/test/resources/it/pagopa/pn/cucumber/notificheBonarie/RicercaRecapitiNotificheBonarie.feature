@@ -1747,7 +1747,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | subject         | Test Serch Contact       |
       | recipientType   | PG                       |
       | taxId           | 20517490320              |
-      | denomination    | CucumberSpa              |
+      | denomination    | GherkinSrl             |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
       | phone_number    | NULL                     |
@@ -1851,7 +1851,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_isAvailable          | flase    |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | SMS      |
-      | details_digitalAddressSource | PLATFORM |
+      | details_digitalAddressSource | SPECIAL |
       | details_isAvailable          | true     |
 
 

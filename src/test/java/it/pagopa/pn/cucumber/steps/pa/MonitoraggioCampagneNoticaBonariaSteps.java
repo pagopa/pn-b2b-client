@@ -14,7 +14,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import java.time.Duration;
 
 import static org.awaitility.Awaitility.await;
-import static org.jsoup.helper.Validate.fail;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j

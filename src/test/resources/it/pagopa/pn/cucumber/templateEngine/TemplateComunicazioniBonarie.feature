@@ -51,7 +51,7 @@ Feature: Comunicazioni bonarie
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-body
   Scenario: [COMBO_TEMPLATE_ENGINE_03_2_B] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'EMAIL
     When recupero il template per "email body avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
-    Then verifico che il template è in formato "htlm"
+    Then verifico che il template è in formato "html"
     And il corpo del messaggio contiene il testo "Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti."
 
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
