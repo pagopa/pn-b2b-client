@@ -140,7 +140,8 @@ public class DelegationCommonStep {
             httpCallExecutor,
             sharedStepsContext.getEServicesCommonContext().getEserviceId(),
             pollingService,
-            clientTokenConfigurator.getDelegationApiClient()
+            clientTokenConfigurator.getDelegationApiClient(),
+            sharedStepsContext
         );
 
         // Il delegato accetta la delega

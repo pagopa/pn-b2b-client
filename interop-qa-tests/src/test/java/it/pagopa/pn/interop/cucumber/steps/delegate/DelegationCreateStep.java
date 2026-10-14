@@ -376,7 +376,8 @@ public class DelegationCreateStep {
             httpCallExecutor,
             eServiceId,
             pollingService,
-            delegationApiClient
+            delegationApiClient,
+            sharedStepsContext
         );
     }
 
@@ -389,7 +390,8 @@ public class DelegationCreateStep {
         IHttpExecutor httpExecutor,
         UUID eServiceId,
         PollingService pollingService,
-        IDelegationApiClient client
+        IDelegationApiClient client,
+        SharedStepsContext sharedStepsContext
     ) {
         UUID delegateOrganizationId = identityService.getOrganizationId(delegateTenantType);
         UUID delegatorOrganizationId = identityService.getOrganizationId(delegatorTenantType);
@@ -407,6 +409,7 @@ public class DelegationCreateStep {
                 res -> res != HttpStatus.NOT_FOUND,
                 "There was an error while creating the delegation!"
             );
+            sharedStepsContext.getDelegationCommonContext().setDelegationId(delegationProxy.getDelegationId());
         }
     }
 
