@@ -170,11 +170,8 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
   # CDT 7.2 (Examples M2M): aggiunta a un'assegnazione esistente, 1 -> 1,2
   # e 1,2 -> 1,2,3,4, mantenendo tutti i valutatori già assegnati.
   # Prime assegnazioni singole e multiple in M2M_RA_REVIEW_01.
-  # CDT 7.3 (Examples M2M), copertura parziale: rimozione singola 1,2 -> 1.
-  # La sostituzione 1 -> 2 verifica l'esclusione del precedente valutatore,
-  # ma non copre la precondizione del CDT 7.3 di più valutatori iniziali.
-  # TODO CDT 7.3: rimozione simultanea di più valutatori (es. 1,2,3,4 -> 1,2)
-  # e sostituzione completa di un gruppo (es. 1,2 -> 3,4).
+  # CDT 7.3 (Examples M2M): rimozione singola 1,2 -> 1,
+  # rimozione multipla 1,2,3,4 -> 1,2 e sostituzione completa 1,2 -> 3,4.
   Scenario Outline: [ASSIGN_MORE_REVIEWERS_01] <apiSet> - <caso> da <modeIniziale>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -191,8 +188,8 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi nel passaggio da <reviewerIniziali> a <reviewerFinali> non vedono più la finalità nelle assegnazioni
 
-    # Con due reviewer, aggiunta e singolo -> multipli coincidono;
-    # analogamente, rimozione e multipli -> singolo coincidono.
+    # Con quattro reviewer, i cambi di cardinalità singolo/multipli restano distinti
+    # dalle aggiunte/rimozioni multiple che mantengono un gruppo e dalle sostituzioni di gruppo.
     Examples: BFF
       | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
       | BFF    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
@@ -203,6 +200,15 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
       | BFF    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
       | BFF    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
       | BFF    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
+      # CDT 1.1: casi di gruppo con quattro reviewer.
+      | BFF    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
+      | BFF    | Aggiunta multipla a gruppo esistente    | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1,2,3,4        | ReviewerWritesReviewerSigns |
+      | BFF    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
+      | BFF    | Rimozione multipla da gruppo            | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2,3,4          | 1,2            | ReviewerWritesReviewerSigns |
+      | BFF    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
+      | BFF    | Sostituzione completa del gruppo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+      | BFF    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+      | BFF    | Cambio contemporaneo gruppo e mode     | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | AdminWritesReviewerSigns    |
 
     @m2m-ra-review
     Examples: M2M
@@ -221,6 +227,14 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
       # CDT 7.2: più valutatori già assegnati nel Given; aggiunta di 3 e 4 senza rimuovere 1 e 2.
       | M2M    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
       | M2M    | Aggiunta multipla a gruppo esistente    | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1,2,3,4        | ReviewerWritesReviewerSigns |
+      # CDT 7.3: rimozione contemporanea di 3 e 4, mantenendo 1 e 2.
+      | M2M    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
+      | M2M    | Rimozione multipla da gruppo            | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2,3,4          | 1,2            | ReviewerWritesReviewerSigns |
+      # CDT 7.3: esclusione di tutti i reviewer iniziali e assegnazione di un nuovo gruppo.
+      | M2M    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
+      | M2M    | Sostituzione completa del gruppo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+      | M2M    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+      | M2M    | Cambio contemporaneo gruppo e mode     | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | AdminWritesReviewerSigns    |
 
   # CDT 7.2: prima assegnazione singola e multipla via M2M.
   # CDT 7.4: mode 1 non pubblicata e mode 2 in SUBMITTED/REJECTED.
