@@ -1,12 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationPaymentItem;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationDigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPaymentAttachment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPhysicalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.PagoPaPaymentBase;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
@@ -17,33 +12,9 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.DIGITAL_DOMICILE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.EMAIL;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.MESSAGE_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_AMOUNT;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_CREDITOR_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_DUE_DATE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_MULTY_NUMBER;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_NOTICE_CODE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHONE_NUMBER;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_ADDRESS;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_AT;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_DETAILS;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_MUNICIPALITY;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_PROVINCE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_STATE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_ZIP;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_ADDITIONAL_LANGUAGES;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_DENOMINATION;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_TYPE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.getValue;
+import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
 
 @Component
 @RequiredArgsConstructor

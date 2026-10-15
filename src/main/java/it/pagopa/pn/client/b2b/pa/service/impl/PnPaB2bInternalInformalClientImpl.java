@@ -1,22 +1,13 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.InformalNotificationTerminationApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.MessagesApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.NewInformalNotificationApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.CxTypeAuthFleet;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalPreLoadRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalPreLoadResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.InformalNotificationTerminationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.MessagesApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.NewInformalNotificationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api.RecipientReadInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.api.InternalOnlyApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.InformalSentNotificationV1;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
@@ -32,7 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class PnPaB2bInternalInformalClientImpl {
+public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     private final String operatorId;
     private final MessagesApi messagesApi;
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
@@ -40,25 +31,42 @@ public class PnPaB2bInternalInformalClientImpl {
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
     private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
+    private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
     private final List<String> groups;
 
-    public PnPaB2bInternalInformalClientImpl(
-            RestTemplate restTemplate,
-            @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin) {
+    private final String apiKeyMvp1;
+    private final String apiKeyMvp2;
+    private final String apiKeyGa;
+    private final String apiKeySon;
+    private final String apiKeyRoot;
+
+    public PnPaB2bInternalInformalClientImpl(RestTemplate restTemplate,
+                                             @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
+                                             @Value("${pn.external.api-key}") String apiKeyMvp1,
+                                             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+                                             @Value("${pn.external.api-key-GA}") String apiKeyGa,
+                                             @Value("${pn.external.api-key-SON}") String apiKeySon,
+                                             @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
 
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
-        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
-        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
-        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, deliveryBasePathOrigin));
+        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, null));
+        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, null));
+        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, null));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
         this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
+
+        this.apiKeyMvp1 = apiKeyMvp1;
+        this.apiKeyMvp2 = apiKeyMvp2;
+        this.apiKeyGa = apiKeyGa;
+        this.apiKeySon = apiKeySon;
+        this.apiKeyRoot = apiKeyRoot;
     }
 
-    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String basePath) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String apiKey) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
+        newApiClient.setApiKey(apiKey);
         return newApiClient;
     }
 
@@ -75,49 +83,47 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public MessageResponse createMessage(String cxId, NewMessageRequest request) {
-        return messagesApi.newMessage(operatorId, CxTypeAuthFleet.PA, cxId, request, groups);
+        return messagesApi.newMessage(request);
     }
 
     public MessageResponse getMessage(UUID messageId, String cxId) {
-        return messagesApi.messageById(messageId, operatorId, CxTypeAuthFleet.PA, cxId, groups);
+        return messagesApi.messageById(messageId);
     }
 
-    public NewInformalNotificationResponse sendNewInformalNotificationV1(String cxId, InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
-        return newInformalNotificationApi.sendNewInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, "B2B", informalNotificationRequestV1, groups, null, null);
+    public NewNotificationResponse sendNewInformalNotificationV1(String cxId, InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
+        return newInformalNotificationApi.sendNewInformalNotificationV1(informalNotificationRequestV1);
     }
 
     public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String cxId, String notificationRequestId) {
-        return senderReadInformalNotificationB2BApi.getInformalNotificationRequestStatusV1(operatorId, CxTypeAuthFleet.PA, cxId, groups, notificationRequestId, null, null);
+        return senderReadInformalNotificationB2BApi.retrieveInformalNotificationRequestStatusV1(notificationRequestId, null, null);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String cxId, String iun, int docIdx) {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationDocument(operatorId, CxTypeAuthFleet.PA, cxId, iun, docIdx, groups);
+        return senderReadInformalNotificationB2BApi.retrieveSentInformalNotificationDocument(iun, docIdx);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, String cxId, int recipientIdx, int attachmentIdx) {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationAttachment(operatorId, CxTypeAuthFleet.PA, cxId, iun, recipientIdx, "PAGOPA", groups, attachmentIdx);
+        return senderReadInformalNotificationB2BApi.retrieveSentInformalNotificationAttachment(iun, recipientIdx, "PAGOPA", attachmentIdx);
     }
 
     public TerminationRequestStatus terminateInformalWorkflow(String cxId, String iun) {
-        return informalNotificationTerminationApi.terminateInformalWorkflow(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups);
+        return informalNotificationTerminationApi.terminateInformalWorkflow(iun);
     }
 
     public InformalSentNotificationV1 getSentInformalNotification(String iun) {
         return internalOnlyApi.getSentInformalNotificationPrivateV1(iun, null);
     }
 
-    public LegalNotificationSearchResponse searchNotificationsPrivate(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, Boolean recipientIdOpaque,
-                                                                      String senderId, List<NotificationStatusV26> status, String mandateId, String cxType,
-                                                                      Integer size, String nextPagesKey) {
+    public LegalNotificationSearchResponse searchNotificationsPrivate(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, Boolean recipientIdOpaque, String senderId, List<NotificationStatusV26> status, String mandateId, String cxType, Integer size, String nextPagesKey) {
         return internalOnlyApi.searchNotificationsPrivate(startDate, endDate, recipientId, recipientIdOpaque, senderId, status, mandateId, cxType, size, nextPagesKey);
     }
 
     public List<InformalPreLoadResponse> informalPresignedUploadRequest(String cxId, List<InformalPreLoadRequest> requests) {
-        return newInformalNotificationApi.informalPresignedUploadRequest(operatorId, CxTypeAuthFleet.PA, cxId, requests);
+        return newInformalNotificationApi.informalPresignedUploadRequest(requests);
     }
 
     public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
-        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage);
+        return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(iun, retrieveMessage);
     }
 
     public FullReceivedInformalNotificationV1 getReceivedInformalNotification(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType) {
@@ -125,13 +131,63 @@ public class PnPaB2bInternalInformalClientImpl {
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationDocument(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer docIdx) {
-        return recipientReadInformalNotificationApi.getReceivedInformalNotificationDocumentV1(operatorId, recipientType, cxId, "WEB", iun, docIdx, null, null
-        );
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationDocumentV1(operatorId, recipientType, cxId, "WEB", iun, docIdx, null, null);
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse getReceivedInformalNotificationAttachment(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType, Integer attachmentIdx) {
-        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx
-        );
+        return recipientReadInformalNotificationApi.getReceivedInformalNotificationAttachmentV1(operatorId, recipientType, cxId, "WEB", iun, "PAGOPA", null, null, attachmentIdx);
     }
 
+    @Override
+    public boolean setApiKeys(ApiKeyType apiKey) {
+        boolean beenSet = false;
+        switch (apiKey) {
+            case MVP_1 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_1) {
+                    setApiKey(apiKeyMvp1);
+                    this.apiKeySetted = ApiKeyType.MVP_1;
+                }
+                beenSet = true;
+            }
+            case MVP_2 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_2) {
+                    setApiKey(apiKeyMvp2);
+                    this.apiKeySetted = ApiKeyType.MVP_2;
+                }
+                beenSet = true;
+            }
+            case GA -> {
+                if (this.apiKeySetted != ApiKeyType.GA) {
+                    setApiKey(apiKeyGa);
+                    this.apiKeySetted = ApiKeyType.GA;
+                }
+                beenSet = true;
+            }
+            case SON -> {
+                if (this.apiKeySetted != ApiKeyType.SON) {
+                    setApiKey(apiKeySon);
+                    this.apiKeySetted = ApiKeyType.SON;
+                }
+                beenSet = true;
+            }
+            case ROOT -> {
+                if (this.apiKeySetted != ApiKeyType.ROOT) {
+                    setApiKey(apiKeyRoot);
+                    this.apiKeySetted = ApiKeyType.ROOT;
+                }
+                beenSet = true;
+            }
+        }
+        return beenSet;
+    }
+
+    @Override
+    public void setApiKey(String apiKey) {
+
+    }
+
+    @Override
+    public ApiKeyType getApiKeySetted() {
+        return this.apiKeySetted;
+    }
 }

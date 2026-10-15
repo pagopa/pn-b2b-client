@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.datatest;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import lombok.Data;
 
 import java.util.Map;
