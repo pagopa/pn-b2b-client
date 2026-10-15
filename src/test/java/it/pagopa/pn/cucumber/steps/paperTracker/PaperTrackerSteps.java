@@ -211,7 +211,7 @@ public class PaperTrackerSteps {
         FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersionByIun(sharedSteps.getNotificationIun());
         trackingKeys = fullSentNotification.getTimeline().stream()
                 .map(TimelineElementV28::getElementId)
-                .filter(e -> e.contains(key) && (e.contains(".ATTEMPT_0") || !e.contains(".ATTEMPT_")))
+                .filter(e -> e.contains(key))
                 .flatMap(prepare -> Stream.of(prepare + ".PCRETRY_0", prepare + ".PCRETRY_1", prepare + ".PCRETRY_2", prepare + ".PCRETRY_3", prepare + ".PCRETRY_4"))
                 .toList();
     }
