@@ -81,6 +81,7 @@ Feature: Gara Consolidatore/Recapito FASE 2
     And si verifica che su DynamoDB è presente l'elemento "PREPARE_ANALOG_DOMICILE" nella tabella pn-PaperTrackings con statusCodes "RECAG010A"
 
 
+  #IMPLEMENTATI MANUALMENTE PER IMPOSSIBILITA' NEL RAGGIUNGERE IL MS DA AWS
 #  @consolidatoreFase2
 #  Scenario Outline: [CON_F_TWO_06_01] Normalizzazione sincrona con dati configurabili
 #    Given preparo una request di normalizzazione con:
