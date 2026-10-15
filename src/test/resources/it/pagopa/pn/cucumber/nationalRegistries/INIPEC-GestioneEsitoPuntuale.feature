@@ -11,7 +11,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
   #   "non risulta alcuna richiesta INIPEC"       -> nessun record (né SENT né NOT_SENT)
   #
 
-  @inipecGestionePuntuale @inipecParallel
+  @inipecGestionePuntuale @inipecParallel @mockNR
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_02.1] Notifica verso due PG con esiti errore temporaneo e domicilio trovato rispettivamente nel recupero del domicilio digitale presso INIPEC nuova versione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -32,7 +32,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta INIPEC per il cf "17492068394" risulta RIMESSA in retry
 
 
-  @inipecGestionePuntuale @inipecParallel
+  @inipecGestionePuntuale @inipecParallel @mockNR
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_01] Notifica verso due PG con esiti posizione non trovata e posizione senza pec associata rispettivamente nel recupero del domicilio digitale presso INIPEC
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -54,7 +54,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta INIPEC per il cf "83016259471" risulta INVIATA al primo tentativo
 
 
-  @inipecGestionePuntuale @inipecIsolato
+  @inipecGestionePuntuale @inipecIsolato @mockNR
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_02.2] Notifica verso due PG con esiti errore temporaneo e domicilio trovato rispettivamente nel recupero del domicilio digitale presso INIPEC vecchia versione
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -74,7 +74,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then per i cf "29527800386" e "10433218194" non risulta alcuna richiesta INIPEC
 
 
-  @inipecGestionePuntuale
+  @inipecGestionePuntuale @mockNR
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_HF_01] Notifica multidestinatario di cui uno non recupera pec su inipec e quindi avrà fallback su inad
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
