@@ -162,6 +162,12 @@ public class VoucherGenerationAgreementSteps {
         dataPreparationService.approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
+    @Given("{string} approva quella richiesta di fruizione ma l'operazione è vietata")
+    public void approveAgreementFailing(String tenantType) {
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        dataPreparationService.approveAgreementFailing(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, 403);
+    }
+
     private static void handleUnknownAttributeKind(String attributeKind) {
         throw new IllegalArgumentException("Unknown attribute kind: " + attributeKind);
     }
