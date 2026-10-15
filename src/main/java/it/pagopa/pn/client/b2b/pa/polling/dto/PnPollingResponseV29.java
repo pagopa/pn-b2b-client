@@ -19,5 +19,5 @@ public class PnPollingResponseV29 extends PnPollingResponse {
     private TimelineElementV28 timelineElement;
     private NotificationStatusHistoryElementV26 notificationStatusHistoryElement;
     private List<ProgressResponseElementV29> progressResponseElementList;
-    private ProgressResponseElementV29 progressResponseElement;// todo t v29 verificare
+    private ProgressResponseElementV29 progressResponseElement;
 }

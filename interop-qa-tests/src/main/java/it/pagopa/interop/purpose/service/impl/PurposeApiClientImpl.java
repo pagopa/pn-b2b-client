@@ -8,6 +8,7 @@ import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
@@ -30,6 +31,8 @@ import static it.pagopa.interop.utils.BlobFileCreationUtils.createTempFile;
         backoff = @Backoff(delay = 2000)
 )
 public class PurposeApiClientImpl implements IPurposeApiClient {
+    public static final String METADATA_VERSION_HEADER = "x-metadata-version";
+
     private final PurposesApi purposesApi;
     private final RestTemplate restTemplate;
     private final String basePath;
@@ -75,6 +78,11 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public Purpose getPurpose(UUID purposeId) {
         return purposesApi.getPurpose(purposeId);
+    }
+
+    @Override
+    public ResponseEntity<Purpose> getPurposeWithHttpInfo(UUID purposeId) {
+        return purposesApi.getPurposeWithHttpInfo(purposeId);
     }
 
     public PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef) {
@@ -185,11 +193,42 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
         purposesApi.rejectRiskAnalysis(purposeId, payload);
     }
 
+    /**
+     * Firma l'analisi del rischio acquisendo prima la versione corrente dei metadati
+     * tramite {@link #getPurposeWithHttpInfo(UUID)}. Il valore dell'header
+     * {@code x-metadata-version} viene convertito in un intero e inviato nella POST
+     * di firma come {@code metadataVersionToSign} di {@link RiskAnalysisSignSeed}.
+     * <p>
+     * La GET e la POST utilizzano entrambe il bearer token attualmente configurato:
+     * l'utente deve quindi essere autorizzato sia a leggere la finalità sia a firmarla.
+     * Per separare le identità delle due operazioni, o utilizzare una versione letta
+     * in precedenza, acquisire i metadati con un utente autorizzato e invocare
+     * {@link #signRiskAnalysis(UUID, RiskAnalysisSignSeed)} con il payload esplicito
+     * dopo aver configurato il token dell'utente che tenta la firma.
+     *
+     * @param purposeId identificativo della finalità di cui firmare l'analisi del rischio
+     * @throws IllegalStateException se l'header {@code x-metadata-version} è assente
+     *                               o non è convertibile in un intero
+     * @throws RestClientException se la GET preliminare o la POST di firma fallisce
+     */
     @Override
     public void signRiskAnalysis(UUID purposeId) throws RestClientException {
-        /* FIXME: l'aggiunta del nuovo parametro obbligatorio RiskAnalysisSignSeed richiede di rivedere i flussi di
-            test che utilizzano questa API. Si passa null MOMENTANEAMENTE per consentire la compilazione del modulo. */
-        purposesApi.signRiskAnalysis(purposeId, null);
+        String metadataVersion = getPurposeWithHttpInfo(purposeId).getHeaders().getFirst(METADATA_VERSION_HEADER);
+        if (metadataVersion == null) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
+        }
+        final Integer version;
+        try {
+            version = Integer.valueOf(metadataVersion);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " non valido: " + metadataVersion, e);
+        }
+        signRiskAnalysis(purposeId, new RiskAnalysisSignSeed().metadataVersionToSign(version));
+    }
+
+    @Override
+    public void signRiskAnalysis(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException {
+        purposesApi.signRiskAnalysis(purposeId, payload);
     }
 
     @Override
