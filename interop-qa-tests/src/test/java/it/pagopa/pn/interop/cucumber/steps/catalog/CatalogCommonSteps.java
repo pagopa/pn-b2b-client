@@ -117,11 +117,12 @@ public class CatalogCommonSteps {
                 eServiceSeed == null ? new EServiceSeed() : eServiceSeed,
                 descriptorSeed == null ? new UpdateEServiceDescriptorSeed() : descriptorSeed);
         boolean isAsyncExchange = eServiceSeed != null && eServiceSeed.getAsyncExchange() != null && eServiceSeed.getAsyncExchange();
-        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+        MutateDescriptorResult mutateDescriptorResult = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                         descriptorState), false, isAsyncExchange);
         eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+        eServiceContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
     }
 
     public static void createEServiceWithDescriptorSpecifyingConsumerDelegationFlags(
@@ -132,11 +133,12 @@ public class CatalogCommonSteps {
             Boolean isClientAccessDelegable
     ) {
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptorSpecifyingConsumerDelegationFlags(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), isConsumerDelegable, isClientAccessDelegable);
-        dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+        MutateDescriptorResult mutateDescriptorResult = dataPreparationService.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                 eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                         descriptorState), false);
         eServiceContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServiceContext.setDescriptorId(eServiceDescriptor.getDescriptorId());
+        eServiceContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
     }
 
     @Given("{string} ha già creato un e-service con un descrittore in stato {string} e un documento già caricato")
@@ -155,12 +157,13 @@ public class CatalogCommonSteps {
     private void createEServiceWithDescriptorAndDocuments(String tenantType, String descriptorState, int documents,
                                                           String documentNamePrefix, String documentPrettyNamePrefix) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
 
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         MutateDescriptorResult result = dataPreparationService.bringDescriptorToGivenState(
                 eServiceDescriptor.getEServiceId(), eServiceDescriptor.getDescriptorId(),
                 EServiceDescriptorState.valueOf(descriptorState), documents, documentNamePrefix,
-                documentPrettyNamePrefix, false);
+                documentPrettyNamePrefix, false, true);
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
         eServicesCommonContext.setEserviceId(eServiceDescriptor.getEServiceId());
         eServicesCommonContext.setDescriptorId(eServiceDescriptor.getDescriptorId());

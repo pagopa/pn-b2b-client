@@ -81,6 +81,11 @@ public class NotificationClientImpl extends AbstractClient implements INotificat
     }
 
     @Override
+    public List<Notification> getPage(int page, int size) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public UUID getId(Notification entity) {
         throw new UnsupportedOperationException();
     }

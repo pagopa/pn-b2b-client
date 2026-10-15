@@ -10,7 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.auth.model.ClientCredentialsR
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.authorization.model.VoucherContext;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import java.util.Map;

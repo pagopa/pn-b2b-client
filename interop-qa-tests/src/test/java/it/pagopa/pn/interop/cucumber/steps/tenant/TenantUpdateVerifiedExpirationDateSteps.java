@@ -38,7 +38,7 @@ public class TenantUpdateVerifiedExpirationDateSteps {
         UUID tenantId = identityService.getOrganizationId(targetTenantType);
 
         dataPreparationService.assignVerifiedAttributeToTenant(tenantId, verifierId,
-                sharedStepsContext.getAttributeCommonContext().getAttributeId(), sharedStepsContext.getAgreementId(), date.toString());
+                sharedStepsContext.getAttributeCommonContext().getAttributeId(), sharedStepsContext.getAgreementCommonContext().getAgreementId(), date.toString());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
     }
 

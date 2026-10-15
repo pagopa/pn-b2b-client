@@ -31,7 +31,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         tenantId,
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
-                                .agreementId(sharedStepsContext.getAgreementId())
+                                .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
                 )
         );
     }
@@ -45,7 +45,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         tenantId,
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
-                                .agreementId(sharedStepsContext.getAgreementId())
+                                .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
                                 .expirationDate(OffsetDateTime.now().plusDays(7).toString())
                 )
         );
@@ -60,7 +60,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         tenantId,
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
-                                .agreementId(sharedStepsContext.getAgreementId())
+                                .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
                                 .expirationDate(LocalDate.now().minusDays(7).toString())
                 )
         );

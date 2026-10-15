@@ -19,7 +19,7 @@ public class AgreementDocumentReadSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .getAgreementConsumerDocument(
-                                sharedStepsContext.getAgreementId(),
+                                sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                                 sharedStepsContext.getAgreementCommonContext().getDocumentId())
         );
     }

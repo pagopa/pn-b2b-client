@@ -19,7 +19,7 @@ public class AgreementDocumentDeleteSteps {
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
                         .removeAgreementConsumerDocument(
-                                sharedStepsContext.getAgreementId(), sharedStepsContext.getAgreementCommonContext().getDocumentId())
+                                sharedStepsContext.getAgreementCommonContext().getAgreementId(), sharedStepsContext.getAgreementCommonContext().getDocumentId())
         );
     }
 }
