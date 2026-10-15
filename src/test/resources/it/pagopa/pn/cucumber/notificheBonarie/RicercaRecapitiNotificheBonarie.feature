@@ -155,7 +155,6 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      | details_isTosAccepted        | xx       |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
@@ -212,7 +211,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_channel              | PEC      |
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | false    |
-      And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
+    And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
       | details_channel              | PEC     |
       | details_digitalAddressSource | GENERAL |
       | details_isAvailable          | false   |
@@ -282,7 +281,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     Then viene disabilitato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "disabilitato" per la PA "default"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-managerxxx" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-workflow-manager" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto                        |
       | param1 | AUD_COM_SEND_EMAIL_COURTESY |
 
@@ -1747,7 +1746,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | subject         | Test Serch Contact       |
       | recipientType   | PG                       |
       | taxId           | 20517490320              |
-      | denomination    | GherkinSrl             |
+      | denomination    | GherkinSrl               |
       | email           | NULL                     |
       | digitalDomicile | example@OK-pecSuccess.it |
       | phone_number    | NULL                     |
@@ -1850,9 +1849,9 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
       | details_digitalAddressSource | PLATFORM |
       | details_isAvailable          | flase    |
     And si attende che venga prodotto l'elemento "GET_ADDRESS" della notifica bonaria con dettagli
-      | details_channel              | SMS      |
+      | details_channel              | SMS     |
       | details_digitalAddressSource | SPECIAL |
-      | details_isAvailable          | true     |
+      | details_isAvailable          | true    |
 
 
   @informalNotificationsSearchDigitalAddress @addressBook1 @informalSerchDigitalOFF

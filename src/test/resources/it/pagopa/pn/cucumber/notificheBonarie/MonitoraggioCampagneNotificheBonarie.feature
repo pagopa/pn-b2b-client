@@ -446,34 +446,3 @@ Feature: Monitoraggio delle campagne per le notifiche bonarie.
       | abc         |
       | @           |
       |             |
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    #l
