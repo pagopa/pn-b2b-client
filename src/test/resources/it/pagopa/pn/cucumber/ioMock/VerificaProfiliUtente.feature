@@ -6,19 +6,19 @@ Feature: Verifica e Routing dei Profili Utente App IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_A
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_A] Destinatario non abilitato alla ricezione su IO (Mock)
-    Given un destinatario con codice fiscale in blacklist "${pn.io-mock.sender-not-allowed.tax-id}"
+    Given un destinatario di tipo "BLACKLIST"
     When viene richiesta la verifica del profilo utente
     Then il profilo risulta non abilitato alla ricezione dei messaggi
 
   @MOCK_IO_ROUTER_PROFILE_01_1_B
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_B] Destinatario abilitato per inoltro trasparente verso IO reale
-    Given un destinatario abilitato al routing reale "${pn.io-mock.real-routing.tax-id}"
+    Given un destinatario di tipo "WHITELIST"
     When viene richiesta la verifica del profilo utente
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 
   @MOCK_IO_ROUTER_PROFILE_01_1_C
   Scenario: [MOCK_IO_ROUTER_PROFILE_01_1_C] Destinatario standard abilitato alla ricezione su IO (Mock)
-    Given un destinatario con codice fiscale ordinario "STANDAR_CF_00001"
+    Given un destinatario di tipo "STANDARD"
     When viene richiesta la verifica del profilo utente
     Then il profilo risulta abilitato alla ricezione dei messaggi
 

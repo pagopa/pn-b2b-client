@@ -46,6 +46,13 @@ public class IOMockMessagesSteps {
             return rawFiscalCode;
         }
         String trimmed = rawFiscalCode.trim();
+        if ("BLACKLIST".equalsIgnoreCase(trimmed) || "DESTINATARIO_IN_BLACKLIST".equalsIgnoreCase(trimmed) || "BLACKLIST_CF".equalsIgnoreCase(trimmed)) {
+            trimmed = "${pn.io-mock.sender-not-allowed.tax-id}";
+        } else if ("WHITELIST".equalsIgnoreCase(trimmed) || "DESTINATARIO_ROUTING_REALE".equalsIgnoreCase(trimmed) || "REAL_ROUTING_CF".equalsIgnoreCase(trimmed) || "WHITELIST_ROUTING_REALE".equalsIgnoreCase(trimmed)) {
+            trimmed = "${pn.io-mock.real-routing.tax-id}";
+        } else if ("STANDARD".equalsIgnoreCase(trimmed) || "ORDINARIO".equalsIgnoreCase(trimmed)) {
+            return "RSSMRA80A01H5010";
+        }
         String resolved = null;
         if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
             resolved = environment.resolvePlaceholders(trimmed);
@@ -87,28 +94,30 @@ public class IOMockMessagesSteps {
         context.setRequestPayload(payload);
     }
 
-    @Given("una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist {string}")
-    public void prepareMessageRequestWithoutMarker(String whitelistFiscalCode) {
-        String resolvedFiscalCode = resolveFiscalCode(whitelistFiscalCode);
+    @Given("una richiesta di invio messaggio senza marker verso un destinatario di tipo {string}")
+    public void prepareMessageRequestWithoutMarkerForRecipientType(String recipientType) {
+        String resolvedFiscalCode = resolveFiscalCode(recipientType);
         Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
                 .withFiscalCode(resolvedFiscalCode)
                 .withSubject("Notifica ordinaria senza marker")
                 .buildMap();
         context.setRequestPayload(payload);
-        if (context.getRequestHeaders() == null) {
-            context.setRequestHeaders(new HashMap<>());
+        if ("WHITELIST".equalsIgnoreCase(recipientType) || "${pn.io-mock.real-routing.tax-id}".equals(recipientType)) {
+            if (context.getRequestHeaders() == null) {
+                context.setRequestHeaders(new HashMap<>());
+            }
+            context.getRequestHeaders().put("Ocp-Apim-Subscription-Key", "sub-key-io-collaudo-test-12345");
         }
-        context.getRequestHeaders().put("Ocp-Apim-Subscription-Key", "sub-key-io-collaudo-test-12345");
+    }
+
+    @Given("una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist {string}")
+    public void prepareMessageRequestWithoutMarker(String whitelistFiscalCode) {
+        prepareMessageRequestWithoutMarkerForRecipientType(whitelistFiscalCode);
     }
 
     @Given("una richiesta di invio messaggio con subject ordinario senza marker per destinatario ordinario {string}")
     public void prepareMessageRequestWithoutMarkerForOrdinaryRecipient(String ordinaryFiscalCode) {
-        String resolvedFiscalCode = resolveFiscalCode(ordinaryFiscalCode);
-        Map<String, Object> payload = IoMockMessagePayloadBuilder.builder()
-                .withFiscalCode(resolvedFiscalCode)
-                .withSubject("Notifica ordinaria senza marker")
-                .buildMap();
-        context.setRequestPayload(payload);
+        prepareMessageRequestWithoutMarkerForRecipientType(ordinaryFiscalCode);
     }
 
     @Given("una richiesta di invio messaggio non conforme per {string}")

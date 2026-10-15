@@ -1,20 +1,19 @@
 package it.pagopa.pn.cucumber.steps.ioMock.context;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import io.cucumber.java.Before;
 import io.cucumber.spring.ScenarioScope;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 @Getter
 @Setter
-@ScenarioScope(proxyMode = ScopedProxyMode.NO)
+@ScenarioScope
 public class IoMockScenarioContext {
 
     private Map<String, Object> requestPayload;
@@ -42,7 +41,6 @@ public class IoMockScenarioContext {
         resetContext();
     }
 
-    @Before
     public void resetContext() {
         requestPayload = new HashMap<>();
         requestHeaders = new HashMap<>();

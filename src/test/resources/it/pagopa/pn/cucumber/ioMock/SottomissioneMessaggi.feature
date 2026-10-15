@@ -12,7 +12,7 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
 
   @MOCK_IO_SUBMIT_02_1_B
   Scenario: [MOCK_IO_SUBMIT_02_1_B] Routing trasparente a IO reale per richiesta con subject ordinario privo di marker
-    Given una richiesta di invio messaggio con subject ordinario privo di marker verso destinatario whitelist "${pn.io-mock.real-routing.tax-id}"
+    Given una richiesta di invio messaggio senza marker verso un destinatario di tipo "WHITELIST"
     When viene richiesta la sottomissione del messaggio
     Then la richiesta viene instradata con successo verso l'ambiente reale di IO
 
@@ -32,7 +32,7 @@ Feature: Sottomissione del Messaggio e Generazione dell'Identificativo
 
   @MOCK_IO_SUBMIT_02_2_B
   Scenario: [MOCK_IO_SUBMIT_02_2_B] Rifiuto invio a IO reale per destinatario non whitelistato privo di marker
-    Given una richiesta di invio messaggio con subject ordinario senza marker per destinatario ordinario "RSSMRA80A01H5010"
+    Given una richiesta di invio messaggio senza marker verso un destinatario di tipo "STANDARD"
     When viene richiesta la sottomissione del messaggio
     Then la richiesta viene rifiutata per destinatario non abilitato all'inoltro senza marker
 

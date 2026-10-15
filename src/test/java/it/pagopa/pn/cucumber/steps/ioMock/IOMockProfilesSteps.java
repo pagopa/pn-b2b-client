@@ -41,6 +41,13 @@ public class IOMockProfilesSteps {
             return rawFiscalCode;
         }
         String trimmed = rawFiscalCode.trim();
+        if ("BLACKLIST".equalsIgnoreCase(trimmed) || "DESTINATARIO_IN_BLACKLIST".equalsIgnoreCase(trimmed) || "BLACKLIST_CF".equalsIgnoreCase(trimmed)) {
+            trimmed = "${pn.io-mock.sender-not-allowed.tax-id}";
+        } else if ("WHITELIST".equalsIgnoreCase(trimmed) || "DESTINATARIO_ROUTING_REALE".equalsIgnoreCase(trimmed) || "REAL_ROUTING_CF".equalsIgnoreCase(trimmed) || "WHITELIST_ROUTING_REALE".equalsIgnoreCase(trimmed)) {
+            trimmed = "${pn.io-mock.real-routing.tax-id}";
+        } else if ("STANDARD".equalsIgnoreCase(trimmed) || "ORDINARIO".equalsIgnoreCase(trimmed)) {
+            return "STANDAR_CF_00001";
+        }
         String resolved = null;
         if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
             resolved = environment.resolvePlaceholders(trimmed);
@@ -73,6 +80,7 @@ public class IOMockProfilesSteps {
     // PROFILES DOMAIN GIVEN STEPS
     //-----------------------------------------------------------------------------------------
 
+    @Given("un destinatario di tipo {string}")
     @Given("un destinatario con codice fiscale in blacklist {string}")
     @Given("un destinatario abilitato al routing reale {string}")
     @Given("un destinatario con codice fiscale ordinario {string}")

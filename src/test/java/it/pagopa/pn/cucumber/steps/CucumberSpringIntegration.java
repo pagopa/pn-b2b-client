@@ -194,6 +194,7 @@ import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -413,7 +414,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
-        DelayerSkipSenderLimitService.class
+        DelayerSkipSenderLimitService.class,
+        IoMockScenarioContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
