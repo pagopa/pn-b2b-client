@@ -34,12 +34,19 @@ public class PnContentExtractor implements IPnContentExtractor {
                 return null;
             }
             List<String> boldValueList = structuredText.boldWords();
-            if (boldValueList.isEmpty()) {
-                throw new PnParserException("pdf provided is not valid document because did not contain bold words.");
-            }
             String extractedText = structuredText.text();
             if (extractedText == null) {
                 throw new PnParserException("some problems on extracting text by area.");
+            }
+            if (boldValueList == null || boldValueList.isEmpty()) {
+                boldValueList = new ArrayList<>();
+                String[] lines = extractedText.split("\r\n|\n");
+                for (String line : lines) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        boldValueList.add(trimmed);
+                    }
+                }
             }
             return getContent(extractedText, boldValueList, legalFactType);
         } catch (RuntimeException exception) {

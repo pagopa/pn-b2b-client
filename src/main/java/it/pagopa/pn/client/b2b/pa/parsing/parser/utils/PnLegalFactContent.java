@@ -102,7 +102,19 @@ public class PnLegalFactContent {
     }
 
     protected String getTitle(PnParserRecord.PnParserContent content) {
-        return content.valueList().get(0);
+        if (content.valueList() != null && !content.valueList().isEmpty()) {
+            return content.valueList().get(0);
+        }
+        if (content.text() != null && !content.text().isEmpty()) {
+            String[] lines = content.text().split("\r\n|\n");
+            for (String line : lines) {
+                String tr = line.trim();
+                if (!tr.isEmpty()) {
+                    return tr;
+                }
+            }
+        }
+        return null;
     }
 
     protected String getIun(PnParserRecord.PnParserContent content, boolean isWithNotificaPresaInCarico) {
@@ -359,6 +371,9 @@ public class PnLegalFactContent {
     }
 
     protected String cleanDataAttestazioneOpponibile(String dataAttestazioneOpponibile) {
+        if (dataAttestazioneOpponibile == null) {
+            return null;
+        }
         String[] splitted = dataAttestazioneOpponibile.split(" ");
         StringBuilder cleaned = new StringBuilder();
         for (String value: splitted) {

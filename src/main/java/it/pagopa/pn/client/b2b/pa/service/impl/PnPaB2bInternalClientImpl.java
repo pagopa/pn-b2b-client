@@ -183,15 +183,16 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     /**
-    * V26
-    */
+     * V26
+     */
     @Override
     public NewNotificationResponse sendNewNotificationV26(NewNotificationRequestV26 newNotificationRequest) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV26 request;
         request = deepCopy(newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV26.class);
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
         response = newNotificationApi.sendNewNotificationV26(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups, null, null);
-        return deepCopy(response, NewNotificationResponse.class);    }
+        return deepCopy(response, NewNotificationResponse.class);
+    }
 
     @Override
     public NewNotificationRequestStatusResponseV26 getNotificationRequestStatusV26(String notificationRequestId) {
@@ -291,12 +292,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                         , groups,
                         attachmentIdx);
         return deepCopy(response, NotificationAttachmentDownloadMetadataResponse.class);
-    }
-
-
-    @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
-        return null;
     }
 
     @Override
