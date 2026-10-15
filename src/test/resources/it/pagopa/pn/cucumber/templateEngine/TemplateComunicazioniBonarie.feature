@@ -504,8 +504,8 @@ Feature: Comunicazioni bonarie
 
   @templateEngineEscapeOn
   Scenario Outline: [COMBO_TEMPLATE_ENGINE_HTML-ESCAPE_1] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint coinvolti
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "<format>"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "<format>"
 
     Examples:
       | endpoint                                   | format | fields                                                           |

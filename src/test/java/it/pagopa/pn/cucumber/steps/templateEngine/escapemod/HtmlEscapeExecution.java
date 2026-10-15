@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.templateEngine.fuzzing;
+package it.pagopa.pn.cucumber.steps.templateEngine.escapemod;
 
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import java.util.Map;
 
 @Getter
 @RequiredArgsConstructor
-public class HtmlEscapeFuzzExecution {
+public class HtmlEscapeExecution {
 
     private final String endpoint;
     private final String format;

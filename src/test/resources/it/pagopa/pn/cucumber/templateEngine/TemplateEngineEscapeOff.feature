@@ -4,8 +4,8 @@ Feature: Template Engine - HTML escaping disabilitato
 
   @templateEngineEscapeOff
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_OFF_1_A] Verifica comportamento con HTML escaping disabilitato sugli endpoint PDF
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano rappresentati con HTML escaping disabilitato nel template di tipo "pdf"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo "pdf"
 
     Examples:
       | endpoint                                       | fields                                                                                                                                                                                  |
@@ -23,8 +23,8 @@ Feature: Template Engine - HTML escaping disabilitato
 
   @templateEngineEscapeOff
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_OFF_1_B] Verifica comportamento con HTML escaping disabilitato sugli endpoint HTML
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano rappresentati con HTML escaping disabilitato nel template di tipo "html"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo "html"
 
     Examples:
       | endpoint                              | fields                                                           |
@@ -38,8 +38,8 @@ Feature: Template Engine - HTML escaping disabilitato
 
   @templateEngineEscapeOff
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_OFF_1_C] Verifica comportamento con HTML escaping disabilitato sugli endpoint TEXT
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano rappresentati con HTML escaping disabilitato nel template di tipo "text"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo "text"
 
     Examples:
       | endpoint                  | fields                                    |

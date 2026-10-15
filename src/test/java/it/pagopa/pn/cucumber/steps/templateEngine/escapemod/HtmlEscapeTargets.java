@@ -1,26 +1,26 @@
-package it.pagopa.pn.cucumber.steps.templateEngine.fuzzing;
+package it.pagopa.pn.cucumber.steps.templateEngine.escapemod;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public final class HtmlEscapeFuzzTargets {
+public final class HtmlEscapeTargets {
 
     private static final String ENDPOINT_PREFIX =
             "/templates-engine-private/v1/templates/";
 
-    private static final Map<String, HtmlEscapeFuzzTarget> TARGETS = createTargets();
+    private static final Map<String, HtmlEscapeTarget> TARGETS = createTargets();
 
-    private HtmlEscapeFuzzTargets() {
+    private HtmlEscapeTargets() {
     }
 
-    public static HtmlEscapeFuzzTarget get(String endpoint) {
+    public static HtmlEscapeTarget get(String endpoint) {
         String normalizedEndpoint = endpoint.trim().toLowerCase();
 
         if (normalizedEndpoint.startsWith(ENDPOINT_PREFIX)) {
             normalizedEndpoint = normalizedEndpoint.substring(ENDPOINT_PREFIX.length());
         }
 
-        HtmlEscapeFuzzTarget target = TARGETS.get(normalizedEndpoint);
+        HtmlEscapeTarget target = TARGETS.get(normalizedEndpoint);
 
         if (target == null) {
             throw new IllegalArgumentException(
@@ -31,12 +31,12 @@ public final class HtmlEscapeFuzzTargets {
         return target;
     }
 
-    private static Map<String, HtmlEscapeFuzzTarget> createTargets() {
-        Map<String, HtmlEscapeFuzzTarget> targets = new LinkedHashMap<>();
+    private static Map<String, HtmlEscapeTarget> createTargets() {
+        Map<String, HtmlEscapeTarget> targets = new LinkedHashMap<>();
 
         targets.put(
                 "notification-received-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-received-legal-fact",
                         "ATTESTAZIONE OPPONIBILE A TERZI DI NOTIFICA PRESA IN CARICO",
                         null,
@@ -53,7 +53,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "pec-delivery-workflow-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "pec-delivery-workflow-legal-fact",
                         "ATTESTAZIONE OPPONIBILE A TERZI DI NOTIFICA DIGITALE",
                         null,
@@ -67,7 +67,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-viewed-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-viewed-legal-fact",
                         "ATTESTAZIONE OPPONIBILE A TERZI DI AVVENUTO ACCESSO",
                         null,
@@ -81,7 +81,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-cancelled-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-cancelled-legal-fact",
                         "DICHIARAZIONE DI ANNULLAMENTO NOTIFICA",
                         null,
@@ -95,7 +95,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "analog-delivery-workflow-failure-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "analog-delivery-workflow-failure-legal-fact",
                         "DEPOSITO DI AVVENUTA RICEZIONE",
                         null,
@@ -108,7 +108,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "analog-delivery-workflow-timeout-legal-fact",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "analog-delivery-workflow-timeout-legal-fact",
                         null,
                         "analogDeliveryWorkflowTimeoutLegalFact",
@@ -122,7 +122,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-aar-radd-alt",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-aar-radd-alt",
                         "AVVISO DI AVVENUTA RICEZIONE RADD",
                         null,
@@ -137,7 +137,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-aar",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-aar",
                         "AVVISO DI AVVENUTA RICEZIONE",
                         null,
@@ -151,7 +151,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "analog-feedback-availability-statement",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "analog-feedback-availability-statement",
                         null,
                         "analogFeedbackAvailabilityStatement",
@@ -164,7 +164,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-aar-for-email",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-aar-for-email",
                         "AVVISO DI CORTESIA EMAIL",
                         null,
@@ -177,7 +177,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-aar-for-email-digital",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-aar-for-email-digital",
                         "AVVISO DI CORTESIA EMAIL DIGITALE",
                         null,
@@ -190,7 +190,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-aar-for-pec",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-aar-for-pec",
                         "AVVISO DI CORTESIA PEC",
                         null,
@@ -204,7 +204,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "notification-cce-for-email",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "notification-cce-for-email",
                         null,
                         "notificationCceForEmail",
@@ -224,7 +224,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "informal/analog-communication",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "informal/analog-communication",
                         "COMUNICAZIONE BONARIA POSTA CARTACEA",
                         null,
@@ -235,7 +235,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "informal/email-communication-body",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "informal/email-communication-body",
                         "EMAIL BODY COMUNICAZIONE BONARIA",
                         null,
@@ -246,7 +246,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "informal/pec-communication-body",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "informal/pec-communication-body",
                         "PEC BODY COMUNICAZIONE BONARIA",
                         null,
@@ -257,7 +257,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "informal/io-communication",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "informal/io-communication",
                         "IO COMUNICAZIONE BONARIA",
                         null,
@@ -268,7 +268,7 @@ public final class HtmlEscapeFuzzTargets {
 
         targets.put(
                 "informal/courtesy-email-communication-body",
-                new HtmlEscapeFuzzTarget(
+                new HtmlEscapeTarget(
                         "informal/courtesy-email-communication-body",
                         null,
                         "courtesyEmailCommunicationBody",

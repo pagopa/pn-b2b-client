@@ -760,8 +760,8 @@ Feature: Template engine
 
   @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_A] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint PDF
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "pdf"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "pdf"
 
     Examples:
       | endpoint                                    | fields                                                                                                                                                                                 |
@@ -777,8 +777,8 @@ Feature: Template engine
 
   @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "html"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "html"
 
     Examples:
       | endpoint                                   | fields                                                           |
@@ -789,8 +789,8 @@ Feature: Template engine
 
   @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_2] Verifica escaping dei singoli caratteri e delle combinazioni sui diversi formati
-    When eseguo il corpus di fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sul campo "<field>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "<format>"
+    When eseguo il corpus di HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sul campo "<field>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "<format>"
 
     Examples:
       | endpoint                  | field                | format |
