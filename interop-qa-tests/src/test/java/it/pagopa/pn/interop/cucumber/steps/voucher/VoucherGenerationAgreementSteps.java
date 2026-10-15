@@ -165,7 +165,7 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} approva quella richiesta di fruizione ma l'operazione è vietata")
     public void approveAgreementFailing(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.approveAgreementFailing(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, 403);
+        dataPreparationService.approveAgreementFailing(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null, 400);
     }
 
     private static void handleUnknownAttributeKind(String attributeKind) {
