@@ -917,7 +917,7 @@ Feature: Ricerca dei recapiti digitali per una notifica bonaria.
     And vengono rimossi eventuali recapiti presenti per l'utente
 
 
-  @addressBook2 @useB2B @informalSerchDigitalON
+  @addressBook2 @informalSerchDigitalON
   Scenario: [NOTIFICHE_BONARIE_SERCH_CONTACT_PG_07_1_A] Come ente mittente invio una notifica bonaria verso PG SENZA n di telefono speciale e CON n di telefono di piattaforma. Il servizio utilizzerà il numero presente in piattaforma.
     Given si predispone addressbook per l'utente "CucumberSpa"
     When viene richiesto l'inserimento del numero di telefono "+393214210000", e passo la lingua selezionata dal destinatario "IT"
