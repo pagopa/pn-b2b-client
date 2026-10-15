@@ -61,12 +61,14 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DIGITAL_SUCCESS_WORKFLO
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LOAD_FROM_DELIVERY_PUSH;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_TIMELINE_REWORKED;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_VIEWED;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PREPARE_SIMPLE_REGISTERED_LETTER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.REQUEST_REFUSED;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULE_REFINEMENT;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_FEEDBACK;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_COURTESY_MESSAGE;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_DIGITAL_FEEDBACK;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.STATUS_RAPID;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.TIMELINE_RAPID;
@@ -402,7 +404,11 @@ public class B2bStepsV26 implements B2bStepsInterface {
     @Override
     public void waitForEventOrStatus(String pollingStrategy, PollingType pollingType, String timelineEventCategory, WaitForEventPredicateFilters filters) {
         //FLUSSO NORMALE, CON CARICAMENTO DELLA TIMELINE DA B2B
-        if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
+        if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)
+                || timelineEventCategory.equals(SEND_ANALOG_PROGRESS)
+                || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER_PROGRESS)
+                || timelineEventCategory.equals(PREPARE_SIMPLE_REGISTERED_LETTER)
+                || timelineEventCategory.equals(SEND_SIMPLE_REGISTERED_LETTER)) {
             pollingStrategy = TIMELINE_SLOW;
         }
         String strategy = NotificationUtilsV26.getPollingStrategy(pollingStrategy);
