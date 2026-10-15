@@ -87,7 +87,7 @@ Feature: Clonazione di un e-service
     And l'e-service è in stato "<eserviceState>"
     And l'utente è un "<ruolo>" di "PA1"
     When l'utente tenta di clonare quell'e-service
-    Then si ottiene response status code 204
+    Then si ottiene response status code 200
     And la delega in erogazione è ancora associata all'e-service oggetto della duplicazione
     And l'e-service è stato clonato con successo
     And l'e-service clonato non ha ereditato la delega in erogazione dall'e-service oggetto della duplicazione
