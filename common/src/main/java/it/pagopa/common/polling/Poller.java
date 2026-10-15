@@ -28,7 +28,7 @@ public final class Poller {
     static final Duration HEARTBEAT_INTERVAL = Duration.ofSeconds(30);
     // Awaitility converte le durate in nanosecondi per gestire le attese.
     private static final Duration MAX_AWAITILITY_DURATION = Duration.ofNanos(Long.MAX_VALUE);
-    private static final String DEFAULT_TIMEOUT_MESSAGE = "Polling esaurito senza soddisfare la condizione richiesta";
+    private static final String DEFAULT_TIMEOUT_MESSAGE = "Polling exhausted without satisfying the stop condition";
 
     private Poller() {
     }
