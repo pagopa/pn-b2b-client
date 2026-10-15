@@ -54,3 +54,16 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     When l'utente revoca l'attributo precedentemente verificato
     And si ottiene status code 204
     Then "PA1" approva quella richiesta di fruizione ma l'operazione è vietata
+
+  @nrt-minimal
+  @tenant_revoke_verified_attribute1 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_04] Revoca di un attributo verificato dopo l'accettazione della richiesta di fruizione, che viene sospesa dalla piattaforma
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha già verificato l'attributo verificato a "PA2"
+    And "PA1" approva quella richiesta di fruizione
+    When l'utente revoca l'attributo precedentemente verificato
+    And si ottiene status code 204
+    Then la richiesta di fruizione è in stato "SUSPENDED"
