@@ -795,6 +795,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.paName = paName;
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
         this.currentCxId = paInfo.getSenderId();
+        sharedSteps.setInformalSenderId(currentCxId);
         sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
 
         if (!COMUNE_ROOT.equalsIgnoreCase(paName)) {
