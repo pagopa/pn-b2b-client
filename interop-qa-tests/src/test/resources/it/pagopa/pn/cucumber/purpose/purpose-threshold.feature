@@ -266,15 +266,15 @@ Feature: Verifica soglie differenziate
     @sad-path
     @nuovi-operatori-update
     Examples:
-      | ruolo        | purposeId | statusCode |
-      | viewer       | %actual   | 403        |
+      | ruolo  | purposeId | statusCode |
+      | viewer | %actual   | 403        |
 
     @sad-path
     @nuovi-operatori-update
     @PIN-10457
     Examples:
-      | ruolo        | purposeId | statusCode |
-      | reviewer     | %actual   | 403        |
+      | ruolo    | purposeId | statusCode |
+      | reviewer | %actual   | 403        |
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
@@ -305,11 +305,14 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "<status>"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | <remainingDailyCallsPerConsumer> |
+      | remainingDailyCallsTotal       | <remainingDailyCallsTotal>       |
 
     Examples:
-      | dailyCalls | status               |
-      | 100        | ACTIVE               |
-      | 1001       | WAITING_FOR_APPROVAL |
+      | dailyCalls | status               | remainingDailyCallsPerConsumer | remainingDailyCallsTotal |
+      | 100        | ACTIVE               | 900                            | 901                      |
+      | 1001       | WAITING_FOR_APPROVAL | 1000                           | 1001                     |
 
   # PIN-11097
   @dailyCallsThreshold
@@ -336,11 +339,14 @@ Feature: Verifica soglie differenziate
     And si ottiene status code 200
     And l'utente tenta di attivare la finalità
     Then si ottiene status code 200 e la finalità in stato "<status>"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | <remainingDailyCallsPerConsumer> |
+      | remainingDailyCallsTotal       | <remainingDailyCallsTotal>       |
 
     Examples:
-      | dailyCalls | status               |
-      | 100        | ACTIVE               |
-      | 1001       | WAITING_FOR_APPROVAL |
+      | dailyCalls | status               |remainingDailyCallsPerConsumer | remainingDailyCallsTotal |
+      | 100        | ACTIVE               | 900                           | 901                      |
+      | 1001       | WAITING_FOR_APPROVAL | 1000                          | 1001                     |
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
