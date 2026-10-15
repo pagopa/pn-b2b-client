@@ -187,7 +187,9 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
 
     @Override
     public void signRiskAnalysis(UUID purposeId) throws RestClientException {
-        purposesApi.signRiskAnalysis(purposeId);
+        /* FIXME: l'aggiunta del nuovo parametro obbligatorio RiskAnalysisSignSeed richiede di rivedere i flussi di
+            test che utilizzano questa API. Si passa null MOMENTANEAMENTE per consentire la compilazione del modulo. */
+        purposesApi.signRiskAnalysis(purposeId, null);
     }
 
     @Override

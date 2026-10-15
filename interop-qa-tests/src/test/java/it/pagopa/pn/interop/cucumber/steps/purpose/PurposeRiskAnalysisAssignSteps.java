@@ -182,7 +182,7 @@ public class PurposeRiskAnalysisAssignSteps {
                 .isTrue();
     }
 
-    @Then("alla finalità sono associati esclusivamente i valutatori {integerList} in modalità {riskAnalysisReviewMode}")
+    @Then("alla finalità risultano associati esclusivamente i seguenti valutatori: {reviewerList}, in modalità {riskAnalysisReviewMode}")
     public void verifyReviewersAndMode(List<Integer> reviewers, RiskAnalysisReviewMode mode) {
         String tenantType = sharedStepsContext.getTenantType();
         List<UUID> expectedIds = reviewers.stream()
@@ -214,7 +214,7 @@ public class PurposeRiskAnalysisAssignSteps {
         );
     }
 
-    @When("l'utente tenta di assegnare i valutatori {integerList} alla finalità in modalità {riskAnalysisReviewMode}")
+    @When("l'utente tenta di assegnare alla finalità i seguenti valutatori: {reviewerList}, in modalità {riskAnalysisReviewMode}")
     public void assignReviewersAndMode(List<Integer> reviewers, RiskAnalysisReviewMode mode) {
         if (reviewers.stream().anyMatch(index -> index < 1)) {
             throw new IllegalArgumentException("Gli indici dei valutatori devono essere positivi");

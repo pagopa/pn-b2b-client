@@ -81,6 +81,7 @@ public class PurposeRiskAnalysisCompilationSteps {
         }
         verifyRiskAnalysisSigningState(desiredState.name());
         sharedStepsContext.getRiskAnalysisCommonContext().rememberInitialReviewers();
+        rememberPreparedRiskAnalysis();
     }
 
     @Given("si ha un'analisi del rischio non firmata in modalità {riskAnalysisReviewMode} in stato {string}")
@@ -93,12 +94,23 @@ public class PurposeRiskAnalysisCompilationSteps {
             compilesRiskAnalysisViaGenericEndpoint();
             verifyCompilationSuccessful();
             assignmentSteps.verifyNoReviewersAndMode(mode);
+            rememberPreparedRiskAnalysis();
             return;
         }
         if ("SIGNED".equalsIgnoreCase(state)) {
             throw new IllegalArgumentException("L'analisi del rischio deve essere non firmata");
         }
         prepareRiskAnalysisCompilation(mode, state);
+    }
+
+    private void rememberPreparedRiskAnalysis() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RiskAnalysisForm form = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getRiskAnalysisForm();
+        org.assertj.core.api.Assertions.assertThat(form).as("La RA preparata deve contenere un form").isNotNull();
+        org.assertj.core.api.Assertions.assertThat(form.getAnswers())
+                .as("La preparazione standard richiede risposte RA non vuote").isNotEmpty();
+        sharedStepsContext.getRiskAnalysisCommonContext().rememberRiskAnalysis(purposeId, form);
     }
 
     @When("il valutatore assegnato compila l'analisi del rischio della finalità")

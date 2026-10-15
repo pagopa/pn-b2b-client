@@ -181,10 +181,10 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And l'utente è un amministratore del profilo API BFF dell'ente "GSP"
     And l'utente assegna con successo i valutatori <reviewerIniziali> alla finalità in modalità <modeIniziale>
     When l'utente è un amministratore del profilo API <apiSet> dell'ente "GSP"
-    And l'utente tenta di assegnare i valutatori <reviewerFinali> alla finalità in modalità <modeFinale>
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
     Then si ottiene status code 204
     And l'utente è un "admin" di "GSP"
-    And alla finalità sono associati esclusivamente i valutatori <reviewerFinali> in modalità <modeFinale>
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
@@ -247,10 +247,10 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And l'utente è un "admin" di "GSP"
     And si ha un'analisi del rischio non firmata in modalità <modeIniziale> in stato "<statoIniziale>"
     When l'utente è un amministratore del profilo API M2M dell'ente "GSP"
-    And l'utente tenta di assegnare i valutatori <reviewerFinali> alla finalità in modalità <modeFinale>
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
     Then si ottiene status code 204
     And l'utente è un "admin" di "GSP"
-    And alla finalità sono associati esclusivamente i valutatori <reviewerFinali> in modalità <modeFinale>
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 

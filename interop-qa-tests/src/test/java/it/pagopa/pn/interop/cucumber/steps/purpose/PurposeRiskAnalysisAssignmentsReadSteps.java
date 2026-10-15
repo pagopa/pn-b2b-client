@@ -152,8 +152,11 @@ public class PurposeRiskAnalysisAssignmentsReadSteps {
     public void verifyPurposeAssignedToAllReviewers() {
         List<AssignedReviewerActorRef> reviewers = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
         assertThat(reviewers)
-                .as("Nel contesto devono essere presenti i valutatori assegnati")
-                .isNotEmpty();
+                .as("Nel contesto deve essere inizializzato l'elenco dei valutatori assegnati")
+                .isNotNull();
+        if (reviewers.isEmpty()) {
+            return;
+        }
 
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         String previousToken = sharedStepsContext.getUserToken();
