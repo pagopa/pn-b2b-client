@@ -1,5 +1,6 @@
 Feature: Gara Consolidatore/Recapito FASE 2
 
+  #TEST COMMENTATI POICHE' SLITTERANNO IN RELEASE SUCCESSIVA
 #  @consolidatoreFase2
 #  Scenario: [CON_F_TWO_01_01_A] Gestione errori di rendicontazione per AR (Happy Path)
 #    Given viene generata una nuova notifica

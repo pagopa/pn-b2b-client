@@ -146,44 +146,6 @@ public class AwsServiceSteps {
         }
     }
 
-    @Then("verifico che su DynamoDB {is} presente l'elemento {string} nella tabella pn-paperTrackerError esclusivamente con category:")
-    public void checkPaperTrackerErrorInDynamoDB(boolean isPresent, String element, List<String> categories) {
-        String trackingId = String.format("%s.IUN_%s.RECINDEX_0.ATTEMPT_0.PCRETRY_0", element, sharedSteps.getNotificationIun());
-        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_TRACKER_ERROR, Map.of(
-                ":v_trackingId", AttributeValue.builder().s(trackingId).build()
-        ));
-        log.info("Elementi trovati con trackingId {}: {}", trackingId, queryResponse.count());
-        try {
-            if (isPresent) {
-                assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + element).isGreaterThan(0);
-                log.info("Sono presenti {} elementi", queryResponse.items().size());
-                for (Map<String, AttributeValue> item : queryResponse.items()) {
-                    item.forEach((key, value) -> {
-                        Object val = extractValue(value);
-                        if ("category".equalsIgnoreCase(key)) {
-                            assertThat(val)
-                                    .as("Il valore di category deve essere una String")
-                                    .isInstanceOf(String.class);
-
-                            assertThat(queryResponse.items().stream()
-                                    .map(itemValue -> itemValue.get("category"))
-                                    .filter(Objects::nonNull)
-                                    .map(AttributeValue::s)
-                                    .toList())
-                                    .as("Non sono presenti tutte le category attese")
-                                    .containsAll(categories);
-                        }
-                        log.info("{}: {}", key, val);
-                    });
-                }
-            } else {
-                assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + element).isEqualTo(0);
-            }
-        } catch (AssertionError assertionError) {
-            sharedSteps.throwAssertionErrorWithIUN(assertionError);
-        }
-    }
-
     @Then("si verifica che su DynamoDB {is} presente l'elemento {string} nella tabella pn-PaperTrackings con statusCodes {string}")
     public void checkPaperTrackingsInDynamoDB(
             boolean isPresent,
