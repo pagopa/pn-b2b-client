@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+import static it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl.METADATA_VERSION_HEADER;
 import static java.util.Objects.nonNull;
 
 public class PurposeRiskAnalysisCompilationSteps {
@@ -28,6 +29,8 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private RiskAnalysis compiledRiskAnalysis;
+    private UUID purposeIdToSign;
+    private RiskAnalysisSignSeed riskAnalysisSignSeed;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -303,12 +306,34 @@ public class PurposeRiskAnalysisCompilationSteps {
         verifyRiskAnalysisSigningState("SIGNED");
     }
 
+    @Given("l'utente acquisisce la versione dei metadati della finalità da convalidare")
+    public void userRetrievesPurposeMetadataVersionToSign() {
+        purposeIdToSign = null;
+        riskAnalysisSignSeed = null;
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String metadataVersion = clientTokenConfigurator.getPurposeApiClient().getPurposeWithHttpInfo(purposeId)
+                .getHeaders().getFirst(METADATA_VERSION_HEADER);
+        if (metadataVersion == null) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
+        }
+        final Integer version;
+        try {
+            version = Integer.valueOf(metadataVersion);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " non valido: " + metadataVersion, e);
+        }
+        riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
+        purposeIdToSign = purposeId;
+    }
+
     @When("l'utente convalida l'analisi del rischio della finalità")
     public void userSignsRiskAnalysis() {
+        if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
+            throw new IllegalStateException("Acquisire prima la versione dei metadati della finalità da convalidare con un utente autorizzato");
+        }
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-
-        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
     }
 
     @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")
