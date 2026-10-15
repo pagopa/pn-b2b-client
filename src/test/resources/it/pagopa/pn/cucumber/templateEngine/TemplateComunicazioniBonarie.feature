@@ -40,6 +40,28 @@ Feature: Comunicazioni bonarie
     When recupero il template per "sms comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "text"
 
+
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-subject
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_A] Richiamare l’API per il recupero del template relativo al oggetto di avviso di cortesia dell'EMAIL
+    When recupero il template per "email subject avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And il corpo del messaggio contiene il testo "Hai ricevuto una comunicazione da senderDenomination con oggetto: subject"
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-body
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_B] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'EMAIL
+    When recupero il template per "email body avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "html"
+    And il corpo del messaggio contiene il testo "Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti."
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
+    Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS
+    When recupero il template per "sms avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And il corpo del messaggio contiene il testo "Una comunicazione inviata alla tua impresa da senderPaDenomination richiede la tua attenzione. Per leggerla, accedi al sito di SEND - Servizio Notifiche Digitali."
+
+
+
   # ---------- Comunicazione bonaria posta cartacea (schema InformalCommunication) ----------
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
