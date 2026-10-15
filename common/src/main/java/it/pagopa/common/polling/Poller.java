@@ -48,74 +48,58 @@ public final class Poller {
         Objects.requireNonNull(config, "config");
         Objects.requireNonNull(onTimeoutMessage, "onTimeoutMessage");
 
-        class PollingAttempt {
-            final long start = System.nanoTime();
-            Duration nextHeartbeat = HEARTBEAT_INTERVAL;
-            int attempts;
-            T lastValue;
+        long start = System.nanoTime();
+        AtomicInteger attempts = new AtomicInteger();
+        AtomicReference<T> lastValue = new AtomicReference<>();
 
-            Duration elapsed() {
-                return Duration.ofNanos(System.nanoTime() - start);
-            }
-
-            PollingTimeoutException timeoutException() {
-                return new PollingTimeoutException(onTimeoutMessage.apply(lastValue), lastValue, attempts, elapsed());
-            }
-
-            boolean evaluate() {
-                checkInterrupted();
-                if (attempts > 0 && elapsed().compareTo(config.timeout()) >= 0) {
-                    throw timeoutException();
-                }
-                attempts++;
-                boolean satisfied;
-                try {
-                    lastValue = call.get();
-                    satisfied = stopCondition.test(lastValue);
-                } catch (RuntimeException e) {
-                    throw new PollingExecutionException("Errore al tentativo " + attempts + ": " + e.getMessage(), e);
-                }
-                checkInterrupted();
-
-                Duration elapsed = elapsed();
-                if (satisfied) {
-                    log.debug("Polling riuscito al tentativo {} (elapsed={}ms)", attempts, elapsed.toMillis());
-                    return true;
-                }
-                if (attempts >= config.maxAttempts()
-                        || config.interval().compareTo(config.timeout().minus(elapsed)) >= 0) {
-                    throw timeoutException();
-                }
-                if (elapsed.compareTo(nextHeartbeat) >= 0) {
-                    log.info("Polling in corso: tentativo {}, elapsed={}s, timeout={}s",
-                            attempts, elapsed.toSeconds(), config.timeout().toSeconds());
-                    nextHeartbeat = elapsed.plus(HEARTBEAT_INTERVAL);
-                } else {
-                    log.debug("Tentativo {} non soddisfatto, attendo {}ms", attempts, config.interval().toMillis());
-                }
-                return false;
-            }
-        }
-
-        PollingAttempt attempt = new PollingAttempt();
-        // Awaitility richiede un timeout positivo; zero mantiene una singola chiamata immediata.
-        if (config.timeout().isZero()) {
-            attempt.evaluate();
-        } else {
+        Callable<Boolean> attempt = () -> {
+            checkInterrupted();
+            attempts.incrementAndGet();
+            T value;
+            boolean satisfied;
             try {
-                Awaitility.await()
-                        .pollInSameThread()
-                        .ignoreNoExceptions()
-                        .pollDelay(Duration.ZERO)
-                        .pollInterval(awaitilityDuration(config.interval()))
-                        .atMost(awaitilityDuration(config.timeout()))
-                        .until(attempt::evaluate);
-            } catch (ConditionTimeoutException e) {
-                checkInterrupted();
-                throw attempt.timeoutException();
+                value = call.get();
+                satisfied = stopCondition.test(value);
+            } catch (RuntimeException e) {
+                throw new PollingExecutionException("Error on attempt: " + attempts.get() + ": " + e.getMessage(), e);
             }
+            lastValue.set(value);
+            checkInterrupted();
+            if (satisfied) {
+                return true;
+            }
+            // pollInSameThread() non ha un thread di sorveglianza su atMost: senza questo controllo,
+            // Awaitility dormirebbe l'intero pollInterval anche quando supera il timeout residuo,
+            // facendo scadere il polling in ritardo (fino a un intero interval in piu').
+            Duration elapsed = Duration.ofNanos(System.nanoTime() - start);
+            boolean maxAttemptsReached = attempts.get() >= config.maxAttempts();
+            boolean nextIntervalExceedsRemainingTime = config.interval().compareTo(config.timeout().minus(elapsed)) >= 0;
+            if (maxAttemptsReached || nextIntervalExceedsRemainingTime) {
+                throw timeoutException(start, attempts.get(), value, onTimeoutMessage);
+            }
+            return false;
+        };
+
+        try {
+            Awaitility.await()
+                    .pollInSameThread()
+                    .pollDelay(Duration.ZERO)
+                    .pollInterval(awaitilityDuration(config.interval()))
+                    .atMost(awaitilityDuration(config.timeout()))
+                    .until(attempt);
+        } catch (ConditionTimeoutException e) {
+            checkInterrupted();
+            throw timeoutException(start, attempts.get(), lastValue.get(), onTimeoutMessage);
         }
-        return attempt.lastValue;
+        return lastValue.get();
+    }
+
+    private static <T> PollingTimeoutException timeoutException(long start, int attempts, T lastValue,
+                                                                  Function<T, String> onTimeoutMessage) {
+        Duration elapsed = Duration.ofNanos(System.nanoTime() - start);
+        log.warn("Polling exhausted after {} attempts (elapsed={}ms), last value read: {}",
+                attempts, elapsed.toMillis(), lastValue);
+        return new PollingTimeoutException(onTimeoutMessage.apply(lastValue), lastValue, attempts, elapsed);
     }
 
     private static Duration awaitilityDuration(Duration duration) {
