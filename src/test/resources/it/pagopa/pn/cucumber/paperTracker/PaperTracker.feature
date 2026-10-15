@@ -398,6 +398,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_NOT_ORDERED            |
       | FAIL_CON996_PCRETRY_FURTO_RIR |
       | OK_PCRETRY_CON996_RIR         |
+      | FAIL_RIR_M06                  |
+      | OK_RIR_M02                    |
 
 
   @paperTrackerARRunMode
