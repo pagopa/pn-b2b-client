@@ -29,7 +29,8 @@ public record PollingConfig(Duration timeout, Duration interval, int maxAttempts
         new PollingConfig(timeout, interval, 1);
         long intervals;
         try {
-            intervals = timeout.dividedBy(interval);
+            // Esclude il tentativo che partirebbe esattamente alla scadenza.
+            intervals = timeout.isZero() ? 0 : timeout.minusNanos(1).dividedBy(interval);
         } catch (ArithmeticException e) {
             intervals = Long.MAX_VALUE;
         }

@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -80,6 +83,17 @@ public final class Poller {
             return false;
         };
 
+        if (config.timeout().isZero()) {
+            try {
+                attempt.call();
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new PollingExecutionException("Error on first attempt", e);
+            }
+            return lastValue.get();
+        }
+
         try {
             Awaitility.await()
                     .pollInSameThread()
@@ -97,8 +111,8 @@ public final class Poller {
     private static <T> PollingTimeoutException timeoutException(long start, int attempts, T lastValue,
                                                                   Function<T, String> onTimeoutMessage) {
         Duration elapsed = Duration.ofNanos(System.nanoTime() - start);
-        log.warn("Polling exhausted after {} attempts (elapsed={}ms), last value read: {}",
-                attempts, elapsed.toMillis(), lastValue);
+        log.warn("Polling exhausted after {} attempts (elapsed={}ms)",
+                attempts, elapsed.toMillis());
         return new PollingTimeoutException(onTimeoutMessage.apply(lastValue), lastValue, attempts, elapsed);
     }
 

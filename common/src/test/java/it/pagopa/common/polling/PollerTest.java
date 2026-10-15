@@ -143,12 +143,53 @@ class PollerTest {
     @Test
     void zeroTimeoutStillPerformsOneAttempt() {
         PollingConfig config = PollingConfig.of(Duration.ZERO, Duration.ofSeconds(1));
+        AtomicInteger calls = new AtomicInteger();
 
-        assertEquals("OK", poll(() -> "OK", "OK"::equals, config));
+        assertEquals("OK", poll(() -> {
+            calls.incrementAndGet();
+            return "OK";
+        }, "OK"::equals, config));
+        assertEquals(1, calls.get());
+        calls.set(0);
         PollingTimeoutException ex = assertThrows(PollingTimeoutException.class,
-                () -> poll(() -> "WAIT", "OK"::equals, config));
+                () -> poll(() -> {
+                    calls.incrementAndGet();
+                    return "WAIT";
+                }, "OK"::equals, config));
+        assertEquals(1, calls.get());
         assertEquals(1, ex.getAttempts());
         assertEquals("WAIT", ex.getLastValue());
+    }
+
+    @Test
+    void zeroTimeoutWrapsCallExceptionWithoutRetrying() {
+        PollingConfig config = PollingConfig.of(Duration.ZERO, Duration.ofSeconds(1));
+        IllegalStateException cause = new IllegalStateException("call failed");
+        AtomicInteger calls = new AtomicInteger();
+
+        PollingExecutionException ex = assertThrows(PollingExecutionException.class, () -> poll(() -> {
+            calls.incrementAndGet();
+            throw cause;
+        }, value -> true, config));
+
+        assertSame(cause, ex.getCause());
+        assertEquals(1, calls.get());
+    }
+
+    @Test
+    void zeroTimeoutPreservesInterruptionDuringCall() {
+        PollingConfig config = PollingConfig.of(Duration.ZERO, Duration.ofSeconds(1));
+        AtomicInteger calls = new AtomicInteger();
+
+        PollingExecutionException ex = assertThrows(PollingExecutionException.class, () -> poll(() -> {
+            calls.incrementAndGet();
+            Thread.currentThread().interrupt();
+            return "OK";
+        }, "OK"::equals, config));
+
+        assertInstanceOf(InterruptedException.class, ex.getCause());
+        assertTrue(Thread.currentThread().isInterrupted());
+        assertEquals(1, calls.get());
     }
 
     @Test
@@ -269,11 +310,14 @@ class PollerTest {
 
     @Test
     void configOfComputesSafetyCap() {
-        assertEquals(11, PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(1)).maxAttempts());
+        assertEquals(10, PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(1)).maxAttempts());
         assertEquals(3, PollingConfig.of(Duration.ofMillis(2500), Duration.ofSeconds(1)).maxAttempts());
         assertEquals(1, PollingConfig.of(Duration.ZERO, Duration.ofSeconds(1)).maxAttempts());
-        assertEquals(5, PollingConfig.of(Duration.ofMillis(2), Duration.ofNanos(500_000)).maxAttempts());
+        assertEquals(4, PollingConfig.of(Duration.ofMillis(2), Duration.ofNanos(500_000)).maxAttempts());
         assertEquals(4, PollingConfig.of(Duration.ofMillis(5), Duration.ofNanos(1_500_000)).maxAttempts());
+        assertEquals(1, PollingConfig.of(Duration.ofNanos(1), Duration.ofNanos(1)).maxAttempts());
+        assertEquals(1, PollingConfig.of(Duration.ofNanos(1), Duration.ofNanos(2)).maxAttempts());
+        assertEquals(2, PollingConfig.of(Duration.ofNanos(3), Duration.ofNanos(2)).maxAttempts());
     }
 
     @Test

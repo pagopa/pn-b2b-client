@@ -17,9 +17,8 @@ public class PollingTimeoutException extends RuntimeException {
         this.elapsed = elapsed;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T getLastValue() {
-        return (T) lastValue;
+    public Object getLastValue() {
+        return lastValue;
     }
 
     public int getAttempts() {
