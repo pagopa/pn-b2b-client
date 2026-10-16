@@ -31,16 +31,19 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     private final InformalNotificationTerminationApi informalNotificationTerminationApi;
     private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
-    private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
+    private ApiKeyType apiKeySetted = null;
     private final List<String> groups;
+    private final RestTemplate restTemplate;
 
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySon;
     private final String apiKeyRoot;
+    private final String baseExternalPath;
 
     public PnPaB2bInternalInformalClientImpl(RestTemplate restTemplate,
+                                             @Value("${pn.external.base-url}") String baseExternalPath,
                                              @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
                                              @Value("${pn.external.api-key}") String apiKeyMvp1,
                                              @Value("${pn.external.api-key-2}") String apiKeyMvp2,
@@ -50,9 +53,9 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
 
         this.operatorId = "TestMv";
         this.groups = Collections.emptyList();
-        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, null));
-        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, null));
-        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, null));
+        this.messagesApi = new MessagesApi(newInformalApiClient(restTemplate, baseExternalPath, null));
+        this.senderReadInformalNotificationB2BApi = new SenderReadInformalNotificationB2BApi(newInformalApiClient(restTemplate, baseExternalPath, null));
+        this.newInformalNotificationApi = new NewInformalNotificationApi(newInformalApiClient(restTemplate, baseExternalPath, null));
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
         this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
@@ -62,11 +65,16 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
         this.apiKeyRoot = apiKeyRoot;
+        this.restTemplate = restTemplate;
+        //setApiKey(apiKeyGa);
+        this.apiKeySetted = null;
+        this.baseExternalPath = baseExternalPath;
     }
 
-    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String apiKey) {
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newInformalApiClient(RestTemplate restTemplate, String baseExternalPath, String apiKey) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
         newApiClient.setApiKey(apiKey);
+        newApiClient.setBasePath(baseExternalPath);
         return newApiClient;
     }
 
@@ -171,10 +179,9 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
                 beenSet = true;
             }
             case ROOT -> {
-                if (this.apiKeySetted != ApiKeyType.ROOT) {
-                    setApiKey(apiKeyRoot);
-                    this.apiKeySetted = ApiKeyType.ROOT;
-                }
+                if (this.apiKeySetted != ApiKeyType.ROOT)
+                {setApiKey(apiKeyRoot);
+                    this.apiKeySetted = ApiKeyType.ROOT;}
                 beenSet = true;
             }
         }
@@ -184,6 +191,9 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     @Override
     public void setApiKey(String apiKey) {
 
+        this.messagesApi.setApiClient(newInformalApiClient(restTemplate, baseExternalPath, apiKey));
+        this.senderReadInformalNotificationB2BApi.setApiClient(newInformalApiClient(restTemplate, baseExternalPath, apiKey));
+        this.newInformalNotificationApi.setApiClient(newInformalApiClient(restTemplate, baseExternalPath, apiKey));
     }
 
     @Override

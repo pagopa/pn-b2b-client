@@ -792,6 +792,10 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         this.paName = paName;
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
+
+        //todo t bonarie testare questo passaggio
+        pnPaB2bInternalInformalClientImpl.setApiKeys(paInfo.getApiKeyType());
+
         this.currentCxId = paInfo.getSenderId();
         sharedSteps.setInformalSenderId(currentCxId);
         sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
