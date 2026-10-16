@@ -9,4 +9,6 @@ import java.util.UUID;
 public interface IM2MV3PurposeClient extends IM2MPurposeClient, SettableHeaders, Authenticable {
 
     RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId);
+
+    void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentRequest payload);
 }
