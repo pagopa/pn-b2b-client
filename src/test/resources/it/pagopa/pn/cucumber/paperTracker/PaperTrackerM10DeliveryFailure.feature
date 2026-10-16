@@ -78,6 +78,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_zip     | ZONE_2               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RIR"
     And si verifica che la risposta tracking per la sequence "OK-Retry_RIR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
