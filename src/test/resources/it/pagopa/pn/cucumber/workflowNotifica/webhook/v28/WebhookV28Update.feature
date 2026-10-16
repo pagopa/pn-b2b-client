@@ -28,7 +28,7 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
 
   @webhookV28 @precondition @cleanWebhook @webhook3
-  Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo, con eventType "STATUS"  con gruppo che appartenente alla PA.
+  Scenario: [B2B-STREAM_ES1.1_87_2] Aggiornamento di uno stream notifica senza gruppo e con eventType "STATUS", modificato con gruppo non appartenente alla PA.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
@@ -74,7 +74,7 @@ Feature: aggiornamento stream
   @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_89waitForAccepted] Aggiornamento di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
@@ -116,7 +116,7 @@ Feature: aggiornamento stream
   @webhookV28 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_43waitForAccepted] Aggiornamento di uno stream notifica da un gruppo a più gruppi, con eventType "STATUS".
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V28"
-    And allo stream versione "V28" si setta il campo waitForAccepted introdotto con la versione 27 a "true"
+    And allo stream versione "V28" si setta il campo waitForAccepted a "true"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream

@@ -72,4 +72,11 @@ public interface ITemplateEngineClient {
     Resource analogDeliveryWorkflowTimeoutLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowTimeoutLegalFact request) throws RestClientException;
 
     Resource analogFeedbackAvailabilityStatement(LanguageEnum xLanguage, AnalogFeedbackAvailabilityStatement request) throws RestClientException;
+    
+    String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException;
+
+    String informalSmsCourtesy(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
+
 }

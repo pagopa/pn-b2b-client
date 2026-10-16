@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class DataTableTypeNotificationInformal {
 
-    //todo t bonarie
     private InformalNotificationRequestMapper mapper = new InformalNotificationRequestMapper();
 
     //MessagesApi
