@@ -5,6 +5,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.NewInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.api.CampaignStatisticsApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.model.CampaignStatisticsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.api.RecipientReadInformalNotificationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
@@ -32,6 +34,7 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     private final RecipientReadInformalNotificationApi recipientReadInformalNotificationApi;
     private final InternalOnlyApi internalOnlyApi;
     private ApiKeyType apiKeySetted = null;
+    private final CampaignStatisticsApi campaignStatisticsApi;
     private final List<String> groups;
     private final RestTemplate restTemplate;
 
@@ -59,6 +62,7 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
         this.informalNotificationTerminationApi = new InformalNotificationTerminationApi();
         this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
+        this.campaignStatisticsApi = new CampaignStatisticsApi(newcampaignStatisticsApiClient(restTemplate, deliveryBasePathOrigin));
 
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
@@ -89,6 +93,13 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
         client.setBasePath(basePath);
         return client;
     }
+
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient newcampaignStatisticsApiClient(RestTemplate restTemplate, String basePath) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformalmonitorcampaign.ApiClient(restTemplate);
+        client.setBasePath(basePath);
+        return client;
+    }
+
 
     public MessageResponse createMessage(String cxId, NewMessageRequest request) {
         return messagesApi.newMessage(request);
@@ -195,6 +206,10 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
         this.senderReadInformalNotificationB2BApi.setApiClient(newInformalApiClient(restTemplate, baseExternalPath, apiKey));
         this.newInformalNotificationApi.setApiClient(newInformalApiClient(restTemplate, baseExternalPath, apiKey));
     }
+    public CampaignStatisticsResponse getCampaignStatistics(String cxId, String campaignId) {
+        return campaignStatisticsApi.getCampaignStatistics(cxId, campaignId);
+    }
+
 
     @Override
     public ApiKeyType getApiKeySetted() {
