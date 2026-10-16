@@ -307,8 +307,6 @@ public class PurposeRiskAnalysisCompilationSteps {
 
     @Given("l'utente acquisisce la versione dei metadati della finalità da convalidare")
     public void userRetrievesPurposeMetadataVersionToSign() {
-        purposeIdToSign = null;
-        riskAnalysisSignSeed = null;
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
