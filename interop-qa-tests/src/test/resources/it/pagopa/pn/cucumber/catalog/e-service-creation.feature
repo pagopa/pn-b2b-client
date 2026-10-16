@@ -52,6 +52,30 @@ Feature: Creazione e-service
     When l'utente crea un e-service con lo stesso nome
     Then si ottiene status code 409
 
+  @eservice_name_trimmed_space
+  @happy-path
+  Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_1] Gli spazi iniziali e finali nel nome dell'e-service vengono rimossi.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la creazione di un e-service con un il nome "<name>"
+    Then il nome dell'e-service creato non presenta spazi iniziali e finali
+
+    Examples:
+      | name                      |
+      | %blank%%random(5)%%blank% |
+      | %random(5)%               |
+
+  @eservice_name_trimmed_space
+  @sad-path
+  Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_2] La creazione di un e-service con un nome spazi esclusi inferiore al limite minimo previsto non va a buon fine.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente tenta la creazione di un e-service con un il nome "<name>"
+    Then si ottiene lo status code 400
+
+    Examples:
+      | name                                                     |
+      | %blank%%blank%%blank%%blank%%blank%%blank%%blank%%blank% |
+      | %blank%%random(4)%%blank%                                |
+
   @happy-path
   @eservice_description_max_length
   Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_1] Un utente crea un e-service utilizzando la descrizione della lunghezza massima possibile
