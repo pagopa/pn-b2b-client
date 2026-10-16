@@ -45,6 +45,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.regex.Pattern;
 
+import static it.pagopa.pn.interop.cucumber.steps.catalog.EServiceCreationSteps.RANDOM_NAME_PLACEHOLDER;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
@@ -69,7 +70,6 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     private final EServiceSeedFactory eServiceSeedFactory;
     private final DocumentMapper documentMapper;
-    private static final Pattern RANDOM_NAME_PLACEHOLDER = Pattern.compile("%random\\((\\d+)\\)%");
 
     public EserviceSteps(
             SharedStepsContext sharedStepsContext,

@@ -21,7 +21,8 @@ public class EServiceCreationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
     private final SharedStepsContext sharedStepsContext;
     private final BFFDataPreparationService dataPreparationService;
-    private static final Pattern RANDOM_NAME_PLACEHOLDER = Pattern.compile("%random\\((\\d+)\\)%");
+
+    public static final Pattern RANDOM_NAME_PLACEHOLDER = Pattern.compile("%random\\((\\d+)\\)%");
 
     public EServiceCreationSteps(ClientTokenConfigurator clientTokenConfigurator,
                                  SharedStepsContext sharedStepsContext,
