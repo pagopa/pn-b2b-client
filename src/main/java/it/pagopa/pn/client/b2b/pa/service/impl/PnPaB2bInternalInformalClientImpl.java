@@ -101,31 +101,31 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     }
 
 
-    public MessageResponse createMessage(String cxId, NewMessageRequest request) {
+    public MessageResponse createMessage(NewMessageRequest request) {
         return messagesApi.newMessage(request);
     }
 
-    public MessageResponse getMessage(UUID messageId, String cxId) {
+    public MessageResponse getMessage(UUID messageId) {
         return messagesApi.messageById(messageId);
     }
 
-    public NewNotificationResponse sendNewInformalNotificationV1(String cxId, InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
+    public NewNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 informalNotificationRequestV1) throws RestClientException {
         return newInformalNotificationApi.sendNewInformalNotificationV1(informalNotificationRequestV1);
     }
 
-    public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String cxId, String notificationRequestId) {
+    public NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String notificationRequestId) {
         return senderReadInformalNotificationB2BApi.retrieveInformalNotificationRequestStatusV1(notificationRequestId, null, null);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String cxId, String iun, int docIdx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationDocument(String iun, int docIdx) {
         return senderReadInformalNotificationB2BApi.retrieveSentInformalNotificationDocument(iun, docIdx);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, String cxId, int recipientIdx, int attachmentIdx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentInformalNotificationAttachment(String iun, int recipientIdx, int attachmentIdx) {
         return senderReadInformalNotificationB2BApi.retrieveSentInformalNotificationAttachment(iun, recipientIdx, "PAGOPA", attachmentIdx);
     }
 
-    public TerminationRequestStatus terminateInformalWorkflow(String cxId, String iun) {
+    public TerminationRequestStatus terminateInformalWorkflow(String iun) {
         return informalNotificationTerminationApi.terminateInformalWorkflow(iun);
     }
 
@@ -141,7 +141,7 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
         return newInformalNotificationApi.informalPresignedUploadRequest(requests);
     }
 
-    public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
+    public FullSentInformalNotificationV1 getSentInformalNotificationSender(String iun, Boolean retrieveMessage) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(iun, retrieveMessage);
     }
 

@@ -329,7 +329,7 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
      */
     public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
-        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
+        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(notificationIun, true);
     }
 
     /**
