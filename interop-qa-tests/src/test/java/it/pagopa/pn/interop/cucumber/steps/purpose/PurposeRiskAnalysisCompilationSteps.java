@@ -319,6 +319,9 @@ public class PurposeRiskAnalysisCompilationSteps {
         purposeIdToSign = purposeId;
     }
 
+    /* Il get dell'informazione metadataVersion, necessaria per il sign, è deliberatamente fatta altrove e non in questo
+    * step, per lasciar la possibilità di usare questo step anche in test negativi, in cui viene settato un valore
+    * di metadataVersion errato. */
     @When("l'utente convalida l'analisi del rischio della finalità")
     public void userSignsRiskAnalysis() {
         if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
