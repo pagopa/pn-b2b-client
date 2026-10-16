@@ -41,4 +41,5 @@ public interface IPurposeApiClient extends SettableBearerToken {
     void signRiskAnalysis(UUID purposeId) throws RestClientException;
     void signRiskAnalysis(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException;
     Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states);
+    Integer getPurposeMetadataVersion(UUID purposeId) throws RestClientException;
 }

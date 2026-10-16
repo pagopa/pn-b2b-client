@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-import static it.pagopa.interop.purpose.service.impl.PurposeApiClientImpl.METADATA_VERSION_HEADER;
 import static java.util.Objects.nonNull;
 
 public class PurposeRiskAnalysisCompilationSteps {
@@ -312,17 +311,10 @@ public class PurposeRiskAnalysisCompilationSteps {
         riskAnalysisSignSeed = null;
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        String metadataVersion = clientTokenConfigurator.getPurposeApiClient().getPurposeWithHttpInfo(purposeId)
-                .getHeaders().getFirst(METADATA_VERSION_HEADER);
-        if (metadataVersion == null) {
-            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
-        }
-        final Integer version;
-        try {
-            version = Integer.valueOf(metadataVersion);
-        } catch (NumberFormatException e) {
-            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " non valido: " + metadataVersion, e);
-        }
+
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        Integer version = purposeApiClient.getPurposeMetadataVersion(purposeId);
+
         riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
         purposeIdToSign = purposeId;
     }
