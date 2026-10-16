@@ -207,6 +207,9 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
                 xLanguage,
                 request
         );
+    }
+
+    @Override
     public String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
         return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication );
     }
