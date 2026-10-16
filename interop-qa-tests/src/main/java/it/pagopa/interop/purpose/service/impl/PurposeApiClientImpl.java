@@ -194,6 +194,31 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     }
 
     /**
+     * Estrae e restituisce la versione dei metadati della finalità dall'header
+     * {@code x-metadata-version}. Esegue una GET preliminare tramite
+     * {@link #getPurposeWithHttpInfo(UUID)} per acquisire l'header e lo converte
+     * in un intero.
+     *
+     * @param purposeId identificativo della finalità di cui ottenere la versione
+     * @return la versione convertita in Integer
+     * @throws IllegalStateException se l'header {@code x-metadata-version} è assente
+     *                               o non è convertibile in un intero
+     * @throws RestClientException se la GET preliminare fallisce
+     */
+    @Override
+    public Integer getPurposeMetadataVersion(UUID purposeId) throws RestClientException {
+        String metadataVersion = getPurposeWithHttpInfo(purposeId).getHeaders().getFirst(METADATA_VERSION_HEADER);
+        if (metadataVersion == null) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
+        }
+        try {
+            return Integer.valueOf(metadataVersion);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " non valido: " + metadataVersion, e);
+        }
+    }
+
+    /**
      * Firma l'analisi del rischio acquisendo prima la versione corrente dei metadati
      * tramite {@link #getPurposeWithHttpInfo(UUID)}. Il valore dell'header
      * {@code x-metadata-version} viene convertito in un intero e inviato nella POST
@@ -213,16 +238,7 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
      */
     @Override
     public void signRiskAnalysis(UUID purposeId) throws RestClientException {
-        String metadataVersion = getPurposeWithHttpInfo(purposeId).getHeaders().getFirst(METADATA_VERSION_HEADER);
-        if (metadataVersion == null) {
-            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
-        }
-        final Integer version;
-        try {
-            version = Integer.valueOf(metadataVersion);
-        } catch (NumberFormatException e) {
-            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " non valido: " + metadataVersion, e);
-        }
+        Integer version = getPurposeMetadataVersion(purposeId);
         signRiskAnalysis(purposeId, new RiskAnalysisSignSeed().metadataVersionToSign(version));
     }
 
