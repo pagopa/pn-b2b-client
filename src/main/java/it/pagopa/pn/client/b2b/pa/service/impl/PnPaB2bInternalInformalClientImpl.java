@@ -46,7 +46,7 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     private final String baseExternalPath;
 
     public PnPaB2bInternalInformalClientImpl(RestTemplate restTemplate,
-                                             @Value("${pn.external.base-url}") String baseExternalPath,
+                                             @Value("${pn.external.informal-base-url.pagopa}") String baseExternalPath,
                                              @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin,
                                              @Value("${pn.external.api-key}") String apiKeyMvp1,
                                              @Value("${pn.external.api-key-2}") String apiKeyMvp2,
@@ -209,7 +209,6 @@ public class PnPaB2bInternalInformalClientImpl implements SettableApiKey {
     public CampaignStatisticsResponse getCampaignStatistics(String cxId, String campaignId) {
         return campaignStatisticsApi.getCampaignStatistics(cxId, campaignId);
     }
-
 
     @Override
     public ApiKeyType getApiKeySetted() {
