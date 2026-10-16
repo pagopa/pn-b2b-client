@@ -182,6 +182,34 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
+    public String notificationCceForEmail(LanguageEnum xLanguage, NotificationCceForEmail request) throws RestClientException {
+        return templateApi.notificationCceForEmail(xLanguage, request);
+    }
+
+    @Override
+    public String courtesyEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public Resource analogDeliveryWorkflowTimeoutLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowTimeoutLegalFact request) throws RestClientException {
+        return templateApi.analogDeliveryWorkflowTimeoutLegalFact(xLanguage,
+                request
+        );
+    }
+
+    @Override
+    public Resource analogFeedbackAvailabilityStatement(
+            LanguageEnum xLanguage,
+            AnalogFeedbackAvailabilityStatement request
+    ) throws RestClientException {
+        return templateApi.analogFeedbackAvailabilityStatement(
+                xLanguage,
+                request
+        );
+    }
+
+    @Override
     public String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
         return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication );
     }
