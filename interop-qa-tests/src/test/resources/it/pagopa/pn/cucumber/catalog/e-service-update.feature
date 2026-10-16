@@ -62,6 +62,48 @@ Feature: Aggiornamento di un e-service non pubblicato
       | DEPRECATED       |
       | ARCHIVED         |
 
+  @happy-path
+  @nrt-minimal
+  @eservice_updating4
+  Scenario: [ESERVICE_UPDATING_04] Richiesta di pubblicazione di una versione di un e-service concesso in delega, se la richiesta è in pending, viene eliminata con la revoca della delega
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha già una nuova versione in stato DRAFT per quell'e-service
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | agreementApprovalPolicy | MANUAL    |
+      | audience                | pagopa.it |
+      | dailyCallsPerConsumer   | 100       |
+      | dailyCallsTotal         | 1000      |
+      | description             | Descrizione versione 2 |
+      | voucherLifespan         | 80        |
+    And l'utente pubblica quel descrittore
+    And il descrittore risulta in stato "WAITING_FOR_APPROVAL"
+    When l'ente "PA1" revoca la delega in erogazione con successo
+    Then l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
+
+  @happy-path
+  @nrt-minimal
+  @eservice_updating5
+  Scenario: [ESERVICE_UPDATING_05] Richiesta di pubblicazione di una versione di un e-service da template concesso in delega, se la richiesta è in pending, viene eliminata con la revoca della delega
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
+    And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
+    And l'utente pubblica quel descrittore
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha già una nuova versione in stato DRAFT per quell'e-service istanza di template
+    And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
+    And l'utente pubblica quel descrittore
+    And il descrittore risulta in stato "WAITING_FOR_APPROVAL"
+    When l'ente "PA1" revoca la delega in erogazione con successo
+    Then l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
+
   @eservice_published_delegation
   @happy-path
   Scenario Outline: [ESERVICE_PUBLISHED_UPDATE_DELEGATION_01] Per un e-service precedentemente creato,in stato NON DRAFT, è possibile modificare i flag di delega
