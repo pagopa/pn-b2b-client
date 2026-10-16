@@ -181,7 +181,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.RecipientB2BExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.RecipientInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.TemplateEngineClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.AddressManagerServiceImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
@@ -440,7 +439,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
-        AddressManagerServiceImpl.class,
         DelayerSkipSenderLimitService.class
 })
 @EnableScheduling
