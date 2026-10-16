@@ -224,7 +224,6 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    //TODO MATTEO: ho aggiunto il parametro PA e il successivo setting della pa in sharedSteps, senza andava in errore
     @And("{string} recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName) {
         sharedSteps.setPA(paName);
