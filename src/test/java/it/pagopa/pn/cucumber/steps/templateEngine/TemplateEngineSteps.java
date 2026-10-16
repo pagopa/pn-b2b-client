@@ -3,46 +3,26 @@ package it.pagopa.pn.cucumber.steps.templateEngine;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
-import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
-import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.*;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeExecution;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeUtilities;
+import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.net.URI;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,12 +37,9 @@ public class TemplateEngineSteps {
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
     private final Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
-
-    @Autowired
-    private ITemplateEngineClient templateEngineClient;
-
+    private final HtmlEscapeService htmlEscapeService;
     private TemplateEngineResult result;
-    private final List<HtmlEscapeExecution> HtmlEscapeExecutions = new ArrayList<>();
+    private List<HtmlEscapeExecution> htmlEscapeExecutions = List.of();
 
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
@@ -73,10 +50,13 @@ public class TemplateEngineSteps {
     private String runProfile;
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
-                               TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
+                               TemplateEngineContextFactory contextFactory,
+                               Map<TemplateType, List<String>> templateEngineObjectFields,
+                               HtmlEscapeService htmlEscapeService) {
         this.templateEngineStrategy = templateEngineStrategy;
         this.contextFactory = contextFactory;
         this.templateEngineObjectFields = templateEngineObjectFields;
+        this.htmlEscapeService = htmlEscapeService;
     }
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
@@ -284,215 +264,21 @@ public class TemplateEngineSteps {
 
     @When("eseguo HTML escaping sull'endpoint {string} in lingua {string} sui campi {string}")
     public void eseguoIlFuzzingHtmlEscapingSullEndpoint(String endpoint, String language, String fields) {
-        HtmlEscapeTarget target = HtmlEscapeTargets.get(endpoint);
-        HtmlEscapeExecutions.clear();
-
-        Map<String, String> fuzzedValues = new LinkedHashMap<>();
-        for (String field : HtmlEscapeUtilities.splitFields(fields)) {
-            fuzzedValues.put(field, buildPdfFuzzValue());
-        }
-
-        HtmlEscapeExecutions.add(executeFuzzCall(target, language, fuzzedValues));
+        htmlEscapeExecutions = htmlEscapeService.executeFieldsFuzzing(endpoint, language, fields);
     }
 
     @Then("verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo {string}")
     public void verificoCheTuttiIValoriFuzzedSianoRappresentatiSenzaEscaping(String format) {
-
-        Assertions.assertFalse(HtmlEscapeExecutions.isEmpty(), "Nessuna esecuzione fuzzing disponibile");
-        String expectedFormat = format.toLowerCase();
-        for (HtmlEscapeExecution execution : HtmlEscapeExecutions) {
-            Assertions.assertEquals(expectedFormat, execution.getFormat(),
-                    "Il formato dichiarato nello scenario non coincide con quello dell'endpoint "
-                            + execution.getEndpoint());
-
-            String rendered = retrieveFuzzedOutput(execution);
-            Assertions.assertNotNull(rendered,"Output nullo per endpoint " + execution.getEndpoint());
-            String normalizedRendered = HtmlEscapeUtilities.normalizeRendered(rendered, execution.getFormat());
-            for (Map.Entry<String, String> entry : execution.getRawValues().entrySet()) {
-                String field = entry.getKey();
-                String rawValue = HtmlEscapeUtilities.toSingleLine(entry.getValue());
-                switch (execution.getFormat()) {
-                    case "pdf" -> HtmlEscapeValidator.assertPdfValueEscapingDisabled(execution, field, rawValue, normalizedRendered);
-
-                    case "html" ->
-                            HtmlEscapeValidator.assertHtmlValueEscapingDisabled(
-                                    execution,
-                                    field,
-                                    rawValue,
-                                    normalizedRendered
-                            );
-
-                    case "text" ->
-                            HtmlEscapeValidator.assertTextValue(
-                                    execution,
-                                    field,
-                                    rawValue,
-                                    normalizedRendered
-                            );
-
-                    default ->
-                            throw new IllegalArgumentException(
-                                    "Formato non supportato: "
-                                            + execution.getFormat()
-                            );
-                }
-            }
-        }
+        htmlEscapeService.verifyEscapingDisabled(htmlEscapeExecutions, format);
     }
 
     @When("eseguo il corpus di HTML escaping sull'endpoint {string} in lingua {string} sul campo {string}")
     public void eseguoIlCorpusDiFuzzingHtmlEscaping(String endpoint, String language, String field) {
-        HtmlEscapeTarget target = HtmlEscapeTargets.get(endpoint);
-        HtmlEscapeExecutions.clear();
-
-        String random = UUID.randomUUID().toString().replace("-", "").substring(0, 10);
-        List<String> corpus = List.of(
-                "FUZZ_" + random + "_LT_<_END",
-                "FUZZ_" + random + "_GT_>_END",
-                "FUZZ_" + random + "_AMP_&_END",
-                "FUZZ_" + random + "_QUOTE_\"_END",
-                "FUZZ_" + random + "_APOS_'_END",
-                "FUZZ_" + random + "_ALL_<>&\"'_END",
-                "FUZZ_" + random + "_MARKUP_<b>X</b>_END"
-        );
-
-        for (String value : corpus) {
-            HtmlEscapeExecutions.add(executeFuzzCall(target, language, Map.of(field, value)));
-        }
+        htmlEscapeExecutions = htmlEscapeService.executeCorpusFuzzing(endpoint, language, field);
     }
 
     @Then("verifico che tutti i valori siano correttamente rappresentati nel template di tipo {string}")
     public void verificoCheTuttiIValoriFuzzedSianoEscapati(String format) {
-
-        Assertions.assertFalse(HtmlEscapeExecutions.isEmpty(),"Nessuna esecuzione fuzzing disponibile");
-        String expectedFormat = format.toLowerCase();
-        for (HtmlEscapeExecution execution : HtmlEscapeExecutions) {
-            Assertions.assertEquals(
-                    expectedFormat,
-                    execution.getFormat(),
-                    "Il formato dichiarato nello scenario non coincide con quello dell'endpoint "
-                            + execution.getEndpoint()
-            );
-
-            String rendered = retrieveFuzzedOutput(execution);
-            Assertions.assertNotNull(rendered, "Output nullo per endpoint " + execution.getEndpoint());
-            String normalizedRendered = HtmlEscapeUtilities.normalizeRendered(rendered, execution.getFormat());
-            for (Map.Entry<String, String> entry : execution.getRawValues().entrySet()) {
-                String field = entry.getKey();
-                String rawValue = HtmlEscapeUtilities.toSingleLine(entry.getValue());
-
-                switch (execution.getFormat()) {
-
-                    case "pdf" -> HtmlEscapeValidator.assertPdfValue(execution, field, rawValue, normalizedRendered);
-                    case "html" -> HtmlEscapeValidator.assertHtmlValue(execution, field, rawValue, normalizedRendered);
-                    case "text" -> HtmlEscapeValidator.assertTextValue(execution, field, rawValue, normalizedRendered);
-                    default -> throw new IllegalArgumentException("Formato non supportato: " + execution.getFormat());
-                }
-            }
-        }
+        htmlEscapeService.verifyEscapingEnabled(htmlEscapeExecutions, format);
     }
-
-    private HtmlEscapeExecution executeFuzzCall(HtmlEscapeTarget target, String language, Map<String, String> logicalValues) {
-        result = null;
-        templateFileException = null;
-        templateServerException = null;
-        templateFileExceptions.clear();
-
-        Map<String, String> mappedValues = new LinkedHashMap<>();
-        for (Map.Entry<String, String> entry : logicalValues.entrySet()) {
-            String mappedField = target.getFieldMappings().get(entry.getKey());
-            if (mappedField == null) {
-                throw new IllegalArgumentException("Campo '" + entry.getKey() + "' non configurato per endpoint " + target.getEndpoint());
-            }
-            mappedValues.put(mappedField, entry.getValue());
-        }
-
-        TemplateEngineResult callResult;
-        if (target.getTemplateType() != null) {
-            Map<String, String> parameters = new HashMap<>();
-            parameters.put("context_recipientType", "PF");
-            parameters.put("recipient_recipientType", "PF");
-            parameters.put("recipientType", "PF");
-            parameters.putAll(mappedValues);
-
-            TemplateType templateTypeObject = TemplateType.fromValue(target.getTemplateType().toUpperCase());
-            retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
-
-            if (templateFileException != null) {
-                throw templateFileException;
-            }
-            if (templateServerException != null) {
-                throw templateServerException;
-            }
-            callResult = result;
-        } else {
-            callResult = retrieveTemplateByClientReflection(target, language, mappedValues);
-            result = callResult;
-        }
-
-        Assertions.assertNotNull(callResult, "Nessuna risposta ottenuta dall'endpoint " + target.getEndpoint());
-        return new HtmlEscapeExecution(target.getEndpoint(), target.getFormat(), new LinkedHashMap<>(logicalValues), callResult);
-    }
-
-    private TemplateEngineResult retrieveTemplateByClientReflection(HtmlEscapeTarget target, String language,
-                                                                    Map<String, String> propertyValues) {
-        Assertions.assertNotNull(templateEngineClient, "ITemplateEngineClient non disponibile");
-        Method clientMethod = findClientMethod(target.getOperationId());
-
-        try {
-            Object request = HtmlEscapeReflectionHandler.createDefaultModel(clientMethod.getParameterTypes()[1], 0, new LinkedHashSet<>());
-            for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
-                HtmlEscapeReflectionHandler.setNestedProperty(request, entry.getKey().split("\\."), 0, entry.getValue());
-            }
-
-            Object languageValue = HtmlEscapeReflectionHandler.createLanguageValue(clientMethod.getParameterTypes()[0], language);
-            Object response = clientMethod.invoke(templateEngineClient, languageValue, request);
-            return HtmlEscapeReflectionHandler.toTemplateEngineResult(response);
-        } catch (InvocationTargetException e) {
-            Throwable cause = e.getCause();
-            if (cause instanceof HttpClientErrorException httpClientErrorException) {
-                throw httpClientErrorException;
-            }
-            if (cause instanceof HttpServerErrorException httpServerErrorException) {
-                throw httpServerErrorException;
-            }
-            throw new IllegalStateException("Errore invocando " + target.getOperationId(), cause);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalStateException("Impossibile costruire/invocare il payload per " + target.getOperationId(), e);
-        }
-    }
-
-    private String retrieveFuzzedOutput(HtmlEscapeExecution execution) {
-        return switch (execution.getFormat()) {
-            case "pdf" -> {
-                Resource resource = execution.getResult().getTemplateFileReturned();
-                Assertions.assertNotNull(resource, "PDF non restituito per endpoint " + execution.getEndpoint());
-                yield HtmlEscapeUtilities.extractPdfText(resource, execution.getEndpoint());
-            }
-            case "html", "text" -> {
-                String text = execution.getResult().getTemplateHtmlReturned();
-                Assertions.assertNotNull(text, "Testo/HTML non restituito per endpoint " + execution.getEndpoint());
-                yield text;
-            }
-            default -> throw new IllegalArgumentException(
-                    "Formato non supportato: " + execution.getFormat()
-            );
-        };
-    }
-
-    private String buildPdfFuzzValue() {
-        String id = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
-        return "FZ_" + id + "_<b>X</b>_<>&\"'àèì$_€_END";
-    }
-
-    private  Method findClientMethod(String operationId) {
-        String normalizedOperation = HtmlEscapeUtilities.normalize(operationId);
-        return Arrays.stream(templateEngineClient.getClass().getMethods())
-                .filter(method -> method.getParameterCount() == 2)
-                .filter(method -> HtmlEscapeUtilities.normalize(method.getName()).equals(normalizedOperation))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        "Il client Template Engine non espone l'operationId '" + operationId + "'"));
-    }
-
 }
