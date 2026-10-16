@@ -4,7 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.domain.Role;
-import it.pagopa.interop.authorization.enums.M2MRole;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -50,12 +49,31 @@ public class ClientCreateStep {
 
     @Given("l'utente è un amministratore del profilo API {apiSet} dell'ente {string}")
     public void setRole(ApiProfile.ApiSet apiSet, String tenant) {
-        sharedStepsContext.setApiSet(apiSet);
+        setProfileRole(apiSet == ApiProfile.ApiSet.M2M ? "m2m-admin" : "admin", apiSet, tenant);
+    }
 
+    @Given("l'utente ha ruolo {string} nel profilo API {apiSet} dell'ente {string}")
+    public void setProfileRole(String role, ApiProfile.ApiSet apiSet, String tenant) {
+        validateProfileRole(role, apiSet);
         if (apiSet == ApiProfile.ApiSet.BFF) {
-            doSetRole(1, "admin", tenant, clientTokenConfigurator, identityService, sharedStepsContext);
-        } else if (apiSet == ApiProfile.ApiSet.M2M) {
-            M2MAuthSteps.doAuthenticateM2MUser("admin", tenant, M2MRole.M2M_ADMIN, clientTokenConfigurator, sharedStepsContext, identityService, apiProfile);
+            doSetRole(1, role, tenant, clientTokenConfigurator, identityService, sharedStepsContext);
+        } else {
+            M2MAuthSteps.doAuthenticateM2MUser("admin", tenant, M2MAuthSteps.m2mRole(role),
+                    clientTokenConfigurator, sharedStepsContext, identityService, apiProfile);
+        }
+    }
+
+    static void validateProfileRole(String role, ApiProfile.ApiSet apiSet) {
+        if (apiSet == null || role == null) {
+            throw new IllegalArgumentException("Ruolo e profilo API devono essere valorizzati");
+        }
+        boolean m2mRole = "m2m".equalsIgnoreCase(role) || "m2m-admin".equalsIgnoreCase(role);
+        if (m2mRole != (apiSet == ApiProfile.ApiSet.M2M)) {
+            throw new IllegalArgumentException("Ruolo " + role + " non compatibile con il profilo API " + apiSet);
+        }
+        if (apiSet == ApiProfile.ApiSet.BFF) {
+            // Validazione sintattica prima di acquisire token o modificare il contesto.
+            Role.fromValue(role.toUpperCase(java.util.Locale.ROOT));
         }
     }
 

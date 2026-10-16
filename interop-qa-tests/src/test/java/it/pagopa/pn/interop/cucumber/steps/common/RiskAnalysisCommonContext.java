@@ -27,6 +27,14 @@ public class RiskAnalysisCommonContext {
     RiskAnalysisFormSeed riskAnalysisVariation;
     RiskAnalysisSnapshot initialRiskAnalysis;
 
+    // Finalità ed ente di riferimento per convertire gli indici dei reviewer nei relativi UUID
+    // nel body della richiesta di assegnazione RA (RiskAnalysisAssignmentRequest, endpoint assign).
+    // Nei test cross-ente mantiene i reviewer del proprietario anche se il client autenticato è di un altro ente.
+    ReviewerPayloadOwner reviewerPayloadOwner;
+
+    public record ReviewerPayloadOwner(UUID purposeId, String tenantType) {
+    }
+
     public void rememberInitialReviewers() {
         initialReviewerActors = List.copyOf(assignedReviewerActors);
     }

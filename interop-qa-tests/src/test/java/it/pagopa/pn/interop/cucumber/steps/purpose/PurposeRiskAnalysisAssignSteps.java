@@ -219,7 +219,10 @@ public class PurposeRiskAnalysisAssignSteps {
         if (reviewers.stream().anyMatch(index -> index < 1)) {
             throw new IllegalArgumentException("Gli indici dei valutatori devono essere positivi");
         }
-        String tenantType = sharedStepsContext.getTenantType();
+        var payloadOwner = sharedStepsContext.getRiskAnalysisCommonContext().getReviewerPayloadOwner();
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        String tenantType = payloadOwner != null && payloadOwner.purposeId().equals(purposeId)
+                ? payloadOwner.tenantType() : sharedStepsContext.getTenantType();
         List<AssignedReviewerActorRef> reviewerActors = reviewers.stream()
                 .map(index -> new AssignedReviewerActorRef(tenantType, "reviewer", index-1))
                 .toList();
