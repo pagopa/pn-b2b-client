@@ -34,7 +34,7 @@ public class VoucherGenerationAgreementSteps {
     public void unsuspendAgreement(String tenantType, ClientType clientType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         dataPreparationService.unsuspendAgreement(
-            sharedStepsContext.getAgreementId(),
+            sharedStepsContext.getAgreementCommonContext().getAgreementId(),
             clientType, null
         );
     }
@@ -60,7 +60,7 @@ public class VoucherGenerationAgreementSteps {
                     idDestinatario,
                     idAssegnatore,
                     sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                    sharedStepsContext.getAgreementId(),
+                    sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                     null);
                 break;
             case "DECLARED":
@@ -94,7 +94,7 @@ public class VoucherGenerationAgreementSteps {
                 dataPreparationService.revokeVerifiedAttributeToTenant(
                     dstId,
                     sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                    sharedStepsContext.getAgreementId(),
+                    sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                     revokerId
                 );
                 break;
@@ -112,19 +112,19 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} ha già aggiornato la richiesta di fruizione all'ultima versione dell'eservice")
     public void upgradeAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.upgradeAgreement(sharedStepsContext.getAgreementId());
+        dataPreparationService.upgradeAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId());
     }
 
     @Given("{string} ha già richiesto la pubblicazione della richiesta aggiornata che và in stato PENDING")
     public void requestAgreementPublication(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.submitAgreement(sharedStepsContext.getAgreementId(), AgreementState.PENDING);
+        dataPreparationService.submitAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), AgreementState.PENDING);
     }
 
     @Given("{string} ha già archiviato quella richiesta di fruizione")
     public void archiveAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.archiveAgreement(sharedStepsContext.getAgreementId());
+        dataPreparationService.archiveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId());
     }
 
     @Given("{string} ha già pubblicato una nuova versione per quell'e-service che richiede quell'attributo verificato")
@@ -159,7 +159,7 @@ public class VoucherGenerationAgreementSteps {
     @Given("{string} approva quella richiesta di fruizione")
     public void approveAgreement(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementId(), null);
+        dataPreparationService.approveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), null);
     }
 
     private static void handleUnknownAttributeKind(String attributeKind) {

@@ -5,8 +5,11 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.OffsetDateTime;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class SafeStorageStepsPojo {
@@ -32,9 +35,33 @@ public class SafeStorageStepsPojo {
     private FileCreationResponse fileCreationResponse;
     private FileDownloadResponse fileDownloadResponse;
     private String resourcePath;
+    //disponibilita documenti
+    private Integer fileMetadataUpdateStatusCode;
+    private Integer fileDownloadStatusCode;
+    private String issuedDownloadUrl;
+    private Integer issuedDownloadStatusCode;
+    private Integer informationAccessStatusCodeBeforeExpiration;
+    private Integer informationAccessStatusCode;
+    // Ultima fine disponibilita impostata tramite l'API, usata per confrontarla con quanto
+    // la risposta di lettura riporta.
+    private OffsetDateTime lastAvailableUntilSet;
+    // Ultima retention impostata esplicitamente tramite l'API (indipendente dalla fine
+    // disponibilita), usata con lo stesso scopo.
+    private OffsetDateTime lastRetentionUntilSet;
+    // Conservazione garantita registrata come riferimento indipendente PRIMA di una lettura,
+    // per verificare che la data restituita coincida con quella nota (non dedotta dalla
+    // risposta stessa).
+    private OffsetDateTime capturedRetentionUntil;
+    // Body dell'ultima risposta di errore all'aggiornamento dei metadati, riportato nelle
+    // asserzioni per rendere diagnosticabile un rifiuto inatteso.
+    private String fileMetadataUpdateErrorBody;
+    // Conservazione garantita nota per ciascun documento: la lettura non la espone piu' una
+    // volta impostata la fine disponibilita, quindi viene tracciata dagli step.
+    private Map<String, OffsetDateTime> guaranteedRetentionUntilByFileKey;
 
     public SafeStorageStepsPojo() {
         this.createdFiles = new LinkedList<>();
         this.fileKeyInesistenti = new LinkedList<>();
+        this.guaranteedRetentionUntilByFileKey = new HashMap<>();
     }
 }

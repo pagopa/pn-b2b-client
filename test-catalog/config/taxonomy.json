@@ -1,0 +1,294 @@
+{
+  "services": [
+    {
+      "id": "send",
+      "name": "SEND",
+      "root": "src",
+      "description": "Notifiche digitali e recapito",
+      "rules": [
+        {
+          "tags": [
+            "@informalNotificationsValidation"
+          ],
+          "area": "Notifiche bonarie"
+        },
+        {
+          "path": "/messaggiCortesiaBanche/",
+          "area": "Messaggi di cortesia alle banche"
+        },
+        {
+          "path": "/nationalRegistries/",
+          "area": "Registri nazionali e domicili digitali"
+        },
+        {
+          "path": "/invioAttoInteroPec/",
+          "area": "Invio degli atti via PEC"
+        },
+        {
+          "path": "/serviceDesk/",
+          "area": "Assistenza"
+        },
+        {
+          "path": "/bilinguismo/",
+          "area": "Notifiche multilingue"
+        },
+        {
+          "path": "/CostiGara/",
+          "area": "Costi di recapito"
+        },
+        {
+          "path": "/comunicazioniBonarie/",
+          "area": "Comunicazioni bonarie"
+        },
+        {
+          "path": "/visualizzazioneNotifica/",
+          "area": "Consultazione delle notifiche"
+        },
+        {
+          "path": "/correzioneTimeline/",
+          "area": "Correzione della cronologia della notifica"
+        },
+        {
+          "path": "/pagamentiMultipli/",
+          "area": "Pagamenti multipli"
+        },
+        {
+          "path": "/support/",
+          "area": "Supporto operativo"
+        },
+        {
+          "path": "/LimitAttach20gr/",
+          "area": "Allegati e peso della notifica"
+        },
+        {
+          "path": "/mandateb2bmassivi/",
+          "area": "Deleghe per intermediari massivi"
+        },
+        {
+          "path": "/safeStorage/",
+          "area": "Archiviazione dei documenti"
+        },
+        {
+          "path": "/annullamentoNotifica/",
+          "area": "Annullamento delle notifiche"
+        },
+        {
+          "path": "/IndicizzazioneFile/",
+          "area": "Indicizzazione dei documenti"
+        },
+        {
+          "path": "/Radd/",
+          "area": "Ritiro e assistenza presso gli sportelli RADD"
+        },
+        {
+          "path": "/AooUo/",
+          "area": "Aree e unità organizzative"
+        },
+        {
+          "path": "/workflowNotifica/",
+          "area": "Invio e avanzamento delle notifiche"
+        },
+        {
+          "path": "/versioning/",
+          "area": "Compatibilità tra versioni"
+        },
+        {
+          "path": "/baseFunction/",
+          "area": "Invio, validazione e allegati"
+        },
+        {
+          "path": "/authentication/",
+          "area": "Autenticazione"
+        },
+        {
+          "path": "/costiNotificaFase5/",
+          "area": "Gestione dei costi della notifica"
+        },
+        {
+          "path": "/templateEngine/",
+          "area": "Modelli delle comunicazioni"
+        },
+        {
+          "path": "/notificheBonarie/",
+          "area": "Notifiche bonarie"
+        },
+        {
+          "path": "/paperTracker/",
+          "area": "Tracciamento del recapito cartaceo"
+        },
+        {
+          "path": "/verificaPagamento/",
+          "area": "Verifica dei pagamenti"
+        },
+        {
+          "path": "/PaIntegration/",
+          "area": "Integrazione con la pubblica amministrazione"
+        },
+        {
+          "path": "/(AbilitazioneDomicilioDigitale|AdeguamentoIndirizzoANPR|RicercaIndirizzoSpezioneVas)\\.feature$",
+          "area": "Indirizzi e domicili digitali"
+        },
+        {
+          "path": "/(ApikeyManager|ApiB2bDestinatariStrutturati)\\.feature$",
+          "area": "Accesso e integrazione B2B"
+        },
+        {
+          "path": "/(CopiaConformeCon020)\\.feature$",
+          "area": "Documenti e copie conformi"
+        },
+        {
+          "path": "/(DelegheTemporanee)\\.feature$",
+          "area": "Deleghe"
+        },
+        {
+          "path": "/(DowntimeLogs|RecuperoDisservizi)\\.feature$",
+          "area": "Gestione dei disservizi"
+        },
+        {
+          "path": "/(IOConnector)\\.feature$",
+          "area": "Messaggi tramite app IO"
+        },
+        {
+          "path": "/(InteropProbing)\\.feature$",
+          "area": "Verifica della disponibilità dei servizi"
+        },
+        {
+          "path": "/(ResaAlMittente)\\.feature$",
+          "area": "Restituzione al mittente"
+        },
+        {
+          "path": "/(UserAttributes)\\.feature$",
+          "area": "Attributi utente"
+        },
+        {
+          "path": "/(auditLogOpenSearch)\\.feature$",
+          "area": "Tracciamento delle operazioni"
+        },
+        {
+          "path": "/(bs-prod)\\.feature$",
+          "area": "Ritiro e assistenza presso gli sportelli RADD"
+        }
+      ]
+    },
+    {
+      "id": "interop",
+      "name": "Interop",
+      "root": "interop-qa-tests",
+      "description": "Interoperabilità e scambio di dati",
+      "rules": [
+        {
+          "tags": [
+            "@capofila"
+          ],
+          "area": "Deleghe"
+        },
+        {
+          "path": "/tenant/",
+          "area": "Enti aderenti"
+        },
+        {
+          "path": "/tracing/",
+          "area": "Tracciamento"
+        },
+        {
+          "path": "/dpop/",
+          "area": "Sicurezza delle richieste"
+        },
+        {
+          "path": "/attribute/",
+          "area": "Attributi"
+        },
+        {
+          "path": "/notification/",
+          "area": "Notifiche agli utenti"
+        },
+        {
+          "path": "/catalog/",
+          "area": "Catalogo degli e-service"
+        },
+        {
+          "path": "/e-service-template/",
+          "area": "Modelli di e-service"
+        },
+        {
+          "path": "/selfcare/",
+          "area": "Gestione delle utenze"
+        },
+        {
+          "path": "/agreement/",
+          "area": "Richieste di fruizione"
+        },
+        {
+          "path": "/agreementApprovalPolicy/",
+          "area": "Approvazione delle richieste di fruizione"
+        },
+        {
+          "path": "/m2mgateway/",
+          "area": "Integrazione tra sistemi (M2M)"
+        },
+        {
+          "path": "/purpose-template/",
+          "area": "Modelli di finalità"
+        },
+        {
+          "path": "/dev_tools/",
+          "area": "Strumenti di integrazione"
+        },
+        {
+          "path": "/archiviazione-documentale/",
+          "area": "Archiviazione documentale"
+        },
+        {
+          "path": "/voucher/",
+          "area": "Autorizzazioni e voucher"
+        },
+        {
+          "path": "/purpose/",
+          "area": "Finalità"
+        },
+        {
+          "path": "/llgg/",
+          "area": "Allineamento alle linee guida"
+        },
+        {
+          "path": "/authorization/",
+          "area": "Autorizzazioni"
+        },
+        {
+          "path": "/probing/",
+          "area": "Verifica della disponibilità dei servizi"
+        },
+        {
+          "path": "/incaricato/",
+          "area": "Fruizione tramite incaricato"
+        },
+        {
+          "path": "/capofila/",
+          "area": "Deleghe"
+        }
+      ]
+    },
+    {
+      "id": "pari",
+      "name": "PARI",
+      "root": "pari",
+      "description": "Registro dei beni ed esercenti",
+      "rules": [
+        {
+          "path": "/registrobeni/",
+          "area": "Registro dei beni"
+        },
+        {
+          "path": "/esercenti/",
+          "area": "Esercenti"
+        }
+      ],
+      "featureNames": {
+        "action-on-products.feature": "Gestione e verifica dei prodotti",
+        "upload-csv.feature": "Caricamento dei prodotti",
+        "institution-list.feature": "Consultazione del registro dei beni",
+        "merchant-strong-credential.feature": "Credenziali forti degli esercenti"
+      }
+    }
+  ]
+}

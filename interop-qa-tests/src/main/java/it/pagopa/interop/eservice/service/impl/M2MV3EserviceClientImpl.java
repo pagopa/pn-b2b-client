@@ -97,6 +97,11 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     }
 
     @Override
+    public List<EService> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(EService entity) {
         return entity == null ? null : entity.getId();
     }
@@ -176,6 +181,37 @@ public class M2MV3EserviceClientImpl extends AbstractDPoPClient implements IM2MV
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return vMapper.mapToV2(eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription())));
+    }
+
+    @Override
+    public EService submitDelegatedEServiceArchiving(UUID eServiceId, DelegatedEServiceArchivingRequest body) {
+        DelegateEServiceArchivingSeed seed = body == null
+            ? null
+            : new DelegateEServiceArchivingSeed()
+                .archivingReason(body.getArchivingReason())
+                .gracePeriodDays(body.getGracePeriodDays() == null
+                    ? null
+                    : DelegateGracePeriodDays.fromValue(body.getGracePeriodDays()));
+
+        return vMapper.mapToV2(eservicesApi.submitDelegatedEServiceArchiving(eServiceId, seed));
+    }
+
+    @Override
+    public EService cancelDelegatedEServiceArchiving(UUID eServiceId) {
+        return vMapper.mapToV2(eservicesApi.cancelDelegatedEServiceArchiving(eServiceId));
+    }
+
+    @Override
+    public EService approveDelegatedEServiceArchiving(UUID eServiceId) {
+        return vMapper.mapToV2(eservicesApi.approveDelegatedEServiceArchiving(eServiceId));
+    }
+
+    @Override
+    public EService rejectDelegatedEServiceArchiving(UUID eServiceId, String rejectionReason) {
+        return vMapper.mapToV2(eservicesApi.rejectDelegatedEServiceArchiving(
+            eServiceId,
+            new RejectDelegatedEServiceArchivingSeed().rejectionReason(rejectionReason)
+        ));
     }
 
     @Override

@@ -40,6 +40,28 @@ Feature: Comunicazioni bonarie
     When recupero il template per "sms comunicazione bonaria" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "text"
 
+
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-subject
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_A] Richiamare l’API per il recupero del template relativo al oggetto di avviso di cortesia dell'EMAIL
+    When recupero il template per "email subject avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And il corpo del messaggio contiene il testo "Hai ricevuto una comunicazione da senderDenomination con oggetto: subject"
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-body
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_B] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'EMAIL
+    When recupero il template per "email body avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "html"
+    And il corpo del messaggio contiene il testo "Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti."
+
+  @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
+    Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS
+    When recupero il template per "sms avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
+    Then verifico che il template è in formato "text"
+    And il corpo del messaggio contiene il testo "Una comunicazione inviata alla tua impresa da senderPaDenomination richiede la tua attenzione. Per leggerla, accedi al sito di SEND - Servizio Notifiche Digitali."
+
+
+
   # ---------- Comunicazione bonaria posta cartacea (schema InformalCommunication) ----------
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
@@ -94,14 +116,14 @@ Feature: Comunicazioni bonarie
     When recupero il template per "comunicazione bonaria posta cartacea" con i valori nel request body:
       | hasAttachment | true |
     Then verifico che il template è in formato ".pdf"
-    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite Identificativo Univoco Notifica: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
+    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite IUN: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
   Scenario: [COMBO_TEMPLATE_ENGINE_8_6] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasAttachment false
     When recupero il template per "comunicazione bonaria posta cartacea" con i valori nel request body:
       | hasAttachment | false |
     Then verifico che il template è in formato ".pdf"
-    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite Identificativo Univoco Notifica: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
+    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite IUN: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
   Scenario: [COMBO_TEMPLATE_ENGINE_8_7] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasPayment true con checkoutUrl
@@ -109,15 +131,15 @@ Feature: Comunicazioni bonarie
       | hasPayment  | true        |
       | checkoutUrl | checkoutUrl |
     Then verifico che il template è in formato ".pdf"
-    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite Identificativo Univoco Notifica: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. Per saldare l’importo tramite tutti i canali abilitati a pagoPA, fai riferimento all’avviso di pagamento allegato. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
+    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite IUN: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. Per saldare l’importo tramite tutti i canali abilitati a pagoPA, fai riferimento all’avviso di pagamento allegato. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
 
   @templateEngine # /templates-engine-private/v1/templates/informal/analog-communication
-Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasPayment false con checkoutUrl null o valorizzato
+  Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero del template di comunicazione bonaria posta cartacea - hasPayment false con checkoutUrl null o valorizzato
     When recupero il template per "comunicazione bonaria posta cartacea" con i valori nel request body:
       | hasPayment  | <hasPayment>  |
       | checkoutUrl | <checkoutUrl> |
     Then verifico che il template è in formato ".pdf"
-    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite Identificativo Univoco Notifica: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
+    And il corpo del messaggio contiene il testo "COMUNICAZIONE DA PARTE DI sender_denomination Comunicazione inviata tramite IUN: UTGP-ZRHR-XDNQ-202505-Q-1 Codice fiscale: recipient_taxId notifichedigitali.it Hai ricevuto una comunicazione da sender_denomination con oggetto: subject Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni prendi visione degli allegati, che possono fornirti dettagli importanti. In ogni caso, qualora avessi bisogno di assistenza, contatta sender_denomination attraverso i suoi canali ufficiali. CON L'APP IO È ANCORA PIÙ SEMPLICE! Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti. E in più, paghi in digitale. Scarica gratis l'app IO!"
     Examples:
       | hasPayment | checkoutUrl |
       | false      | null        |
@@ -428,7 +450,7 @@ Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero
   @templateEngine # /templates-engine-private/v1/templates/informal/io-communication
   Scenario: [COMBO_TEMPLATE_ENGINE_13_5] Richiamare l’API per il recupero del template di IO comunicazione bonaria - body con primaryContent
     When recupero il template per "IO comunicazione bonaria" con i valori nel request body:
-      | body_primaryContent   | body_primaryContent |
+      | body_primaryContent | body_primaryContent |
     Then verifico che il template è in formato "text"
     And il corpo del messaggio contiene il testo "Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni **prendi visione degli allegati**, che possono fornirti dettagli importanti. Ma ricorda: saranno disponibili online per 180 giorni, quindi salvali sul tuo dispositivo. In ogni caso, qualora avessi bisogno di assistenza, **contatta sender_denomination attraverso i suoi canali ufficiali**."
 
@@ -439,9 +461,9 @@ Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero
     Then verifico che il template è in formato "text"
     And il corpo del messaggio contiene il testo "<messageContent>"
     Examples:
-      | hasAttachment | messageContent                                                                                                                                                                                                                                                                                                                                                                             |
+      | hasAttachment | messageContent                                                                                                                                                                                                                                                                                                                                                                    |
       | true          | Ciao recipient_denomination, body_primaryContent Per avere maggiori informazioni **prendi visione degli allegati**, che possono fornirti dettagli importanti. Ma ricorda: saranno disponibili online per 180 giorni, quindi salvali sul tuo dispositivo. In ogni caso, qualora avessi bisogno di assistenza, **contatta sender_denomination attraverso i suoi canali ufficiali**. |
-      | false         | Ciao recipient_denomination, body_primaryContent In ogni caso, qualora avessi bisogno di assistenza, **contatta sender_denomination attraverso i suoi canali ufficiali**.                                                                                                                                                                                                                  |
+      | false         | Ciao recipient_denomination, body_primaryContent In ogni caso, qualora avessi bisogno di assistenza, **contatta sender_denomination attraverso i suoi canali ufficiali**.                                                                                                                                                                                                         |
 
   @templateEngine # /templates-engine-private/v1/templates/informal/io-communication
   Scenario: [COMBO_TEMPLATE_ENGINE_13_7] Richiamare l’API per il recupero del template di IO comunicazione bonaria - hasPayment true con checkoutUrl
@@ -500,5 +522,18 @@ Scenario Outline: [COMBO_TEMPLATE_ENGINE_8_8] Richiamare l’API per il recupero
     When recupero il template per "sms comunicazione bonaria" con i valori nel request body:
       | recipientType | null |
     Then verifico che la chiamata sia andata in "400" error
+
+
+  @templateEngineEscapeOn
+  Scenario Outline: [COMBO_TEMPLATE_ENGINE_HTML-ESCAPE_1] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint coinvolti
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "<format>"
+
+    Examples:
+      | endpoint                                   | format | fields                                                           |
+      | informal/analog-communication              | pdf    | subject,sender.denomination,recipient.denomination                |
+      | informal/email-communication-body          | html   | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/pec-communication-body            | html   | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/io-communication                  | text   | sender.denomination,recipient.denomination                        |
 
 

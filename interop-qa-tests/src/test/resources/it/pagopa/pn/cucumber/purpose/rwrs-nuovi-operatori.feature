@@ -83,6 +83,17 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     Then si ottiene status code 200
     And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 
+  @privacy-policy-url
+  Scenario: [RWRS_COMPILAZIONE_12_1_REVISORE_INFORMATIVA_1] Compilazione analisi del rischio da parte del valutatore assegnato, specificando un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
+    Given "PA1" ha già creato e pubblicato 1 e-service con personalData true
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice con flagPersonalData impostato a "true"
+    And l'utente è un "admin" di "PA2"
+    And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
+    When il valutatore assegnato compila l'analisi del rischio della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene status code 200
+    And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
+
   # OK
   # PST: Scenario 12 - Caso 12.1
   Scenario: [RWRS_COMPILAZIONE_12_1_NON_REVIEWER] Compilazione analisi del rischio da parte di utente non reviewer (negativo)

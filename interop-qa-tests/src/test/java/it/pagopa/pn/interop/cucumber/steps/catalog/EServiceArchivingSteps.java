@@ -133,11 +133,12 @@ public class EServiceArchivingSteps {
     public void descriptorHasPopulatedArchivingScheduleWithEServiceScope(String descriptorId, String eServiceId) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID eServiceUUID = UUID.fromString(eServiceId);
-        UUID descriptorUUID = UUID.fromString(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        UUID resolvedDescriptorId = catalogResolver.resolveDescriptorId(descriptorId);
 
         // verifichiamo che l'attributo archivingSchedule sia valorizzato in tutti i suoi campi; sul solo campo scope controlliamo anche che il valore coincida con quello atteso
-        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(eServiceUUID, descriptorUUID, ArchivingScope.ESERVICE);
+        //un controllo più approfondito sui valori dell'attributo archivingSchedule viene fatto nello step identificato dal metodo latestDescriptorHasArchivingScheduleWithEServiceScope
+        archivingScheduleVerifier.pollDescriptorPopulatedArchivingSchedule(resolvedEServiceId, resolvedDescriptorId, ArchivingScope.ESERVICE);
     }
 
     private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
