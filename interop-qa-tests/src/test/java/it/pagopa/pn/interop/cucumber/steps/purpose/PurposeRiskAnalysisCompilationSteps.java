@@ -416,6 +416,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     * step, per lasciar la possibilità di usare questo step anche in test negativi, in cui viene settato un valore
     * di metadataVersion errato. */
     @When("l'utente convalida l'analisi del rischio della finalità")
+    @When("l'utente convalida l'analisi del rischio della finalità usando la versione dei metadati precedentemente acquisita")
     public void userSignsRiskAnalysis() {
         if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
             throw new IllegalStateException("Acquisire prima la versione dei metadati della finalità da convalidare con un utente autorizzato");
