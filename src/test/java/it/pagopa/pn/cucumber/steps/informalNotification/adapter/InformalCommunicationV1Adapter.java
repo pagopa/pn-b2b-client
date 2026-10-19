@@ -7,20 +7,33 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalDocument;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class InformalCommunicationV1Adapter implements InformalCommunicationAdapter {
 
     private final InformalCommunicationV1Mapper mapper;
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
     private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
+
+    @Autowired
+    public InformalCommunicationV1Adapter(NotificationInformalUtilsV1 notificationInformalUtilsV1,
+                                          PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl) {
+        this(InformalCommunicationV1Mapper.INSTANCE, notificationInformalUtilsV1, pnPaB2bInternalInformalClientImpl);
+    }
+
+    public InformalCommunicationV1Adapter(InformalCommunicationV1Mapper mapper,
+                                          NotificationInformalUtilsV1 notificationInformalUtilsV1,
+                                          PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl) {
+        this.mapper = mapper != null ? mapper : InformalCommunicationV1Mapper.INSTANCE;
+        this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
+        this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
+    }
 
     @Override
     public InformalSendResult sendInformalNotification(String cxId, String paName, InformalCommunication domainModel) throws IOException {

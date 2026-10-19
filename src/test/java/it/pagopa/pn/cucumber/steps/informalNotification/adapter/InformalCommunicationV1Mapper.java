@@ -6,9 +6,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface InformalCommunicationV1Mapper {
+    InformalCommunicationV1Mapper INSTANCE = Mappers.getMapper(InformalCommunicationV1Mapper.class);
 
     InformalNotificationRequestV1 toV1(InformalCommunication domain);
 
