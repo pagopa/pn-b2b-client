@@ -42,9 +42,13 @@ public class IOConnectorSteps {
     private final DynamoDbService dynamoDbService;
     private final IPnIOConnectorClient pnIOConnectorClient;
 
-    public static final String SENDER_SERVICE_ID = "01KP5QYVRZDDEMHCN3TV1QY1H6";
-    public static final String RECIPIENT_TAX_ID = "PF-9319addf-6f72-4438-8b39-dcc25cbfcbc8";
     public static final String CLIENT_ID = "QA_CLIENT_ID";
+
+    @Value("${pn.IOConnector.sender-service-id}")
+    public String senderServiceId;
+
+    @Value("${pn.IOConnector.recipient-tax-id}")
+    public String recipientTaxId;
 
     //scenario 5 va richiesta data-preparation. si deve richiedere un requestId e un recipientTaxId
     //di un messaggio censito e dotato di allegati. il recipientTaxId viene passato allo step parametrico dal file feature
@@ -74,8 +78,8 @@ public class IOConnectorSteps {
 
         messageRequest.setRequestId(requestId);
         messageRequest.setIun("IUN-TEST");
-        messageRequest.setRecipientTaxId(RECIPIENT_TAX_ID);
-        messageRequest.setSenderServiceId(SENDER_SERVICE_ID);
+        messageRequest.setRecipientTaxId(this.recipientTaxId);
+        messageRequest.setSenderServiceId(this.senderServiceId);
         messageRequest.setSubject("Oggetto di test");
         messageRequest.setMarkdown("Contenuto del messaggio");
 
@@ -192,8 +196,9 @@ public class IOConnectorSteps {
     public void invokeProfileVerificationAPIOK(String recipientTaxId) {
 
         GetProfileRequest getProfileRequest = new GetProfileRequest();
-        getProfileRequest.setRecipientTaxId(recipientTaxId);
-        getProfileRequest.setSenderServiceId(SENDER_SERVICE_ID);//TODO
+        String resolvedTaxId = StringUtils.resolveValue(recipientTaxId);
+        getProfileRequest.setRecipientTaxId(resolvedTaxId != null && !resolvedTaxId.isBlank() ? resolvedTaxId : this.recipientTaxId);
+        getProfileRequest.setSenderServiceId(this.senderServiceId);
 
         try {
             GetProfileResponse resp = pnIOConnectorClient.getIOProfile(CLIENT_ID,
@@ -245,7 +250,7 @@ public class IOConnectorSteps {
         String resolvedRecipient = StringUtils.resolveValue(recipientTaxId);
         boolean isInvalidTest = (resolvedRecipient == null || resolvedRecipient.contains("non-valid"));
         String creationRecipient = isInvalidTest 
-                ? "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34" 
+                ? this.recipientTaxId 
                 : resolvedRecipient;
 
         if (messageRequest != null && messageRequest.getRequestId() != null) {
@@ -280,7 +285,7 @@ public class IOConnectorSteps {
         if (isInvalidTest) {
             messageRequest = null;
         }
-        ensureMessageWithAttachmentExists("PF-ef4f3181-c2a9-4924-9307-d107af8f0c34");
+        ensureMessageWithAttachmentExists(this.recipientTaxId);
         String requestId = (messageRequest != null && messageRequest.getRequestId() != null)
                 ? messageRequest.getRequestId()
                 : REQUEST_ID_FOR_PREEXISTING_MESSAGE;
