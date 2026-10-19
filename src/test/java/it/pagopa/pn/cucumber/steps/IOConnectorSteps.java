@@ -43,7 +43,7 @@ public class IOConnectorSteps {
     private final IPnIOConnectorClient pnIOConnectorClient;
 
     public static final String SENDER_SERVICE_ID = "01KP5QYVRZDDEMHCN3TV1QY1H6";
-    public static final String RECIPIENT_TAX_ID = "PF-ef4f3181-c2a9-4924-9307-d107af8f0c34";
+    public static final String RECIPIENT_TAX_ID = "PF-9319addf-6f72-4438-8b39-dcc25cbfcbc8";
     public static final String CLIENT_ID = "QA_CLIENT_ID";
 
     //scenario 5 va richiesta data-preparation. si deve richiedere un requestId e un recipientTaxId
