@@ -247,6 +247,12 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
         purposesApi.signRiskAnalysis(purposeId, payload);
     }
 
+    /** Firma con il payload fornito, preservando le informazioni HTTP del client generato. */
+    @Override
+    public ResponseEntity<Void> signRiskAnalysisWithHttpInfo(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException {
+        return purposesApi.signRiskAnalysisWithHttpInfo(purposeId, payload);
+    }
+
     @Override
     public Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states) {
         return purposesApi.getRiskAnalysisAssignments(offset, limit, eservicesIds, states);

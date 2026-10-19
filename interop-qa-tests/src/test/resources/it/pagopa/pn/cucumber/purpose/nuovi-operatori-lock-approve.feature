@@ -1,6 +1,20 @@
 @purpose @nuovi-operatori @ra-lock-approve
 Feature: Validazione della versione dei metadati durante la firma dell'analisi del rischio
 
+  # CDT 3.3: due reviewer distinti inviano la stessa V quasi simultaneamente.
+  # Il vincitore non è predeterminato: esattamente un 204, un 409 e versione finale V+1.
+  @ra-concurrent-sign
+  Scenario: [RA_SIGN_CONCURRENT_01] Due approvazioni concorrenti sulla stessa versione
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente ha ruolo "admin" nel profilo API BFF dell'ente "GSP"
+    And l'utente assegna con successo i valutatori 1,2 alla finalità in modalità AdminWritesReviewerSigns
+    And compila l'analisi del rischio tramite endpoint generico con successo
+    And l'utente invia il submit dell'analisi del rischio della finalità con successo
+    When i due valutatori assegnati convalidano contemporaneamente l'analisi del rischio con la stessa versione acquisita
+    Then una sola firma concorrente riesce e la versione dei metadati è incrementata di uno
+
   # CDT 3.1 e 3.6: stesso stato SUBMITTED e attore autorizzato, varia solo il payload di firma inviato tramite client generato.
   # I casi negativi distinguono il 400 (Bad Request da schema/validazione) dal 409 (Conflict su versione non allineata).
   Scenario Outline: [RA_SIGN_VERSION_VALIDATION_01] Firma con versione metadati <versione> (<esito>)
