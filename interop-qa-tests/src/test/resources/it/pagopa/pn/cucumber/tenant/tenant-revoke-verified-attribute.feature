@@ -44,7 +44,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And l'attributo di "PA1" risulta revocato da "PA2"
 
   @nrt-minimal
-  @tenant_revoke_verified_attribute1 @no-parallel
+  @tenant_revoke_verified_attribute3 @no-parallel
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_03] Revoca di un attributo verificato e richiesta di fruizione non accettabile
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
@@ -56,7 +56,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     Then "PA1" approva quella richiesta di fruizione ma l'operazione è vietata
 
   @nrt-minimal
-  @tenant_revoke_verified_attribute1 @no-parallel
+  @tenant_revoke_verified_attribute4 @no-parallel
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_04] Revoca di un attributo verificato dopo l'accettazione della richiesta di fruizione, che viene sospesa dalla piattaforma
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
