@@ -1,5 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReviewerWorkflow;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
+
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -39,7 +42,7 @@ public class PurposeRiskAnalysisSignValidationSteps {
     @When("l'utente convalida l'analisi del rischio con versione metadati {signVersionCase}")
     public void signWithVersion(SignVersionCase versionCase) {
         configurator.setBearerToken(context.getUserToken());
-        var client = configurator.getPurposeApiClient();
+        IPurposeApiClient client = configurator.getPurposeApiClient();
         initialPurpose = client.getPurpose(purposeId());
         currentVersion = client.getPurposeMetadataVersion(purposeId());
         if (currentVersion == null) {
@@ -63,14 +66,14 @@ public class PurposeRiskAnalysisSignValidationSteps {
     public void verifySignConsistency(boolean successful) {
         assertThat(initialPurpose).as("Eseguire prima il tentativo di firma").isNotNull();
         configurator.setBearerToken(context.getUserToken());
-        var client = configurator.getPurposeApiClient();
+        IPurposeApiClient client = configurator.getPurposeApiClient();
         context.getPollingService().makePolling(() -> client.getPurpose(purposeId()), purpose -> {
             if (!successful) {
                 // In caso di esito negativo (es. 400 o 409), l'intero oggetto Purpose deve essere rimasto immutato
                 return initialPurpose.equals(purpose);
             }
             // In caso di firma positiva (204), la RA deve essere passata a SIGNED, con firmatario e data valorizzati
-            var workflow = purpose.getReviewerWorkflow();
+            ReviewerWorkflow workflow = purpose.getReviewerWorkflow();
             return workflow != null && workflow.getSigningState() == RiskAnalysisSigningState.SIGNED
                     && signerId.equals(workflow.getSignedBy()) && workflow.getSignedAt() != null;
         }, "Stato o dati RA non coerenti con l'esito della firma");

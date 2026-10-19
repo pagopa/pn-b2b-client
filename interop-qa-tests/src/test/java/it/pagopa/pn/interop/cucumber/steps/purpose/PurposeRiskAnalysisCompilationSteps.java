@@ -324,8 +324,8 @@ public class PurposeRiskAnalysisCompilationSteps {
                     if (purpose.getRiskAnalysisForm() == null) {
                         return false;
                     }
-                    var persistedAnswers = purpose.getRiskAnalysisForm().getAnswers();
-                    var expectedAnswers = expectedVariation.getAnswers();
+                    java.util.Map<String, java.util.List<String>> persistedAnswers = purpose.getRiskAnalysisForm().getAnswers();
+                    java.util.Map<String, java.util.List<String>> expectedAnswers = expectedVariation.getAnswers();
                     return expectedAnswers.equals(persistedAnswers);
                 },
                 "The risk analysis variation is not persisted"

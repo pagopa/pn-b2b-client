@@ -1,5 +1,8 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReviewerWorkflow;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.ReviewerPayloadOwner;
+
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -194,7 +197,7 @@ public class PurposeRiskAnalysisAssignSteps {
         sharedStepsContext.getPollingService().makePolling(
                 () -> purposeApiClient.getPurpose(purposeId),
                 purpose -> {
-                    var workflow = purpose.getReviewerWorkflow();
+                    ReviewerWorkflow workflow = purpose.getReviewerWorkflow();
                     if (purpose.getRiskAnalysisReviewMode() == null
                             || !purpose.getRiskAnalysisReviewMode().getValue().equals(mode.getValue())) {
                         return false;
@@ -219,7 +222,7 @@ public class PurposeRiskAnalysisAssignSteps {
         if (reviewers.stream().anyMatch(index -> index < 1)) {
             throw new IllegalArgumentException("Gli indici dei valutatori devono essere positivi");
         }
-        var payloadOwner = sharedStepsContext.getRiskAnalysisCommonContext().getReviewerPayloadOwner();
+        ReviewerPayloadOwner payloadOwner = sharedStepsContext.getRiskAnalysisCommonContext().getReviewerPayloadOwner();
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         String tenantType = payloadOwner != null && payloadOwner.purposeId().equals(purposeId)
                 ? payloadOwner.tenantType() : sharedStepsContext.getTenantType();

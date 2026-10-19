@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.RiskAnalysisSnapshot;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm;
@@ -33,7 +34,7 @@ public class PurposeRiskAnalysisReviewModeSteps {
 
     @Then("i dati RA dopo il cambio modalità risultano {riskAnalysisDataEffect}")
     public void verifyRiskAnalysisData(RiskAnalysisDataEffect expectedEffect) {
-        var snapshot = context.getRiskAnalysisCommonContext().getInitialRiskAnalysis();
+        RiskAnalysisSnapshot snapshot = context.getRiskAnalysisCommonContext().getInitialRiskAnalysis();
         assertThat(snapshot).as("La preparazione deve memorizzare la RA iniziale").isNotNull();
         assertThat(snapshot.purposeId()).isEqualTo(purposeId());
         assertThat(snapshot.answers()).isNotEmpty();

@@ -1,5 +1,7 @@
 package it.pagopa.interop.purpose.service.mapper;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
+
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm;
@@ -19,7 +21,7 @@ class PurposeUpdateMapperTest {
                 .currentVersion(new PurposeVersion().dailyCalls(42))
                 .riskAnalysisForm(new RiskAnalysisForm().version("1.0"));
 
-        var payload = mapper.toUpdateContent(purpose);
+        PurposeUpdateContent payload = mapper.toUpdateContent(purpose);
 
         assertThat(payload.getTitle()).isEqualTo(purpose.getTitle());
         assertThat(payload.getDescription()).isEqualTo(purpose.getDescription());
@@ -33,7 +35,7 @@ class PurposeUpdateMapperTest {
 
     @Test
     void acceptsAbsentOptionalValues() {
-        var payload = mapper.toUpdateContent(new Purpose().title("Titolo").description("Descrizione")
+        PurposeUpdateContent payload = mapper.toUpdateContent(new Purpose().title("Titolo").description("Descrizione")
                 .isFreeOfCharge(true).currentVersion(new PurposeVersion().dailyCalls(1)));
 
         assertThat(payload.getFreeOfChargeReason()).isNull();

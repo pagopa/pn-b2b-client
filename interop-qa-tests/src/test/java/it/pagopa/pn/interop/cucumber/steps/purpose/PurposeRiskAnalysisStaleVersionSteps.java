@@ -1,5 +1,9 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
+
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -50,27 +54,27 @@ public class PurposeRiskAnalysisStaleVersionSteps {
     @When("l'utente modifica {riskAnalysisMutation} per rendere obsoleta la versione acquisita")
     public void mutatePurpose(RiskAnalysisMutation mutation) {
         configurator.setBearerToken(context.getUserToken());
-        var client = configurator.getPurposeApiClient();
+        IPurposeApiClient client = configurator.getPurposeApiClient();
         mutationPurposeId = UUID.fromString(context.getPurposeCommonContext().getPurposeId());
-        var purpose = client.getPurpose(mutationPurposeId);
+        Purpose purpose = client.getPurpose(mutationPurposeId);
         versionBeforeMutation = client.getPurposeMetadataVersion(mutationPurposeId);
         if (mutation == RiskAnalysisMutation.TITOLO) {
             String expectedTitle = purpose.getTitle() + " - modifica concorrente";
-            var payload = purposeMapper.toUpdateContent(purpose).title(expectedTitle);
+            PurposeUpdateContent payload = purposeMapper.toUpdateContent(purpose).title(expectedTitle);
             mutationPersisted = updated -> expectedTitle.equals(updated.getTitle());
             mutationDescription = "aggiornamento del titolo della finalità";
             context.getHttpCallExecutor().performCall(() -> client.updatePurpose(mutationPurposeId, payload));
         } else {
-            var form = purpose.getRiskAnalysisForm();
-            var answers = new LinkedHashMap<>(form.getAnswers());
-            var previous = answers.get("institutionalPurpose");
+            RiskAnalysisForm form = purpose.getRiskAnalysisForm();
+            LinkedHashMap<String, List<String>> answers = new LinkedHashMap<>(form.getAnswers());
+            List<String> previous = answers.get("institutionalPurpose");
             String value = IterableUtils.isEmpty(previous) ? "modifica concorrente"
                     : previous.get(0) + " - modifica concorrente";
             answers.put("institutionalPurpose", List.of(value));
             String expectedVersion = form.getVersion();
-            var expectedAnswers = new LinkedHashMap<String, List<String>>();
+            LinkedHashMap<String, List<String>> expectedAnswers = new LinkedHashMap<>();
             answers.forEach((key, values) -> expectedAnswers.put(key, values == null ? null : List.copyOf(values)));
-            var payload = new RiskAnalysisFormSeed().version(expectedVersion).answers(answers);
+            RiskAnalysisFormSeed payload = new RiskAnalysisFormSeed().version(expectedVersion).answers(answers);
             mutationPersisted = updated -> updated.getRiskAnalysisForm() != null
                     && Objects.equals(expectedVersion, updated.getRiskAnalysisForm().getVersion())
                     && expectedAnswers.equals(updated.getRiskAnalysisForm().getAnswers());
@@ -84,7 +88,7 @@ public class PurposeRiskAnalysisStaleVersionSteps {
     public void verifyMutationPersisted() {
         assertThat(versionBeforeMutation).as("Versione prima della modifica").isNotNull();
         assertThat(mutationPersisted).as("Eseguire prima la modifica e definirne il controllo di persistenza").isNotNull();
-        var client = configurator.getPurposeApiClient();
+        IPurposeApiClient client = configurator.getPurposeApiClient();
         context.getPollingService().makePolling(() -> client.getPurpose(mutationPurposeId), purpose -> {
             if (!mutationPersisted.test(purpose)) {
                 return false;
