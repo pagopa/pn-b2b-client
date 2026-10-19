@@ -22,12 +22,12 @@ public class PreconditionChecker {
 
 
     @Before("@precondition")
-    public void setup(){
+    public void setup() {
         Assumptions.assumeTrue(preconditionForTest());
     }
 
-    private boolean preconditionForTest(){
-        System.out.println("ENV: "+env+" isInteropEnabled: "+isInteropEnabled);
+    private boolean preconditionForTest() {
+        System.out.println("ENV: " + env + " isInteropEnabled: " + isInteropEnabled);
         return switch (env) {
             case "test" -> !isInteropEnabled;
             case "uat", "hotfix" -> isInteropEnabled;
@@ -36,12 +36,17 @@ public class PreconditionChecker {
     }
 
     @Before("@uatEnvCondition")
-    public void envCondition(){
+    public void envCondition() {
         Assumptions.assumeFalse(env.equalsIgnoreCase("uat"));
     }
 
+    @Before("@ignoreOnHotfixEnv")
+    public void hotfixEnvCondition() {
+        Assumptions.assumeFalse(env.equalsIgnoreCase("hotfix"));
+    }
+
     @Before("@mockEnvCondition")
-    public void mockCondition(){
+    public void mockCondition() {
         Assumptions.assumeTrue(env.equalsIgnoreCase("uat"));
     }
 }
