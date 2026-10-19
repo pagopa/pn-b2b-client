@@ -66,6 +66,12 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
         return vMapper.mapToV2(purposesApi.getPurpose(purposeId));
     }
 
+    /** Legge la finalità preservando i campi disponibili solo nel contratto V3. */
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purpose getPurposeV3(UUID purposeId) {
+        return purposesApi.getPurpose(purposeId);
+    }
+
     @Override
     public Purposes getPurposes(PurposesListRequest request) {
         return vMapper.mapToV2(purposesApi.getPurposes(
