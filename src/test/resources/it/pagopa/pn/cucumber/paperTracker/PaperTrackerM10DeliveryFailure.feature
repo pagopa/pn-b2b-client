@@ -17,7 +17,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si verifica che la risposta tracking per la sequence "OK-Retry_RS_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
 
@@ -33,8 +32,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" certifichi il mancato recapito M10 e il corretto avvio del retry
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
@@ -55,8 +53,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
-    And si verifica che la risposta tracking per la sequence "OK-Retry_890_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "OK-Retry_890_M10" certifichi il mancato recapito M10 e il corretto avvio del retry
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
@@ -80,8 +77,13 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "RIR"
-    And si verifica che la risposta tracking per la sequence "OK-Retry_RIR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "OK-Retry_RIR_M10" certifichi il mancato recapito M10 e il corretto avvio del retry
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details                      | NOT_NULL  |
+      | details_recIndex             |         0 |
+      | details_sentAttemptMade      |         0 |
+      | details_deliveryDetailCode   | RECRI004C |
+      | details_deliveryFailureCause | M10       |
     And si verifica che non ci siano errori per i trackingId richiesti
 
   @paperTrackerM10 @paperTrackerRISRunMode @MOCK_RECAPITO_M10_01_1_E
@@ -100,7 +102,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si verifica che la risposta tracking per la sequence "OK-Retry_RIS_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
   # ====================================================================================================================
@@ -120,13 +121,12 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | digitalDomicile         | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
+    Then si verifica che su PaperTrackingsError sia presente un errore con categoria "<expectedCategory>" e causa "<expectedCause>"
     And si verifica che non sia presente nessun retry per il tracking
 
     Examples:
-      | eventType | sequenceAddress         | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-      | Consegna  | Via@OK_AR-BAD-CAUSE-M10 | "{\\"trackingId\\":\\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\\",\\"created\\":\\"2026-03-06T15:56:31.698620001Z\\",\\"errorCategory\\":\\"DELIVERY_FAILURE_CAUSE_ERROR\\",\\"details\\":{\\"cause\\":\\"VALUES_NOT_MATCHING\\",\\"message\\":\\"Invalid deliveryFailureCause: M10\\",\\"additionalDetails\\":{\\"affectedEvents\\":[{\\"deliveryFailureCause\\":\\"M10\\",\\"statusTimestamp\\":\\"2026-03-06T15:56:16Z\\",\\"statusCode\\":\\"RECRN001A\\"}]}},\\"flowThrow\\":\\"SEQUENCE_VALIDATION\\",\\"eventThrow\\":\\"RECRN001C\\",\\"eventIdThrow\\":\\"1c7bfd2b-5e88-4383-8f93-03fca35c397c\\",\\"productType\\":\\"AR\\",\\"type\\":\\"ERROR\\"}" |
+      | eventType | sequenceAddress         | expectedCategory            | expectedCause       |
+      | Consegna  | Via@OK_AR-BAD-CAUSE-M10 | DELIVERY_FAILURE_CAUSE_ERROR | VALUES_NOT_MATCHING |
   # ====================================================================================================================
   # SCENARIO 2 - Validazione Preventiva del Record (Tripletta Documentale e OCR)
   # CASO DI TEST 2.1: Validazione corretta degli allegati demat. Sblocco step successivi verso il retry (con OCR
@@ -147,8 +147,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "OK-Retry_AR_M10" certifichi il mancato recapito M10 e il corretto avvio del retry
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
@@ -169,8 +168,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si verifica che la risposta tracking per la sequence "OK_AR-M10-OCR-KO" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "OK_AR-M10-OCR-KO" certifichi il mancato recapito M10 e il corretto avvio del retry
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                      | NOT_NULL  |
       | details_recIndex             |         0 |
@@ -178,7 +176,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_deliveryDetailCode   | RECRN002C |
       | details_deliveryFailureCause | M10       |
 
-  @paperTrackerM10 @trackerErrors @ocrRun
+  @paperTrackerM10 @trackerErrors @ocrRun @MOCK_RECAPITO_M10_02_2_B
   Scenario: [MOCK_RECAPITO_M10_02_2_B] TEST 2.2 - Path B: Blocco del retry ed emissione errore OCR_VALIDATION con mock OCR:KO e motore OCR abilitato (NO RETRY / ERRORE)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -192,8 +190,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_province     | RM                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-06T15:16:35.246856627Z\",\"errorCategory\":\"OCR_VALIDATION\",\"details\":{\"cause\":\"OCR_KO\",\"message\":\"validazione fallita\",\"additionalDetails\":{\"ocrDataResultPayload\":{\"predictedRefinementType\":\"\",\"validationType\":\"ai\",\"description\":\"validazione fallita\",\"validationStatus\":\"KO\"}}},\"flowThrow\":\"DEMAT_VALIDATION\",\"eventThrow\":\"RECRN002C\",\"eventIdThrow\":\"2f428c7d-99f5-490c-a9fd-d6132c1589a2\",\"productType\":\"AR\",\"type\":\"ERROR\"}"
+    Then si verifica che su PaperTrackingsError sia presente un errore con categoria "OCR_VALIDATION" e causa "OCR_KO"
     And si verifica che non sia presente nessun retry per il tracking
   # ====================================================================================================================
   # SCENARIO 3 - Orchestrazione della Logica di Retry (PCRETRY+1)
@@ -215,7 +212,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK-DoubleRetry_AR_M10" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
 
@@ -230,7 +226,6 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | digitalDomicile         | NULL                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     Then si verifica che la notifica rimanga bloccata in stato DELIVERING al superamento del max retry
 
 
