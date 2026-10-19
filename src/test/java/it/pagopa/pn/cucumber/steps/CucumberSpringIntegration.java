@@ -205,6 +205,7 @@ import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidato
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
+import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
@@ -397,6 +398,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
+        HtmlEscapeService.class,
         EmdIntegrationApiImpl.class,
         SettableAuthTokenRaddCognito.class,
         EventTimelineParser.class,
