@@ -51,7 +51,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                                 .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
-                                .delegationId(delegationId)
+                                //.delegationId(delegationId) TODO attivare quando pronto per OpenAPI
                 )
         );
     }
