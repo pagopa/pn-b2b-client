@@ -65,7 +65,7 @@ Feature: Aggiornamento di un e-service non pubblicato
   @happy-path
   @nrt-minimal
   @eservice_updating4
-  Scenario: [ESERVICE_UPDATING_04] Richiesta di pubblicazione di una versione di un e-service concesso in delega, se la richiesta è in pending, viene eliminata con la revoca della delega
+  Scenario: [ESERVICE_UPDATING_04] Richiesta di pubblicazione di una versione di un e-service concesso in delega, se la richiesta è in pending, torna in bozza con la revoca della delega
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
@@ -82,13 +82,14 @@ Feature: Aggiornamento di un e-service non pubblicato
       | voucherLifespan         | 80        |
     And l'utente pubblica quel descrittore
     And il descrittore risulta in stato "WAITING_FOR_APPROVAL"
-    When l'ente "PA1" revoca la delega in erogazione con successo
-    Then l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
+    When l'utente è un "admin" di "PA1"
+    And l'ente "PA1" revoca la delega in erogazione con successo
+    Then il descrittore risulta in stato "DRAFT"
 
   @happy-path
   @nrt-minimal
   @eservice_updating5
-  Scenario: [ESERVICE_UPDATING_05] Richiesta di pubblicazione di una versione di un e-service da template concesso in delega, se la richiesta è in pending, viene eliminata con la revoca della delega
+  Scenario: [ESERVICE_UPDATING_05] Richiesta di pubblicazione di una versione di un e-service da template concesso in delega, se la richiesta è in pending, torna in bozza con la revoca della delega
     Given l'utente è un "admin" di "PA1"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
     And l'utente effettua la creazione di un nuovo e-service a partire dal template con successo indicando tutte le specifiche
@@ -101,8 +102,9 @@ Feature: Aggiornamento di un e-service non pubblicato
     And l'utente specifica i metadati mancanti all'istanza del template sincrono con successo
     And l'utente pubblica quel descrittore
     And il descrittore risulta in stato "WAITING_FOR_APPROVAL"
-    When l'ente "PA1" revoca la delega in erogazione con successo
-    Then l'ultimo descrittore in stato WAITING_FOR_APPROVAL è stato cancellato
+    When l'utente è un "admin" di "PA1"
+    And l'ente "PA1" revoca la delega in erogazione con successo
+    Then il descrittore risulta in stato "DRAFT"
 
   @eservice_published_delegation
   @happy-path
