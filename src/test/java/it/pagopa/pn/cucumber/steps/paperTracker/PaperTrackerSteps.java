@@ -497,6 +497,11 @@ public class PaperTrackerSteps {
 
     @Then("si verifica che su PaperTrackingsError sia presente un errore con categoria {string} e causa {string}")
     public void checkTrackingErrorWithCategoryAndCause(String errorCategory, String cause) {
+        checkTrackingErrorWithCategoryCauseAndType(errorCategory, cause, null);
+    }
+
+    @Then("si verifica che su PaperTrackingsError sia presente un errore con categoria {string}, causa {string} e tipo {string}")
+    public void checkTrackingErrorWithCategoryCauseAndType(String errorCategory, String cause, String type) {
         ensureTrackingKeys();
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
@@ -514,11 +519,14 @@ public class PaperTrackerSteps {
                             .filter(Objects::nonNull)
                             .filter(e -> Objects.equals(errorCategory, e.getErrorCategory()))
                             .filter(e -> e.getDetails() != null && Objects.equals(cause, e.getDetails().getCause()))
+                            .filter(e -> type == null || (e.getType() != null && Objects.equals(type, e.getType().getValue())))
                             .findFirst()
                             .ifPresent(atomicReference::set);
 
                     assertThat(atomicReference.get())
-                            .as("Non è stato trovato nessun errore su PaperTrackingsError con categoria %s e causa %s", errorCategory, cause)
+                            .as(type != null
+                                    ? String.format("Non è stato trovato nessun errore su PaperTrackingsError con categoria %s, causa %s e tipo %s", errorCategory, cause, type)
+                                    : String.format("Non è stato trovato nessun errore su PaperTrackingsError con categoria %s e causa %s", errorCategory, cause))
                             .isNotNull();
                 });
     }

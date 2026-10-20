@@ -11,7 +11,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     Given viene generata una nuova notifica
       | subject                 | invio notifica con cucumber |
       | senderDenomination      | Comune di Palermo           |
-    And destinatario Mario Gherkin e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it                |
       | physicalAddress_address | Via@OK-Retry_RS_M10         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -91,8 +91,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber Analogic e:
       | physicalAddress_State        | FRANCIA              |
       | physicalAddress_municipality | Parigi               |
       | physicalAddress_zip          | ZONE_1               |
@@ -175,6 +174,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | details_sentAttemptMade      |         0 |
       | details_deliveryDetailCode   | RECRN002C |
       | details_deliveryFailureCause | M10       |
+    And si verifica che su PaperTrackingsError sia presente un errore con categoria "OCR_VALIDATION", causa "OCR_KO" e tipo "WARNING"
 
   @paperTrackerM10 @trackerErrors @ocrRun @MOCK_RECAPITO_M10_02_2_B
   Scenario: [MOCK_RECAPITO_M10_02_2_B] TEST 2.2 - Path B: Blocco del retry ed emissione errore OCR_VALIDATION con mock OCR:KO e motore OCR abilitato (NO RETRY / ERRORE)
@@ -190,7 +190,7 @@ Feature: SEND - Recapito FASE 2: Gestione causale di mancato recapito M10 (Indir
       | physicalAddress_province     | RM                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
-    Then si verifica che su PaperTrackingsError sia presente un errore con categoria "OCR_VALIDATION" e causa "OCR_KO"
+    Then si verifica che su PaperTrackingsError sia presente un errore con categoria "OCR_VALIDATION", causa "OCR_KO" e tipo "ERROR"
     And si verifica che non sia presente nessun retry per il tracking
   # ====================================================================================================================
   # SCENARIO 3 - Orchestrazione della Logica di Retry (PCRETRY+1)
