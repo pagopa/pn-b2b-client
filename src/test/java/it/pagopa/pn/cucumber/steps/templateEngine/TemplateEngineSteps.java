@@ -3,12 +3,14 @@ package it.pagopa.pn.cucumber.steps.templateEngine;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.exception.IllegalConfigurationException;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeExecution;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeUtilities;
+import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -18,8 +20,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,9 @@ public class TemplateEngineSteps {
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
     private final Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
+    private final HtmlEscapeService htmlEscapeService;
     private TemplateEngineResult result;
+    private List<HtmlEscapeExecution> htmlEscapeExecutions = List.of();
 
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
@@ -48,10 +50,13 @@ public class TemplateEngineSteps {
     private String runProfile;
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
-                               TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
+                               TemplateEngineContextFactory contextFactory,
+                               Map<TemplateType, List<String>> templateEngineObjectFields,
+                               HtmlEscapeService htmlEscapeService) {
         this.templateEngineStrategy = templateEngineStrategy;
         this.contextFactory = contextFactory;
         this.templateEngineObjectFields = templateEngineObjectFields;
+        this.htmlEscapeService = htmlEscapeService;
     }
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
@@ -135,14 +140,14 @@ public class TemplateEngineSteps {
     }
 
     public boolean isValidPdf(Resource resource) {
-        try (InputStream is = resource.getInputStream()) {
-            String retrievedText = PDFUtility.extractText(is.readAllBytes());
+        try {
+            String retrievedText = HtmlEscapeUtilities.extractPdfText(resource, "template corrente");
             if (retrievedText == null) {
                 return false;
             }
             result.setFileTextRetrieved(retrievedText);
             return !retrievedText.isBlank();
-        } catch (IOException | RuntimeException e) {
+        } catch (RuntimeException e) {
             return false;
         }
     }
@@ -186,7 +191,7 @@ public class TemplateEngineSteps {
         if (fileType.equals("pdf")) {
             Assertions.assertNotNull(result.getFileTextRetrieved());
             if (field.equals("finale")) {
-                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni con socio unico capitale sociale di euro 1000000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
+                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni capitale sociale di euro 1,000,000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
             } else if (field.equals("delegato")) {
                 Assertions.assertTrue(result.retrieveFormattedText().contains("il " + fieldValue + " ha avuto accesso ai documenti informatici oggetto di notifica"));
             } else {
@@ -251,5 +256,29 @@ public class TemplateEngineSteps {
             Assertions.assertFalse(formattedText.contains(message),
                     "Il corpo del messaggio contiene il testo non atteso: " + message);
         }
+    }
+
+    // -------------------------------------------------------------------------
+    // HTML ESCAPE
+    // -------------------------------------------------------------------------
+
+    @When("eseguo HTML escaping sull'endpoint {string} in lingua {string} sui campi {string}")
+    public void eseguoIlFuzzingHtmlEscapingSullEndpoint(String endpoint, String language, String fields) {
+        htmlEscapeExecutions = htmlEscapeService.executeFieldsFuzzing(endpoint, language, fields);
+    }
+
+    @Then("verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoRappresentatiSenzaEscaping(String format) {
+        htmlEscapeService.verifyEscapingDisabled(htmlEscapeExecutions, format);
+    }
+
+    @When("eseguo il corpus di HTML escaping sull'endpoint {string} in lingua {string} sul campo {string}")
+    public void eseguoIlCorpusDiFuzzingHtmlEscaping(String endpoint, String language, String field) {
+        htmlEscapeExecutions = htmlEscapeService.executeCorpusFuzzing(endpoint, language, field);
+    }
+
+    @Then("verifico che tutti i valori siano correttamente rappresentati nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoEscapati(String format) {
+        htmlEscapeService.verifyEscapingEnabled(htmlEscapeExecutions, format);
     }
 }

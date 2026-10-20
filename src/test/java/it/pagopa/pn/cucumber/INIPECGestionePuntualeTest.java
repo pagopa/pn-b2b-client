@@ -14,7 +14,7 @@ import org.junit.platform.suite.api.*;
         @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"ignore"})
-@IncludeTags({"inipecGestionePuntuale"})
+@ExcludeTags({"inipecIsolato"})
+@IncludeTags({"inipecGestionePuntuale", "fallbackINAD"})
 public class INIPECGestionePuntualeTest {
 }
