@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.function.Consumer;
 
 import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PurposeRiskAnalysisCompilationSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -32,6 +33,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final PurposeRiskAnalysisAssignSteps assignmentSteps;
     private RiskAnalysis compiledRiskAnalysis;
     private UUID purposeIdToSign;
+    private Purpose purposeBeforeSign;
     private RiskAnalysisSignSeed riskAnalysisSignSeed;
     private RiskAnalysisFormSeed lastCompiledForm;
 
@@ -109,8 +111,8 @@ public class PurposeRiskAnalysisCompilationSteps {
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         RiskAnalysisForm form = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getRiskAnalysisForm();
-        org.assertj.core.api.Assertions.assertThat(form).as("La RA preparata deve contenere un form").isNotNull();
-        org.assertj.core.api.Assertions.assertThat(form.getAnswers())
+        assertThat(form).as("La RA preparata deve contenere un form").isNotNull();
+        assertThat(form.getAnswers())
                 .as("La preparazione standard richiede risposte RA non vuote").isNotEmpty();
         sharedStepsContext.getRiskAnalysisCommonContext().rememberRiskAnalysis(purposeId, form);
     }
@@ -288,13 +290,13 @@ public class PurposeRiskAnalysisCompilationSteps {
     }
 
     private void verifyCompilationSuccessful() {
-        org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus())
+        assertThat(httpCallExecutor.getResponseStatus())
                 .as("La compilazione deve restituire uno status HTTP")
                 .isNotNull();
-        org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
                 .as("Status HTTP della compilazione: %s", httpCallExecutor.getResponseStatus())
                 .isTrue();
-        org.assertj.core.api.Assertions.assertThat(lastCompiledForm).isNotNull();
+        assertThat(lastCompiledForm).isNotNull();
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getPollingService().makePolling(
@@ -407,6 +409,7 @@ public class PurposeRiskAnalysisCompilationSteps {
 
         IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
         Integer version = purposeApiClient.getPurposeMetadataVersion(purposeId);
+        purposeBeforeSign = purposeApiClient.getPurpose(purposeId);
 
         riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
         purposeIdToSign = purposeId;
@@ -423,6 +426,21 @@ public class PurposeRiskAnalysisCompilationSteps {
         }
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
+    }
+
+    /** Confronta l'intera finalità e la versione acquisita prima del cambio al ruolo non autorizzato. */
+    @Then("la firma rifiutata lascia invariati la finalità e la versione dei metadati acquisite")
+    public void verifyRejectedSignUnchanged() {
+        assertThat(purposeBeforeSign).as("Acquisire la baseline di firma prima del tentativo").isNotNull();
+
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        IPurposeApiClient client = clientTokenConfigurator.getPurposeApiClient();
+        assertThat(client.getPurpose(purposeIdToSign))
+                .as("Il diniego di firma non deve modificare alcun campo della Purpose")
+                .isEqualTo(purposeBeforeSign);
+        assertThat(client.getPurposeMetadataVersion(purposeIdToSign))
+                .as("Il diniego di firma non deve incrementare la versione dei metadati")
+                .isEqualTo(riskAnalysisSignSeed.getMetadataVersionToSign());
     }
 
     @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")
