@@ -121,7 +121,7 @@ Feature: Conteggio e paginazione del Read Model PostgreSQL
     When l'utente richiede una operazione di listing sul catalogo filtrando per la keyword "PIN7134-NESSUNA-CORRISPONDENZA"
     Then la risposta contiene 0 risultati distinti e totalCount 0 con offset 0 e limit 12
 
-  @catalog @happy-path
+  @catalog @deleghe2 @happy-path
   Scenario: [DATA_PAGINATION_CATALOG_03] Catalogo - piu documenti non moltiplicano gli e-service conteggiati
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e 3 documenti già caricati
     And l'utente è un "admin" di "GSP"
