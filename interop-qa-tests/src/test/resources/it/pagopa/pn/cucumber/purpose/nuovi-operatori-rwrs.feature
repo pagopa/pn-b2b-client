@@ -176,7 +176,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
       And il valutatore assegnato compila l'analisi del rischio della finalità con successo
       When l'utente è un "admin" di "PA2"
-      And l'utente acquisisce la versione dei metadati della finalità da convalidare
+    Given l'utente acquisisce la finalità e la versione dei metadati per la convalida
       And l'utente convalida l'analisi del rischio della finalità
       Then si ottiene status code 403
       And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
@@ -189,7 +189,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       And l'utente è un "admin" di "PA2"
       And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
       And il valutatore assegnato compila l'analisi del rischio della finalità con successo
-      And l'utente acquisisce la versione dei metadati della finalità da convalidare
+      And l'utente acquisisce la finalità e la versione dei metadati per la convalida
       When l'utente è un "admin" di "PA1"
       And l'utente convalida l'analisi del rischio della finalità
       Then si ottiene status code 403
@@ -207,7 +207,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
       And l'utente è un "admin" di "PA2"
       And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
       And il valutatore assegnato compila l'analisi del rischio della finalità con successo
-      And l'utente acquisisce la versione dei metadati della finalità da convalidare
+      And l'utente acquisisce la finalità e la versione dei metadati per la convalida
       When l'utente è il numero 2 ad avere ruolo "reviewer" di "PA2"
       And l'utente convalida l'analisi del rischio della finalità
       Then si ottiene status code 400

@@ -61,7 +61,7 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
     And <compilazione>
     And <invio>
     And l'utente è un "reviewer" di "GSP"
-    And l'utente acquisisce la versione dei metadati della finalità da convalidare
+    And l'utente acquisisce la finalità e la versione dei metadati per la convalida
     When l'utente è il numero 2 ad avere ruolo "<ruoloModifica>" di "GSP"
     And l'utente modifica <datoModificato> per rendere obsoleta la versione acquisita
     Then si ottiene status code 200

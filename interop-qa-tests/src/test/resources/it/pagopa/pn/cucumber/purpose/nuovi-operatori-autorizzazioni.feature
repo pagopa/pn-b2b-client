@@ -14,7 +14,7 @@ Feature: Rifiuto della firma dell'analisi del rischio per ruoli non autorizzati
     And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente ha ruolo "admin" nel profilo API BFF dell'ente "GSP"
     And si ha una compilazione dell'analisi del rischio in modalità <mode> in stato "<stato>"
-    And l'utente acquisisce la versione dei metadati della finalità da convalidare
+    And l'utente acquisisce la finalità e la versione dei metadati per la convalida
     When l'utente ha ruolo "<ruolo>" nel profilo API BFF dell'ente "GSP"
     And l'utente convalida l'analisi del rischio della finalità usando la versione dei metadati precedentemente acquisita
     Then si ottiene status code 403
