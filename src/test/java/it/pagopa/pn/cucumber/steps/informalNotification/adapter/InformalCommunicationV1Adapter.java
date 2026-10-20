@@ -61,11 +61,14 @@ public class InformalCommunicationV1Adapter implements InformalCommunicationAdap
         requestV1 = notificationInformalUtilsV1.preloadAndPrepare(requestV1, paName);
 
         // 3. Ripristina le chiavi non valide dopo il preload
-        invalidKeyOverrides.forEach((idx, overrideKey) -> {
+        for (Map.Entry<Integer, String> entry : invalidKeyOverrides.entrySet()) {
+            int idx = entry.getKey();
+            String overrideKey = entry.getValue();
+            assert requestV1.getDocuments() != null;
             if (idx < requestV1.getDocuments().size() && requestV1.getDocuments().get(idx).getRef() != null) {
                 requestV1.getDocuments().get(idx).getRef().setKey(overrideKey);
             }
-        });
+        }
 
         // 4. Riapplica eventuali altri override di test (contentType, sha256, duplicazione chiavi)
         if (domainModel.getDocuments() != null && requestV1.getDocuments() != null) {
