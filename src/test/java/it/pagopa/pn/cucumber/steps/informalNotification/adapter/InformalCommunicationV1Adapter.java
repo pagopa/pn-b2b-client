@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -39,10 +41,33 @@ public class InformalCommunicationV1Adapter implements InformalCommunicationAdap
     public InformalSendResult sendInformalNotification(String cxId, String paName, InformalCommunication domainModel) throws IOException {
         InformalNotificationRequestV1 requestV1 = mapper.toV1(domainModel);
 
-        // Preload documents and payments for v1
+        // 1. Identifica chiavi non valide impostate dai test (es. per testare la validazione dell'API)
+        // e imposta temporaneamente una risorsa valida di classpath per far completare con successo il preload S3
+        Map<Integer, String> invalidKeyOverrides = new HashMap<>();
+        if (requestV1.getDocuments() != null) {
+            for (int i = 0; i < requestV1.getDocuments().size(); i++) {
+                var doc = requestV1.getDocuments().get(i);
+                if (doc.getRef() != null && doc.getRef().getKey() != null) {
+                    String key = doc.getRef().getKey();
+                    if (key.startsWith("PN_NOTIFICATION_ATTACHMENT") || !key.startsWith("classpath:")) {
+                        invalidKeyOverrides.put(i, key);
+                        doc.getRef().setKey("classpath:/sample_1pg.pdf");
+                    }
+                }
+            }
+        }
+
+        // 2. Preload documents and payments for v1
         requestV1 = notificationInformalUtilsV1.preloadAndPrepare(requestV1, paName);
 
-        // Apply any test-specific domain overrides after preload
+        // 3. Ripristina le chiavi non valide dopo il preload
+        invalidKeyOverrides.forEach((idx, overrideKey) -> {
+            if (idx < requestV1.getDocuments().size() && requestV1.getDocuments().get(idx).getRef() != null) {
+                requestV1.getDocuments().get(idx).getRef().setKey(overrideKey);
+            }
+        });
+
+        // 4. Riapplica eventuali altri override di test (contentType, sha256, duplicazione chiavi)
         if (domainModel.getDocuments() != null && requestV1.getDocuments() != null) {
             for (int i = 0; i < domainModel.getDocuments().size() && i < requestV1.getDocuments().size(); i++) {
                 InformalDocument domainDoc = domainModel.getDocuments().get(i);
@@ -52,9 +77,6 @@ public class InformalCommunicationV1Adapter implements InformalCommunicationAdap
                 }
                 if (domainDoc.getSha256() != null) {
                     v1Doc.setDigests(new NotificationAttachmentDigests().sha256(domainDoc.getSha256()));
-                }
-                if (domainDoc.getKey() != null && domainDoc.getKey().startsWith("PN_NOTIFICATION_ATTACHMENT")) {
-                    v1Doc.getRef().setKey(domainDoc.getKey());
                 }
             }
             if (domainModel.getDocuments().size() >= 2 && requestV1.getDocuments().size() >= 2) {
