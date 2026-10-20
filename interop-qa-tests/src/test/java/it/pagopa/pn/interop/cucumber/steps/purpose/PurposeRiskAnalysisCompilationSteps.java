@@ -402,7 +402,7 @@ public class PurposeRiskAnalysisCompilationSteps {
         verifyRiskAnalysisSigningState("SIGNED");
     }
 
-    @Given("l'utente acquisisce la versione dei metadati della finalità da convalidare")
+    @Given("l'utente acquisisce la finalità e la versione dei metadati per la convalida")
     public void userRetrievesPurposeMetadataVersionToSign() {
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
@@ -422,7 +422,7 @@ public class PurposeRiskAnalysisCompilationSteps {
     @When("l'utente convalida l'analisi del rischio della finalità usando la versione dei metadati precedentemente acquisita")
     public void userSignsRiskAnalysis() {
         if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
-            throw new IllegalStateException("Acquisire prima la versione dei metadati della finalità da convalidare con un utente autorizzato");
+            throw new IllegalStateException("Acquisire prima la finalità e la versione dei metadati per la convalida con un utente autorizzato");
         }
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
