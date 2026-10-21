@@ -327,5 +327,22 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     Examples: altri stati
       | caso                                           | modeIniziale                | statoIniziale | reviewerFinali | modeFinale                  |
       | Mode 2 SUBMITTED - sostituzione reviewer        | AdminWritesReviewerSigns    | SUBMITTED     | 2              | AdminWritesReviewerSigns    |
-      | Mode 2 REJECTED - sostituzione reviewer         | AdminWritesReviewerSigns    | REJECTED      | 2              | AdminWritesReviewerSigns    |
+
+  # CDT 7.4: in AWRS/REJECTED la sostituzione M2M del reviewer aggiorna l'assegnatario,
+  # e al successivo submit dell'admin la finalità compare tra le assegnazioni del nuovo reviewer.
+  @m2m-ra-review @nuovi-operatori-rejected
+  Scenario: [M2M_RA_REVIEW_REJECTED_01] Modifica assegnazione in stato REJECTED e visibilità dopo nuovo submit
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "GSP"
+    And si ha un'analisi del rischio non firmata in modalità AdminWritesReviewerSigns in stato "REJECTED"
+    When l'utente è un amministratore del profilo API M2M dell'ente "GSP"
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: 2, in modalità AdminWritesReviewerSigns
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "GSP"
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: 2, in modalità AdminWritesReviewerSigns
+    And l'utente invia il submit dell'analisi del rischio della finalità con successo
+    And ai valutatori assegnati risulta correttamente assegnata la finalità
+    And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
