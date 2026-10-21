@@ -202,3 +202,4 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
      When l'utente è un "admin" di "PA2"
      And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
      Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+

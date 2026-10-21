@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingD
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
+import it.pagopa.interop.purpose.service.RiskAnalysisAssignmentRequest;
 import it.pagopa.interop.utils.ApiClientUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -63,6 +64,12 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
     @Override
     public Purpose getPurpose(UUID purposeId) {
         return vMapper.mapToV2(purposesApi.getPurpose(purposeId));
+    }
+
+    /** Legge la finalità preservando i campi disponibili solo nel contratto V3. */
+    @Override
+    public it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purpose getPurposeV3(UUID purposeId) {
+        return purposesApi.getPurpose(purposeId);
     }
 
     @Override
@@ -164,6 +171,11 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
     @Override
     public RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId) throws RestClientException {
         return purposesApi.getRemainingDailyCalls(purposeId);
+    }
+
+    @Override
+    public void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentRequest payload) throws RestClientException {
+        purposesApi.assignRiskAnalysisReviewer(purposeId, payload.toM2MRequest());
     }
 
     @Override

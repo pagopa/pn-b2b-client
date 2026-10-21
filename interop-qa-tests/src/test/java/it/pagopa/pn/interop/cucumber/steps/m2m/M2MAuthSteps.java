@@ -49,11 +49,19 @@ public class M2MAuthSteps {
     @Given("l'utente è un {m2mRole} dell'ente {delegationRole}")
     public void authenticateM2MDelegationUser(M2MRole m2MRole, DelegationRole delegationRole) {
         String tenantType = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        authenticateM2MUser("admin", tenantType, m2MRole);
+        doAuthenticateM2MUser("admin", tenantType, m2MRole, clientTokenConfigurator, sharedStepsContext, identityService, apiProfile);
     }
 
     @Given("l'utente è un {string} di {string} con ruolo M2M {m2mRole}")
     public void authenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole) {
+        doAuthenticateM2MUser(selfcareRole, tenant, m2MRole, clientTokenConfigurator, sharedStepsContext, identityService, apiProfile);
+    }
+
+    public static void doAuthenticateM2MUser(String selfcareRole, String tenant, M2MRole m2MRole,
+                                            ClientTokenConfigurator clientTokenConfigurator,
+                                            SharedStepsContext sharedStepsContext,
+                                            IdentityService identityService,
+                                            ApiProfile apiProfile) {
         ApiProfile.ApiMode mode = apiProfile.getApiMode();
         ApiProfile.ApiM2MVersion version = apiProfile.getApiM2MVersion();
 
@@ -84,6 +92,7 @@ public class M2MAuthSteps {
         sharedStepsContext.setRole(Role.fromValue(roleUpper));
         sharedStepsContext.setTenantType(tenant);
         sharedStepsContext.getClientCommonContext().addClient(clientId);
+        sharedStepsContext.setApiSet(ApiProfile.ApiSet.M2M);
     }
 
     @Given("viene impostato per l'utente un token m2m non valido")
