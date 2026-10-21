@@ -372,3 +372,32 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati
+
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_1] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
+
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_2] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    Given "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    Then si ottiene status code 200
+
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_3] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA2"
+    And l'utente assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
