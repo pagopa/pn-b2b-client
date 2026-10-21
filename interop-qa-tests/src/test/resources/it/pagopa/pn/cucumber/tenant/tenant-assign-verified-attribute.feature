@@ -90,7 +90,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     Given "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    When il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
     Then si ottiene status code 200
 
   @nrt-minimal

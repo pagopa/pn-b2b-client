@@ -63,7 +63,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    And il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    And il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
     When il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 200
 
