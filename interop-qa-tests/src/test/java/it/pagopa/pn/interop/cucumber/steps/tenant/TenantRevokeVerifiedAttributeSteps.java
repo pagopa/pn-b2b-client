@@ -41,6 +41,15 @@ public class TenantRevokeVerifiedAttributeSteps {
         revokeAttribute();
     }
 
+    @When("il delegato all'erogazione revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreated() {
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+
+        // TODO serve chiamare un metodo che usi delegationId, ma attendo l'implementazione in DEV/QA
+        revokeAttribute();
+    }
+
     @When("{string} revoca l'attributo precedentemente verificato")
     public void revokeAttributePreviouslyCreated(String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
