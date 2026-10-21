@@ -395,6 +395,8 @@ public class DelegationCreateStep {
     ) {
         UUID delegateOrganizationId = identityService.getOrganizationId(delegateTenantType);
         UUID delegatorOrganizationId = identityService.getOrganizationId(delegatorTenantType);
+        sharedStepsContext.getDelegationCommonContext().setDelegatorTenant(delegatorTenantType);
+        sharedStepsContext.getDelegationCommonContext().setDelegateTenant(delegateTenantType);
 
         httpExecutor.performCall(() -> delegationCreator.apply(
             new DelegationSeed().eserviceId(eServiceId).delegateId(delegateOrganizationId)));
