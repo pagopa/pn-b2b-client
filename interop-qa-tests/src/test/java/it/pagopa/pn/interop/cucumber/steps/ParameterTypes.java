@@ -107,8 +107,11 @@ public class ParameterTypes {
         return result;
     }
 
-    @ParameterType("nessuno|[1-9][0-9]*(?:,[1-9][0-9]*)*")
+    @ParameterType("NULL|nessuno|[1-9][0-9]*(?:,[1-9][0-9]*)*")
     public static List<Integer> reviewerList(String value) {
+        if ("NULL".equals(value)) {
+            return null;
+        }
         return "nessuno".equals(value) ? List.of() : integerList(value);
     }
 

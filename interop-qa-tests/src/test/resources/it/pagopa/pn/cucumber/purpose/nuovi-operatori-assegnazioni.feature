@@ -1,5 +1,5 @@
 # NOTA: considerare di compattare gli scenari di questo file in uno Scenario Outline
-@purpose @nuovi-operatori
+@purpose @nuovi-operatori @tmp-nuovi-operatori-exec
 Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi Operatori
 
   # PST: Scenario 31 - Caso 31.1
@@ -172,7 +172,76 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
   # Prime assegnazioni singole e multiple in M2M_RA_REVIEW_01.
   # CDT 7.3 (Examples M2M): rimozione singola 1,2 -> 1,
   # rimozione multipla 1,2,3,4 -> 1,2 e sostituzione completa 1,2 -> 3,4.
-  Scenario Outline: [ASSIGN_MORE_REVIEWERS_01] <apiSet> - <caso> da <modeIniziale>
+  Scenario Outline: [ASSIGN_MORE_REVIEWERS_DRAFT_01] <apiSet> - <caso> da <modeIniziale>
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "GSP"
+    And si ha una compilazione dell'analisi del rischio in modalità <modeIniziale> in stato "<statoIniziale>"
+    And l'utente è un amministratore del profilo API BFF dell'ente "GSP"
+    And l'utente assegna con successo i valutatori <reviewerIniziali> alla finalità in modalità <modeIniziale>
+    When l'utente è un amministratore del profilo API <apiSet> dell'ente "GSP"
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "GSP"
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità <modeFinale>
+
+    # AWRS/DRAFT: i reviewer non vedono ancora la finalità nelle proprie assegnazioni.
+    @bff-ra-review
+    Examples: BFF
+      | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
+      | BFF    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
+      | BFF    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
+      | BFF    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
+      | BFF    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
+      | BFF    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
+      | BFF    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
+      | BFF    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
+      | BFF    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+
+    @m2m-ra-review
+    Examples: M2M
+      | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
+      | M2M    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
+      | M2M    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
+      | M2M    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
+      | M2M    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
+      | M2M    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
+      | M2M    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
+      | M2M    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
+      | M2M    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
+
+  # CDT 1.1/7.4: RWRS/ASSIGNED -> AWRS/DRAFT; la lista personale non mostra
+  # la finalità finché l'admin non effettua il submit.
+  Scenario Outline: [ASSIGN_MORE_REVIEWERS_TO_DRAFT_01] <apiSet> - <caso> da RWRS/ASSIGNED
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "GSP"
+    And si ha una compilazione dell'analisi del rischio in modalità ReviewerWritesReviewerSigns in stato "ASSIGNED"
+    And l'utente è un amministratore del profilo API BFF dell'ente "GSP"
+    And l'utente assegna con successo i valutatori <reviewerIniziali> alla finalità in modalità ReviewerWritesReviewerSigns
+    When l'utente è un amministratore del profilo API <apiSet> dell'ente "GSP"
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: <reviewerFinali>, in modalità AdminWritesReviewerSigns
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "GSP"
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità AdminWritesReviewerSigns
+    And lo stato della compilazione dell'analisi del rischio è "DRAFT"
+
+    @bff-ra-review
+    Examples: BFF
+      | apiSet | caso                                 | reviewerIniziali | reviewerFinali |
+      | BFF    | Cambio contemporaneo reviewer e mode | 1                | 2              |
+      | BFF    | Cambio contemporaneo gruppo e mode   | 1,2              | 3,4            |
+
+    @m2m-ra-review
+    Examples: M2M
+      | apiSet | caso                                 | reviewerIniziali | reviewerFinali |
+      | M2M    | Cambio contemporaneo reviewer e mode | 1                | 2              |
+
+  # RWRS/ASSIGNED -> RWRS/ASSIGNED: i reviewer assegnati vedono la finalità;
+  # quelli rimossi non la vedono più.
+  Scenario Outline: [ASSIGN_MORE_REVIEWERS_ASSIGNED_01] <apiSet> - <caso> da <modeIniziale>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
@@ -188,53 +257,46 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
-    # Con quattro reviewer, i cambi di cardinalità singolo/multipli restano distinti
-    # dalle aggiunte/rimozioni multiple che mantengono un gruppo e dalle sostituzioni di gruppo.
+    @bff-ra-review
     Examples: BFF
       | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
-      | BFF    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
-      | BFF    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
-      | BFF    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
-      | BFF    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
       | BFF    | Aggiunta - singolo a multipli           | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 1,2            | ReviewerWritesReviewerSigns |
       | BFF    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
       | BFF    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
-      | BFF    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
-      # CDT 1.1: casi di gruppo con quattro reviewer.
-      | BFF    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
       | BFF    | Aggiunta multipla a gruppo esistente    | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1,2,3,4        | ReviewerWritesReviewerSigns |
-      | BFF    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
       | BFF    | Rimozione multipla da gruppo            | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2,3,4          | 1,2            | ReviewerWritesReviewerSigns |
-      | BFF    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
       | BFF    | Sostituzione completa del gruppo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
-      | BFF    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
-      | BFF    | Cambio contemporaneo gruppo e mode     | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | AdminWritesReviewerSigns    |
 
     @m2m-ra-review
     Examples: M2M
       | apiSet | caso                                    | modeIniziale                | statoIniziale | reviewerIniziali | reviewerFinali | modeFinale                  |
-      | M2M    | Aggiunta - singolo a multipli           | AdminWritesReviewerSigns    | DRAFT         | 1                | 1,2            | AdminWritesReviewerSigns    |
-      | M2M    | Rimozione - multipli a singolo          | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1              | AdminWritesReviewerSigns    |
-      # CDT 7.4: modifica prima della firma in mode 2, stato DRAFT.
-      | M2M    | Sostituzione completa                   | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | AdminWritesReviewerSigns    |
-      | M2M    | Cambio contemporaneo reviewer e mode    | AdminWritesReviewerSigns    | DRAFT         | 1                | 2              | ReviewerWritesReviewerSigns |
       | M2M    | Aggiunta - singolo a multipli           | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 1,2            | ReviewerWritesReviewerSigns |
       | M2M    | Rimozione - multipli a singolo          | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1              | ReviewerWritesReviewerSigns |
-      # CDT 7.4: modifica prima della firma in mode 3, stato ASSIGNED.
-      # Verificare che mode 2 (AdminWritesReviewerSigns) non preveda lo stato ASSIGNED.
       | M2M    | Sostituzione completa                   | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | ReviewerWritesReviewerSigns |
-      | M2M    | Cambio contemporaneo reviewer e mode    | ReviewerWritesReviewerSigns | ASSIGNED      | 1                | 2              | AdminWritesReviewerSigns    |
-      # CDT 7.2: più valutatori già assegnati nel Given; aggiunta di 3 e 4 senza rimuovere 1 e 2.
-      | M2M    | Aggiunta multipla a gruppo esistente    | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 1,2,3,4        | AdminWritesReviewerSigns    |
       | M2M    | Aggiunta multipla a gruppo esistente    | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 1,2,3,4        | ReviewerWritesReviewerSigns |
-      # CDT 7.3: rimozione contemporanea di 3 e 4, mantenendo 1 e 2.
-      | M2M    | Rimozione multipla da gruppo            | AdminWritesReviewerSigns    | DRAFT         | 1,2,3,4          | 1,2            | AdminWritesReviewerSigns    |
       | M2M    | Rimozione multipla da gruppo            | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2,3,4          | 1,2            | ReviewerWritesReviewerSigns |
-      # CDT 7.3: esclusione di tutti i reviewer iniziali e assegnazione di un nuovo gruppo.
-      | M2M    | Sostituzione completa del gruppo        | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | AdminWritesReviewerSigns    |
       | M2M    | Sostituzione completa del gruppo        | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
-      | M2M    | Cambio contemporaneo gruppo e mode     | AdminWritesReviewerSigns    | DRAFT         | 1,2              | 3,4            | ReviewerWritesReviewerSigns |
-      | M2M    | Cambio contemporaneo gruppo e mode     | ReviewerWritesReviewerSigns | ASSIGNED      | 1,2              | 3,4            | AdminWritesReviewerSigns    |
+
+  # CDT 7.2/7.4: dopo la prima assegnazione in AWRS/DRAFT i reviewer non vedono
+  # la finalità nella lista personale fino al submit dell'analisi del rischio.
+  Scenario Outline: [M2M_RA_REVIEW_DRAFT_01] Prima assegnazione mode 1 verso AWRS/DRAFT - <caso>
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente è un "admin" di "GSP"
+    And si ha un'analisi del rischio non firmata in modalità AdminWritesAdminSigns in stato "DRAFT"
+    When l'utente è un amministratore del profilo API M2M dell'ente "GSP"
+    And l'utente tenta di assegnare alla finalità i seguenti valutatori: <reviewerFinali>, in modalità AdminWritesReviewerSigns
+    Then si ottiene status code 204
+    And l'utente è un "admin" di "GSP"
+    And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità AdminWritesReviewerSigns
+    And lo stato della compilazione dell'analisi del rischio è "DRAFT"
+
+    @nuovi-operatori-execution
+    Examples: mode 2
+      | caso                                 | reviewerFinali |
+      | Mode 1 non pubblicata verso mode 2    | 2              |
+      | Prima assegnazione multipla verso mode 2 | 1,2         |
 
   # CDT 7.2: prima assegnazione singola e multipla via M2M.
   # CDT 7.4: mode 1 non pubblicata e mode 2 in SUBMITTED/REJECTED.
@@ -254,13 +316,16 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
-    Examples:
+    @nuovi-operatori-execution
+    Examples: mode 1
       # Il controllo dei rimossi usa lo snapshot iniziale: lista vuota nei quattro casi mode 1.
       # Le sostituzioni SUBMITTED/REJECTED verificano anche l'assenza del reviewer 1.
       | caso                                           | modeIniziale                | statoIniziale | reviewerFinali | modeFinale                  |
-      | Mode 1 non pubblicata verso mode 2              | AdminWritesAdminSigns       | DRAFT         | 2              | AdminWritesReviewerSigns    |
       | Mode 1 non pubblicata verso mode 3              | AdminWritesAdminSigns       | DRAFT         | 2              | ReviewerWritesReviewerSigns |
-      | Prima assegnazione multipla verso mode 2        | AdminWritesAdminSigns       | DRAFT         | 1,2            | AdminWritesReviewerSigns    |
       | Prima assegnazione multipla verso mode 3        | AdminWritesAdminSigns       | DRAFT         | 1,2            | ReviewerWritesReviewerSigns |
+
+    Examples: altri stati
+      | caso                                           | modeIniziale                | statoIniziale | reviewerFinali | modeFinale                  |
       | Mode 2 SUBMITTED - sostituzione reviewer        | AdminWritesReviewerSigns    | SUBMITTED     | 2              | AdminWritesReviewerSigns    |
       | Mode 2 REJECTED - sostituzione reviewer         | AdminWritesReviewerSigns    | REJECTED      | 2              | AdminWritesReviewerSigns    |
+

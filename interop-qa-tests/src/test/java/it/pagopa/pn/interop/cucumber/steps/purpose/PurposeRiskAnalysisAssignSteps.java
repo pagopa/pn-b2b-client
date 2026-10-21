@@ -157,7 +157,8 @@ public class PurposeRiskAnalysisAssignSteps {
     public void assignReviewersAndModeSuccessfully(List<Integer> reviewers, RiskAnalysisReviewMode mode) {
         assignReviewersAndMode(reviewers, mode);
         verifyAssignmentResponseSuccessful();
-        verifyReviewersAndMode(reviewers, mode);
+        // Perché è accettato, come valore correttamente interpretato come vuoto, "null", non la lista vuota.
+        verifyReviewersAndMode(reviewers == null ? List.of() : reviewers, mode);
         sharedStepsContext.getRiskAnalysisCommonContext().rememberInitialReviewers();
     }
 
@@ -168,7 +169,7 @@ public class PurposeRiskAnalysisAssignSteps {
 
     @Given("l'utente assegna con successo la finalità senza valutatori in modalità {riskAnalysisReviewMode}")
     public void assignWithoutReviewersSuccessfully(RiskAnalysisReviewMode mode) {
-        assignReviewersAndModeSuccessfully(List.of(), mode);
+        assignReviewersAndModeSuccessfully(null, mode);
     }
 
     @Then("alla finalità non sono associati valutatori e la modalità è {riskAnalysisReviewMode}")
@@ -219,14 +220,14 @@ public class PurposeRiskAnalysisAssignSteps {
 
     @When("l'utente tenta di assegnare alla finalità i seguenti valutatori: {reviewerList}, in modalità {riskAnalysisReviewMode}")
     public void assignReviewersAndMode(List<Integer> reviewers, RiskAnalysisReviewMode mode) {
-        if (reviewers.stream().anyMatch(index -> index < 1)) {
+        if (reviewers != null && reviewers.stream().anyMatch(index -> index < 1)) {
             throw new IllegalArgumentException("Gli indici dei valutatori devono essere positivi");
         }
         ReviewerPayloadOwner payloadOwner = sharedStepsContext.getRiskAnalysisCommonContext().getReviewerPayloadOwner();
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         String tenantType = payloadOwner != null && payloadOwner.purposeId().equals(purposeId)
                 ? payloadOwner.tenantType() : sharedStepsContext.getTenantType();
-        List<AssignedReviewerActorRef> reviewerActors = reviewers.stream()
+        List<AssignedReviewerActorRef> reviewerActors = (reviewers == null ? List.<Integer>of() : reviewers).stream()
                 .map(index -> new AssignedReviewerActorRef(tenantType, "reviewer", index-1))
                 .toList();
         List<UUID> reviewerIds = reviewerActors.stream()
@@ -235,7 +236,7 @@ public class PurposeRiskAnalysisAssignSteps {
 
         RiskAnalysisAssignmentRequest payload = RiskAnalysisAssignmentRequest.builder()
                 .reviewMode(mode)
-                .reviewerIds(reviewerIds)
+                .reviewerIds(reviewers == null ? null : reviewerIds)
                 .build();
 
         assignReviewer(payload, reviewerActors);
