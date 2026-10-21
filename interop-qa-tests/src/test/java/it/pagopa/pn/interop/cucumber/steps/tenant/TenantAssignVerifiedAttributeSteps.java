@@ -38,7 +38,9 @@ public class TenantAssignVerifiedAttributeSteps {
 
     @When("il delegato all'erogazione assegna a {string} l'attributo verificato precedentemente creato")
     public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
-        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+
         UUID tenantId = identityService.getOrganizationId(tenantType);
         UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
                 UUID.randomUUID() :
