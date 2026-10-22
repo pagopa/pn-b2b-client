@@ -1,6 +1,6 @@
 Feature: verifica consume stream
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_CONSUME_CONTAINS_ONLY_LEGAL] Creando uno stream per una PA, e inviando con questa 1 notifica legale e 1 bonaria, lo stream con communicationType = LEGAL contiene solo elementi relativi alla notifica a valore legale
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -35,7 +35,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_CONSUME_CONTAINS_ONLY_INFORMAL] Creando uno stream per una PA, e inviando con questa 1 notifica legale e 1 bonaria, lo stream con communicationType = INFORMAL contiene solo elementi relativi alla notifica bonaria
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -71,7 +71,7 @@ Feature: verifica consume stream
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_INFORMAL_CONSUME_1] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_REACHED (flusso digitale)
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -104,7 +104,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_INFORMAL_CONSUME_2] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_UNREACHED
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -134,7 +134,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_INFORMAL_CONSUME_3] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_REACHED (flusso analogico)
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -170,7 +170,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_INFORMAL_CONSUME_4] Consume di uno stream con communicationType = INFORMAL con notifica visualizzata
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -200,7 +200,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
   Scenario: [STREAM_INFORMAL_CONSUME_5] Consume di uno stream con communicationType = INFORMAL con notifica undeliverable e SEND_DIGITAL_MESSAGE_SKIP
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
