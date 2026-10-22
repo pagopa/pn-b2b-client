@@ -65,6 +65,14 @@ public interface ITemplateEngineClient {
 
     String informalSmsCommunication(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
 
+    String notificationCceForEmail(LanguageEnum xLanguage, NotificationCceForEmail request) throws RestClientException;
+
+    String courtesyEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    Resource analogDeliveryWorkflowTimeoutLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowTimeoutLegalFact request) throws RestClientException;
+
+    Resource analogFeedbackAvailabilityStatement(LanguageEnum xLanguage, AnalogFeedbackAvailabilityStatement request) throws RestClientException;
+    
     String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
 
     String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException;
