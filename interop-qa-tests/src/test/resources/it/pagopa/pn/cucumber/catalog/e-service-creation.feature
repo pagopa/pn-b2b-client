@@ -52,6 +52,8 @@ Feature: Creazione e-service
     When l'utente crea un e-service con lo stesso nome
     Then si ottiene status code 409
 
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
   @eservice_name_trimmed_space
   @happy-path
   Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_1] Gli spazi iniziali e finali nel nome dell'e-service vengono rimossi.
@@ -64,6 +66,8 @@ Feature: Creazione e-service
       | %blank%%random(5)%%blank% |
       | %random(5)%               |
 
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
   @eservice_name_trimmed_space
   @sad-path
   Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_2] La creazione di un e-service con un nome spazi esclusi inferiore al limite minimo previsto non va a buon fine.

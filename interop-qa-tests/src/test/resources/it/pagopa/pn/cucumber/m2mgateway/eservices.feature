@@ -1504,6 +1504,8 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | GSP            |
       | Privato        |
 
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
   @eservice_name_trimmed_space
   @happy-path
   Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_3] Gli spazi iniziali e finali nel nome dell'e-service vengono rimossi.
@@ -1518,6 +1520,8 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | %blank%%random(5)%%blank% |
       | %random(5)%               |
 
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
   @eservice_name_trimmed_space
   @sad-path
   Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_4] La creazione di un e-service con un nome spazi esclusi inferiore al limite minimo previsto non va a buon fine.
