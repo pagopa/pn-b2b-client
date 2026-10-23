@@ -24,8 +24,8 @@ import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
@@ -243,6 +243,7 @@ public class SharedSteps {
     public SharedSteps(ApplicationContext context,
                        IPnPaB2bClient b2bClient,
                        PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
+                       PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl,
                        PnPollingFactory pollingFactory,
                        IPnWebPaClient webPaClient,
                        PnWebRecipientExternalClientImpl webRecipientClient,
@@ -329,7 +330,7 @@ public class SharedSteps {
      * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
      */
     public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
-        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(notificationIun, true);
+        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
     }
 
     /**
