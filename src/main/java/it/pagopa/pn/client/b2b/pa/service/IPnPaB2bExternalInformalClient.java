@@ -12,7 +12,7 @@ public interface IPnPaB2bExternalInformalClient {
 
     MessageResponse getMessage(UUID messageId, SettableApiKey.ApiKeyType apiKeyType);
 
-    NewNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 request, SettableApiKey.ApiKeyType apiKeyType);
+    NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 request, SettableApiKey.ApiKeyType apiKeyType);
 
     NewInformalNotificationRequestStatusResponseV1 getNotificationStatusByRequestId(String notificationRequestId, SettableApiKey.ApiKeyType apiKeyType);
 

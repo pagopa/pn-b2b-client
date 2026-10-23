@@ -69,7 +69,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String paName;
     private SettableApiKey.ApiKeyType apiKeyType;
 
-    private NewNotificationResponse newInformalNotificationResponse;
+    private NewInformalNotificationResponse newInformalNotificationResponse;
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
@@ -166,7 +166,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             throw new UncheckedIOException("Errore durante la preparazione della notifica bonaria con campagna " + campaignId, e);
         }
 
-        NewNotificationResponse response = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(request, apiKeyType);
+        NewInformalNotificationResponse response = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(request, apiKeyType);
         String notificationRequestId = response.getNotificationRequestId();
 
         NewInformalNotificationRequestStatusResponseV1 acceptedStatus = pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());

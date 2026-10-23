@@ -161,7 +161,6 @@ public class InformalRecipientBuilder {
             case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createMessageITSL(currentCxId, apiKeyType));
             case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createMessageITEN(currentCxId, apiKeyType));
             case "${SAVED-IT}" -> UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
-            case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.createMessageITFR(currentCxId, apiKeyType));
 
             default -> UUID.fromString(value);
         };

@@ -720,7 +720,7 @@
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
                                 <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externallb2bpainformal.model</modelPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -948,8 +948,8 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpabundleinformal.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpabundleinformal.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -960,8 +960,8 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpabundleinformal.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpabundleinformal.model</modelPackage>
                         </configuration>
                     </execution>
 

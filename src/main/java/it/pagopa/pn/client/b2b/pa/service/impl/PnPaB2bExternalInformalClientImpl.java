@@ -102,7 +102,7 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
     }
 
     @Override
-    public NewNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 request, SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
+    public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 request, SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
         return notificationApi(apiKeyType).sendNewInformalNotificationV1(request);
     }
 
