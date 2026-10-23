@@ -35,7 +35,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_CONSUME_CONTAINS_ONLY_INFORMAL] Creando uno stream per una PA, e inviando con questa 1 notifica legale e 1 bonaria, lo stream con communicationType = INFORMAL contiene solo elementi relativi alla notifica bonaria
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
