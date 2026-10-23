@@ -14,3 +14,11 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
       | mode       |
       | erogazione |
       | ricezione  |
+
+  @sad-path
+  Scenario: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_CREATION_2] La creazione di un nuovo e-service a partire da un template attivo NON può essere effettuata da un ente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m v3 tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
+    Then si ottiene response status code 403
