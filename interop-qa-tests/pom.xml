@@ -571,7 +571,7 @@
                             </typeMappings>
                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
                             <!-- TODO non appena disponibili le specifiche per la 2.24.0, aggiornare il tag di riferimento a 2.24.0 -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.24.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -607,7 +607,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
