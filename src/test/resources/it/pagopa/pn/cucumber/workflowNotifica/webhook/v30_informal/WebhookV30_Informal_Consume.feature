@@ -135,7 +135,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_INFORMAL_CONSUME_3] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_REACHED (flusso analogico)
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
