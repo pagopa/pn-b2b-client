@@ -62,7 +62,7 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
     And <invio>
     And l'utente è un "reviewer" di "GSP"
     And l'utente acquisisce la finalità e la versione dei metadati per la convalida
-    When l'utente è il numero 2 ad avere ruolo "<ruoloModifica>" di "GSP"
+    When l'utente è il numero <numeroUtente> ad avere ruolo "<ruoloModifica>" di "GSP"
     And l'utente modifica <datoModificato> per rendere obsoleta la versione acquisita
     Then si ottiene status code 200
     And la modifica concorrente è persistita e ha incrementato la versione dei metadati
@@ -74,7 +74,8 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
     And lo stato della compilazione dell'analisi del rischio è "<stato>"
 
     Examples:
-      | mode                        | compilazione                                                                      | invio                                                                         | ruoloModifica | datoModificato | stato     |
-      | AdminWritesReviewerSigns    | compila l'analisi del rischio tramite endpoint generico con successo              | l'utente invia il submit dell'analisi del rischio della finalità con successo | admin         | titolo         | SUBMITTED |
-      | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  |
+      | mode                        | compilazione                                                                      | invio                                                                         | ruoloModifica | datoModificato | stato     | numeroUtente |
+      | AdminWritesReviewerSigns    | compila l'analisi del rischio tramite endpoint generico con successo              | l'utente invia il submit dell'analisi del rischio della finalità con successo | admin         | titolo         | SUBMITTED | 1            |
 
+      # Errore 22/10/2026: a posteriori del tentativo di convalida risulta mutato un solo attributo, hasUnreadNotifications: prima true, dopo false. Studi in corso per accertarne le cause
+      | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  | 2            |

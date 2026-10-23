@@ -1,25 +1,25 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.ReviewerWorkflow;
-import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.ReviewerPayloadOwner;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
-import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ReviewerWorkflow;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.purpose.service.RiskAnalysisAssignmentRequest;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.ReviewerPayloadOwner;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.UUID;
 
 public class PurposeRiskAnalysisAssignSteps {
@@ -189,9 +189,11 @@ public class PurposeRiskAnalysisAssignSteps {
     @Then("alla finalità risultano associati esclusivamente i seguenti valutatori: {reviewerList}, in modalità {riskAnalysisReviewMode}")
     public void verifyReviewersAndMode(List<Integer> reviewers, RiskAnalysisReviewMode mode) {
         String tenantType = sharedStepsContext.getTenantType();
-        List<UUID> expectedIds = reviewers.stream()
-                .map(index -> identityService.getUserId(tenantType, "reviewer", index - 1))
-                .toList();
+        List<UUID> expectedIds = reviewers == null
+                ? Collections.emptyList()
+                : reviewers.stream()
+                    .map(index -> identityService.getUserId(tenantType, "reviewer", index - 1))
+                    .toList();
         UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();

@@ -1,11 +1,15 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionDocument;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -34,6 +38,30 @@ class PurposeRiskAnalysisAssignmentDeniedStepsTest {
     void acceptsEntirePurposeAndMetadataUnchanged() {
         PurposeRiskAnalysisAssignmentDeniedSteps steps = baseline();
         when(client.getPurpose(purposeId)).thenReturn(new Purpose().id(purposeId).title("Originale"));
+        assertThatCode(steps::verifyAssignmentUnchanged).doesNotThrowAnyException();
+    }
+
+    @Test
+    void acceptsAsyncRiskAnalysisDocumentGenerationOnActiveVersion() {
+        UUID versionId = UUID.randomUUID();
+        when(context.getTenantType()).thenReturn("GSP");
+        when(context.getPurposeCommonContext().getPurposeId()).thenReturn(purposeId.toString());
+        when(configurator.getPurposeApiClient()).thenReturn(client);
+        Purpose initial = new Purpose().id(purposeId).title("Originale")
+                .currentVersion(new PurposeVersion().id(versionId).state(PurposeVersionState.ACTIVE))
+                .versions(List.of(new PurposeVersion().id(versionId).state(PurposeVersionState.ACTIVE)));
+        when(client.getPurpose(purposeId)).thenReturn(initial);
+        when(client.getPurposeMetadataVersion(purposeId)).thenReturn(3);
+        PurposeRiskAnalysisAssignmentDeniedSteps steps = new PurposeRiskAnalysisAssignmentDeniedSteps(context, configurator);
+        steps.rememberAssignment();
+
+        PurposeVersionDocument generatedDoc = new PurposeVersionDocument().id(UUID.randomUUID());
+        Purpose afterAsyncDoc = new Purpose().id(purposeId).title("Originale")
+                .currentVersion(new PurposeVersion().id(versionId).state(PurposeVersionState.ACTIVE).riskAnalysisDocument(generatedDoc))
+                .versions(List.of(new PurposeVersion().id(versionId).state(PurposeVersionState.ACTIVE).riskAnalysisDocument(generatedDoc)));
+        when(client.getPurpose(purposeId)).thenReturn(afterAsyncDoc);
+        when(client.getPurposeMetadataVersion(purposeId)).thenReturn(4);
+
         assertThatCode(steps::verifyAssignmentUnchanged).doesNotThrowAnyException();
     }
 

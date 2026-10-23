@@ -18,7 +18,7 @@ Feature: Eventi di piattaforma delle assegnazioni RA via M2M
 
     Examples:
       | mode                        | reviewerFinali | evento                                    |
-      | AdminWritesAdminSigns       | nessuno        | PurposeRiskAnalysisSelfAssignedV2         |
+      | AdminWritesAdminSigns       | NULL           | PurposeRiskAnalysisSelfAssignedV2         |
       | AdminWritesReviewerSigns    | 1              | PurposeRiskAnalysisWorkflowCreatedV2      |
       | ReviewerWritesReviewerSigns | 1              | PurposeRiskAnalysisAssignedV2             |
 
@@ -45,9 +45,9 @@ Feature: Eventi di piattaforma delle assegnazioni RA via M2M
       | rimozione     | AdminWritesReviewerSigns    | 1,2              | AdminWritesReviewerSigns    | 1              | PurposeRiskAnalysisWorkflowCreatedV2 |
       | aggiunta      | ReviewerWritesReviewerSigns | 1                | ReviewerWritesReviewerSigns | 1,2            | PurposeRiskAnalysisAssignedV2        |
       | rimozione     | ReviewerWritesReviewerSigns | 1,2              | ReviewerWritesReviewerSigns | 1              | PurposeRiskAnalysisAssignedV2        |
-      | cambio mode   | AdminWritesAdminSigns       | nessuno          | AdminWritesReviewerSigns    | 1              | PurposeRiskAnalysisWorkflowCreatedV2 |
-      | cambio mode   | AdminWritesAdminSigns       | nessuno          | ReviewerWritesReviewerSigns | 1              | PurposeRiskAnalysisAssignedV2        |
-      | cambio mode   | AdminWritesReviewerSigns    | 1                | AdminWritesAdminSigns       | nessuno        | PurposeRiskAnalysisSelfAssignedV2    |
+      | cambio mode   | AdminWritesAdminSigns       | NULL             | AdminWritesReviewerSigns    | 1              | PurposeRiskAnalysisWorkflowCreatedV2 |
+      | cambio mode   | AdminWritesAdminSigns       | NULL             | ReviewerWritesReviewerSigns | 1              | PurposeRiskAnalysisAssignedV2        |
+      | cambio mode   | AdminWritesReviewerSigns    | 1                | AdminWritesAdminSigns       | NULL           | PurposeRiskAnalysisSelfAssignedV2    |
       | cambio mode   | AdminWritesReviewerSigns    | 1                | ReviewerWritesReviewerSigns | 1              | PurposeRiskAnalysisAssignedV2        |
-      | cambio mode   | ReviewerWritesReviewerSigns | 1                | AdminWritesAdminSigns       | nessuno        | PurposeRiskAnalysisSelfAssignedV2    |
+      | cambio mode   | ReviewerWritesReviewerSigns | 1                | AdminWritesAdminSigns       | NULL           | PurposeRiskAnalysisSelfAssignedV2    |
       | cambio mode   | ReviewerWritesReviewerSigns | 1                | AdminWritesReviewerSigns    | 1              | PurposeRiskAnalysisWorkflowCreatedV2 |

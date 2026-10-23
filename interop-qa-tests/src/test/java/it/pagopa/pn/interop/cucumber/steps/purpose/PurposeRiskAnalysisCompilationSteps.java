@@ -143,6 +143,7 @@ public class PurposeRiskAnalysisCompilationSteps {
         });
     }
 
+    @Given("uno dei reviewer assegnati compila l'analisi del rischio della finalità con successo")
     @Given("il valutatore assegnato compila l'analisi del rischio della finalità con successo")
     public void assignedReviewerCompilesRiskAnalysisSuccessfully() {
         assignedReviewerCompilesRiskAnalysis();
