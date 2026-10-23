@@ -138,10 +138,13 @@ del branch sorgente o della configurazione del catalogo.
 La navigazione segue **servizio → area → funzionalità → scenario BDD**.
 In questa prima versione una funzionalità corrisponde a una dichiarazione
 `Feature` con almeno uno scenario. Feature omonime in file diversi restano
-separate; il percorso ne permette la distinzione. Non è una tassonomia di
-prodotto già validata: i nomi delle aree sono una prima proposta basata sulla
-struttura del repository. I titoli delle Feature rimangono quelli originali,
-tranne le etichette esplicitamente definite in `featureNames` (attualmente PARI).
+separate; il percorso ne permette la distinzione. 
+Non è una tassonomia di prodotto già validata: i nomi delle aree sono basate sulla
+struttura del repository.  
+L'area funzionale "File di utility tecnica" è stata inserita per contenere scenari come _examples.feature che non implementano alcuna logica di testing reale.
+La funzionalità di paginazione prima non classificata è stata inserita all'interno dell'area funzionale "Catalogo degli eservice"  tramite il tag piuttosto che il path per permettere eventuali future nuove aggregazioni differenti nel caso di aggiunta scenari al path /pagination.
+Sono state aggiunte le aree "Consolidatore" "IO connector" e "funzionalità Delivery push" e unificate quelle di Comunicazione bonarie e Notifiche Bonarie.
+I titoli delle Feature rimangono quelli originali, tranne le etichette esplicitamente definite in `featureNames` (attualmente PARI).
 
 Le regole sono ordinate: la prima corrispondenza determina l'area dello scenario.
 `tags` contiene nomi esatti con `@`; `path` è un'espressione regolare applicata al
