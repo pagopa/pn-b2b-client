@@ -1,6 +1,6 @@
 Feature: verifica consume stream
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_CONSUME_CONTAINS_ONLY_LEGAL] Creando uno stream per una PA, e inviando con questa 1 notifica legale e 1 bonaria, lo stream con communicationType = LEGAL contiene solo elementi relativi alla notifica a valore legale
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -65,13 +65,14 @@ Feature: verifica consume stream
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria
     When si invoca l'api Webhook versione "V30" per ottenere gli elementi di timeline di tale notifica
     Then lo stream "V30" contiene solo elementi relativi a notifiche INFORMAL
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_INFORMAL_CONSUME_1] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_REACHED (flusso digitale)
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -104,7 +105,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_INFORMAL_CONSUME_2] Consume di uno stream con communicationType = INFORMAL con notifica andata in COMPLETED_UNREACHED
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -145,7 +146,7 @@ Feature: verifica consume stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId               | MessaMora                  |
+      | campaignId               | CampAnalogic               |
       | messageId                | ${NEW-IT}                  |
       | subject                  | Test workflow              |
       | recipientType            | PG                         |
@@ -170,7 +171,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_INFORMAL_CONSUME_4] Consume di uno stream con communicationType = INFORMAL con notifica visualizzata
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
@@ -200,7 +201,7 @@ Feature: verifica consume stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3 @Textex2
+  @webhookV30Informal @precondition @cleanWebhook @webhook3
   Scenario: [STREAM_INFORMAL_CONSUME_5] Consume di uno stream con communicationType = INFORMAL con notifica undeliverable e SEND_DIGITAL_MESSAGE_SKIP
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
     And allo stream versione "V30" si setta il campo waitForAccepted a "true"
