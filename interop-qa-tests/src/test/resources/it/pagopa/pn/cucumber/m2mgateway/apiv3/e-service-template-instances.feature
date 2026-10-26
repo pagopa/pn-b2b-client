@@ -63,3 +63,24 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m v3 tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso2"
     Then si ottiene response status code 403
+
+  Scenario Outline: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_DESCRIPTOR_CREATION_1] La creazione di una nuova versione in bozza di un'istanza di e-service template può essere effettuata da un ente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m v3 tenta la creazione di una nuova versione in bozza dell'istanza dell'e-service template utilizzando i dati del descrittore precedente
+    Then si ottiene status code 200 e il descrittore contiene i campi del precedente
+
+    Examples:
+      | mode       |
+      | erogazione |
+      | ricezione  |
+
+  Scenario: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_DESCRIPTOR_CREATION_2] La creazione di una nuova versione in bozza di un'istanza di e-service template NON può essere effettuata da un ente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m v3 tenta la creazione di una nuova versione in bozza dell'istanza dell'e-service template utilizzando i dati del descrittore precedente
+    Then si ottiene response status code 403
