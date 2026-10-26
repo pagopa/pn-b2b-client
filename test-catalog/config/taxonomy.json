@@ -11,7 +11,7 @@
           "area": "Messaggi di cortesia alle banche"
         },
         {
-          "path": "/consolidatore.v2/",
+        "path": "/consolidatore/v2/",
           "area": "Consolidatore"
         },
         {
