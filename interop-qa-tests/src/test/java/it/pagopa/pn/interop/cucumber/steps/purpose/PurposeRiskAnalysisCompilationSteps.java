@@ -444,6 +444,23 @@ public class PurposeRiskAnalysisCompilationSteps {
                 .isEqualTo(riskAnalysisSignSeed.getMetadataVersionToSign());
     }
 
+    /**
+     * Verifica tramite polling che la finalità presenti notifiche non lette per l'utente.
+     */
+    @Then("all'utente risultano delle notifiche per quella finalità")
+    public void verifyUserHasUnreadNotificationsForPurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> Boolean.TRUE.equals(purpose.getHasUnreadNotifications()),
+                "L'attributo hasUnreadNotifications della finalità non è diventato true entro il tempo massimo di attesa"
+        );
+    }
+
     @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")
     public void anotherAssignedReviewerSignsRiskAnalysis() {
         List<AssignedReviewerActorRef> assignedReviewerActors = getAssignedReviewerActorsOrThrow(

@@ -51,31 +51,49 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
   # RWRS ASSIGNED viene modificata da reviewer 2 (risposte RA). Firma sempre reviewer 1.
   # Le finestre UI del PST sono ricondotte alla stessa verifica API del lock:
   # V1 acquisita, mutazione valida -> V2, firma esplicita con V1 -> 409, nessuna mutazione ulteriore.
+  #
+  # Si usano i reviewer 2 e 3 perché al momento 1 non è abilitato alla ricezione delle notifiche, ed uno degli
+  # attributi coinvolti nel confronto delle finalità - hasUnreadNotifications - riguarda la ricezione delle notifiche.
   @sad-path
   Scenario Outline: [RA_SIGN_STALE_VERSION_01] Firma con versione obsoleta dopo modifica in <mode>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
     And l'utente ha ruolo "admin" nel profilo API BFF dell'ente "GSP"
-    And l'utente assegna con successo i valutatori 1,2 alla finalità in modalità <mode>
+    And l'utente assegna con successo i valutatori 2,3 alla finalità in modalità <mode>
     And <compilazione>
     And <invio>
-    And l'utente è un "reviewer" di "GSP"
+    And l'utente è il numero 2 ad avere ruolo "reviewer" di "GSP"
     And l'utente acquisisce la finalità e la versione dei metadati per la convalida
     When l'utente è il numero <numeroUtente> ad avere ruolo "<ruoloModifica>" di "GSP"
     And l'utente modifica <datoModificato> per rendere obsoleta la versione acquisita
     Then si ottiene status code 200
     And la modifica concorrente è persistita e ha incrementato la versione dei metadati
     And lo stato della compilazione dell'analisi del rischio è "<stato>"
-    When l'utente è un "reviewer" di "GSP"
+    When l'utente è il numero 2 ad avere ruolo "reviewer" di "GSP"
     And l'utente convalida l'analisi del rischio della finalità usando la versione dei metadati precedentemente acquisita
     Then si ottiene status code 409
-    And il tentativo con versione obsoleta lascia invariati finalità e versione dei metadati
+    When l'utente è il numero <numeroUtente> ad avere ruolo "<ruoloModifica>" di "GSP"
+    Then il tentativo con versione obsoleta lascia invariati finalità e versione dei metadati
     And lo stato della compilazione dell'analisi del rischio è "<stato>"
 
     Examples:
       | mode                        | compilazione                                                                      | invio                                                                         | ruoloModifica | datoModificato | stato     | numeroUtente |
       | AdminWritesReviewerSigns    | compila l'analisi del rischio tramite endpoint generico con successo              | l'utente invia il submit dell'analisi del rischio della finalità con successo | admin         | titolo         | SUBMITTED | 1            |
+      | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  | 3            |
 
-      # Errore 22/10/2026: a posteriori del tentativo di convalida risulta mutato un solo attributo, hasUnreadNotifications: prima true, dopo false. Verifiche in corso https://pagopaspa.slack.com/archives/C0AJLKQJDM2/p1792770601665149
-      | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  | 2            |
+  @sad-path
+  # NB: il controllo riguarda nello specifico il campo "hasUnreadNotifications" dell'oggetto Purpose, NON le notifiche in-app.
+  # Si usano i reviewer 2 e 3 perché al momento 1 non è abilitato alla ricezione delle notifiche
+  Scenario: [RA_ASSIGN_NOTIFICATION_01] Ad ogni valutatore a cui è stata assegnata una finalità risultano delle notifiche associate a quella finalità
+    Given "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+    And l'utente ha ruolo "admin" nel profilo API BFF dell'ente "GSP"
+    And l'utente assegna con successo i valutatori 2,3 alla finalità in modalità ReviewerWritesReviewerSigns
+    When l'utente è il numero 2 ad avere ruolo "reviewer" di "GSP"
+    And l'utente acquisisce la finalità e la versione dei metadati per la convalida
+    Then all'utente risultano delle notifiche per quella finalità
+    When l'utente è il numero 3 ad avere ruolo "reviewer" di "GSP"
+    And l'utente acquisisce la finalità e la versione dei metadati per la convalida
+    Then all'utente risultano delle notifiche per quella finalità

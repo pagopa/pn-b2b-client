@@ -108,10 +108,17 @@ public class PurposeRiskAnalysisStaleVersionSteps {
     public void verifyMetadataUnchanged() {
         assertThat(versionAfterMutation).as("Verificare prima la modifica concorrente").isNotNull();
         configurator.setBearerToken(context.getUserToken());
-        assertThat(configurator.getPurposeApiClient().getPurpose(mutationPurposeId))
-                .as("La Purpose aggiornata non deve essere modificata dalla firma rifiutata")
-                .isEqualTo(purposeAfterMutation);
-        assertThat(configurator.getPurposeApiClient().getPurposeMetadataVersion(mutationPurposeId))
+        IPurposeApiClient client = configurator.getPurposeApiClient();
+        context.getPollingService().makePolling(
+                () -> client.getPurpose(mutationPurposeId),
+                purpose -> Objects.equals(purpose, purposeAfterMutation),
+                purpose -> String.format(
+                        "La Purpose aggiornata non deve essere modificata dalla firma rifiutata. Purpose attuale: %s, Purpose attesa: %s",
+                        purpose,
+                        purposeAfterMutation
+                )
+        );
+        assertThat(client.getPurposeMetadataVersion(mutationPurposeId))
                 .isEqualTo(versionAfterMutation);
     }
 }
