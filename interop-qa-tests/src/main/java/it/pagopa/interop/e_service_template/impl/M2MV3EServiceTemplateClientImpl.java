@@ -146,6 +146,15 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     ) {
         return eserviceTemplatesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(eserviceId, descriptorId, seed);
     }
+    
+    @Override
+    public ResponseEntity<EServiceDescriptor> updateTemplateInstanceDescriptorQuotas(
+            UUID eserviceId,
+            UUID descriptorId,
+            UpdateEServiceTemplateInstanceDescriptorQuotasSeed seed
+    ) {
+        return eserviceTemplatesApi.updateTemplateInstanceDescriptorQuotasWithHttpInfo(eserviceId, descriptorId, seed);
+    }
 
     @Override
     public ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(

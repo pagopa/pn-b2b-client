@@ -28,4 +28,6 @@ public interface IM2MV3EServiceTemplateClient extends IM2MEServiceTemplateClient
     ResponseEntity<EServiceDescriptor> updateDraftDescriptorTemplateInstance(
             UUID eserviceId, UUID descriptorId, UpdateEServiceDescriptorTemplateInstanceSeed seed);
 
+    ResponseEntity<EServiceDescriptor> updateTemplateInstanceDescriptorQuotas(
+            UUID eserviceId, UUID descriptorId, UpdateEServiceTemplateInstanceDescriptorQuotasSeed seed);
 }
