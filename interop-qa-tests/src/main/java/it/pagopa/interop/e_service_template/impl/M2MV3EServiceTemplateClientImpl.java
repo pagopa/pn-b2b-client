@@ -8,9 +8,14 @@ import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceDescriptorQuotasSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
@@ -116,6 +121,15 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     ) {
         return eserviceTemplatesApi.updateEServiceTemplateInstanceWithHttpInfo(eserviceId, seed);
     }
+
+    @Override
+    public ResponseEntity<EService> updateEServiceTemplateInstanceLabel(
+        UUID eserviceId,
+        EServiceInstanceLabelUpdateSeed seed
+    ) {
+        return eserviceTemplatesApi.updateEServiceTemplateInstanceLabelWithHttpInfo(eserviceId, seed);
+    }
+
 
     @Override
     public ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
