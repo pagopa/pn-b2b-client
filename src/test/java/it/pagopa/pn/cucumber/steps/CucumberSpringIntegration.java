@@ -110,6 +110,18 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationSta
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusNoAcceptedV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceValidationStatusV29;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v29.PnPollingServiceWebhookV29;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceStatusExtraRapidV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceStatusRapidV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceStatusSlowV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceTimelineExtraRapidV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceTimelineRapidV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceTimelineSlowE2eV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceTimelineSlowV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceValidationStatusAcceptedExtraRapidV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceValidationStatusAcceptedShortV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceValidationStatusNoAcceptedV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceValidationStatusV30;
+import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceWebhookV30;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -194,7 +206,9 @@ import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidato
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
+import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -343,6 +357,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusAcceptedExtraRapidV29.class,
         PnPollingServiceStatusExtraRapidV29.class,
         PnPollingServiceTimelineExtraRapidV29.class,
+
+        PnPollingServiceTimelineRapidV30.class,
+        PnPollingServiceStatusRapidV30.class,
+        PnPollingServiceTimelineSlowV30.class,
+        PnPollingServiceTimelineSlowE2eV30.class,
+        PnPollingServiceStatusSlowV30.class,
+        PnPollingServiceValidationStatusV30.class,
+        PnPollingServiceValidationStatusNoAcceptedV30.class,
+        PnPollingServiceValidationStatusAcceptedShortV30.class,
+        PnPollingServiceWebhookV30.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV30.class,
+        PnPollingServiceStatusExtraRapidV30.class,
+        PnPollingServiceTimelineExtraRapidV30.class,
+
         PortfatLambdaClient.class,
         MailSenderConfig.class,
         PnParserService.class,
@@ -372,6 +400,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaperChannelClientImpl.class,
         TemplateConfiguration.class,
         TemplateEngineContextFactory.class,
+        HtmlEscapeService.class,
         EmdIntegrationApiImpl.class,
         SettableAuthTokenRaddCognito.class,
         EventTimelineParser.class,
@@ -415,7 +444,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
-        DelayerSkipSenderLimitService.class
+        DelayerSkipSenderLimitService.class,
+        IoMockScenarioContext.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
