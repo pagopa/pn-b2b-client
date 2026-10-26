@@ -25,7 +25,12 @@ Feature: Funzionalità della feature Nuovi Operatori in caso di feature flag dis
   # PST: Scenario 33 - Caso 33.4
   @sad-path
   Scenario: [FFOFF_CONVALIDA_33_4_SIGN_INATTIVA] Valutatore - API sign inattiva
-	Given l'utente è un "reviewer" di "PA2"
+	Given "PA1" ha già creato e pubblicato 1 e-service
+	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
+	And l'utente è un "admin" di "PA2"
+	And l'utente acquisisce la versione dei metadati della finalità da convalidare
+	And l'utente è un "reviewer" di "PA2"
 	When l'utente convalida l'analisi del rischio della finalità
 	Then si ottiene status code 501
 

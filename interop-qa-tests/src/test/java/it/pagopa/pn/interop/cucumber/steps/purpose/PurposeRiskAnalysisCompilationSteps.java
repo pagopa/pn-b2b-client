@@ -13,6 +13,7 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +26,10 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final SharedStepsContext sharedStepsContext;
     private final BFFDataPreparationService dataPreparationService;
     private final IHttpExecutor httpCallExecutor;
+    private final IdentityService identityService;
     private RiskAnalysis compiledRiskAnalysis;
+    private UUID purposeIdToSign;
+    private RiskAnalysisSignSeed riskAnalysisSignSeed;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -36,6 +40,7 @@ public class PurposeRiskAnalysisCompilationSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.dataPreparationService = dataPreparationService;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.identityService = sharedStepsContext.getIdentityService();
     }
 
     @When("il valutatore assegnato compila l'analisi del rischio della finalità")
@@ -46,6 +51,18 @@ public class PurposeRiskAnalysisCompilationSteps {
             RiskAnalysisFormSeed riskAnalysisForm = new RiskAnalysisFormSeed()
                     .version(riskAnalysis.getRiskAnalysisForm().getVersion())
                     .answers(riskAnalysis.getRiskAnalysisForm().getAnswers());
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
+        });
+    }
+
+    @When("il valutatore assegnato compila l'analisi del rischio della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void assignedReviewerCompilesRiskAnalysisWithUrl() {
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
+            String tenantType = sharedStepsContext.getTenantType();
+            String kind = identityService.getKind(tenantType);
+            RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
             UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
             httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
         });
@@ -288,12 +305,28 @@ public class PurposeRiskAnalysisCompilationSteps {
         verifyRiskAnalysisSigningState("SIGNED");
     }
 
-    @When("l'utente convalida l'analisi del rischio della finalità")
-    public void userSignsRiskAnalysis() {
+    @Given("l'utente acquisisce la versione dei metadati della finalità da convalidare")
+    public void userRetrievesPurposeMetadataVersionToSign() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        Integer version = purposeApiClient.getPurposeMetadataVersion(purposeId);
+
+        riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
+        purposeIdToSign = purposeId;
+    }
+
+    /* Il get dell'informazione metadataVersion, necessaria per il sign, è deliberatamente fatta altrove e non in questo
+    * step, per lasciar la possibilità di usare questo step anche in test negativi, in cui viene settato un valore
+    * di metadataVersion errato. */
+    @When("l'utente convalida l'analisi del rischio della finalità")
+    public void userSignsRiskAnalysis() {
+        if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
+            throw new IllegalStateException("Acquisire prima la versione dei metadati della finalità da convalidare con un utente autorizzato");
+        }
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
     }
 
     @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")

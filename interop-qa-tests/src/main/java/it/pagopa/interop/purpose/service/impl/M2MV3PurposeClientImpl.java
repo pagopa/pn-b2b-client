@@ -1,32 +1,26 @@
 package it.pagopa.interop.purpose.service.impl;
 
-import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
-
 import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RemainingDailyCallsResponse;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.purpose.service.IM2MV3PurposeClient;
 import it.pagopa.interop.utils.ApiClientUtils;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
+
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -160,6 +154,11 @@ public class M2MV3PurposeClientImpl extends AbstractDPoPClient implements IM2MV3
             .freeOfChargeReason(body.getFreeOfChargeReason())
             .description(body.getDescription())
         ));
+    }
+
+    @Override
+    public Purpose createPurpose(PurposeSeed purposeSeed) {
+        return vMapper.mapToV2(purposesApi.createPurpose(vMapper.mapToV3(purposeSeed)));
     }
 
     @Override
