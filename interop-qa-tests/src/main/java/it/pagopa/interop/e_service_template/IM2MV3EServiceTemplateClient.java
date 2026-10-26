@@ -23,5 +23,7 @@ public interface IM2MV3EServiceTemplateClient extends IM2MEServiceTemplateClient
 
     ResponseEntity<EService> updateEServiceTemplateInstanceLabel(UUID eserviceId, EServiceInstanceLabelUpdateSeed seed);
 
+    ResponseEntity<EServiceDescriptor> createTemplateInstanceDescriptor(UUID eserviceId, EServiceInstanceDescriptorSeed seed);
+
 
 }
