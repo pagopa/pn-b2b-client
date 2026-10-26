@@ -2,8 +2,14 @@ package it.pagopa.interop.e_service_template;
 
 import it.pagopa.interop.authorization.service.utils.Authenticable;
 import it.pagopa.interop.authorization.service.utils.SettableHeaders;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
+import org.springframework.http.ResponseEntity;
+
+import java.util.UUID;
 
 public interface IM2MV3EServiceTemplateClient extends IM2MEServiceTemplateClient, SettableHeaders,
     Authenticable {
 
+    ResponseEntity<EService> createEServiceInstanceFromTemplate(UUID templateId, InstanceEServiceSeed seed);
 }

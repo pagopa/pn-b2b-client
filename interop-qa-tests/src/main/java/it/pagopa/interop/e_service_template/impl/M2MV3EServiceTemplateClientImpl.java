@@ -7,8 +7,10 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -96,6 +98,14 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     public EServiceTemplate createEServiceTemplate(EServiceTemplateSeed payload) {
         return vMapper.mapToV2(eserviceTemplatesApi.createEServiceTemplate(
                 vMapper.mapToV3(payload)));
+    }
+
+    @Override
+    public ResponseEntity<EService> createEServiceInstanceFromTemplate(
+        UUID templateId,
+        InstanceEServiceSeed seed
+    ) {
+        return eserviceTemplatesApi.createEServiceInstanceFromTemplateWithHttpInfo(templateId, seed);
     }
 
     @Override
