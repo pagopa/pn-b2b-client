@@ -11,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -106,6 +107,14 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
         InstanceEServiceSeed seed
     ) {
         return eserviceTemplatesApi.createEServiceInstanceFromTemplateWithHttpInfo(templateId, seed);
+    }
+
+    @Override
+    public ResponseEntity<EService> updateEServiceTemplateInstance(
+        UUID eserviceId,
+        UpdateEServiceTemplateInstanceSeed seed
+    ) {
+        return eserviceTemplatesApi.updateEServiceTemplateInstanceWithHttpInfo(eserviceId, seed);
     }
 
     @Override
