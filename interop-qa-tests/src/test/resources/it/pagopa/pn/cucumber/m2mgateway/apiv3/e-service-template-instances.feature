@@ -46,3 +46,20 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m v3 tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 403
+
+  Scenario: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_LABEL_UPDATE_1] La modifica dell'etichetta di un'istanza in stato PUBLISHED di un e-service template può essere effettuata da un ente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED con nome "E-Service"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso1" a partire dal template con successo indicando tutte le specifiche
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m v3 tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso2"
+    Then si ottiene response status code 200
+    And il suffisso "suffisso2" è utilizzato correttamente nell'e-service
+
+  Scenario: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_LABEL_UPDATE_2] La modifica dell'etichetta di un'istanza in stato PUBLISHED di un e-service template NON può essere effettuata da un ente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED con nome "E-Service"
+    And l'utente effettua la creazione di un nuovo e-service in stato PUBLISHED con suffisso "suffisso1" a partire dal template con successo indicando tutte le specifiche
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m v3 tenta la modifica del campo instanceLabel dell'istanza dell'e-service template "%actual" in stato PUBLISHED con "suffisso2"
+    Then si ottiene response status code 403
