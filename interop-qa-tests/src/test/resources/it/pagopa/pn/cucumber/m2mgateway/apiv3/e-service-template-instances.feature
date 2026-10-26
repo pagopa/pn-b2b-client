@@ -106,3 +106,35 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m
     When l'utente m2m v3 tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 403
+
+  Scenario Outline: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_DESCRIPTOR_QUOTAS_UPDATE_1] La modifica delle soglie di chiamate del descriptor di un'istanza di e-service template può essere effettuata da un ente con ruolo M2M-ADMIN
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità <mode> in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <state> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente m2m v3 tenta la modifica delle soglie di chiamate del descriptor dell'istanza dell'e-service template
+    Then si ottiene response status code 200
+    And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
+
+    Examples:
+      | mode       | state      |
+      | erogazione | PUBLISHED  |
+      | erogazione | SUSPENDED  |
+      | erogazione | DEPRECATED |
+      | ricezione  | PUBLISHED  |
+      | ricezione  | SUSPENDED  |
+      | ricezione  | DEPRECATED |
+
+  Scenario Outline: [M2M_V3_ESERVICE_TEMPLATE_INSTANCE_DESCRIPTOR_QUOTAS_UPDATE_2] La modifica delle soglie di chiamate del descriptor di un'istanza di e-service template NON può essere effettuata da un ente con ruolo M2M
+    Given l'utente è un "admin" di "PA1"
+    And l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED
+    And l'utente effettua la creazione di un nuovo e-service in stato <state> a partire dal template con successo indicando solo le specifiche strettamente necessarie
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m
+    When l'utente m2m v3 tenta la modifica delle soglie di chiamate del descriptor dell'istanza dell'e-service template
+    Then si ottiene response status code 403
+
+    Examples:
+      | state      |
+      | PUBLISHED  |
+      | SUSPENDED  |
+      | DEPRECATED |
