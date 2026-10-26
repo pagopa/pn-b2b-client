@@ -1,5 +1,5 @@
 # NOTA: considerare di compattare gli scenari di questo file in uno Scenario Outline
-@purpose @nuovi-operatori @tmp-nuovi-operatori-exec
+@purpose @nuovi-operatori @evol-nuovi-operatori @tmp-nuovi-operatori-exec
 Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi Operatori
 
   # PST: Scenario 31 - Caso 31.1

@@ -1,12 +1,13 @@
-@purpose @nuovi-operatori @sad-path
+@purpose @nuovi-operatori @evol-nuovi-operatori @sad-path
 Feature: Diniego delle modifiche di assegnazione dell'analisi del rischio
 
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-11237
   # CDT 1.4, 1.5, 7.5 e sola scrittura di 7.7.
   # La preparazione usa l'admin BFF GSP e una richiesta valida per isolare il motivo del diniego.
   # "reviewer": 1 -> 2, mode invariata. "mode": reviewer 1 invariato, mode 2 <-> 3.
   # Per mode 1 pubblicata si provano solo cambi mode validi verso 2/3 con reviewer 1.
   # Codici concordati: 409 per firma/pubblicazione, 403 per autorizzazione.
-  Scenario Outline: [RA_ASSIGNMENT_DENIED_01] <apiSet> - <caso> - <modeIniziale> - <ruolo> di <enteAttore>
+  Scenario Outline: [RA_ASSIGNMENT_DENIED_01] Diniego modifica assegnazione per stato non modificabile o ruolo non autorizzato (<apiSet> - <caso> - <modeIniziale> - <ruolo> di <enteAttore>)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice

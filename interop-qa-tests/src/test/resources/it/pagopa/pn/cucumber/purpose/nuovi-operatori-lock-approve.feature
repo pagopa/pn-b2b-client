@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori @ra-lock-approve
+@purpose @nuovi-operatori @evol-nuovi-operatori @ra-lock-approve
 Feature: Validazione della versione dei metadati durante la firma dell'analisi del rischio
 
   # CDT 3.3: due reviewer distinti inviano la stessa V quasi simultaneamente.
@@ -77,5 +77,5 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
       | mode                        | compilazione                                                                      | invio                                                                         | ruoloModifica | datoModificato | stato     | numeroUtente |
       | AdminWritesReviewerSigns    | compila l'analisi del rischio tramite endpoint generico con successo              | l'utente invia il submit dell'analisi del rischio della finalità con successo | admin         | titolo         | SUBMITTED | 1            |
 
-      # Errore 22/10/2026: a posteriori del tentativo di convalida risulta mutato un solo attributo, hasUnreadNotifications: prima true, dopo false. Studi in corso per accertarne le cause
+      # Errore 22/10/2026: a posteriori del tentativo di convalida risulta mutato un solo attributo, hasUnreadNotifications: prima true, dopo false. Verifiche in corso https://pagopaspa.slack.com/archives/C0AJLKQJDM2/p1792770601665149
       | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  | 2            |

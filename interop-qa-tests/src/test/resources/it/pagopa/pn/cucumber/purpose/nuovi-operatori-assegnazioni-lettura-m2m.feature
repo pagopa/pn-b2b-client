@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori @m2m-ra-review
+@purpose @nuovi-operatori @evol-nuovi-operatori @m2m-ra-review
 Feature: Autorizzazione alla lettura dell'assegnazione RA tramite M2M
 
   # CDT 7.7: un utente m2m del proprietario può consultare modalità e valutatori assegnati.

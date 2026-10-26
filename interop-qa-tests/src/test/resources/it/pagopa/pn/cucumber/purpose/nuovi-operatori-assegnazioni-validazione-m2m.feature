@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori @m2m-ra-review
+@purpose @nuovi-operatori @evol-nuovi-operatori @m2m-ra-review
 Feature: Validazione dei dati di assegnazione dell'analisi del rischio via M2M
 
   # Background CDT 7.6

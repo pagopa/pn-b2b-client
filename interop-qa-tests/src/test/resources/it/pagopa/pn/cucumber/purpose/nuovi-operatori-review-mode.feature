@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori
+@purpose @nuovi-operatori @evol-nuovi-operatori
 Feature: Cambio modalità di revisione e gestione dei dati dell'analisi del rischio
 
   # CDT 1.2 e 1.3: cambio modalità verso AWRS/DRAFT (la finalità non compare nella lista personale prima del submit).

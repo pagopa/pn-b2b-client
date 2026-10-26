@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori @ra-lock-approve
+@purpose @nuovi-operatori @evol-nuovi-operatori @ra-lock-approve
 Feature: Rifiuto della firma dell'analisi del rischio per ruoli non autorizzati
   Verifica che solo i reviewer possano firmare l'analisi, rifiutando gli altri ruoli e preservando lo stato.
 

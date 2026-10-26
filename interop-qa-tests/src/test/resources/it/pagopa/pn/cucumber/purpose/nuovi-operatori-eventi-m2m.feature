@@ -1,4 +1,4 @@
-@purpose @nuovi-operatori @m2m-events @m2m-ra-review @m2m-ra-events
+@purpose @nuovi-operatori @evol-nuovi-operatori @m2m-events @m2m-ra-review @m2m-ra-events
 Feature: Eventi di piattaforma delle assegnazioni RA via M2M
 
   # CDT 7.8: azione tramite m2m-admin, consultazione per il solo proprietario.
