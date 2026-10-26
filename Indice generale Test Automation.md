@@ -18623,7 +18623,7 @@ Dati Destinatario
 
 I casi di consegna seguenti verificano la prosecuzione del workflow dopo `PAYMENT`. I casi di correzione timeline `TR3_RESTART_CREATION_PAID_MONODEST`, `TR3_RESTART_CREATION_PAID_MULTIDEST`, `TR3_PAYMENTS_RESTART_1_MONOPAY` e `TR3_PAYMENTS_RESTART_2_MULTIPAY` verificano invece il rifiuto di una nuova richiesta di restart del destinatario pagato, controllando anche la specifica causa dell'errore.
 
-[Correzione timeline fase 3](src/test/resources/it/pagopa/pn/cucumber/correzioneTimeline/TimelineReworkFase3.feature) · [Correzione timeline ASYNC](src/test/resources/it/pagopa/pn/cucumber/correzioneTimeline/TimelineReworkFase3_costi_async.feature) · [Analisi QA-18421](docs/qa/QA-18421.md)
+[Correzione timeline fase 3](src/test/resources/it/pagopa/pn/cucumber/correzioneTimeline/TimelineReworkFase3.feature) · [Correzione timeline ASYNC](src/test/resources/it/pagopa/pn/cucumber/correzioneTimeline/TimelineReworkFase3_costi_async.feature)
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[E2E-WF-POST-PAYMENT-1.1] Il pagamento non blocca il primo invio analogico (AR `@OK_AR`, 890 `@OK-CompiutaGiacenza_890`). Il pagamento avviene subito dopo l'accettazione.</summary>
