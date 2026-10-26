@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.common.http.HttpCallExecutor;
-import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsHttpClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
@@ -24,14 +24,14 @@ import java.util.List;
 
 @Slf4j
 public class DowntimeLogsSteps {
-    private final IPnDowntimeLogsClient downtimeLogsClient;
+    private final IPnDowntimeLogsHttpClient downtimeLogsClient;
     private final LegalFactContentVerifySteps legalFactContentVerifySteps;
     private final HttpCallExecutor httpCallExecutor;
     private PnDowntimeEntry pnDowntimeEntry;
     private String sha256;
 
     @Autowired
-    public DowntimeLogsSteps(IPnDowntimeLogsClient downtimeLogsClient, LegalFactContentVerifySteps legalFactContentVerifySteps,
+    public DowntimeLogsSteps(IPnDowntimeLogsHttpClient downtimeLogsClient, LegalFactContentVerifySteps legalFactContentVerifySteps,
                              HttpCallExecutor httpCallExecutor) {
         this.downtimeLogsClient = downtimeLogsClient;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;

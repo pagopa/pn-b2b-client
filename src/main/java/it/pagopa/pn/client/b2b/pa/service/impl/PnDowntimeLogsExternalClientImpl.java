@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsHttpClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeInternalApi;
@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Component
-public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsClient {
+public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsHttpClient {
     private final DowntimeApi downtimeApi;
     private final DowntimeInternalApi internalApi;
     private final StatusApi statusApi;

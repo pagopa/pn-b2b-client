@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import it.pagopa.common.http.HttpCallExecutor;
-import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsHttpClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DowntimeLogsStepsTest {
-    private final IPnDowntimeLogsClient client = mock(IPnDowntimeLogsClient.class);
+    private final IPnDowntimeLogsHttpClient client = mock(IPnDowntimeLogsHttpClient.class);
     private final HttpCallExecutor executor = new HttpCallExecutor();
     private final DowntimeLogsSteps steps = new DowntimeLogsSteps(client, mock(LegalFactContentVerifySteps.class), executor);
 
