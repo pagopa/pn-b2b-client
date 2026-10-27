@@ -361,7 +361,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -601,7 +601,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

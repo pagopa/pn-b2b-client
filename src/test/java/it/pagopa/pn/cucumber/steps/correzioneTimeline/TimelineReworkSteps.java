@@ -236,6 +236,35 @@ public class TimelineReworkSteps {
                 .orElseThrow(() -> new RuntimeException("Errore la richiesta creata non è nello stato desiderato!"));
     }
 
+    @Then("la richiesta di restart è rifiutata per il pagamento del destinatario {int}")
+    public void verifyRestartRejectedForPayment(int recipientIndex) {
+        String iun = sharedSteps.getNotificationIun();
+        String reworkId = resolveReworkId("RESTART");
+        String context = String.format("IUN=%s | reworkId=%s | destinatario=%d", iun, reworkId, recipientIndex);
+        Assertions.assertNotNull(reworkId, "ReworkId del restart nullo | " + context);
+
+        ReworkItemsResponse response = reworkTimelineClient.retrieveNotificationReworkById(iun, reworkId);
+        Assertions.assertNotNull(response, "Risposta del restart nulla | " + context);
+        Assertions.assertNotNull(response.getItems(), "Elementi del restart nulli | " + context);
+        List<ReworkItem> matchingItems = response.getItems().stream()
+                .filter(Objects::nonNull)
+                .filter(item -> reworkId.equals(item.getReworkId()))
+                .toList();
+        Assertions.assertEquals(1, matchingItems.size(), "Atteso un solo elemento per il restart corrente | " + context);
+
+        ReworkItem item = matchingItems.get(0);
+        Assertions.assertAll(context,
+                () -> Assertions.assertEquals(ReworkItem.RequestTypeEnum.RESTART, item.getRequestType(), "Tipo della richiesta"),
+                () -> Assertions.assertEquals("RECINDEX_" + recipientIndex, item.getRecIndex(), "Destinatario della richiesta"),
+                () -> Assertions.assertEquals(ReworkItem.StatusEnum.ERROR, item.getStatus(), "Stato della richiesta"),
+                () -> Assertions.assertTrue(item.getErrors() != null && item.getErrors().stream()
+                                .filter(Objects::nonNull)
+                                .anyMatch(error -> error.getCause() == ReworkError.CauseEnum.INVALID_TIMELINE_ELEMENT
+                                        && "PAYMENT category found in timeline".equals(error.getDescription())),
+                        () -> "Atteso il rifiuto per PAYMENT con causa INVALID_TIMELINE_ELEMENT | errori=" + item.getErrors())
+        );
+    }
+
     @And("viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:")
     public void callReworkWithParamsWithError(DataTable params) {
         Map<String, String> inputData = params.asMaps().get(0);
