@@ -3,7 +3,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
   Tutti gli utenti autorizzati di enti PA e GSP possono ottenere la lista degli e-service con la quale hanno almeno una richiesta di fruizione attiva
 
   @happy-path
-  @agreement_e_service_producer_listing1
+  @agreement_e_service_producer_listing1 @wait_for_fix
   Scenario Outline: Restituisce gli e-service per i quali l’erogatore ha almeno una richiesta di fruizione in stato NON DRAFT da parte dei fruitori
     Given l'utente è un "<ruolo>" di "<ente>"
     And "<ente>" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -69,7 +69,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
     Then si ottiene status code 200 e la lista di 0 e-service
 
   @happy-path
-  @agreement_e_service_producer_listing6
+  @agreement_e_service_producer_listing6 @wait_for_fix
   Scenario Outline: Restituisce gli e-service con ciascun possibile stato nel filtro per l'agreement tranne stato requisiti mancanti
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con prefisso "listing6" in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -94,7 +94,7 @@ Feature: Listing e-service con richieste di fruizione attive lato erogatore
       | ACTIVE          | REJECTED        | MANUAL          |
 
   @happy-path
-  @agreement_e_service_producer_listing7
+  @agreement_e_service_producer_listing7 @wait_for_fix
   Scenario: Restituisce gli e-service con lo stato requisiti mancanti nel filtro per l'agreement
     Given l'utente è un "admin" di "PA1"
     And PA1 ha già creato 1 attributo CERTIFIED
