@@ -52,7 +52,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     Then si ottiene status code 204
 
   @nrt-minimal
-  @tenant_assign_verified_attribute4 @wait_for_fix @PIN-5198
+  @tenant_assign_verified_attribute4
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_04] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel passato ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un attributo verificato
