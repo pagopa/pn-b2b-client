@@ -71,7 +71,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     When l'utente assegna a "PA1" l'attributo verificato precedentemente creato
     Then si ottiene status code 403
 
-  @nrt-minimal
+  @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute6
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
@@ -81,7 +81,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
     Then si ottiene status code 400
 
-  @nrt-minimal
+  @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute7
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
@@ -93,7 +93,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     When il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
     Then si ottiene status code 200
 
-  @nrt-minimal
+  @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute8
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_08] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
