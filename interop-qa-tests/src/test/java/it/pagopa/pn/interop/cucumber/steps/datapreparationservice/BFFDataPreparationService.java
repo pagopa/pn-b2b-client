@@ -1220,6 +1220,13 @@ public class BFFDataPreparationService {
         );
     }
 
+    public void approveAgreementFailing(UUID agreementId, DelegationRef delegationRef, int failureCode) {
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(agreementId, delegationRef));
+        Assertions.assertEquals(failureCode, httpCallExecutor.getResponseStatus().value(),
+                "Response status code"
+        );
+    }
+
     public void unsuspendAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
         httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(agreementId, delegationRef));
         assertValidResponse();
