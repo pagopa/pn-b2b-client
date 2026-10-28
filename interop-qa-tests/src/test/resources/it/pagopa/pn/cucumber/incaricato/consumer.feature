@@ -981,5 +981,6 @@ Feature: Test API Availability in Use of E-Service
     And l'ente delegante "PA1"
     And l'utente è un "api" dell'ente delegante
     And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "api" dell'ente delegato
     When l'ente delegato visualizza l'elenco delle deleghe ricevute
     Then si ottiene status code 403
