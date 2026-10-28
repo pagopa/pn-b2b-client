@@ -975,6 +975,8 @@ public class B2bStepsV26 implements B2bStepsInterface {
         pnPollingPredicate.setTimelineElementPredicateV28(timelineElement ->
                 timelineElement.getCategory() != null
                         && (timelineEventCategory == null || Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(timelineEventCategory))
+                        && (!filters.isWithDigitalAddress() || timelineElement.getDetails() != null
+                            && timelineElement.getDetails().getDigitalAddress() != null)
                         && (filters.getRecipientIndex() == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getRecIndex()).equals(filters.getRecipientIndex()))
                         && (filters.getDeliveryDetailCode() == null || Objects.equals(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryDetailCode(), filters.getDeliveryDetailCode()))
                         && (filters.getWithElementIdSuffix() == null || Objects.requireNonNull(timelineElement.getElementId()).contains(filters.getWithElementIdSuffix()))

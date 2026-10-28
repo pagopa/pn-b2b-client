@@ -64,6 +64,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @dev @workflowDigitale @testLite @mockNR #da rimuovere una volta che abbiamo liberi professionisti con feature flag a true
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B_TIMELINE_7915_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC OK
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -109,6 +110,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @workflowDigitale @testLite @mockNR
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA non Trovato - INIPEC non Trovato - INAD Trovato - Mock
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -205,6 +207,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
   #OK------------>
   @workflowDigitale  @mockNR
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B_TIMELINE_7597_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC Trovato - Mock
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -227,6 +230,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @workflowDigitale  @mockNR
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B_TIMELINE_7597_3_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC Real
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

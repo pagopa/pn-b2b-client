@@ -18,6 +18,7 @@ public class WaitForEventPredicateFilters {
      */
     private String withElementIdSuffix;
     private Integer recipientIndex;
+    private boolean withDigitalAddress;
     private String deliveryDetailCode;
     private String documentType;
     private String responseStatus;

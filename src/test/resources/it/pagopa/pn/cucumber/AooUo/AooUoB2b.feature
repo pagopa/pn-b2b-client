@@ -53,6 +53,7 @@ Feature: verifica feature aoo/uo
 
 
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -82,6 +83,7 @@ Feature: verifica feature aoo/uo
       | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook2
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_4] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -112,6 +114,7 @@ Feature: verifica feature aoo/uo
       | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -140,6 +143,7 @@ Feature: verifica feature aoo/uo
       | details_sentAttemptMade      | 0                                                                     |
 
   @AOO_UO @addressBook2
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_6] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -170,6 +174,7 @@ Feature: verifica feature aoo/uo
 
 
   @AOO_UO @addressBook2
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_7] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -194,6 +199,7 @@ Feature: verifica feature aoo/uo
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_8] invio messaggio di cortesia - invio notifica per email per ente padre
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -214,6 +220,7 @@ Feature: verifica feature aoo/uo
       | details_recIndex       | 0                                                  |
 
   @AOO_UO @addressBook2
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_9] invio messaggio di cortesia - invio notifica per email per ente figlio per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -238,6 +245,7 @@ Feature: verifica feature aoo/uo
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
   @AOO_UO @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario: [B2B-AOO-UO_10] invio messaggio di cortesia - invio notifica per email per ente figlio
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente

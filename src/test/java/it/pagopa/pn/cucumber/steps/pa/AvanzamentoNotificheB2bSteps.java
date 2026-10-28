@@ -596,9 +596,14 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry per l utente {int}")
     public void vieneVerificatoCheNellElementoDiTimelineDellaNotificaSiaPresenteIlCampoDigitalAddressDaNationalRegistryPerLUtente(String timelineEventCategory, Integer recipientIndex) {
-        readingEventUpToTheTimelineElementOfNotificationPerUtente(timelineEventCategory, recipientIndex);
+        WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
+                .recipientIndex(recipientIndex)
+                .withDigitalAddress(true)
+                .build();
+        B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
+        b2bStepsInterface.waitForEventOrStatus(TIMELINE_SLOW, TIMELINE, timelineEventCategory, filters);
         TimelineElementCheckFilters checkFilters = TimelineElementCheckFilters.builder().build();
-        getB2bStepsInterface().performFurtherChecks(CHECK_DIGITAL_ADDRESS, checkFilters);
+        b2bStepsInterface.checkIfTimelineElementExists(timelineEventCategory, true, CHECK_DIGITAL_ADDRESS, checkFilters);
     }
 
     @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")

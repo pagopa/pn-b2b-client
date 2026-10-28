@@ -723,6 +723,7 @@ Feature: annullamento notifiche b2b
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
   @Annullamento  @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -749,6 +750,7 @@ Feature: annullamento notifiche b2b
   # pn.configuration.workflow.wait.accepted.millis.pagopa=21000
   # pn.configuration.workflow.wait.millis.pagopa=11000
   @Annullamento @mockPec @addressBook1 @ignoreHotfixTemp #temp
+  @recipientUidAndNationalRegistryDigitalAddress
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
