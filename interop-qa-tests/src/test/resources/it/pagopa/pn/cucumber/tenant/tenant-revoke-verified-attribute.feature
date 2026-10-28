@@ -43,7 +43,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And l'attributo di "PA1" rimane verificato da "GSP"
     And l'attributo di "PA1" risulta revocato da "PA2"
 
-  @nrt-minimal
+  @nrt-minimal @wait_for_fix
   @tenant_revoke_verified_attribute3 @no-parallel
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_03] Revoca di un attributo verificato e richiesta di fruizione non accettabile
     Given l'utente è un "admin" di "PA1"
@@ -53,9 +53,10 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And "PA1" ha già verificato l'attributo verificato a "PA2"
     When l'utente revoca l'attributo precedentemente verificato
     And si ottiene status code 204
+    And l'attributo di "PA2" risulta revocato da "PA1"
     Then "PA1" approva quella richiesta di fruizione ma l'operazione è vietata
 
-  @nrt-minimal
+  @nrt-minimal @wait_for_fix
   @tenant_revoke_verified_attribute4 @no-parallel
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_04] Revoca di un attributo verificato dopo l'accettazione della richiesta di fruizione, che viene sospesa dalla piattaforma
     Given l'utente è un "admin" di "PA1"
@@ -66,4 +67,5 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And "PA1" approva quella richiesta di fruizione
     When l'utente revoca l'attributo precedentemente verificato
     And si ottiene status code 204
+    And l'attributo di "PA2" risulta revocato da "PA1"
     Then la richiesta di fruizione è in stato "SUSPENDED"
