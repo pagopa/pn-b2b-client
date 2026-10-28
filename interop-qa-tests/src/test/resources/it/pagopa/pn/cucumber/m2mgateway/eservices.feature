@@ -1504,6 +1504,37 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | GSP            |
       | Privato        |
 
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
+  @eservice_name_trimmed_space
+  @happy-path
+  Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_3] Gli spazi iniziali e finali nel nome dell'e-service vengono rimossi.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione dell'e-service con la seguente configurazione:
+      | name | <name> |
+    Then l'utente è un "admin" di "PA1"
+    And il nome dell'e-service creato non presenta spazi iniziali e finali
+
+    Examples:
+      | name                      |
+      | %blank%%random(5)%%blank% |
+      | %random(5)%               |
+
+  # Il ticket PIN-9436 è stato posticipato alla release 2.25
+  @ignore
+  @eservice_name_trimmed_space
+  @sad-path
+  Scenario Outline: [ESERVICE_CREATION_NAME_SPACES_4] La creazione di un e-service con un nome spazi esclusi inferiore al limite minimo previsto non va a buon fine.
+    Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    When l'utente tenta la creazione dell'e-service con la seguente configurazione:
+      | name | <name> |
+    Then si ottiene lo status code 400
+
+    Examples:
+      | name                                                     |
+      | %blank%%blank%%blank%%blank%%blank%%blank%%blank%%blank% |
+      | %blank%%random(4)%%blank%                                |
+
   @eservice_description_max_length
   @happy-path
   Scenario: [ESERVICE_CREATION_DESCRIPTION_MAX_LENGTH_3] Un utente crea un e-service utilizzando la descrizione della lunghezza massima possibile con M2M

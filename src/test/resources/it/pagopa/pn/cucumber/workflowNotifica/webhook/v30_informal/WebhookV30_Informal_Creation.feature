@@ -113,7 +113,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook2
   #LIMITE SPECIFICO PER PA: pnConfiguration.maxStreamsNumber = 9; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMITE_SPECIFICO_INFERIORE_DEFAULT_INFORMAL] Creazione per una PA (avente un proprio limite massimo di stream pari a 9) di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V30"
@@ -129,7 +129,7 @@ Feature: verifica creazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookV30Informal @precondition @cleanWebhook @webhook3
+  @webhookV30Informal @precondition @cleanWebhook @webhook1
   #LIMITE SPECIFICO PER PA: pnConfiguration.maxStreamsNumber = 11; LIMITE DEFAULT (pnConfigurations.MaxStreams  = 10)
   Scenario: [STREAM_LIMITE_SPECIFICO_SUPERIORE_DEFAULT_INFORMAL] Creazione per una PA (avente un proprio limite massimo di stream pari a 11) di 12 nuovi stream notifica con eventType TIMELINE e senza gruppo.
     Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V30"
