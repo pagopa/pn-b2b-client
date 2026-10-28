@@ -12,4 +12,4 @@ Feature: Modifica di un singolo aderente
   Scenario: [TENANT_WRONG_VERSION_1] Quando si tenta di modificare un tenant con una versione non aggiornata, si ottiene un errore
     Given l'ente "PA4" legge la propria attuale configurazione
     When si tenta di modificare il tenant "PA4" con una versione antecedente a quella corrente
-    Then si ottiene status code 400
+    Then si ottiene status code 409

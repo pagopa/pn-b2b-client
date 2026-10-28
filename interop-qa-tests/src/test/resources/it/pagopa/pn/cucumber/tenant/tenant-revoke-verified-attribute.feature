@@ -43,9 +43,31 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And l'attributo di "PA1" rimane verificato da "GSP"
     And l'attributo di "PA1" risulta revocato da "PA2"
 
-  @nrt-minimal
-  @tenant_revoke_verified_attribute3
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_03] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla revoca dell'attributo
+  @nrt-minimal @wait_for_fix
+  @tenant_revoke_verified_attribute3 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_03] Revoca di un attributo verificato e richiesta di fruizione non accettabile
+    When l'utente revoca l'attributo precedentemente verificato
+    And si ottiene status code 204
+    And l'attributo di "PA2" risulta revocato da "PA1"
+    Then "PA1" approva quella richiesta di fruizione ma l'operazione è vietata
+
+  @nrt-minimal @wait_for_fix
+  @tenant_revoke_verified_attribute4 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_04] Revoca di un attributo verificato dopo l'accettazione della richiesta di fruizione, che viene sospesa dalla piattaforma
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    And "PA1" ha già verificato l'attributo verificato a "PA2"
+    And "PA1" approva quella richiesta di fruizione
+    When l'utente revoca l'attributo precedentemente verificato
+    And si ottiene status code 204
+    And l'attributo di "PA2" risulta revocato da "PA1"
+    Then la richiesta di fruizione è in stato "SUSPENDED"
+
+  @nrt-minimal @wait_for_fix
+  @tenant_revoke_verified_attribute5 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_05] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -54,9 +76,9 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     When il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 400
 
-  @nrt-minimal
-  @tenant_revoke_verified_attribute4
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_04] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla revoca dell'attributo
+  @nrt-minimal @wait_for_fix
+  @tenant_revoke_verified_attribute6 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -67,9 +89,9 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     When il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 200
 
-  @nrt-minimal
-  @tenant_revoke_verified_attribute5
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_05] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla revoca dell'attributo
+  @nrt-minimal @wait_for_fix
+  @tenant_revoke_verified_attribute7 @no-parallel
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
