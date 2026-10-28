@@ -1,6 +1,9 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1, 2.1, 2.2 e 3.1; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -14,7 +17,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName             |
@@ -37,6 +40,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_AR_ALL_CON            |
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -52,7 +56,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName            |
@@ -65,6 +69,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_RIR_M02              |
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_A_RIR] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -80,9 +85,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK_RIR_NO_DEMAT" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT" in modalità DRY
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_B] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -95,10 +101,11 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si verifica che la risposta tracking per la sequence "DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
+    And si verifica che la risposta tracking per la sequence "FAIL-DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR" in modalità DRY
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_1_C] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -124,9 +131,10 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_responseStatus     | OK        |
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL_IndirizzoInesistenteAR" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR" in modalità DRY
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
   si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -141,7 +149,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                 |
@@ -151,6 +159,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK_PCRETRY_CON996_AR         |
 
   @paperTrackerAR
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_2_RIR] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
   si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -167,7 +176,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                  |
@@ -277,6 +286,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   #questo scenario andrà incluso nell'NRT totale
   @paperTrackerARRunMode
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_AR_4] Viene verificato che gli elementi di timeline sono presenti
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -293,7 +303,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>" in modalità RUN
     Examples:
       | sequence                     | physicalAddress                  |
       | OK_AR                        | Via@ok_AR                        |
@@ -325,6 +335,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | OK-GiacenzaCorrected_AR      | Via@OK-GiacenzaCorrected_AR      |
 
   @paperTrackerARRunMode
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_AR_4.A] Viene verificato che tutti gli elementi di timeline per la sequence OK_AR_NOT_ORDERED siano presenti
   e che ci sia un errore di tipo DUPLICATED_EVENT in PaperTrackingsError per l'evento RECRN001A
     Given viene generata una nuova notifica
@@ -341,7 +352,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_NOT_ORDERED"
     And si verifica che la risposta tracking per la sequence "OK_AR_NOT_ORDERED" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_AR_NOT_ORDERED" in modalità RUN
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -372,6 +383,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | FAIL-DiscoveryIrreperibile_AR   | COMPLETELY_UNREACHABLE             |
 
   @paperTrackerARRunMode
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_RIR_1] Viene verificato che gli elementi di timeline sono presenti per le sequence RIR
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -389,7 +401,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>" in modalità RUN
     Examples:
       | sequence                      |
       | OK_RIR                        |

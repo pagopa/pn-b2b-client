@@ -20,6 +20,7 @@ public enum DynamoTableName {
     PAPER_REQUEST_ERROR("pn-PaperRequestError"),
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
     PAPER_TRACKINGS("pn-PaperTrackings"),
+    PAPER_TRACKER_DRY_RUN_OUTPUTS("pn-PaperTrackerDryRunOutputs"),
     NOTIFICATIONS("pn-Notifications"),
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata");
 

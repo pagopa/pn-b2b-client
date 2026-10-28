@@ -35,7 +35,8 @@ public class DynamoDbService {
             case ONBOARD_INSTITUTIONS -> queryWithoutFilters(tableName, "id", attributeValues);
             case NOTIFICATION_REWORKS, TIMELINE_FULL, NOTIFICATIONS ->
                     queryWithoutFilters(tableName, "iun", attributeValues);
-            case PAPER_TRACKER_ERROR, PAPER_TRACKINGS -> queryWithoutFilters(tableName, "trackingId", attributeValues);
+            case PAPER_TRACKER_ERROR, PAPER_TRACKINGS, PAPER_TRACKER_DRY_RUN_OUTPUTS ->
+                    queryWithoutFilters(tableName, "trackingId", attributeValues);
             case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
