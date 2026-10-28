@@ -131,6 +131,7 @@ public interface IM2MEserviceClient extends IClient<EService, UUID> {
     @Builder
     class EServiceArchivingRequest {
         private String archivingReason;
+        private Integer gracePeriodDays;
     }
 
     EServices getAll(EserviceListRequest payload);

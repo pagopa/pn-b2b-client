@@ -45,7 +45,7 @@ public class TenantsProcessApiClientImpl implements ITenantsProcessApi {
     public TenantsProcessApiClientImpl(
             @Value("${" + TENANT_PROCESS_HOST + "}") String basePath,
             RestTemplate restTemplate,
-            @Qualifier("interopIdentityService") IdentityService identityService
+            IdentityService identityService
     ) {
         log.debug("Value of env. var {}: {}", TENANT_PROCESS_HOST, basePath);
         this.basePath = basePath;

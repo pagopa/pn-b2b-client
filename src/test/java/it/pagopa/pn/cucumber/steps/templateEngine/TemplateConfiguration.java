@@ -4,6 +4,7 @@ import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
+import it.pagopa.pn.cucumber.steps.templateEngine.strategies.comunicazioniBonarie.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,19 @@ public class TemplateConfiguration {
 
         map.put(TemplateType.AVVISO_CORTESIA_EMAIL_DIGITALE, new NotificationAARForEMAILDigitalStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_SMS_DIGITALE, new NotificationAARForSMSDigitalStrategy(templateEngineClient));
+
+        map.put(TemplateType.COMUNICAZIONE_BONARIA, new InformalAnalogCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_EMAIL_BODY, new InformalEmailCommunicationBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_EMAIL_SUBJECT, new InformalEmailCommunicationSubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_PEC_BODY, new InformalPecCommunicationBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_PEC_SUBJECT, new InformalPecCommunicationSubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_IO, new InformalIOCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_SMS, new InformalSmsCommunicationStrategy(templateEngineClient, templateEngineConfigBean));
+
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_BODY, new InformalEmailCourtesyBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_EMAIL_SUBJECT, new InformalEmailCourtesySubjectStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.COMUNICAZIONE_BONARIA_AVVISO_CORTESIA_SMS, new InformalSmsCourtesyStrategy(templateEngineClient, templateEngineConfigBean));
+
         return map;
     }
 

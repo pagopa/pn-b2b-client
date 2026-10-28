@@ -51,7 +51,7 @@ public class S3BucketInfoBuilder {
 
         if (parts.length > 1) {
             String rest = String.join("/", java.util.Arrays.copyOfRange(parts, 1, parts.length));
-            boolean endsWithFile = rest.matches(".*\\.[A-Za-z0-9]{2,5}$");
+            boolean endsWithFile = rest.matches(".*\\.[A-Za-z0-9]{2,6}$");
 
             if (endsWithFile) {
                 int lastSlash = rest.lastIndexOf('/');

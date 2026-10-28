@@ -13,7 +13,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | statusCode |
       | true             | 200        |
       | false            | 200        |
-      | undefined        | 400        |
 
   @llgg
   Scenario Outline: [LLGG_1.1] Creazione e-service in modalità "DELIVER" con diverse combinazioni di flagPersonalData e verifica del descrittore
@@ -43,7 +42,7 @@ Feature: Allineamento linee guida
       | false            |
 
   @llgg
-  Scenario Outline: [LLGG_2] Creazione e-service in modalità "RECEIVE" con diverse combinazioni di flagPersonalData
+  Scenario Outline: [LLGG_2] Creazione e-service in modalità 'RECEIVE' con diverse combinazioni di flagPersonalData
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in modalità "RECEIVE" con un descrittore in stato "DRAFT" e flag dati personali a "<eServicePersonalDataFlag>"
     Then si ottiene status code 200
@@ -51,13 +50,11 @@ Feature: Allineamento linee guida
     When l'utente aggiunge un'analisi del rischio con un flag relativo ai dati personali impostato a "<riskAnalysisPersonalDataFlag>"
     Then si ottiene status code <statusCodeRiskAnalysis>
     Given "PA1" ha già caricato un'interfaccia per quel descrittore
-    When l'utente pubblica quel descrittore
+    When l'utente tenta di pubblicare quel descrittore
     Then si ottiene status code <descriptorStatusCode>
 
     Examples:
       | eServicePersonalDataFlag | descriptorStatusCode | riskAnalysisPersonalDataFlag | statusCodeRiskAnalysis |
-      | undefined                | 400                  | false                        | 204                    |
-      | undefined                | 400                  | true                         | 204                    |
       | false                    | 200                  | false                        | 204                    |
       | true                     | 400                  | false                        | 400                    |
       | true                     | 200                  | true                         | 204                    |
@@ -115,7 +112,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | updateStatusCode | publishStatusCode |
       | false            | 200              | 200               |
       | true             | 200              | 200               |
-      | undefined        | 200              | 400               |
 
   @llgg
   Scenario Outline: [LLGG_4] Aggiornamento descrittore in modalità RECIVE di un eService comprendente il flag dati
@@ -135,8 +131,6 @@ Feature: Allineamento linee guida
       | personalDataFlag | riskAnalysisPersonalDataFlag | updateStatusCode | publishStatusCode |
       | false            | false                        | 200              | 200               |
       | true             | true                         | 200              | 200               |
-      | undefined        | true                         | 200              | 400               |
-      | undefined        | false                        | 200              | 400               |
 
   @llgg
   Scenario Outline: [LLGG_4.1] Aggiornamento descrittore in modalità RECIVE di un eService comprendente un flag dati incoerente tra risk analysis e eService

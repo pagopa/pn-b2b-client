@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.attribute;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -10,12 +8,16 @@ import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttribute, UUID> {
 
@@ -53,9 +55,41 @@ public class CertifiedAttributeSteps extends AbstractCommonSteps<CertifiedAttrib
     }
 
     @Then("la risposta contiene almeno {int} attributo certificato")
-    public void listCheck(int expectedSize) {
+    public void listCheckCount(int expectedSize) {
         List<CertifiedAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedActual();
         assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize);
+    }
+
+    @Then("la risposta contiene esattamente l'attributo certificato discreto creato")
+    public void listCheck() {
+        listCheck(null);
+    }
+
+    @Then("la risposta contiene esattamente i {int} attributi certificati discreti creati")
+    public void listCheck(Integer expectedSize) {
+        List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(expectedSize == null ? 1 : expectedSize);
+        assertThat(actual).containsAll(published);
+    }
+
+    @Then("la risposta contiene esattamente i {int} elementi richiesti nella paginazione")
+    public void pageResponseCheck(Integer expectedSize) {
+        List<CertifiedDiscreteAttribute> published = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscretePublished();
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+
+        assertThat(actual).hasSize(expectedSize == null ? 1 : expectedSize);
+
+        actual.forEach(attr -> {
+            assertThat(published).anyMatch(attr::equals);
+        });
+    }
+
+    @Then("la risposta contiene {int} elementi")
+    public void pageResponseLengthCheck(int expectedSize) {
+        List<CertifiedDiscreteAttribute> actual = sharedStepsContext.getAttributeCommonContext().getCertifiedDiscreteActual();
+        assertThat(actual).hasSize(expectedSize);
     }
 
     @Override

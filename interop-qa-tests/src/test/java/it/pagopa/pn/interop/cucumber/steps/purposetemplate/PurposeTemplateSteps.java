@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.purposetemplate;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -17,6 +18,7 @@ import it.pagopa.interop.purpose.service.impl.PurposeTemplateClientImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 import it.pagopa.pn.interop.cucumber.steps.m2m.purpose_template.assistant.PurposeTemplatePatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.ParameterTypesInterop.ResourceState;
 import it.pagopa.pn.interop.cucumber.steps.purposetemplate.model.PurposeTemplateContext;
@@ -25,6 +27,7 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.assertj.core.api.Assertions;
 import org.joda.time.DateTime;
 import org.springframework.core.io.Resource;
@@ -36,6 +39,10 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.generateRiskAnalysisFormTemplateSeedFromFormSeed;
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
+import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA;
+import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static org.apache.commons.collections4.IterableUtils.isEmpty;
@@ -118,7 +125,6 @@ public class PurposeTemplateSteps {
     @AllArgsConstructor
     @Getter
     public enum PurposeTemplateErrorTypes {
-
         ANSWER_OVER_250("ANSWER OVER 250"),
         NO_PURPOSE_ANSWER("NO PURPOSE ANSWER"),
         NO_PERSONAL_DATA_ANSWER("NO PERSONAL DATA ANSWER"),
@@ -134,10 +140,45 @@ public class PurposeTemplateSteps {
         invokeCreatePurposeTemplate();
     }
 
+    @When("viene creato un nuovo purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeTemplateWithUrl(String tenantType) {
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(tenantKind, true);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
+        invokeCreatePurposeTemplate();
+    }
+
+    @When("viene creato un nuovo purpose template destinato a enti {string} indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali")
+    public void createPurposeTemplateWithEditablePolicy(String tenantType) {
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(tenantKind, true);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        templateSeed.getAnswers().get("policyProvided").setValues(Collections.emptyList());
+        templateSeed.getAnswers().get("policyProvided").setEditable(true);
+        templateSeed.getAnswers().get("policyProvided").setSuggestedValues(Collections.emptyList());
+        templateSeed.getAnswers().remove("policyProvidedMedium");
+        templateSeed.getAnswers().remove("policyProvidedOnlineLink");
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
+        invokeCreatePurposeTemplate();
+    }
+
+    @When("viene creato un nuovo purpose template specificando nell'analisi del rischio:")
+    public void createPurposeTemplate(DataTable answersTable) {
+        tryToCreatePurposeTemplate(answersTable);
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful()).as("Purpose template succeeded").isTrue();
+    }
+
+    @When("si tenta di creare un nuovo purpose template specificando nell'analisi del rischio:")
+    public void tryToCreatePurposeTemplate(DataTable answersTable) {
+        prepareCreationRequest(answersTable);
+        invokeCreatePurposeTemplate();
+    }
+
     @When("viene creato un nuovo purpose template coerente con la tipologia dell'ente")
     public void createPurposeTemplateWithTenantKindCoherentWithTenantType() {
         TargetTenantKind targetTenantKind = resolveTargetTenantKindFromContextTenantType();
-        prepareCreationRequest(false, targetTenantKind);
+        prepareCreationRequest(targetTenantKind, false);
         invokeCreatePurposeTemplate();
     }
 
@@ -182,7 +223,17 @@ public class PurposeTemplateSteps {
     }
 
     private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue) {
-        return prepareCreationRequest(handlePersonalDataValue, TargetTenantKind.PA);
+        return prepareCreationRequest(TargetTenantKind.PA, handlePersonalDataValue);
+    }
+
+    @And("viene creato un nuovo purpose template destinato a enti {string} con handlePersonalData {bool}")
+    private PurposeTemplateSeed prepareCreationRequest(String tenantKind, Boolean handlePersonalDataValue) {
+        TargetTenantKind targetTenantKind = "PA".equals(tenantKind) ? TargetTenantKind.PA : TargetTenantKind.PRIVATE;
+        return prepareCreationRequest(handlePersonalDataValue, null, targetTenantKind);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(DataTable answersTable) {
+        return prepareCreationRequest(answersTable, resolveTargetTenantKindFromContextTenantType());
     }
 
     private TargetTenantKind resolveTargetTenantKindFromContextTenantType() {
@@ -200,7 +251,16 @@ public class PurposeTemplateSteps {
         }
     }
 
-    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, TargetTenantKind targetTenantKind) {
+    public PurposeTemplateSeed prepareCreationRequest(TargetTenantKind targetTenantKind, Boolean handlePersonalDataValue) {
+        return prepareCreationRequest(handlePersonalDataValue, null, targetTenantKind);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(DataTable answersTable, TargetTenantKind targetTenantKind) {
+        boolean handlePersonalDataValue = isExpectedPersonalData(answersTable);
+        return prepareCreationRequest(handlePersonalDataValue, answersTable, targetTenantKind);
+    }
+
+    private PurposeTemplateSeed prepareCreationRequest(Boolean handlePersonalDataValue, DataTable answersTable, TargetTenantKind targetTenantKind) {
         purposeTemplateCreationRequest = new PurposeTemplateSeed();
         purposeTemplateCreationRequest.setPurposeTitle("purposeTitle" + DateTime.now());
         purposeTemplateCreationRequest.setPurposeDescription("purposeDescription_CREATE");
@@ -212,12 +272,22 @@ public class PurposeTemplateSteps {
         purposeTemplateCreationRequest.setHandlesPersonalData(handlePersonalDataValue);
         purposeTemplateCreationRequest.setPurposeFreeOfChargeReason("Sono una Pubblica Amministrazione");
 
-        if (handlePersonalDataValue != null) {
-            RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
-                    .version(getPurposeTemplateVersion())
-                    .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
-            purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
+        if (answersTable == null) {
+            if (handlePersonalDataValue != null) {
+                RiskAnalysisFormTemplateSeed riskAnalysisForm = new RiskAnalysisFormTemplateSeed()
+                        .version(getPurposeTemplateVersion())
+                        .answers(getRiskAnalysysTemplateFormAnswerMap(purposeTemplateCreationRequest.getHandlesPersonalData()));
+                purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(riskAnalysisForm);
+            }
+        } else {
+            RiskAnalysisFormSeed seed = dataPreparationService.getRiskAnalysisSpecifyingAnswers(
+                    getRiskAnalysisFromAnswersDataTable(answersTable)
+            ).getRiskAnalysisForm();
+            purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(
+                    generateRiskAnalysisFormTemplateSeedFromFormSeed(seed)
+            );
         }
+
         return purposeTemplateCreationRequest;
     }
 
@@ -225,9 +295,10 @@ public class PurposeTemplateSteps {
     private String getPurposeTemplateVersion() {
         // L'inclusione dei valori null è volta a favorire retrocompatibilità con il comportamento antecedente
         // a questa aggiunta, che considerava "3.1" come versione hardcoded.
+        // C'è stato un aggiornamento di versione: PA 3.2 e Privato 2.1
         String tenant = sharedStepsContext.getTenantType();
         String tenantKind = isNull(tenant) ? null : sharedStepsContext.getIdentityService().getKind(tenant);
-        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.1" : "2.0";
+        return isNull(tenantKind) || "PA".equals(tenantKind) ? "3.2" : "2.1";
     }
 
     private void invokeCreatePurposeTemplate() {
@@ -353,6 +424,17 @@ public class PurposeTemplateSteps {
         invokeUpdatePurposeTemplate(resourceState);
     }
 
+    @When("l'utente tenta di effettuare la modifica del purpose template destinato a enti {string} indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void updatePurposeTemplateRequest(String tenantType) {
+        String tenantKind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        prepareCreationRequest(tenantKind, true);
+        RiskAnalysisFormTemplateSeed templateSeed = dataPreparationService.getRiskAnalysisTemplateByExample(tenantKind, PERSONAL_DATA);
+        RiskAnalysisTemplateAnswerSeed answerSeed = new RiskAnalysisTemplateAnswerSeed().editable(false).suggestedValues(List.of("https://www.example.com/privacy-" + RandomStringUtils.insecure().nextAlphanumeric(3)));
+        templateSeed.getAnswers().put("policyProvidedOnlineLink", answerSeed);
+        purposeTemplateCreationRequest.setPurposeRiskAnalysisForm(templateSeed);
+        httpCallExecutor.performCall(() -> purposeTemplateClient.updatePurposeTemplate(createdPurposeTemplate.getId(), purposeTemplateCreationRequest));
+    }
+
     @When("si aggiorna il purpose template {exists} con errore di tipo {purposeTemplateError}")
     public void updatePurposeTemplateWithError(boolean exists, PurposeTemplateErrorTypes error) {
         insertErrorsOnPurpose(error);
@@ -413,10 +495,7 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
-            .eserviceId(eServiceId);
-
-        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, request));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.linkEServiceToPurposeTemplate(ptId, eServiceId));
         if(httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             pollingService.makePolling(
                 () -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 30, null, null),
@@ -432,7 +511,7 @@ public class PurposeTemplateSteps {
         if (exists) {
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
-                    res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().size() > 0,
+                    res -> !((IPurposeTemplateClient.Resources) httpCallExecutor.getResponse()).getResults().isEmpty(),
                     "Failed to retrieve the client!"
             );
         } else {
@@ -440,11 +519,11 @@ public class PurposeTemplateSteps {
         }
 
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
-            EServiceDescriptorsPurposeTemplate esDescriptorsPt = (EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse();
+            IPurposeTemplateClient.Resources esDescriptorsPt = (IPurposeTemplateClient.Resources) httpCallExecutor.getResponse();
             assertThat(esDescriptorsPt).as("L'output della get degli e-service associati non dev'essere null").isNotNull();
             assertThat(esDescriptorsPt.getResults()).as("Il result dell'output della get degli e-service associati non dev'essere null").isNotNull();
-            List<EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor> resultList = esDescriptorsPt.getResults();
-            linkedEServices = resultList.stream().map(EServiceDescriptorPurposeTemplateWithCompactEServiceAndDescriptor::getEservice).toList();
+            List<LinkableResource> resultList = esDescriptorsPt.getResults();
+            linkedEServices = resultList.stream().map(LinkableResource::getEservice).toList();
             checkEServicesList(true);
         }
     }
@@ -472,15 +551,12 @@ public class PurposeTemplateSteps {
 
         UUID ptId = exists ? createdPurposeTemplate.getId() : UUID.randomUUID();
 
-        LinkEServiceToPurposeTemplateRequest request = new LinkEServiceToPurposeTemplateRequest()
-            .eserviceId(eServiceId);
-
-        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, request));
+        httpCallExecutor.performCall(() -> purposeTemplateClient.unlinkEServiceToPurposeTemplate(ptId, eServiceId));
         if (exists) {
             if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
                 pollingService.makePolling(
                         () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplateEServices(ptId, 0, 10, null, null)),
-                        res -> ((EServiceDescriptorsPurposeTemplate) httpCallExecutor.getResponse()).getResults().stream().filter(
+                        res -> ((IPurposeTemplateClient.Resources) httpCallExecutor.getResponse()).getResults().stream().filter(
                                 x -> x.getEservice().getId().equals(eServiceId)).toList().isEmpty(),
                         "Error while checking if the eService is correctly unlinked from purpose template"
                 );
@@ -683,6 +759,7 @@ public class PurposeTemplateSteps {
         httpCallExecutor.performCall(() -> purposeTemplateClient.addPurposeTemplateRiskAnalysisAnswer(ptId, request));
         if (httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             riskAnalysis = (RiskAnalysisTemplateAnswerResponse) httpCallExecutor.getResponse();
+            sharedStepsContext.getPurposeTemplateContext().setRiskAnalysisAnswerId(riskAnalysis.getId());
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(() -> purposeTemplateClient.getPurposeTemplate(ptId)),
                     res -> res != HttpStatus.NOT_FOUND,
@@ -872,7 +949,7 @@ public class PurposeTemplateSteps {
         UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         assertThat(eServiceId).as("L'id dell'eService creato risulta null").isNotNull();
         fromSeed.setEserviceId(eServiceId);
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         assertThat(agreementId).as("L'id dell'agreement creato risulta null").isNotNull();
         Agreement agreement = clientTokenConfigurator.getAgreementClient().getAgreementById(agreementId);
         assertThat(agreement).as("L'agreement restituito risulta null").isNotNull();
@@ -1080,9 +1157,7 @@ public class PurposeTemplateSteps {
         // 6) Link EService (opzionale)
         if (eserviceIdsValue != null && !eserviceIdsValue.isEmpty()) {
             for (UUID eserviceId : eserviceIdsValue) {
-                LinkEServiceToPurposeTemplateRequest linkReq = new LinkEServiceToPurposeTemplateRequest()
-                        .eserviceId(eserviceId);
-                purposeTemplateClient.linkEServiceToPurposeTemplate(purposeTemplateId, linkReq);
+                purposeTemplateClient.linkEServiceToPurposeTemplate(purposeTemplateId, eserviceId);
             }
         }
 
@@ -1296,6 +1371,32 @@ public class PurposeTemplateSteps {
         sharedStepsContext.getPurposeTemplateContext().setUpdatedAt(OffsetDateTime.now());
         PurposeTemplateDraftUpdateSeed request = this.patchAssistant.buildDefaultPatchRequest();
         patchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale della finalità creata da template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void patchPurposeTemplateWithURLPolicy() {
+        RandomStringUtils randomUtils = RandomStringUtils.insecure();
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = sharedStepsContext.getIdentityService().getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+        Map<String, List<String>> answers = new HashMap<>();
+        answers.put("institutionalPurpose", List.of("Answer1"));
+        answers.put("policyProvided", List.of("YES"));
+        answers.put("policyProvidedMedium", List.of("ONLINE"));
+        answers.put("policyProvidedOnlineLink", List.of("www.altrapolicy-%s.it".formatted(randomUtils.nextAlphanumeric(3))));
+
+        riskAnalysisForm.setAnswers(answers);
+        httpCallExecutor.performCall(
+               () -> clientTokenConfigurator.getPurposeApiClient().patchUpdatePurposeFromTemplate(
+                       sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId(),
+                       UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                       new PatchPurposeUpdateFromTemplateContent()
+                               .title("some new title - " + randomUtils.nextAlphanumeric(3))
+                               .riskAnalysisForm(riskAnalysisForm)
+                               .dailyCalls(49)
+               )
+        );
     }
 
     @When("{string} con ruolo {m2mRole} tenta di effettuare la modifica parziale del purpose template")

@@ -1,6 +1,7 @@
 package it.pagopa.pn.interop.cucumber.steps.notification;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -17,6 +18,7 @@ public class NotificationConfigSteps {
     private enum ConfigTarget { USER, TENANT }
 
     private final NotificationConfigClient configClient;
+    private final SharedStepsContext sharedStepsContext;
 
     private TenantNotificationConfig actualTenantNotificationConfig;
     private UserNotificationConfig actualUserNotificationConfig;
@@ -26,6 +28,7 @@ public class NotificationConfigSteps {
     public NotificationConfigSteps(SharedStepsContext sharedStepsContext, ClientTokenConfigurator clientTokenConfigurator) {
         this.configClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
         this.configClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     @When("si tenta di {word} la configurazione delle notifiche per {word}")
@@ -125,17 +128,27 @@ public class NotificationConfigSteps {
                 .agreementActivatedRejectedToConsumer(isActive)
                 .purposeActivatedRejectedToConsumer(isActive)
                 .purposeSuspendedUnsuspendedToConsumer(isActive)
+                .purposeRiskAnalysisAssignmentStatusToAdmin(isActive)
+                .purposeRiskAnalysisAssignmentStatusToReviewer(
+                        sharedStepsContext.getRole() == Role.REVIEWER && isActive
+                )
+                .purposePublishedWithRiskAnalysisToReviewer(
+                        sharedStepsContext.getRole() == Role.REVIEWER && isActive
+                )
                 .newEserviceTemplateVersionToInstantiator(isActive)
                 .eserviceTemplateNameChangedToInstantiator(isActive)
                 .eserviceTemplateStatusChangedToInstantiator(isActive)
                 .delegationApprovedRejectedToDelegator(isActive)
                 .eserviceNewVersionSubmittedToDelegator(isActive)
+                .eserviceStateChangedToProducer(isActive)
                 .eserviceNewVersionApprovedRejectedToDelegate(isActive)
                 .delegationSubmittedRevokedToDelegate(isActive)
                 .certifiedVerifiedAttributeAssignedRevokedToAssignee(isActive)
                 .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(isActive)
                 .purposeQuotaAdjustmentRequestToProducer(isActive)
-                .purposeOverQuotaStateToConsumer(isActive);
+                .purposeOverQuotaStateToConsumer(isActive)
+                .eserviceArchivingRequestedToDelegator(isActive)
+                .eserviceArchivingApprovedRejectedToDelegate(isActive);
 
         UserNotificationConfigUpdateSeed seed = new UserNotificationConfigUpdateSeed();
         seed.setInAppNotificationPreference(true);
@@ -226,7 +239,7 @@ public class NotificationConfigSteps {
 
                 configClient.updateUserNotificationConfig(userSeed);
 
-                if (userSeed != null && expectedUserNotificationConfig != null &&!isInvalid) {
+                if (userSeed != null && expectedUserNotificationConfig != null && !isInvalid) {
                     expectedUserNotificationConfig.setEmailNotificationPreference(userSeed.getEmailNotificationPreference());
                 }
             }

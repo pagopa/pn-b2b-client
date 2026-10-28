@@ -65,7 +65,7 @@ public class PurposeVersionCreateSteps {
         newDailyCalls = 51;
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurposeVersion(
-                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                        UUID.fromString(sharedStepsContext.getPurposeId()),
                         new PurposeVersionSeed().dailyCalls(newDailyCalls)
                 )
         );

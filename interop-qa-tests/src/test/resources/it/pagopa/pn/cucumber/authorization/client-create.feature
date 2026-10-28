@@ -1,4 +1,5 @@
 @client
+@client-create
 Feature: Creazione di un client
   Tutti gli admin possono creare un client
 

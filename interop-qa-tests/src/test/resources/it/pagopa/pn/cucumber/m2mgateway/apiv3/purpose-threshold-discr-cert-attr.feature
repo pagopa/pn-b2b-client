@@ -7,8 +7,8 @@ Feature: Soglie differenziate in attributi certificati discreti con API M2M V3
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 99                    |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 99                    |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"

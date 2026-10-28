@@ -5,5 +5,8 @@ public enum BucketRole {
     WORM,
 
     /** Bucket operativo / temporaneo */
-    STANDARD
+    STANDARD,
+
+    /** Bucket contenente i dati firmati digitalmente */
+    SIGNED,
 }

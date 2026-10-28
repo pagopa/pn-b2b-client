@@ -1,11 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.api.MandateApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.ApiClient;
@@ -14,7 +8,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffSearchMandateRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffSearchMandateResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffUpdateRequest;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -23,6 +17,8 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+
+import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
 
 
 @Component
@@ -165,19 +161,6 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     public void revokeMandate(String mandateId) throws RestClientException {
         mandateServiceApi.revokeMandateV1(mandateId);
-    }
-
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .build();
-        try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
     }
 
 }

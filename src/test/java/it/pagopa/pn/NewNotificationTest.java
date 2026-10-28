@@ -29,8 +29,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.*;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 

@@ -718,7 +718,7 @@ Feature: annullamento notifiche b2b
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 2                    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
@@ -751,6 +751,8 @@ Feature: annullamento notifiche b2b
   @Annullamento @mockPec @addressBook1 @ignoreHotfixTemp #temp
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene inserito un recapito legale "example@sequence.90s-C000.90s-C001.90s-C005.90s-C003"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -758,7 +760,7 @@ Feature: annullamento notifiche b2b
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
@@ -873,7 +875,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED" con la versione "V10"
 
-  @Annullamento1 @webhook2  @cleanC3
+  @Annullamento1 @webhook3  @cleanC3
   Scenario: [B2B-STREAM_TIMELINE_24_2] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10"
     Given viene generata una nuova notifica
@@ -881,7 +883,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
@@ -896,7 +898,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" con la versione "V10"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
-  @Annullamento @webhook3 @ignore
+  @Annullamento @webhook2 @ignore
   Scenario: [B2B-STREAM_TIMELINE_24_3] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
@@ -904,8 +906,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
-    #And si crea il nuovo stream per il "Comune_2" con versione "V10"
+    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi "ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V10"
@@ -926,7 +927,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati "V10"
 
-  @Annullamento1 @webhook2 @cleanC3
+  @Annullamento1 @webhook3 @cleanC3
   Scenario: [B2B-STREAM_TIMELINE_24_4] Invio notifica digitale ed attesa di un eventi di Timeline stream v1  con controllo EventId incrementale e senza duplicati scenario positivo
    #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
@@ -934,7 +935,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro di timeline "NOTIFICATION_CANCELLED"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10" e filtro timeline "NOTIFICATION_CANCELLED"
     #And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con la versione "V10"
@@ -1003,7 +1004,7 @@ Feature: annullamento notifiche b2b
       | digitalDomicile_address | test@OK-PEC-SLOW.it |
       | payment_f24             | PAYMENT_F24_FLAT    |
       | title_payment           | F24_FLAT_GHERKIN    |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" non esiste
 

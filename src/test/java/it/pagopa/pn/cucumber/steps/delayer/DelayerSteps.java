@@ -1,17 +1,23 @@
 package it.pagopa.pn.cucumber.steps.delayer;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.Before;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.ParallelScenarioPhase;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import lombok.RequiredArgsConstructor;
@@ -19,27 +25,56 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.*;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.GATE_TIMEOUT;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.EVALUATE_PRINT_CAPACITY;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.SENT_TO_PREPARE_PHASE_2;
+import static it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps.valueOf;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.calculateLimitByComparativo;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCurrentMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMonday;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.hasSeedInRequestId;
 
 @Slf4j
 @RequiredArgsConstructor
+@ScenarioScope
 public class DelayerSteps {
 
-
     private final DelayerContext context;
+    private final DelayerSuiteContext suiteContext;
     private final DelayerCsvLoader csvLoader;
     private final DelayerPlanner planner;
     private final DelayerSevice service;
     private final DelayerValidator validator;
     private final DelayerPaperDeliveryUtils utils;
+    private final DelayerSkipSenderLimitService skipSenderLimitService;
     private final Map<String, Integer> availableCapacityByDriver = new HashMap<>();
 
+    private String parallelScenarioId;
+
+    @Before("@delayer1 or @delayer2 or @delayer3 or @delayer4 or @delayer5")
+    public void bindParallelScenario(Scenario scenario) {
+        if (!DelayerSuiteContext.isSuiteConfigured()) {
+            throw new IllegalStateException(
+                    "Scenario Delayer parallelo senza suite configurata: avviare con -Dtest=DelayerParallelTest "
+                            + "(o Delayer1Test…Delayer5Test) così che @BeforeAll legga gli scenario id");
+        }
+        parallelScenarioId = suiteContext.extractScenarioId(scenario.getName());
+        context.resetContext();
+        availableCapacityByDriver.clear();
+    }
 
     @Given("il CSV {string} contiene {int} notifiche distribuite tra i seguenti test case:")
     public void initParams(String csv, Integer expectedNotificationCount, DataTable dataTable) {
@@ -54,7 +89,7 @@ public class DelayerSteps {
         service.importData(csvName, context.expectedDeliveryDate);
     }
 
-    @Then("vengono puliti i dati dalle tabelle target")
+    @Given("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
         service.deleteDataAll();
     }
@@ -240,6 +275,10 @@ public class DelayerSteps {
 
     @And("vengono simulate internamente le operazioni di BatchWorkflowStateMachine")
     public void runSimulation() {
+        // Il passaggio false→true vale solo per la settimana successiva se la spedizione viene
+        // rimandata: è gestito da DelayerSkipSenderLimitService.resolveOnFreeze al congelamento,
+        // non qui — altrimenti si applicherebbe anche a spedizioni ordinarie di questa settimana
+        // che non sono affatto in ritardo, dando loro una priorità che non spetta ancora.
         context.expectedPianification.replaceAll((seed, oldStepMap) ->
                 planner.simulateAlgorithm(SENT_TO_PREPARE_PHASE_2, seed)
         );
@@ -252,28 +291,53 @@ public class DelayerSteps {
 
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate: {string}")
     public void runFirstStepFunctionWithFixedDeliveryDate(String deliveryWeek) throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.BATCH_REQUESTED);
+        suiteContext.awaitAllAtLeast(ParallelScenarioPhase.BATCH_REQUESTED, GATE_TIMEOUT);
+
+        synchronized (suiteContext) {
+            // Il riuso dell'esecuzione è pensato solo per gli scenari paralleli censiti (es: @delayer1-5,
+            // via DelayerSuiteContext.configure). Al di fuori di quella suite ogni scenario deve avviare
+            // sempre una propria esecuzione.
+            if (!DelayerSuiteContext.isSuiteConfigured() || suiteContext.batchExecutionArn == null) {
+                suiteContext.batchExecutionArn =
+                        service.runBatchWorkflowStateMachine(context.printCapacity, deliveryWeek);
+            }
+            context.currentExecutionArn = suiteContext.batchExecutionArn;
+        }
+
         service.waitUntilStepFunctionEnd(context);
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.BATCH_DONE);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine con deliveryDate in avanti di {int} settimane")
     public void runFirstStepFunctionWithDeliveryDate(int weeksToAdd) throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getNextMonday(weeksToAdd));
-        service.waitUntilStepFunctionEnd(context);
+        String deliveryWeek = getNextMonday(weeksToAdd);
+        runFirstStepFunctionWithFixedDeliveryDate(deliveryWeek);
     }
 
     @When("viene avviata la step function BatchWorkflowStateMachine")
     public void runFirstStepFunction() throws Exception {
-        context.currentExecutionArn = service.runBatchWorkflowStateMachine(context.printCapacity, getCurrentMonday());
-        service.waitUntilStepFunctionEnd(context);
+        runFirstStepFunctionWithFixedDeliveryDate(getCurrentMonday());
     }
 
     @When("viene avviata la step function DelayerToPaperChannelStateMachine")
     public void runSecondStepFunction() throws Exception {
-        context.currentExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.PHASE2_REQUESTED);
+        suiteContext.awaitAllAtLeast(ParallelScenarioPhase.PHASE2_REQUESTED, GATE_TIMEOUT);
+
+        synchronized (suiteContext) {
+            // Stessa guardia di runFirstStepFunctionWithFixedDeliveryDate: riuso solo se la suite
+            // parallela è effettivamente censita, altrimenti ogni scenario riparte da zero.
+            if (!DelayerSuiteContext.isSuiteConfigured() || suiteContext.phase2ExecutionArn == null) {
+                suiteContext.phase2ExecutionArn = service.runDelayerToPaperChannel().getExecutionArn();
+            }
+            context.currentExecutionArn = suiteContext.phase2ExecutionArn;
+        }
+
         service.waitUntilStepFunctionEnd(context);
         ++context.currentStepFunction2ExecutionIndex;
         checkPrintCapacityCounter();
+        suiteContext.advance(parallelScenarioId, ParallelScenarioPhase.PHASE2_DONE);
     }
 
     @And("verifica che i parametri in PrintCapacityCounter siano conformi a quelli calcolati internamente")
@@ -382,7 +446,7 @@ public class DelayerSteps {
 
     @And("sposto la simulazione in avanti di {int} settimane")
     public void moveForward(int nWeeks) {
-        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m->m.get("FROZEN")).orElse(Collections.emptyList()));
+        var frozen = new ArrayList<>(context.expectedPianification.values().stream().findAny().map(m -> m.get("FROZEN")).orElse(Collections.emptyList()));
         context.resetContext();
         context.expectedDeliveryDate = getNextMonday(nWeeks);
         context.actualCsv.addAll(frozen);
@@ -443,13 +507,65 @@ public class DelayerSteps {
     }
 
 
-    @Then("viene verificato il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} e deliveryDate: {string}")
-    public void checkSenderLimitForPA(String paId, String province, String product, String deliveryDate) {
+    @Then("verifica che dopo il riordino per priorità mittente le spedizioni siano:")
+    public void checkSenderPriorityReassignment(DataTable dataTable) throws Exception {
+        SoftAssertions softly = new SoftAssertions();
+
+        for (Map<String, String> row : dataTable.asMaps(String.class, String.class)) {
+            String requestId = row.get("requestId");
+            List<DelayerPaperDelivery> found = service.pollByRequestId(requestId, 1, 200);
+
+            softly.assertThat(found)
+                    .as("Nessun record trovato in pn-DelayerPaperDelivery per requestId '%s'", requestId)
+                    .isNotEmpty();
+
+            if (found.isEmpty()) continue;
+
+            DelayerPaperDelivery actual = found.get(0);
+
+            String expectedVirtual = row.get("virtualNotificationSentAt");
+            if (expectedVirtual != null && !expectedVirtual.isBlank()) {
+                softly.assertThat(actual.getVirtualNotificationSentAt())
+                        .as("virtualNotificationSentAt per requestId '%s'", requestId)
+                        .isEqualTo(expectedVirtual);
+            }
+
+            String expectedSkip = row.get("skipSenderLimit");
+            if (expectedSkip != null && !expectedSkip.isBlank()) {
+                softly.assertThat(actual.getSkipSenderLimit())
+                        .as("skipSenderLimit per requestId '%s'", requestId)
+                        .isEqualTo(Boolean.valueOf(expectedSkip));
+            }
+        }
+
+        softly.assertAll();
+    }
+
+    /**
+     * Verifica mirata per singolo requestId (esatto, non un prefisso di seed): interroga GET_BY_REQUEST_ID
+     * e controlla che il pk sia presente per lo step atteso.
+     */
+    @Then("verifica che la spedizione con requestId {string} sia al workflow step {string}")
+    public void checkNotificationAtWorkflowStep(String requestId, String expectedStep) throws Exception {
+        List<DelayerPaperDelivery> found = service.pollByRequestId(requestId, 1, 200);
+        Assertions.assertThat(found)
+                .as("Nessun record trovato in pn-DelayerPaperDelivery per requestId '%s'", requestId)
+                .isNotEmpty();
+        Assertions.assertThat(found.stream().filter(d -> d.getPk().endsWith(expectedStep)))
+                .as("Workflow step per requestId '%s'", requestId)
+                .isNotEmpty();
+    }
+
+    @Then("viene verificato che il limite garantito per la pa: {string} relativo a provincia: {string}, prodotto: {string} sia corretto")
+    public void checkSenderLimitForPA(String paId, String province, String product) {
+        Assertions.assertThat(context.expectedDeliveryDate)
+                .as("La deliveryDate deve essere impostata prima di verificare il limite del mittente")
+                .isNotNull();
+        String deliveryDate = context.expectedDeliveryDate;
 
         String pk = new StringBuilder(paId).append("~")
                 .append(product).append("~")
                 .append(province).toString();
-
         int sumEstimate = service.getCountersSumEstimates(deliveryDate, province, product).getNumberOfShipments();
         int weeklyEstimate = service.fetchWeeklyEstimateForPA(deliveryDate, pk);
         Set<String> productsWithCapacity = new HashSet<>();
@@ -469,11 +585,17 @@ public class DelayerSteps {
 
         double expectedSenderLimit = Math.ceil((sumDeclaredCapacity - toBeExcluded) * (senderLimitPercentage / 100.0));
 
-        int actualSenderLimit = service.getUsedSenderLimit(deliveryDate, pk);
+        int actualSenderLimit = service.getUsedSenderLimit(DelayerPaperDeliveryUtils.getPreviousMondayFromDate(deliveryDate, 1), pk);
 
         Assertions.assertThat(expectedSenderLimit).as("Confronto di actual ed expected del limite del mittente").isEqualTo(actualSenderLimit);
 
     }
 
-
+    @And("viene verificato che il contatore EXCLUDE sia pari a: {int} per la provincia {string} e prodotto {string}")
+    public void checkExcludeCounter(int expectedResult, String province, String product) {
+        int excludeCounter = service.getCountersExclude(context.expectedDeliveryDate, province, product);
+        Assertions.assertThat(excludeCounter)
+                .as("Confronto di actual ed expected del contatore EXCLUDE per deliveryDate=%s, province=%s, product=%s", context.expectedDeliveryDate, province, product)
+                .isEqualTo(expectedResult);
+    }
 }

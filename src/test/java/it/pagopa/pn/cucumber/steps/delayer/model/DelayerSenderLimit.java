@@ -5,11 +5,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"pk", "deliveryDate", "weeklyEstimate"})
+@ToString
 public class DelayerSenderLimit {
     private String pk;
     private String deliveryDate;

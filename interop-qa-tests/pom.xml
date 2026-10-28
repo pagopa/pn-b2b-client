@@ -36,7 +36,26 @@
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.fasterxml.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>2.16.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <!-- Modulo common condiviso tra SEND e INTEROP -->
+        <dependency>
+            <groupId>it.pagopa.pn</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- BOUNCY CASTLE: gestione di file firmati digitalmente (p7m) -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -307,8 +326,9 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.21.0-RC4/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
+                            <!-- TODO aggiornare la versione di riferimento del file openapi quando sarà disponibile la nuova versione 2.24 -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -343,7 +363,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.21.0-RC4/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -377,7 +397,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/tags/1.0.0-RC8/packages/api/open-api/api-external-interop-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-tracing-core/refs/heads/develop/packages/api/open-api/api-external-interop-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -511,7 +531,9 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.21.0-RC4/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
+                            <!-- TODO aggiornare la versione di riferimento del file openapi quando sarà disponibile la nuova versione 2.24 -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -548,7 +570,8 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
                             <!--<inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/release/2.10.0/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.21.0-RC4/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
+                            <!-- TODO non appena disponibili le specifiche per la 2.24.0, aggiornare il tag di riferimento a 2.24.0 -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -584,8 +607,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <!-- <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</inputSpec> -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.21.0-RC4/packages/api-clients/open-api/tenantApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/tenantApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

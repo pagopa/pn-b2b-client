@@ -47,6 +47,7 @@ Feature: Soglie differenziate con API M2M V3
       | security     | m2m-admin | %actual   | 200        |
       | support      | m2m-admin | %actual   | 200        |
       | api,security | m2m-admin | %actual   | 200        |
+      | viewer       | m2m-admin | %actual   | 200        |
 
     @sad-path
     Examples:
@@ -56,13 +57,15 @@ Feature: Soglie differenziate con API M2M V3
       | security     | m2m       | %actual   | 403        |
       | support      | m2m       | %actual   | 403        |
       | api,security | m2m       | %actual   | 403        |
+      | viewer       | m2m       | %actual   | 403        |
 
     @sad-path
     @nuovi-operatori-update
     @PIN-10457
     Examples:
       | role         | m2mRole   | purposeId | statusCode |
-      | reviewer     | m2m-admin | %actual   | 403        |
+      | reviewer     | m2m-admin | %actual   | 200        |
+      | reviewer     | m2m       | %actual   | 403        |
 
   Scenario Outline: [PURPOSE_THRESHOLD_10b] Una richiesta con API M2M V3 per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
     Given l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin

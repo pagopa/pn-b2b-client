@@ -25,6 +25,7 @@ import java.util.*;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EServiceTemplateStepContext {
+    private String producerName;
     private List<EServiceTemplateInfo> templatesManaged = new ArrayList<>();
     private EServiceTemplateDocumentInfo lastAddedDocument;
     private UpdateEServiceTemplateVersionSeed lastTemplateVersionUpdateSeed;
@@ -75,6 +76,8 @@ public class EServiceTemplateStepContext {
     private List<UUID> removedVerifiedAttributesIds = new ArrayList<>();
 
     private String modifiedTemplateName;
+
+    private EServiceTechnology technology = EServiceTechnology.REST; // DEFAULT a REST principalmente per mantenere retrocompatibilità prima dell'introduzione di questo attributo
 
     private static boolean isAnswersFieldInRiskAnalysisFormSeed(Field field) {
         return field.getName().equals("answers") && field.getDeclaringClass().equals(
@@ -134,4 +137,5 @@ public class EServiceTemplateStepContext {
     private <T> T lastOf(List<T> list) {
         return IterableUtils.isEmpty(list) ? null : list.get(list.size() - 1);
     }
+
 }

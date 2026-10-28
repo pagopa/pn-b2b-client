@@ -146,7 +146,7 @@ public class DataPreparationService implements SettableHttpCallExecutor {
         if (!httpCallExecutor.getResponseStatus().is2xxSuccessful()) {
             throw new RuntimeException("Invalid response %s: %s".formatted(
                 httpCallExecutor.getResponseStatus(),
-                httpCallExecutor.getResponse()
+                httpCallExecutor.getErrorMessage()
             ));
         }
     }

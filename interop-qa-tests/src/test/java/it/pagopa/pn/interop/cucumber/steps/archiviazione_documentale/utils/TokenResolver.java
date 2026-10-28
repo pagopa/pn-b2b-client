@@ -29,7 +29,7 @@ public class TokenResolver {
                     Map.entry(":clientId", ctx -> safe(c -> c.getClientCommonContext().getLastClient(), ctx)),
                     Map.entry(":userId", ctx -> safe(c -> c.getIdentityService().getUserId(c.getTenantType(), c.getRole().getValue()), ctx)),
                     Map.entry(":kid", ctx -> safe(c -> c.getClientCommonContext().getKeyId(), ctx)),
-                    Map.entry(":agreementId", ctx -> safe(SharedStepsContext::getAgreementId, ctx)),
+                    Map.entry(":agreementId", ctx -> safe(c -> c.getAgreementCommonContext().getAgreementId(), ctx)),
                     Map.entry(":consumerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
                     Map.entry(":producerDelegationId", ctx -> safe(c -> c.getDelegationCommonContext().getDelegationId(), ctx)),
                     Map.entry(":purposeId", ctx -> safe(c -> c.getPurposeCommonContext().getLastPurposeId(), ctx)),
@@ -41,7 +41,8 @@ public class TokenResolver {
                     Map.entry(":purposeTemplateId", ctx -> safe(c -> c.getPurposeTemplateContext().getPurposeTemplateId(), ctx)),
                     Map.entry(":descriptorId", ctx -> safe(c -> c.getEServicesCommonContext().getDescriptorId(), ctx)),
                     Map.entry(":eserviceTemplateId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getId(), ctx)),
-                    Map.entry(":eserviceTemplateVersionId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), ctx))
+                    Map.entry(":eserviceTemplateVersionId", ctx -> safe(c -> c.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId(), ctx)),
+                    Map.entry(":jwtId", ctx -> safe(c -> c.getAuditTokenContext().getJwtId(), ctx))
                     );
 
     private static String safe(Function<SharedStepsContext, Object> extractor, SharedStepsContext ctx) {

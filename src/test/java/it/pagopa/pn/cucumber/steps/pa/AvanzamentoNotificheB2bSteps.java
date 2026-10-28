@@ -14,8 +14,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.b2bVersions.B2bStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
@@ -42,8 +42,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.PAYMENT;
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.PAYMENT;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.PollingType.TIMELINE;
 import static it.pagopa.pn.cucumber.steps.utilitySteps.checkTimelineElement.TimelineElementCheck.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -139,7 +139,11 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("controllo la correttezza dei timelineElementId degli elementi di timeline della fullSentNotification con versione b2b {string}")
     public void checkReworkTimelineElement(String version) {
         NotificationVersion notificationVersion = sharedSteps.getNotificationVersion(version);
-        getB2bStepsInterface(notificationVersion).checkReworkTimelineWithVersion();
+        try {
+            getB2bStepsInterface(notificationVersion).checkReworkTimelineWithVersion();
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     /**
@@ -463,6 +467,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeVerifyTypeDoc(String timelineEventCategory, String deliveryDetailCode, String documentType) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
                 .deliveryDetailCode(deliveryDetailCode)
+                .documentType(documentType)
                 .build();
         B2bStepsInterface b2bStepsInterface = getB2bStepsInterface();
         b2bStepsInterface.waitForEventOrStatus(TIMELINE_RAPID, TIMELINE, timelineEventCategory, filters);
@@ -1210,6 +1215,56 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("l'evento {string} è successivo all'evento {string}")
+    public void checkOrdineEventiSenzaArrotondamento(String eventoSuccessivo, String eventoPrecedente) {
+        try {
+            FullSentNotificationV29 notification = sharedSteps.getSentNotificationLastVersion();
+            TimelineElementV28 successivo = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoSuccessivo.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoSuccessivo));
+            TimelineElementV28 precedente = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoPrecedente.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
+
+            assertThat(successivo.getIngestionTimestamp())
+                    .as("L'evento %s deve avvenire dopo %s", eventoSuccessivo, eventoPrecedente)
+                    .isAfter(precedente.getIngestionTimestamp());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @And("l'evento {string} al tentativo {int} è successivo all'evento {string}")
+    public void checkOrdineEventoPerTentativo(String eventoSuccessivo, Integer tentativo, String eventoPrecedente) {
+        try {
+            FullSentNotificationV29 notification = sharedSteps.getSentNotificationLastVersion();
+            TimelineElementV28 successivo = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoSuccessivo.equals(element.getCategory().getValue()))
+                    .filter(element -> element.getDetails() != null
+                            && tentativo.equals(element.getDetails().getSentAttemptMade()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError(
+                            "Evento non trovato: " + eventoSuccessivo + " al tentativo " + tentativo));
+            TimelineElementV28 precedente = notification.getTimeline().stream()
+                    .filter(element -> element.getCategory() != null
+                            && eventoPrecedente.equals(element.getCategory().getValue()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("Evento non trovato: " + eventoPrecedente));
+
+            assertThat(successivo.getIngestionTimestamp())
+                    .as("L'evento %s del tentativo %s deve avvenire dopo %s",
+                            eventoSuccessivo, tentativo, eventoPrecedente)
+                    .isAfter(precedente.getIngestionTimestamp());
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {
         WaitForEventPredicateFilters filters = WaitForEventPredicateFilters.builder()
@@ -1249,7 +1304,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che non esista l'elemento {string} al tentativo {string}")
     public void checkToTheTimelineForElementOfNotificationAtAttemptNotExist(String timelineEventCategory, String attempt) {
-        Assertions.assertThrows(AssertionFailedError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
+        Assertions.assertThrows(AssertionError.class, () -> readingEventUpToTheTimelineElementOfNotificationAtAttempt(timelineEventCategory, attempt));
     }
 
     public String mapValueFromTable(DataTable table, String key) {

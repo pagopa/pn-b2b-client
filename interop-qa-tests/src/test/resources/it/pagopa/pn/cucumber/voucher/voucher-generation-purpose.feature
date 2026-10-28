@@ -142,7 +142,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose10
@@ -155,7 +155,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose11
@@ -170,7 +170,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" ha già archiviato quella finalità
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose12 @no-parallel
@@ -185,7 +185,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA2" ha già sospeso la finalità che risulta sospesa dall'erogatore
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose13
@@ -200,7 +200,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" ha già sospeso la finalità che risulta sospesa dal fruitore
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose14
@@ -217,7 +217,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA2" ha già sospeso la finalità che risulta sospesa dall'erogatore
     Given "PA2" ha già riattivato la finalità sospesa dall'erogatore
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose15
@@ -234,7 +234,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA2" ha già sospeso la finalità che risulta sospesa dall'erogatore
     Given "PA1" ha già riattivato la finalità sospesa dal fruitore
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose16 @wait_for_fix @PIN-5318
@@ -251,7 +251,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA1" ha già riattivato la finalità sospesa dal fruitore
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_purpose17
@@ -266,4 +266,4 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given l'utente possiede un identificativo di una purpose che non esiste
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400

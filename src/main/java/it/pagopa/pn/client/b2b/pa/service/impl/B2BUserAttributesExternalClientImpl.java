@@ -1,16 +1,11 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.AllApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.CourtesyApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.api.LegalApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.AddressVerificationResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.CxLanguage;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.userattributesb2b.model.LegalChannelType;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.AddressVerification;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.UserAddresses;
@@ -29,6 +24,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static it.pagopa.pn.client.b2b.pa.utils.JsonDeepCopyMapper.deepCopy;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -210,15 +206,4 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
         AddressVerificationResponse response = courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, courtesyChannelType, address, xPagopaPnLanguage);
     }
 
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
-    }
 }

@@ -266,15 +266,15 @@ Feature: Verifica soglie differenziate
     @sad-path
     @nuovi-operatori-update
     Examples:
-      | ruolo        | purposeId | statusCode |
-      | viewer       | %actual   | 403        |
+      | ruolo  | purposeId | statusCode |
+      | viewer | %actual   | 403        |
 
     @sad-path
     @nuovi-operatori-update
     @PIN-10457
     Examples:
-      | ruolo        | purposeId | statusCode |
-      | reviewer     | %actual   | 403        |
+      | ruolo    | purposeId | statusCode |
+      | reviewer | %actual   | 403        |
 
   @dailyCallsThreshold
   Scenario Outline: [PURPOSE_THRESHOLD_10] Una richiesta con API BFF per recuperare le soglie rimanenti specificando una finalità non valida o inesistente fallisce
@@ -286,6 +286,68 @@ Feature: Verifica soglie differenziate
       | %random   | 404        |
       | %null     | 400        |
 
+  # PIN-11097
+  @dailyCallsThreshold
+  Scenario Outline: [PURPOSE_THRESHOLD_OVERQUOTA_1] Per la creazione di una finalità il sistema calcola il superamento delle quote considerando solo il carico della versione dell'e-service associata alla richiesta di fruizione
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 1000 e dailyCallsTotal uguale a 1001
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea una nuova versione dell'e-service
+    When l'utente aggiorna alcuni parametri di quel descrittore con:
+      | dailyCallsPerConsumer   | 5000      |
+      | dailyCallsTotal         | 5001      |
+      | voucherLifespan         | 1600      |
+      | agreementApprovalPolicy | AUTOMATIC |
+    And l'utente ha già pubblicato quel descrittore
+    And l'utente è un "admin" di "PA2"
+    # La soglia considerata è quella definita nella prima versione dell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a <dailyCalls>
+    And si ottiene status code 200
+    And l'utente tenta di attivare la finalità
+    Then si ottiene status code 200 e la finalità in stato "<status>"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | <remainingDailyCallsPerConsumer> |
+      | remainingDailyCallsTotal       | <remainingDailyCallsTotal>       |
+
+    Examples:
+      | dailyCalls | status               | remainingDailyCallsPerConsumer | remainingDailyCallsTotal |
+      | 100        | ACTIVE               | 900                            | 901                      |
+      | 1001       | WAITING_FOR_APPROVAL | 1000                           | 1001                     |
+
+  # PIN-11097
+  @dailyCallsThreshold
+  Scenario Outline: [PURPOSE_THRESHOLD_OVERQUOTA_2] Per la creazione di una finalità il sistema calcola il superamento delle quote considerando solo il carico della versione dell'e-service associata alla richiesta di fruizione
+    Given "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 1000 e dailyCallsTotal uguale a 1001
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA1"
+    And l'utente crea una nuova versione dell'e-service
+    When l'utente aggiorna alcuni parametri di quel descrittore con:
+      | dailyCallsPerConsumer   | 5000      |
+      | dailyCallsTotal         | 5001      |
+      | voucherLifespan         | 1600      |
+      | agreementApprovalPolicy | AUTOMATIC |
+    And l'utente ha già pubblicato quel descrittore
+    And "PA3" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "PA3"
+    And l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a 5000
+    And si ottiene status code 200
+    And l'utente tenta di attivare la finalità
+    And si ottiene status code 200 e la finalità in stato "ACTIVE"
+    And l'utente è un "admin" di "PA2"
+    # La soglia considerata è quella definita nella prima versione dell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a <dailyCalls>
+    And si ottiene status code 200
+    And l'utente tenta di attivare la finalità
+    Then si ottiene status code 200 e la finalità in stato "<status>"
+    And i residui relativi alle dailyCalls associati alla finalità sono pari a:
+      | remainingDailyCallsPerConsumer | <remainingDailyCallsPerConsumer> |
+      | remainingDailyCallsTotal       | <remainingDailyCallsTotal>       |
+
+    Examples:
+      | dailyCalls | status               |remainingDailyCallsPerConsumer | remainingDailyCallsTotal |
+      | 100        | ACTIVE               | 900                           | 901                      |
+      | 1001       | WAITING_FOR_APPROVAL | 1000                          | 1001                     |
+
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOn
   Scenario: [CERT_DISCRETE_ATTR_PURPOSE_THRESHOLD_1A] Attivazione con successo di una finalità e verifica della corretta decurtazione
@@ -294,8 +356,8 @@ Feature: Verifica soglie differenziate
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 99                    |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 99                    |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"
@@ -316,9 +378,9 @@ Feature: Verifica soglie differenziate
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100 e con i seguenti attributi:
-      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,100) | 99                    |
-      | CERTIFIED          | 0     |            |                                     |                       |
+      | kind               | group | comparator | value                              | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,10) | 99                    |
+      | CERTIFIED          | 0     |            |                                    |                       |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
@@ -340,9 +402,9 @@ Feature: Verifica soglie differenziate
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 100 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 90                    |
-      | CERTIFIED          | 0     |            |                                      | 75                    |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 90                    |
+      | CERTIFIED          | 0     |            |                                     | 75                    |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente assegna a "PA1" l'attributo certificato precedentemente creato
@@ -364,9 +426,9 @@ Feature: Verifica soglie differenziate
     And l'utente richiede una operazione di listing degli attributi certificati discreti disponibili
     And l'utente "PA1" possiede almeno un attributo certificato discreto
     And "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC" con dailyCallsPerConsumer uguale a 10 e dailyCallsTotal uguale a 200 e con i seguenti attributi:
-      | kind               | group | comparator | value                                | dailyCallsPerConsumer |
-      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 90                    |
-      | CERTIFIED_DISCRETE | 1     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-100) | 120                   |
+      | kind               | group | comparator | value                               | dailyCallsPerConsumer |
+      | CERTIFIED_DISCRETE | 0     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 90                    |
+      | CERTIFIED_DISCRETE | 1     | GTE        | $ATTR_CERT_DISCR_THRESHOLD(PA1,-10) | 120                   |
     And si ottiene response status code 200
     And l'e-service è in stato "PUBLISHED"
     And l'utente è un "admin" di "PA1"

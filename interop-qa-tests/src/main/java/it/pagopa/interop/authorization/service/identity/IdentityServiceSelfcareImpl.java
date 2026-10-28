@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import software.amazon.awssdk.services.kms.model.NotFoundException;
 
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +53,8 @@ public class IdentityServiceSelfcareImpl implements IdentityService {
     public String getMaintenanceToken() {
         try {
             return sessionTokenFactory.getMaintenanceToken();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new RuntimeException("Errore durante il reperimento del token di maintenance", e);
         }
     }

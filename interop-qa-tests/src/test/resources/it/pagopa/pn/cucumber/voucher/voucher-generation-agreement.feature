@@ -197,7 +197,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
         Given "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement12
@@ -212,7 +212,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
         Given "PA1" ha già sospeso quella richiesta di fruizione come CONSUMER
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement13
@@ -228,7 +228,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA1" ha già sospeso quella richiesta di fruizione come CONSUMER
         Given "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement14
@@ -245,7 +245,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA1" ha già sospeso quella richiesta di fruizione come CONSUMER
         Given "PA2" ha già attivato nuovamente quella richiesta di fruizione come PRODUCER
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement15
@@ -262,7 +262,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA2" ha già sospeso quella richiesta di fruizione come PRODUCER
         Given "PA1" ha già attivato nuovamente quella richiesta di fruizione come CONSUMER
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement16 @no-parallel @certifiedAttribute
@@ -279,7 +279,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA2" ha già revocato quell'attributo "CERTIFIED" a "PA1"
         Given la richiesta di fruizione è passata in stato "SUSPENDED"
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement17 @no-parallel
@@ -298,7 +298,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA2" ha già revocato quell'attributo "VERIFIED" a "PA1"
         Given la richiesta di fruizione è passata in stato "SUSPENDED"
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement18 @no-parallel
@@ -315,7 +315,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA1" ha già revocato quell'attributo "DECLARED" a "PA1"
         Given la richiesta di fruizione è passata in stato "SUSPENDED"
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement19
@@ -330,7 +330,7 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
         Given "PA1" ha già archiviato quella richiesta di fruizione
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400
 
     @nrt-minimal
     @voucher_generation_agreement20
@@ -348,4 +348,4 @@ Feature: Generazione del voucher sulle richieste di fruizione
         Given "PA1" ha già aggiornato la richiesta di fruizione all'ultima versione dell'eservice
         Given la richiesta di fruizione è passata in stato "SUSPENDED"
         When l'utente richiede la generazione del voucher
-        Then la richiesta di generazione del Voucher non va a buon fine
+        Then si ottiene status code 400

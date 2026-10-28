@@ -8,11 +8,14 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PriceVerificationSteps {
 
     private final SharedSteps sharedSteps;

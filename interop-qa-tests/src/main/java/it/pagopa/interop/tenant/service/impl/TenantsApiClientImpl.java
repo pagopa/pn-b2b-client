@@ -47,6 +47,16 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void addCertifiedDiscreteAttribute(UUID tenantId, CertifiedDiscreteTenantAttributeSeed certifiedDiscreteTenantAttributeSeed) {
+        tenantsApi.addCertifiedDiscreteAttribute(tenantId, certifiedDiscreteTenantAttributeSeed);
+    }
+
+    @Override
+    public void updateCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId, UpdateCertifiedDiscreteTenantAttributeSeed updateCertifiedDiscreteTenantAttributeSeed) {
+        tenantsApi.updateCertifiedDiscreteAttribute(tenantId, attributeId, updateCertifiedDiscreteTenantAttributeSeed);
+    }
+
+    @Override
     public CertifiedAttributesResponse getCertifiedAttributes(UUID tenantId) {
        return tenantsApi.getCertifiedAttributes(tenantId);
     }
@@ -101,7 +111,13 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
+    public void revokeCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId) {
+        tenantsApi.revokeCertifiedDiscreteAttribute(tenantId, attributeId);
+    }
+
+    @Override
     public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
+        // TODO assicurarsi che con il rilascio 2.25 agreementId non sia più nel body, ma nei query params
         tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new RevokeVerifiedAttributeRequest().agreementId(agreementId));
     }
 

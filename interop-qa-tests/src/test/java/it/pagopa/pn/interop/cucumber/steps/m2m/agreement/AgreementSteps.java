@@ -1,34 +1,24 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.agreement;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.ObjectUtils.allNull;
-import static org.apache.commons.lang3.ObjectUtils.anyNull;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient;
 import it.pagopa.interop.agreement.service.IM2MAgreementClient.AgreementsListRequest;
+import it.pagopa.interop.agreement.service.IM2MV3AgreementClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreements;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Documents;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
-import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
-import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.agreement.utils.AgreementResolver;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.M2MDataPreparationService;
+import org.assertj.core.api.Assertions;
+import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -37,8 +27,11 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import org.assertj.core.api.Assertions;
-import org.springframework.http.HttpStatus;
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.ObjectUtils.allNull;
+import static org.apache.commons.lang3.ObjectUtils.anyNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 public class AgreementSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -46,6 +39,7 @@ public class AgreementSteps {
     private final IdentityService identityService;
     private final M2MDataPreparationService dataPreparationService;
     private final IM2MAgreementClient agreementClient;
+    private final IM2MV3AgreementClient agreementClientV3;
     private final IHttpExecutor httpCallExecutor;
     private final PollingService pollingService;
     private final AgreementResolver agreementResolver;
@@ -61,6 +55,7 @@ public class AgreementSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.pollingService = sharedStepsContext.getPollingService();
         this.agreementResolver = new AgreementResolver(sharedStepsContext);
+        this.agreementClientV3 = clientTokenConfigurator.getM2mV3AgreementClient();
     }
 
     @Given("{string} ha un agreement m2m attivo per ciascun e-service di {string}")
@@ -139,7 +134,7 @@ public class AgreementSteps {
 
         UUID agreementId = dataPreparationService.createAndCheckAgreement(eserviceId, descriptorId);
 
-        sharedStepsContext.setAgreementId(agreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(agreementId);
     }
 
     @When("l'utente m2m richiede una operazione di approvazione della richiesta di fruizione con id {string}")
@@ -179,7 +174,7 @@ public class AgreementSteps {
 
     private void verifyAgreementState(AgreementState expectedState, String errorMessage) {
 
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementById(agreementId)),
                 status -> status.is2xxSuccessful() &&
@@ -191,7 +186,7 @@ public class AgreementSteps {
 
     @When("l'utente tenta di ottenere la lista delle finalità correlate alla richiesta di fruizione")
     public void agreementPurposes() {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getAgreementPurposes(agreementId)),
                 status -> status.is2xxSuccessful() && !((Purposes) httpCallExecutor.getResponse()).getResults().isEmpty(),
@@ -226,7 +221,7 @@ public class AgreementSteps {
 
     @When("l'utente tenta di ottenere la lista dei documenti correlati alla richiesta di fruizione")
     public void agreementDocuments() {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
         pollingService.makePolling(
                 () -> httpCallExecutor.performCall(() -> agreementClient.getConsumerDocuments(agreementId)),
                 status -> status.is2xxSuccessful() && !((Documents) httpCallExecutor.getResponse()).getResults().isEmpty(),
@@ -262,6 +257,13 @@ public class AgreementSteps {
         });
     }
 
+    /* Questa operazione è fattibile solo nel set v3, motivo per cui viene usato direttamente il client v3 */
+    @When("l'utente tenta di archiviare la richiesta di fruizione")
+    public void archiveAgreement() {
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
+        httpCallExecutor.performCall(() -> agreementClientV3.archiveAgreement(agreementId));
+    }
+
     private boolean areConsistent(DocumentMetadata createdDocument, Document returnedDocument) {
         return allNull(createdDocument, returnedDocument) ||
                 Objects.equals(createdDocument.getName(), returnedDocument.getName()) &&
@@ -275,25 +277,5 @@ public class AgreementSteps {
         return !anyNull(x, y) || x.equals(y) ||
                 y.isAfter(lowerBound) && y.isBefore(upperBound);
     }
-
-    // FIXME
-/*
-    @Given("{string} ha una richiesta di fruizione in stato {string} per quell'e-service")
-    public void tenantAlreadyHasFruitionRequestWithState(String consumer, String agreementState) {
-        String token = identityService.getToken(consumer, null);
-        tenantAlreadyHasFruitionRequestWithState(agreementState, token, null);
-    }
-
-    private void tenantAlreadyHasFruitionRequestWithState(String agreementState, String token, UUID delegationId) {
-        clientTokenConfigurator.setBearerToken(token);
-
-        UUID agreementId = dataPreparationService.createAgreementWithGivenState(
-            it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState.fromValue(agreementState),
-            sharedStepsContext.getEServicesCommonContext().getEserviceId(),
-            sharedStepsContext.getEServicesCommonContext().getDescriptorId(),
-            delegationId,
-            null);
-        sharedStepsContext.setAgreementId(agreementId);
-    }*/
 
 }

@@ -3,42 +3,8 @@
 Feature: Test di operazioni non ammesse per i nuovi operatori
 
   # PST: Scenario 23 - Caso 23.1
-  @sad-path
-  Scenario: [COMB_NON_AMMESSE_23_1_DRAFT] Tentativo assegnazione reviewer con workflow gia esistente in stato DRAFT (negativo)
-	Given "PA1" ha già creato e pubblicato 1 e-service
-	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "DRAFT"
-	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
-	Then si ottiene status code 409
-
-  # PST: Scenario 23 - Caso 23.1
-  @sad-path
-  Scenario: [COMB_NON_AMMESSE_23_1_ASSIGNED] Tentativo assegnazione reviewer con workflow gia esistente in stato ASSIGNED (negativo)
-	Given "PA1" ha già creato e pubblicato 1 e-service
-	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns" con successo
-	And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
-	When l'utente assegna un valutatore alla finalità in modalità "ReviewerWritesReviewerSigns"
-	Then si ottiene status code 409
-
-  # PST: Scenario 23 - Caso 23.1
-  @sad-path
-  Scenario: [COMB_NON_AMMESSE_23_1_SUBMITTED] Tentativo assegnazione reviewer con workflow gia esistente in stato SUBMITTED (negativo)
-	Given "PA1" ha già creato e pubblicato 1 e-service
-	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico con successo
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And lo stato della compilazione dell'analisi del rischio è "SUBMITTED"
-	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
-	Then si ottiene status code 409
+  # Scenari "Tentativo assegnazione reviewer con workflow gia esistente in stato ASSIGNED, SUBMITTED, DRAFT, REJECTED"
+  # rimossi, poiché con la feature Evolutive Nuovi Operatori l'op. di riassegnazione per questi stati è ora consentita.
 
   # PST: Scenario 23 - Caso 23.1
   @sad-path
@@ -51,20 +17,6 @@ Feature: Test di operazioni non ammesse per i nuovi operatori
 	And compila l'analisi del rischio tramite endpoint generico con successo
 	And l'utente invia il submit dell'analisi del rischio della finalità con successo
 	And il valutatore assegnato convalida l'analisi del rischio della finalità con successo
-	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
-	Then si ottiene status code 409
-
-  # PST: Scenario 23 - Caso 23.1
-  @sad-path
-  Scenario: [COMB_NON_AMMESSE_23_1_REJECTED] Tentativo assegnazione reviewer con workflow gia esistente in stato REJECTED (negativo)
-	Given "PA1" ha già creato e pubblicato 1 e-service
-	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
-	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
-	And l'utente è un "admin" di "PA2"
-	And l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns" con successo
-	And compila l'analisi del rischio tramite endpoint generico con successo
-	And l'utente invia il submit dell'analisi del rischio della finalità con successo
-	And un reviewer assegnato rifiuta l'analisi del rischio con successo
 	When l'utente assegna un valutatore alla finalità in modalità "AdminWritesReviewerSigns"
 	Then si ottiene status code 409
 

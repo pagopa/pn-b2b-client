@@ -4,8 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.common.util.CloudWatchQueryBuilder;
-import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +18,15 @@ import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRespo
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -106,5 +111,125 @@ public class AwsServiceSteps {
     @Given("vengono disabilitati i check sugli audit log")
     public void disableAuditLogCheck() {
         checkAuditLogDisabled = true;
+    }
+
+    @Then("verifico che su DynamoDB {is} presente l'elemento {string} con errorCode {string} nella tabella paperRequestError al tentativo {int}")
+    public void checkPaperErrorInDynamoDB(boolean isPresent, String timelineElement, String errorCode, int attempt) {
+        String requestId = String.format("%s.IUN_%s.RECINDEX_0.ATTEMPT_%d", timelineElement, sharedSteps.getNotificationIun(), attempt);
+        QueryResponse queryResponse = dynamoDbService.call(DynamoTableName.PAPER_REQUEST_ERROR, Map.of(
+                ":v_requestId", AttributeValue.builder().s(requestId).build()
+        ));
+        log.info("Elementi trovati con requestId {}: {}", requestId, queryResponse.count());
+        try {
+            if (isPresent) {
+                assertThat(queryResponse.items().size()).as("La response non contiene nessun elemento con category " + timelineElement).isGreaterThan(0);
+                assertThat(queryResponse.items())
+                        .anyMatch(item ->
+                                item.containsKey("error")
+                                        && item.get("error").s().contains(errorCode)
+                        );
+                for (int i = 0; i < queryResponse.items().size(); i++) {
+                    Map<String, AttributeValue> item = queryResponse.items().get(i);
+                    log.info("--- ELEMENTO TIMELINE {} ---", i + 1);
+                    item.forEach((key, value) -> {
+                        Object val = (value.s() != null) ? value.s() :
+                                (value.n() != null) ? value.n() :
+                                        (value.bool() != null) ? value.bool() : value.toString();
+                        log.info("{}: {}", key, val);
+                    });
+                }
+            } else {
+                assertThat(queryResponse.items().size()).as("La response non deve contenere nessun elemento con category " + timelineElement).isEqualTo(0);
+            }
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @Then("si verifica che su DynamoDB {is} presente l'elemento {string} nella tabella pn-PaperTrackings con statusCodes {string}")
+    public void checkPaperTrackingsInDynamoDB(
+            boolean isPresent,
+            String element,
+            String statusCodes) {
+
+        String trackingId = String.format(
+                "%s.IUN_%s.RECINDEX_0.ATTEMPT_0.PCRETRY_0",
+                element,
+                sharedSteps.getNotificationIun()
+        );
+
+        List<String> expectedStatusCodes = Arrays.stream(statusCodes.split(","))
+                .map(String::trim)
+                .filter(statusCode -> !statusCode.isEmpty())
+                .toList();
+
+        QueryResponse queryResponse = dynamoDbService.call(
+                DynamoTableName.PAPER_TRACKINGS,
+                Map.of(
+                        ":v_trackingId",
+                        AttributeValue.builder()
+                                .s(trackingId)
+                                .build()
+                )
+        );
+
+        log.info(
+                "Elementi trovati con trackingId {}: {}",
+                trackingId,
+                queryResponse.count()
+        );
+
+        try {
+            if (isPresent) {
+
+                assertThat(queryResponse.items())
+                        .as("La response non contiene nessun elemento per trackingId %s", trackingId)
+                        .isNotEmpty();
+
+                List<String> foundStatusCodes = queryResponse.items().stream()
+                        .map(item -> item.get("events"))
+                        .filter(Objects::nonNull)
+                        .filter(AttributeValue::hasL)
+                        .flatMap(events -> events.l().stream())
+                        .filter(AttributeValue::hasM)
+                        .map(AttributeValue::m)
+                        .map(event -> event.get("statusCode"))
+                        .filter(Objects::nonNull)
+                        .map(AttributeValue::s)
+                        .filter(Objects::nonNull)
+                        .toList();
+
+                log.info("StatusCode attesi: {}", expectedStatusCodes);
+                log.info("StatusCode trovati: {}", foundStatusCodes);
+
+                assertThat(foundStatusCodes)
+                        .as(
+                                "Non sono stati trovati tutti gli statusCode attesi. Attesi: %s - Trovati: %s",
+                                expectedStatusCodes,
+                                foundStatusCodes
+                        )
+                        .containsAll(expectedStatusCodes);
+
+            } else {
+
+                assertThat(queryResponse.items())
+                        .as("La response non deve contenere elementi per trackingId %s", trackingId)
+                        .isEmpty();
+            }
+
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    private Object extractValue(AttributeValue value) {
+        if (value.s() != null)
+            return value.s();
+        else if (value.n() != null)
+            return value.n();
+        else if (value.bool() != null)
+            return value.bool();
+        else
+            return value.toString();
     }
 }

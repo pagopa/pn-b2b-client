@@ -189,7 +189,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | NAUZ-WNPH-WQZE-202508-Y-1 | PAGOPA  |                  | 400     |
 
 
-  @appIo
+  @appIo @deleghe4
   Scenario: [QR_CODE_8] Lettura tramite AppIO di una notifica da parte di un delegato PF da un delegatore PF
     Given "Mario Cucumber" rifiuta se presente la delega ricevuta "Mario Gherkin"
     And "Mario Cucumber" viene delegato da "Mario Gherkin" per comune "Comune_Root"

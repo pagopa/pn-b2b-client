@@ -142,7 +142,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given "PA2" ha già sospeso quell'e-service
     Given "PA2" ha già una nuova versione in stato DRAFT per quell'e-service
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_eservice10
@@ -159,7 +159,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA2" ha già sospeso quell'e-service
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   @nrt-minimal
   @voucher_generation_eservice11
@@ -175,7 +175,7 @@ Feature: Generazione del voucher richiesta da un Ente
     Given un "admin" di "PA1" ha caricato una chiave pubblica nel client
     Given "PA2" ha già sospeso la vecchia versione di quell'e-service
     When l'utente richiede la generazione del voucher
-    Then la richiesta di generazione del Voucher non va a buon fine
+    Then si ottiene status code 400
 
   # Waiting for the descriptor archivation to be implemented in the bff and fe
   @nrt-minimal

@@ -174,7 +174,9 @@ Feature: Debugger Client Assertion Sync DPoP
       | platformStatesVerification           | SKIPPED | []                             |
       | dpopValidation                       | PASSED  | []                             |
 
-  @devToolsClientAssertion
+  # Il caso non risulta riproducibile, vedere commento:
+  # https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/2839183413/SRS+Dev+Tools?focusedCommentId=2982051939
+  @devToolsClientAssertion @ignore
   Scenario: [VALIDATION_ERROR_CODE_0019_API_CLIENT_DPOP] Dato un client API valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo API aggiungendo se stesso come membro e caricando una coppia di chiavi
     When il tenant fruitore "PA1" crea una client assertion per un client di tipo API con:
