@@ -28,6 +28,8 @@ public class PurposeRiskAnalysisCompilationSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IdentityService identityService;
     private RiskAnalysis compiledRiskAnalysis;
+    private UUID purposeIdToSign;
+    private RiskAnalysisSignSeed riskAnalysisSignSeed;
 
     public PurposeRiskAnalysisCompilationSteps(
             ClientTokenConfigurator clientTokenConfigurator,
@@ -303,12 +305,28 @@ public class PurposeRiskAnalysisCompilationSteps {
         verifyRiskAnalysisSigningState("SIGNED");
     }
 
-    @When("l'utente convalida l'analisi del rischio della finalità")
-    public void userSignsRiskAnalysis() {
+    @Given("l'utente acquisisce la versione dei metadati della finalità da convalidare")
+    public void userRetrievesPurposeMetadataVersionToSign() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
 
-        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
-        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        Integer version = purposeApiClient.getPurposeMetadataVersion(purposeId);
+
+        riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
+        purposeIdToSign = purposeId;
+    }
+
+    /* Il get dell'informazione metadataVersion, necessaria per il sign, è deliberatamente fatta altrove e non in questo
+    * step, per lasciar la possibilità di usare questo step anche in test negativi, in cui viene settato un valore
+    * di metadataVersion errato. */
+    @When("l'utente convalida l'analisi del rischio della finalità")
+    public void userSignsRiskAnalysis() {
+        if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
+            throw new IllegalStateException("Acquisire prima la versione dei metadati della finalità da convalidare con un utente autorizzato");
+        }
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
     }
 
     @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")
