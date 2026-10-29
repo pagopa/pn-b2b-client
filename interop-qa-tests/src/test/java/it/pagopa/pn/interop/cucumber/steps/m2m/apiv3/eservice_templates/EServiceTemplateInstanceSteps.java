@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
@@ -21,6 +22,7 @@ public class EServiceTemplateInstanceSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final IM2MV3EServiceTemplateClient templateClient;
+    private UpdateEServiceTemplateInstanceSeed lastInstanceUpdateSeed;
 
     /** Uses the explicit v3 client, authenticated by the existing M2M authentication steps. */
     public EServiceTemplateInstanceSteps(
@@ -38,6 +40,39 @@ public class EServiceTemplateInstanceSteps {
         UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
         httpCallExecutor.performCallSavingBodyResponse(
             () -> templateClient.createEServiceInstanceFromTemplate(templateId, new InstanceEServiceSeed()));
+    }
+
+    /** Updates the instance flags through M2M v3 and preserves the HTTP status and body. */
+    @When("l'utente m2m v3 tenta la modifica dei campi dell'istanza dell'e-service template")
+    public void updateEServiceTemplateInstance() {
+        UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        lastInstanceUpdateSeed = new UpdateEServiceTemplateInstanceSeed()
+            .isClientAccessDelegable(true)
+            .isConsumerDelegable(true)
+            .isSignalHubEnabled(true);
+        httpCallExecutor.performCallSavingBodyResponse(
+            () -> templateClient.updateEServiceTemplateInstance(eserviceId, lastInstanceUpdateSeed));
+    }
+
+    /** Checks the update response against the target instance and the submitted flags. */
+    @Then("l'e-service restituito dalla modifica M2M v3 è coerente con i campi richiesti")
+    public void checkUpdatedEServiceResponse() {
+        UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
+        assertThat(lastInstanceUpdateSeed).as("Richiesta di modifica dell'istanza").isNotNull();
+
+        assertThat(httpCallExecutor.getResponse())
+            .as("E-service restituito dalla modifica M2M v3")
+            .isInstanceOfSatisfying(EService.class, updated -> assertSoftly(softly -> {
+                softly.assertThat(updated.getId()).as("ID dell'istanza modificata").isEqualTo(eserviceId);
+                softly.assertThat(updated.getTemplateId()).as("Template di origine").isEqualTo(templateId);
+                softly.assertThat(updated.getIsClientAccessDelegable()).as("Delega tecnica")
+                    .isEqualTo(lastInstanceUpdateSeed.getIsClientAccessDelegable());
+                softly.assertThat(updated.getIsConsumerDelegable()).as("Delega amministrativa")
+                    .isEqualTo(lastInstanceUpdateSeed.getIsConsumerDelegable());
+                softly.assertThat(updated.getIsSignalHubEnabled()).as("Signal Hub")
+                    .isEqualTo(lastInstanceUpdateSeed.getIsSignalHubEnabled());
+            }));
     }
 
     /** Checks the creation response against the BFF setup without performing further API calls. */
