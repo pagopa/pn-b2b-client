@@ -14,6 +14,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTe
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceDescriptorQuotasSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
@@ -34,6 +35,7 @@ public class EServiceTemplateInstanceSteps {
     private EServiceInstanceLabelUpdateSeed lastInstanceLabelUpdateSeed;
     private UUID lastInstanceLabelUpdateEServiceId;
     private UpdateEServiceDescriptorTemplateInstanceSeed lastDescriptorUpdateSeed;
+    private UpdateEServiceTemplateInstanceDescriptorQuotasSeed lastDescriptorQuotasUpdateSeed;
 
     /** Uses the explicit v3 client, authenticated by the existing M2M authentication steps. */
     public EServiceTemplateInstanceSteps(
@@ -153,6 +155,46 @@ public class EServiceTemplateInstanceSteps {
                     .isEqualTo(lastDescriptorUpdateSeed.getDailyCallsTotal());
                 softly.assertThat(updated.getAgreementApprovalPolicy()).as("Politica di approvazione")
                     .isEqualTo(lastDescriptorUpdateSeed.getAgreementApprovalPolicy());
+            }));
+    }
+
+    /** Updates daily call quotas through M2M v3, preserving the HTTP status and body. */
+    @When("l'utente m2m v3 tenta la modifica delle soglie di chiamate del descriptor dell'istanza dell'e-service template")
+    public void updateTemplateInstanceDescriptorQuotas() {
+        UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        lastDescriptorQuotasUpdateSeed = new UpdateEServiceTemplateInstanceDescriptorQuotasSeed()
+            .dailyCallsPerConsumer(10)
+            .dailyCallsTotal(20);
+        httpCallExecutor.performCallSavingBodyResponse(
+            () -> templateClient.updateTemplateInstanceDescriptorQuotas(eserviceId, descriptorId, lastDescriptorQuotasUpdateSeed));
+    }
+
+    /**
+     * Checks the returned descriptor quotas and confirms that its lifecycle state is unchanged.
+     *
+     * @param expectedState descriptor state established by the BFF preconditions
+     */
+    @Then("il descriptor restituito dalla modifica delle soglie M2M v3 è coerente con i valori richiesti e resta in stato {eServiceDescriptorState}")
+    public void checkUpdatedDescriptorQuotasResponse(
+        it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState expectedState
+    ) {
+        UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        UUID templateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+        assertThat(lastDescriptorQuotasUpdateSeed).as("Richiesta di modifica delle soglie").isNotNull();
+
+        assertThat(httpCallExecutor.getResponse())
+            .as("Descriptor restituito dalla modifica delle soglie M2M v3")
+            .isInstanceOfSatisfying(EServiceDescriptor.class, updated -> assertSoftly(softly -> {
+                softly.assertThat(updated.getId()).as("ID del descriptor modificato").isEqualTo(descriptorId);
+                softly.assertThat(updated.getTemplateVersionId()).as("Versione del template di origine")
+                    .isEqualTo(templateVersionId);
+                softly.assertThat(updated.getState()).as("Stato del descriptor invariato")
+                    .isEqualTo(EServiceDescriptorState.fromValue(expectedState.getValue()));
+                softly.assertThat(updated.getDailyCallsPerConsumer()).as("Soglia giornaliera per fruitore")
+                    .isEqualTo(lastDescriptorQuotasUpdateSeed.getDailyCallsPerConsumer());
+                softly.assertThat(updated.getDailyCallsTotal()).as("Soglia giornaliera totale")
+                    .isEqualTo(lastDescriptorQuotasUpdateSeed.getDailyCallsTotal());
             }));
     }
 
