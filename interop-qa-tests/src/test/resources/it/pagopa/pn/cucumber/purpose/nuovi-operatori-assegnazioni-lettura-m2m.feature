@@ -6,6 +6,7 @@ Feature: Autorizzazione alla lettura dell'assegnazione RA tramite M2M
   # NOTA 19/10/2026: al momento lo step di verifica controlla unicamente la modalità perché la GET M2M non espone
   # ancora i valutatori (blocco contrattuale segnalato su https://pagopa.atlassian.net/browse/PIN-11189). Lo step è già
   # intitolato per coprire sia modalità che valutatori; al rilascio della fix andrà aggiornato esclusivamente il corpo del metodo Java.
+  @happy-path
   Scenario Outline: [M2M_RA_READ_OWNER_01] Lettura con utente m2m ente proprietario - <mode>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -26,6 +27,7 @@ Feature: Autorizzazione alla lettura dell'assegnazione RA tramite M2M
 
   # CDT 7.7: PA2 non è né il fruitore GSP né l'erogatore PA1.
   # Il diniego è verificato sulla GET M2M reale, senza fallback BFF.
+  @sad-path
   Scenario Outline: [M2M_RA_READ_OTHER_TENANT_01] Lettura negata al client m2m di altro ente - <mode>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

@@ -1,4 +1,6 @@
-@purpose @nuovi-operatori @evol-nuovi-operatori @m2m-events @m2m-ra-review @m2m-ra-events
+# NOTA: il tag @m2m-events non è presente perché incluso in NrtTest e M2MEvents (che eseguono con API M2M V2),
+# mentre questi scenari richiedono il profilo API M2M V3 e vengono selezionati tramite @m2m-ra-events / @m2m-ra-review / @evol-nuovi-operatori.
+@purpose @nuovi-operatori @evol-nuovi-operatori @m2m-ra-review @m2m-ra-events @happy-path
 Feature: Eventi di piattaforma delle assegnazioni RA via M2M
 
   # CDT 7.8: azione tramite m2m-admin, consultazione per il solo proprietario.

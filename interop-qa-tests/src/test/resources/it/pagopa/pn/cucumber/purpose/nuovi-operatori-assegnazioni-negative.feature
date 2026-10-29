@@ -21,6 +21,7 @@ Feature: Diniego delle modifiche di assegnazione dell'analisi del rischio
     And l'utente è un "admin" di "GSP"
     And l'assegnazione e i dati dell'analisi del rischio sono rimasti invariati
 
+    @bff-ra-review
     Examples: CDT 1.4 - BFF RA firmata
       | apiSet | caso            | modeIniziale                | statoRA | statoFinalita | ruolo | enteAttore | reviewerFinali | modeFinale                  | status |
       | BFF    | SIGNED reviewer | AdminWritesReviewerSigns    | SIGNED  | DRAFT         | admin | GSP        | 2              | AdminWritesReviewerSigns    | 409    |
@@ -29,6 +30,7 @@ Feature: Diniego delle modifiche di assegnazione dell'analisi del rischio
       | BFF    | SIGNED mode     | ReviewerWritesReviewerSigns | SIGNED  | DRAFT         | admin | GSP        | 1              | AdminWritesReviewerSigns    | 409    |
 
     # CDT 1.5: RA modificabile per isolare il diniego di ruolo (non il blocco SIGNED).
+    @bff-ra-review
     Examples: CDT 1.5 - BFF ruoli non autorizzati
       | apiSet | caso     | modeIniziale                | statoRA  | statoFinalita | ruolo        | enteAttore | reviewerFinali | modeFinale                  | status |
       | BFF    | reviewer | AdminWritesReviewerSigns    | DRAFT    | DRAFT         | support      | GSP        | 2              | AdminWritesReviewerSigns    | 403    |

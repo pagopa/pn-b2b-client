@@ -2,6 +2,7 @@
 Feature: Verifiche legacy della feature Nuovi Operatori su finalita senza workflow revisione
 
   # PST: Scenario 22 - Caso 22.1
+  @happy-path
   Scenario Outline: [LEGACY_WORKFLOW_22_1_STATO_VARIABILE] Verifica assenza workflow di revisione su finalita legacy
 	Given "PA1" ha già creato e pubblicato 1 e-service
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

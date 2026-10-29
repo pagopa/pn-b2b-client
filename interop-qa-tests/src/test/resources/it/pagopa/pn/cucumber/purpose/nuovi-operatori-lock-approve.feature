@@ -82,7 +82,7 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
       | AdminWritesReviewerSigns    | compila l'analisi del rischio tramite endpoint generico con successo              | l'utente invia il submit dell'analisi del rischio della finalità con successo | admin         | titolo         | SUBMITTED | 1            |
       | ReviewerWritesReviewerSigns | il valutatore assegnato compila l'analisi del rischio della finalità con successo | lo stato della compilazione dell'analisi del rischio è "ASSIGNED"             | reviewer      | risposte       | ASSIGNED  | 3            |
 
-  @sad-path
+  @happy-path
   # NB: il controllo riguarda nello specifico il campo "hasUnreadNotifications" dell'oggetto Purpose, NON le notifiche in-app.
   # Si usano i reviewer 2 e 3 perché al momento 1 non è abilitato alla ricezione delle notifiche
   Scenario: [RA_ASSIGN_NOTIFICATION_01] Ad ogni valutatore a cui è stata assegnata una finalità risultano delle notifiche associate a quella finalità

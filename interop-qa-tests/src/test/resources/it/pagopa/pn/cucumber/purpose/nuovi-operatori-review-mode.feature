@@ -52,6 +52,7 @@ Feature: Cambio modalità di revisione e gestione dei dati dell'analisi del risc
     And i dati RA dopo il cambio modalità risultano <effettoRA>
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
+    @bff-ra-review
     Examples: BFF - CDT 1.2 e 1.3
       | apiSet | modeIniziale                | statoIniziale | modeFinale                  | effettoRA  | reviewerFinali |
       | BFF    | AdminWritesAdminSigns       | DRAFT         | ReviewerWritesReviewerSigns | azzerati   | 1              |

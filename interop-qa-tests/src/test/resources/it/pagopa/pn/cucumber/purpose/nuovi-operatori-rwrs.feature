@@ -41,6 +41,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
 
   # OK
   # PST: Scenario 11 - Caso 11.1
+  @sad-path
   Scenario: [RWRS_ASSEGNAZIONE_11_1_MODALITA_MANCANTE] Assegnazione valutatore senza modalità
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -51,6 +52,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
 
   # OK
   # PST: Scenario 11 - Caso 11.1
+  @sad-path
   Scenario: [RWRS_ASSEGNAZIONE_11_1_VALUTATORE_MANCANTE] Assegnazione valutatore senza utenti valutatori
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -62,6 +64,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
   # PST: Scenario 11 - Caso 11.1
   # 19/06/2026 Al momento impossibile da eseguire poiché si ha a disposizione una sola utenza reviewer
   @wait_for_fix
+  @sad-path
   Scenario: [RWRS_ASSEGNAZIONE_11_1_MULTIPLO] Assegnazione valutatore con più utenti valutatori
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -72,6 +75,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
 
   # OK
   # PST: Scenario 12 - Caso 12.1
+  @happy-path
   Scenario: [RWRS_COMPILAZIONE_12_1_REVISORE] Compilazione analisi del rischio da parte del valutatore assegnato (positivo)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -84,6 +88,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
     And lo stato della compilazione dell'analisi del rischio è "ASSIGNED"
 
   @privacy-policy-url
+  @happy-path
   Scenario: [RWRS_COMPILAZIONE_12_1_REVISORE_INFORMATIVA_1] Compilazione analisi del rischio da parte del valutatore assegnato, specificando un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
     Given "PA1" ha già creato e pubblicato 1 e-service con personalData true
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -96,6 +101,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
 
   # OK
   # PST: Scenario 12 - Caso 12.1
+  @sad-path
   Scenario: [RWRS_COMPILAZIONE_12_1_NON_REVIEWER] Compilazione analisi del rischio da parte di utente non reviewer (negativo)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -109,6 +115,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
   # PST: Scenario 12 - Caso 12.1
   # 19/06/2026 Al momento impossibile da eseguire poiché si ha a disposizione una sola utenza reviewer
   @wait_for_fix
+  @sad-path
   Scenario: [RWRS_COMPILAZIONE_12_1_REVIEWER_NON_ASSEGNATO] Compilazione analisi del rischio da parte di reviewer non assegnato (negativo)
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -121,6 +128,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
 
    # PST: Scenario 12 - Caso 12.1
    # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10405
+   @sad-path
    Scenario: [RWRS_COMPILAZIONE_12_1_ENDPOINT_GENERICO] Compilazione analisi del rischio tramite endpoint generico (negativo)
      Given "PA1" ha già creato e pubblicato 1 e-service
      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service

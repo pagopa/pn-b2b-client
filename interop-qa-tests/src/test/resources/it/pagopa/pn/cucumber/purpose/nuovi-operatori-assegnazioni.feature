@@ -172,6 +172,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
   # Prime assegnazioni singole e multiple in M2M_RA_REVIEW_01.
   # CDT 7.3 (Examples M2M): rimozione singola 1,2 -> 1,
   # rimozione multipla 1,2,3,4 -> 1,2 e sostituzione completa 1,2 -> 3,4.
+  @happy-path
   Scenario Outline: [ASSIGN_MORE_REVIEWERS_DRAFT_01] <apiSet> - <caso> da <modeIniziale>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -213,6 +214,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 
   # CDT 1.1/7.4: RWRS/ASSIGNED -> AWRS/DRAFT; la lista personale non mostra
   # la finalità finché l'admin non effettua il submit.
+  @happy-path
   Scenario Outline: [ASSIGN_MORE_REVIEWERS_TO_DRAFT_01] <apiSet> - <caso> da RWRS/ASSIGNED
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -241,6 +243,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 
   # RWRS/ASSIGNED -> RWRS/ASSIGNED: i reviewer assegnati vedono la finalità;
   # quelli rimossi non la vedono più.
+  @happy-path
   Scenario Outline: [ASSIGN_MORE_REVIEWERS_ASSIGNED_01] <apiSet> - <caso> da <modeIniziale>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -279,6 +282,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 
   # CDT 7.2/7.4: dopo la prima assegnazione in AWRS/DRAFT i reviewer non vedono
   # la finalità nella lista personale fino al submit dell'analisi del rischio.
+  @m2m-ra-review @happy-path
   Scenario Outline: [M2M_RA_REVIEW_DRAFT_01] Prima assegnazione mode 1 verso AWRS/DRAFT - <caso>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -292,16 +296,15 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità AdminWritesReviewerSigns
     And lo stato della compilazione dell'analisi del rischio è "DRAFT"
 
-    @nuovi-operatori-execution
     Examples: mode 2
-      | caso                                 | reviewerFinali |
-      | Mode 1 non pubblicata verso mode 2    | 2              |
-      | Prima assegnazione multipla verso mode 2 | 1,2         |
+      | caso                                     | reviewerFinali |
+      | Mode 1 non pubblicata verso mode 2       | 2              |
+      | Prima assegnazione multipla verso mode 2 | 1,2            |
 
   # CDT 7.2: prima assegnazione singola e multipla via M2M.
   # CDT 7.4: mode 1 non pubblicata e mode 2 in SUBMITTED/REJECTED.
   # Mode 2 DRAFT e mode 3 ASSIGNED sono coperti dagli Examples M2M di ASSIGN_MORE_REVIEWERS_01.
-  @m2m-ra-review
+  @m2m-ra-review @happy-path
   Scenario Outline: [M2M_RA_REVIEW_01] Modifica assegnazione prima di firma o pubblicazione - <caso>
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -316,7 +319,6 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
     And ai valutatori assegnati risulta correttamente assegnata la finalità
     And i valutatori rimossi rispetto all'assegnazione iniziale non vedono più la finalità nelle assegnazioni
 
-    @nuovi-operatori-execution
     Examples: mode 1
       # Il controllo dei rimossi usa lo snapshot iniziale: lista vuota nei quattro casi mode 1.
       # Le sostituzioni SUBMITTED/REJECTED verificano anche l'assenza del reviewer 1.
@@ -330,7 +332,7 @@ Feature: Consultazione delle assegnazioni e modifica della finalità per i Nuovi
 
   # CDT 7.4: in AWRS/REJECTED la sostituzione M2M del reviewer aggiorna l'assegnatario,
   # e al successivo submit dell'admin la finalità compare tra le assegnazioni del nuovo reviewer.
-  @m2m-ra-review @nuovi-operatori-rejected
+  @m2m-ra-review @happy-path
   Scenario: [M2M_RA_REVIEW_REJECTED_01] Modifica assegnazione in stato REJECTED e visibilità dopo nuovo submit
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
