@@ -114,7 +114,7 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m v3 tenta la modifica delle soglie di chiamate del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 200
-    And il descriptor dell'istanza dell'e-service template è stato modificato correttamente
+    And il descriptor restituito dalla modifica delle soglie M2M v3 è coerente con i valori richiesti e resta in stato <state>
 
     Examples:
       | mode       | state      |
