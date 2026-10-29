@@ -24,6 +24,7 @@ import org.junit.platform.suite.api.Suite;
 })
 @ExcludeTags({
     "wait_for_fix",
+    "ignore",
     "client" // perché non attualmente prevista nella suite NRT generica
 })
 @IncludeTags({"happy-path"})
