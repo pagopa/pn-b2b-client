@@ -12,15 +12,7 @@ import static io.cucumber.junit.platform.engine.Constants.PARALLEL_EXECUTION_ENA
 import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 
 /**
- * QA-18544 / PST QA-18546: verifica degli output Paper Tracker in modalità RUN.
- *
- * <p>Predisporre Paper Tracker in RUN per i prodotti interessati; per la 890
- * rispettare il filtro EC disattivo e la configurazione OCR prevista dalle sequenze.
- * Il runner seleziona i casi ma non modifica la configurazione dell'ambiente.</p>
- * <pre>
- * ./mvnw -Dtest=PaperTrackerOutputsRunTest test
- * ./mvnw -Dtest=PaperTrackerOutputsRunTest -Dcucumber.execution.dry-run=true test
- * </pre>
+ * Esegue gli scenari di verifica degli output Paper Tracker in modalità operativa RUN.
  */
 @Suite
 @IncludeEngines("cucumber")
