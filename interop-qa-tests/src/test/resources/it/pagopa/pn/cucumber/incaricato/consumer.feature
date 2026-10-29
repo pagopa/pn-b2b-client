@@ -791,6 +791,9 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code 200
 
+    # Dalla release 2.25.0, la risoluzione del ticket PIN-9962 neghera' l'invocazione di questo endpoint al ruolo "api".
+    # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+    # Al rilascio della 2.25.0, rimuovere il ruolo "api" dagli Examples di questo Scenario Outline.
     Examples:
       | ruolo        |
       | admin        |
@@ -811,6 +814,9 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegato visualizza l'elenco delle deleghe ricevute
     Then si ottiene status code 200
 
+    # Dalla release 2.25.0, la risoluzione del ticket PIN-9962 neghera' l'invocazione di questo endpoint al ruolo "api".
+    # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+    # Al rilascio della 2.25.0, rimuovere il ruolo "api" dagli Examples di questo Scenario Outline.
     Examples:
       | ruolo        |
       | admin        |
@@ -959,3 +965,32 @@ Feature: Test API Availability in Use of E-Service
       | GSP           | PA2            | 200         |
       | Privato       | PA2            | 200         |
       | PA3           | PA2            | 200         |
+
+  # Al rilascio del ticket PIN-9962 nella release 2.25.0, rimuovere il tag @ignore da questo scenario.
+  # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+  @sad-path @deleghe2 @ignore
+  Scenario: [DELEGATIONS_ACCESS_CONTROL_1] Un utente delegante con ruolo api non può visualizzare l'elenco delle deleghe conferite
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "api" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    When l'ente delegante visualizza l'elenco delle deleghe conferite
+    Then si ottiene status code 403
+
+  # Al rilascio del ticket PIN-9962 nella release 2.25.0, rimuovere il tag @ignore da questo scenario.
+  # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+  @sad-path @deleghe2 @ignore
+  Scenario: [DELEGATIONS_ACCESS_CONTROL_2] Un utente delegato con ruolo api non può visualizzare l'elenco delle deleghe ricevute
+    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegato "PA2"
+    And l'utente è un "admin" dell'ente delegato
+    And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
+    And l'ente delegante "PA1"
+    And l'utente è un "api" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+    And l'utente è un "api" dell'ente delegato
+    When l'ente delegato visualizza l'elenco delle deleghe ricevute
+    Then si ottiene status code 403
