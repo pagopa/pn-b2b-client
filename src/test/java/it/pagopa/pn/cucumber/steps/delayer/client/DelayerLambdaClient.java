@@ -75,6 +75,21 @@ public class DelayerLambdaClient {
         deleteData(null);
     }
 
+    public void deleteMockTables() {
+        deleteMockTables(
+                DelayerTable.DelayerPaperDeliveryMock,
+                DelayerTable.PaperDeliveryCountersMock,
+                DelayerTable.PaperDeliveryDriverCapacitiesMock,
+                DelayerTable.PaperDeliveryDriverUsedCapacitiesMock,
+                DelayerTable.PaperDeliverySenderLimitMock,
+                DelayerTable.PaperDeliveryUsedSenderLimitMock
+        );
+    }
+
+    public void deleteMockTables(Object... tables) {
+        invoke(DelayerOperation.DELETE_MOCK_TABLES, Void.class, paramsOf(tables));
+    }
+
     public Optional<DelayerUsedCapacity> getUsedCapacity(String unifiedDeliveryDriver,
                                                          String geoKey,
                                                          String deliveryDate) {
