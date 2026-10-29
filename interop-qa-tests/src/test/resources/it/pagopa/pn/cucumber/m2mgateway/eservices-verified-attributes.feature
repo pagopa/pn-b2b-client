@@ -379,7 +379,11 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    When via M2M il delegato all'erogazione assegna a "PA2" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
+    When l'utente assegna a "PA2" l'attributo verificato precedentemente creato
+    And si ottiene status code 204
+    And via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 400
 
   @wait_for_fix
@@ -390,7 +394,9 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     Given "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    When via M2M il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    Then si ottiene status code 200
+    And via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 200
 
   @wait_for_fix
@@ -402,5 +408,8 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente è un "admin" di "PA2"
-    And l'utente assegna a "PA3" l'attributo verificato precedentemente creato
+    And via M2M l'utente assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
+    When il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
+    And via M2M l'utente revoca l'attributo precedentemente verificato
     Then si ottiene status code 400
