@@ -92,7 +92,7 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m v3 tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 200
-    And il descriptor dell'istanza in stato DRAFT dell'e-service template è stato modificato correttamente
+    And il descriptor restituito dalla modifica M2M v3 è coerente con i campi richiesti
 
     Examples:
       | mode       |
