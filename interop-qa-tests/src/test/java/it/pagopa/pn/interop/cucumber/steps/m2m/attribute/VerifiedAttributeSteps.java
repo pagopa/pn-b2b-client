@@ -7,6 +7,7 @@ import it.pagopa.interop.agreement.service.IM2MTenantClient;
 import it.pagopa.interop.attribute.service.IM2MVerifiedAttributeClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -186,6 +187,72 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
         assertThat(actualRevokers)
             .as("Verifica che gli enti revocatori attesi siano quelli effettivamente restituiti")
             .containsExactlyInAnyOrderElementsOf(expectedRevokers);
+    }
+
+    @When("via M2M l'utente assegna a {string} l'attributo verificato precedentemente creato")
+    public void assignVerifiedAttribute(String tenantType) {
+        UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        httpExecutor.performCall(
+                () -> tenantClient.assignTenantVerifiedAttribute(
+                        tenantId,
+                        attributeId,
+                        sharedStepsContext.getAgreementCommonContext().getAgreementId(),
+                        null
+                )
+        );
+    }
+
+    @When("via M2M il delegato all'erogazione assegna a {string} l'attributo verificato precedentemente creato")
+    public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
+        // Lo step prevede che sia impostato il tenant effettivamente delegato dallo step precedente
+        UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
+                UUID.randomUUID() :
+                sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        sharedStepsContext.getAttributeCommonContext().setAttributeConsumerTenant(tenantType);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> tenantClient.assignTenantVerifiedAttribute(
+                        tenantId,
+                        delegationId,
+                        attributeId,
+                        sharedStepsContext.getAgreementCommonContext().getAgreementId(),
+                        null
+                )
+        );
+    }
+
+    @When("via M2M l'utente revoca l'attributo precedentemente verificato")
+    public void revokeAttributePreviouslyCreated() {
+        UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(
+                sharedStepsContext.getAttributeCommonContext().getAttributeConsumerTenant()
+        );
+        httpExecutor.performCall(
+                () -> tenantClient.revokeTenantVerifiedAttribute(
+                        tenantId,
+                        sharedStepsContext.getAttributeCommonContext().getAttributeId(),
+                        sharedStepsContext.getAgreementCommonContext().getAgreementId())
+        );
+    }
+
+    @When("via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreated() {
+        // Lo step prevede che sia impostato il tenant effettivamente delegato dallo step precedente
+        UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(
+                sharedStepsContext.getAttributeCommonContext().getAttributeConsumerTenant()
+        );
+        UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
+                UUID.randomUUID() :
+                sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        httpExecutor.performCall(
+                () -> tenantClient.revokeTenantVerifiedAttribute(
+                        tenantId,
+                        delegationId,
+                        sharedStepsContext.getAttributeCommonContext().getAttributeId(),
+                        sharedStepsContext.getAgreementCommonContext().getAgreementId())
+        );
     }
 
     @Override

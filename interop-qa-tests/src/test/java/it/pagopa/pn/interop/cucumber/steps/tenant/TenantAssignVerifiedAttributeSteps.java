@@ -36,6 +36,33 @@ public class TenantAssignVerifiedAttributeSteps {
         );
     }
 
+    @When("il delegato all'erogazione assegna a {string} l'attributo verificato precedentemente creato")
+    public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        // Se non è stato indicato un delegato, usa il tenant corrente
+        if (delegateTenant == null) {
+            clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        } else {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+        }
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
+                UUID.randomUUID() :
+                sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        sharedStepsContext.getAttributeCommonContext().setAttributeConsumerTenant(tenantType);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().verifyVerifiedAttribute(
+                        tenantId,
+                        new VerifiedTenantAttributeSeed()
+                                .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                                .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
+                                //.delegationId(delegationId) TODO attivare quando pronto per OpenAPI
+                )
+        );
+    }
+
     @When("l'utente assegna a {string} l'attributo verificato precedentemente creato con data di scadenza nel futuro")
     public void assignVerifiedAttributeWithFutureExpireDate(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

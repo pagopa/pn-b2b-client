@@ -10,10 +10,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevokers;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.TenantsApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttribute;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.TenantCertifiedDiscreteAttributes;
-import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateTenantCertifiedDiscreteAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 import it.pagopa.interop.utils.ApiClientUtils;
 import java.util.Collections;
 import java.util.Map;
@@ -88,5 +85,31 @@ public class M2MV3TenantClientImpl extends AbstractDPoPClient implements IM2MV3T
     @Override
     public TenantCertifiedDiscreteAttribute replaceTenantCertifiedDiscreteAttribute(UUID tenantId, UUID attributeId, UpdateTenantCertifiedDiscreteAttributeSeed updateTenantCertifiedDiscreteAttributeSeed) {
         return this.tenantsApi.replaceTenantCertifiedDiscreteAttribute(tenantId, attributeId, updateTenantCertifiedDiscreteAttributeSeed);
+    }
+
+    @Override
+    public void revokeTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
+        revokeTenantVerifiedAttribute(tenantId, null, attributeId, agreementId);
+    }
+
+    @Override
+    public void revokeTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId) {
+        // TODO tuning per delegationId
+        this.tenantsApi.revokeTenantVerifiedAttribute(tenantId, attributeId, agreementId);
+    }
+
+    @Override
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId, String expirationDate) {
+        assignTenantVerifiedAttribute(tenantId, null, attributeId, agreementId, expirationDate);
+    }
+
+    @Override
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId, String expirationDate) {
+        // TODO tuning per delegationId
+        TenantVerifiedAttributeSeed seed = new TenantVerifiedAttributeSeed();
+        seed.setId(attributeId);
+        seed.setAgreementId(agreementId);
+        seed.setExpirationDate(expirationDate);
+        this.tenantsApi.assignTenantVerifiedAttribute(tenantId, seed);
     }
 }

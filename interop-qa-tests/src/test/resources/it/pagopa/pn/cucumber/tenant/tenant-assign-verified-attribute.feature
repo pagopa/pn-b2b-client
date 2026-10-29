@@ -52,7 +52,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     Then si ottiene status code 204
 
   @nrt-minimal
-  @tenant_assign_verified_attribute4 @wait_for_fix @PIN-5198
+  @tenant_assign_verified_attribute4
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_04] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo con data di scadenza nel passato ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, ottiene un errore
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un attributo verificato
@@ -65,8 +65,46 @@ Feature: Assegnazione di un attributo verificato ad un aderente
   @tenant_assign_verified_attribute5
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_05] Per un attributo verificato precedentemente creato da un aderente, alla richiesta di assegnazione dell’attributo senza scadenza al proprio ente da parte di un utente con sufficienti permessi (admin), ottiene un errore. Spiega: un ente non può autoassegnarsi attributi verificati
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato un attributo verificato
-    Given "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
-    Given "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When l'utente assegna a "PA1" l'attributo verificato precedentemente creato
+    And "PA2" ha già creato un attributo verificato
+    And "PA2" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA1" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA2"
+    And l'utente assegna a "PA2" l'attributo verificato precedentemente creato
     Then si ottiene status code 403
+
+  @nrt-minimal @wait_for_fix
+  @tenant_assign_verified_attribute6
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla verifica dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When il delegato all'erogazione assegna a "PA2" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
+
+  @nrt-minimal @wait_for_fix
+  @tenant_assign_verified_attribute7 @deleghe2
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla verifica dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    Given "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 200
+
+  @nrt-minimal @wait_for_fix
+  @tenant_assign_verified_attribute8 @deleghe2
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_08] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla verifica dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA2"
+    And l'utente assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 400
