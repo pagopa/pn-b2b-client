@@ -966,6 +966,8 @@ Feature: Test API Availability in Use of E-Service
       | Privato       | PA2            | 200         |
       | PA3           | PA2            | 200         |
 
+  # Al rilascio del ticket PIN-9962 nella release 2.25.0, rimuovere il tag @ignore da questo scenario.
+  # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
   @sad-path @deleghe2 @ignore
   Scenario: [DELEGATIONS_ACCESS_CONTROL_1] Un utente delegante con ruolo api non può visualizzare l'elenco delle deleghe conferite
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -978,6 +980,8 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code 403
 
+  # Al rilascio del ticket PIN-9962 nella release 2.25.0, rimuovere il tag @ignore da questo scenario.
+  # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
   @sad-path @deleghe2 @ignore
   Scenario: [DELEGATIONS_ACCESS_CONTROL_2] Un utente delegato con ruolo api non può visualizzare l'elenco delle deleghe ricevute
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
