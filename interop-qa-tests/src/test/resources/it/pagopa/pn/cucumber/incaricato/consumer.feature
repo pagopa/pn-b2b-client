@@ -791,10 +791,13 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegante visualizza l'elenco delle deleghe conferite
     Then si ottiene status code 200
 
-    # invocazione endpoint negata per ruolo "api" a seguito della risoluzione del ticket https://pagopa.atlassian.net/browse/PIN-9962
+    # Dalla release 2.25.0, la risoluzione del ticket PIN-9962 neghera' l'invocazione di questo endpoint al ruolo "api".
+    # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+    # Al rilascio della 2.25.0, rimuovere il ruolo "api" dagli Examples di questo Scenario Outline.
     Examples:
       | ruolo        |
       | admin        |
+      | api          |
       | security     |
       | api,security |
       | support      |
@@ -811,10 +814,13 @@ Feature: Test API Availability in Use of E-Service
     When l'ente delegato visualizza l'elenco delle deleghe ricevute
     Then si ottiene status code 200
 
-    # invocazione endpoint negata per ruolo "api" a seguito della risoluzione del ticket https://pagopa.atlassian.net/browse/PIN-9962
+    # Dalla release 2.25.0, la risoluzione del ticket PIN-9962 neghera' l'invocazione di questo endpoint al ruolo "api".
+    # Ticket: https://pagopa.atlassian.net/browse/PIN-9962
+    # Al rilascio della 2.25.0, rimuovere il ruolo "api" dagli Examples di questo Scenario Outline.
     Examples:
       | ruolo        |
       | admin        |
+      | api          |
       | security     |
       | api,security |
       | support      |
