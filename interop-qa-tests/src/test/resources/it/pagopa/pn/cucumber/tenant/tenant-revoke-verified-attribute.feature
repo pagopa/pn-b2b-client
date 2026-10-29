@@ -77,11 +77,12 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     Then si ottiene status code 400
 
   @nrt-minimal @wait_for_fix
-  @tenant_revoke_verified_attribute6 @no-parallel
+  @tenant_revoke_verified_attribute6 @no-parallel @deleghe2
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
@@ -90,11 +91,12 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     Then si ottiene status code 200
 
   @nrt-minimal @wait_for_fix
-  @tenant_revoke_verified_attribute7 @no-parallel
+  @tenant_revoke_verified_attribute7 @no-parallel @deleghe2
   Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
     And l'ente "PA2" accetta la delega in erogazione con successo
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
