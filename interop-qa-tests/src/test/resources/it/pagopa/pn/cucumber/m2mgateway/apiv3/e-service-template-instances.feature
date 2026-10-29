@@ -8,6 +8,7 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m v3 tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 200
+    And l'e-service restituito dalla creazione M2M v3 è coerente con il template di origine
 
     Examples:
       | mode       |
