@@ -65,6 +65,7 @@ Feature: verifica consume stream
       | email           | tullio.test@virgilio.it |
       | digitalDomicile | NULL                    |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
+    And si attende che venga prodotto l'elemento "DELIVERED" della notifica bonaria
     When si invoca l'api Webhook versione "V30" per ottenere gli elementi di timeline di tale notifica
     Then lo stream "V30" contiene solo elementi relativi a notifiche INFORMAL
     And viene modificato lo stato dell'apiKey in "BLOCK"
@@ -145,7 +146,7 @@ Feature: verifica consume stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V30"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V30"
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId               | MessaMora                  |
+      | campaignId               | CampAnalogic               |
       | messageId                | ${NEW-IT}                  |
       | subject                  | Test workflow              |
       | recipientType            | PG                         |

@@ -81,9 +81,24 @@ public class AgreementActivateSteps {
         tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, 50, 100);
     }
 
+    @Given("{string} ha già creato un e-service con prefisso {string} in stato {string} che richiede quegli attributi con approvazione {string}")
+    public void tenantHasAlreadyCreateEservice(String tenantType, String eServicePrefix, String descriptorState, String approvalAgreementPolicy) {
+        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, eServicePrefix, 50, 100);
+    }
+
     @Given("{string} ha già creato un e-service in stato {string} che richiede quegli attributi con approvazione {string} con dailyCallsPerConsumer uguale a {int} e dailyCallsTotal uguale a {int}")
     public void tenantHasAlreadyCreateEservice(String tenantType, String descriptorState, String approvalAgreementPolicy, Integer dailyCallsPerConsumer, Integer dailyCallsTotal) {
+        tenantHasAlreadyCreateEservice(tenantType, descriptorState, approvalAgreementPolicy, "e-service", dailyCallsPerConsumer, dailyCallsTotal);
+    }
 
+    private void tenantHasAlreadyCreateEservice(
+            String tenantType,
+            String descriptorState,
+            String approvalAgreementPolicy,
+            String eServicePrefix,
+            Integer dailyCallsPerConsumer,
+            Integer dailyCallsTotal)
+    {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         sharedStepsContext.getEServicesCommonContext().setProducerName(identityService.getTenantName(tenantType));
 
@@ -108,7 +123,7 @@ public class AgreementActivateSteps {
 
         try {
             EServiceDescriptor result = dataPreparationService.createEServiceAndDraftDescriptor(
-                    new EServiceSeed(), updateEServiceDescriptorSeed
+                    new EServiceSeed(), updateEServiceDescriptorSeed, eServicePrefix
             );
             UUID eserviceId = result.getEServiceId();
             UUID descriptorId = result.getDescriptorId();

@@ -165,7 +165,9 @@ Feature: Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
 
-  @devToolsClientAssertion
+  # Il caso non risulta riproducibile, vedere commento:
+  # https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/2839183413/SRS+Dev+Tools?focusedCommentId=2982051939
+  @devToolsClientAssertion @ignore
   Scenario: [VALIDATION_ERROR_CODE_0019_CONSUMER_CLIENT] Dato un client CONSUMER valido, quando il claim nbf è nel futuro allora la validazione formale fallisce con errore clientAssertionInvalidClaims
     Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
     And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
@@ -180,6 +182,22 @@ Feature: Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | SKIPPED | []                             |
       | clientAssertionSignatureVerification | SKIPPED | []                             |
       | platformStatesVerification           | SKIPPED | []                             |
+
+  @devToolsClientAssertion
+  Scenario: [VALIDATION_CLAIM_NBF_CONSUMER_CLIENT] Claim nbf viene validato con successo dal client assertion debugger, autorizzazione bearer
+    Given l'admin del fruitore "PA1" ha già creato un client di tipo CONSUMER aggiungendo se stesso come membro e caricando una coppia di chiavi
+    And l'admin dell'erogatore "PA2" ha creato un eservice e l'admin del fruitore "PA1" ha creato una richiesta di fruizione per quell'eservice e ha associato la finalità a quel client
+    When il tenant fruitore "PA1" crea una client assertion per un client di tipo CONSUMER con:
+      | claim | value |
+      | nbf   | now   |
+    And "PA1" richiede la validazione della client assertion appena creata
+    And si ottiene response status code 200
+    Then i risultati di validazione sono:
+      | step                                 | result | errors |
+      | clientAssertionValidation            | PASSED | []     |
+      | publicKeyRetrieve                    | PASSED | []     |
+      | clientAssertionSignatureVerification | PASSED | []     |
+      | platformStatesVerification           | PASSED | []     |
 
   #Bug aperto: https://pagopa.atlassian.net/browse/PIN-9993
   # 2026-05-08 per il momento non verrà applicato nessun fix, vedi https://pagopa.atlassian.net/browse/PIN-9540

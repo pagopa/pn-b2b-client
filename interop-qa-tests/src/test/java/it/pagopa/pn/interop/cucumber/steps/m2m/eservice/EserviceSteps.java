@@ -43,7 +43,9 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
+import static it.pagopa.pn.interop.cucumber.steps.catalog.EServiceCreationSteps.RANDOM_NAME_PLACEHOLDER;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
 import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
@@ -124,6 +126,12 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         if (data.containsKey("description-length")) {
             int descriptionLength = Integer.parseInt(data.get("description-length"));
             seed.description((new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue());
+        }
+        if (data.containsKey("name")) {
+            String eServiceName = data.get("name").replace("%blank%", " ");
+            eServiceName = RANDOM_NAME_PLACEHOLDER.matcher(eServiceName)
+                    .replaceAll(match -> RandomStringUtils.insecure().nextAlphanumeric(Integer.parseInt(match.group(1))));
+            seed.name(eServiceName);
         }
 
         EServiceCreateRequest request = EServiceCreateRequest.fromSeed(seed);
