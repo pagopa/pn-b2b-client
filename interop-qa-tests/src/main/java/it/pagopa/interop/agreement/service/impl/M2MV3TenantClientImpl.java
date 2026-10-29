@@ -99,14 +99,15 @@ public class M2MV3TenantClientImpl extends AbstractDPoPClient implements IM2MV3T
     }
 
     @Override
-    public void assignTenantVerifiedAttribute(UUID tenantId, UUID agreementId, String expirationDate) {
-        assignTenantVerifiedAttribute(tenantId, null, agreementId, expirationDate);
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId, String expirationDate) {
+        assignTenantVerifiedAttribute(tenantId, null, attributeId, agreementId, expirationDate);
     }
 
     @Override
-    public void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID agreementId, String expirationDate) {
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId, String expirationDate) {
         // TODO tuning per delegationId
         TenantVerifiedAttributeSeed seed = new TenantVerifiedAttributeSeed();
+        seed.setId(attributeId);
         seed.setAgreementId(agreementId);
         seed.setExpirationDate(expirationDate);
         this.tenantsApi.assignTenantVerifiedAttribute(tenantId, seed);

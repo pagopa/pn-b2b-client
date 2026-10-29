@@ -192,9 +192,11 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("via M2M l'utente assegna a {string} l'attributo verificato precedentemente creato")
     public void assignVerifiedAttribute(String tenantType) {
         UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
         httpExecutor.performCall(
                 () -> tenantClient.assignTenantVerifiedAttribute(
                         tenantId,
+                        attributeId,
                         sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         null
                 )
@@ -205,6 +207,7 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
         // Lo step prevede che sia impostato il tenant effettivamente delegato dallo step precedente
         UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
         UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
                 UUID.randomUUID() :
                 sharedStepsContext.getDelegationCommonContext().getDelegationId();
@@ -214,6 +217,7 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
                 () -> tenantClient.assignTenantVerifiedAttribute(
                         tenantId,
                         delegationId,
+                        attributeId,
                         sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         null
                 )

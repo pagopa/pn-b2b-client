@@ -10,6 +10,6 @@ public interface IM2MTenantClient extends SettableBearerToken {
     TenantVerifiedAttributeRevokers getRevokers(UUID organizationId, UUID verifiedAttributeId);
     void revokeTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId);
     void revokeTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId);
-    void assignTenantVerifiedAttribute(UUID tenantId, UUID agreementId, String expirationDate);
-    void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID agreementId, String expirationDate);
+    void assignTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId, String expirationDate);
+    void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId, String expirationDate);
 }
