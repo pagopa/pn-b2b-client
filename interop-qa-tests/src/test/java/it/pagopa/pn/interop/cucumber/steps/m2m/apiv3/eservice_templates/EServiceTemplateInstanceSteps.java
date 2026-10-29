@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.AgreementApprovalPolicy;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTechnology;
@@ -36,6 +37,7 @@ public class EServiceTemplateInstanceSteps {
     private UUID lastInstanceLabelUpdateEServiceId;
     private UpdateEServiceDescriptorTemplateInstanceSeed lastDescriptorUpdateSeed;
     private UpdateEServiceTemplateInstanceDescriptorQuotasSeed lastDescriptorQuotasUpdateSeed;
+    private EServiceInstanceDescriptorSeed lastDescriptorCreationSeed;
 
     /** Uses the explicit v3 client, authenticated by the existing M2M authentication steps. */
     public EServiceTemplateInstanceSteps(
@@ -195,6 +197,47 @@ public class EServiceTemplateInstanceSteps {
                     .isEqualTo(lastDescriptorQuotasUpdateSeed.getDailyCallsPerConsumer());
                 softly.assertThat(updated.getDailyCallsTotal()).as("Soglia giornaliera totale")
                     .isEqualTo(lastDescriptorQuotasUpdateSeed.getDailyCallsTotal());
+            }));
+    }
+
+    /** Creates the next draft through M2M v3 with a fixed configuration. */
+    @When("l'utente m2m v3 tenta la creazione di una nuova versione in bozza dell'istanza dell'e-service template indicando nuovi dati")
+    public void createTemplateInstanceDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
+        // Different from BFFDataPreparationService.updateTemplateInstanceDraftDescriptor's published setup.
+        lastDescriptorCreationSeed = new EServiceInstanceDescriptorSeed()
+            .addAudienceItem("new audience item")
+            .dailyCallsPerConsumer(5)
+            .dailyCallsTotal(20)
+            .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
+        httpCallExecutor.performCallSavingBodyResponse(
+            () -> templateClient.createTemplateInstanceDescriptor(eserviceId, lastDescriptorCreationSeed));
+    }
+
+    /** Checks the new descriptor directly from the POST response without replacing current context IDs. */
+    @Then("il descriptor restituito dalla creazione M2M v3 è coerente con i dati richiesti")
+    public void checkCreatedDescriptorResponse() {
+        UUID previousDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
+        assertThat(previousDescriptorId).as("ID del descriptor di partenza").isNotNull();
+        assertThat(lastDescriptorCreationSeed).as("Richiesta di creazione del descriptor").isNotNull();
+        UUID templateVersionId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getLastVersionId();
+
+        assertThat(httpCallExecutor.getResponse())
+            .as("Descriptor restituito dalla creazione M2M v3")
+            .isInstanceOfSatisfying(EServiceDescriptor.class, created -> assertSoftly(softly -> {
+                softly.assertThat(created.getId()).as("Nuovo ID del descriptor")
+                    .isNotNull().isNotEqualTo(previousDescriptorId);
+                softly.assertThat(created.getState()).as("Stato del nuovo descriptor").isEqualTo(EServiceDescriptorState.DRAFT);
+                softly.assertThat(created.getTemplateVersionId()).as("Versione del template di origine")
+                    .isEqualTo(templateVersionId);
+                softly.assertThat(created.getAudience()).as("Nuova audience")
+                    .isEqualTo(lastDescriptorCreationSeed.getAudience());
+                softly.assertThat(created.getDailyCallsPerConsumer()).as("Nuova soglia per fruitore")
+                    .isEqualTo(lastDescriptorCreationSeed.getDailyCallsPerConsumer());
+                softly.assertThat(created.getDailyCallsTotal()).as("Nuova soglia totale")
+                    .isEqualTo(lastDescriptorCreationSeed.getDailyCallsTotal());
+                softly.assertThat(created.getAgreementApprovalPolicy()).as("Nuova politica di approvazione")
+                    .isEqualTo(lastDescriptorCreationSeed.getAgreementApprovalPolicy());
             }));
     }
 
