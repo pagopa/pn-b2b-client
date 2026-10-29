@@ -5,6 +5,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeRevokers;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.TenantVerifiedAttributeVerifiers;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -48,6 +49,31 @@ public class M2MTenantClientImpl implements IM2MTenantClient {
     @Override
     public TenantVerifiedAttributeRevokers getRevokers(UUID tenantId, UUID attributeId) {
         return this.tenantsApi.getTenantVerifiedAttributeRevokers(tenantId, attributeId, 0, 30);
+    }
+
+    @Override
+    public void revokeTenantVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
+        revokeTenantVerifiedAttribute(tenantId, null, attributeId, agreementId);
+    }
+
+    @Override
+    public void revokeTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId) {
+        // TODO tuning per delegationId
+        this.tenantsApi.revokeTenantVerifiedAttribute(tenantId, attributeId, agreementId);
+    }
+
+    @Override
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID agreementId, String expirationDate) {
+        assignTenantVerifiedAttribute(tenantId, null, agreementId, expirationDate);
+    }
+
+    @Override
+    public void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID agreementId, String expirationDate) {
+        // TODO tuning per delegationId
+        TenantVerifiedAttributeSeed seed = new TenantVerifiedAttributeSeed();
+        seed.setAgreementId(agreementId);
+        seed.setExpirationDate(expirationDate);
+        this.tenantsApi.assignTenantVerifiedAttribute(tenantId, seed);
     }
 
     @Override
