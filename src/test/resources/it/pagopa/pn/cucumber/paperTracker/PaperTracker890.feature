@@ -1,8 +1,11 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1, 2.1 e 2.2; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto 890
 
 
 # Test da lanciare in modalità DRY-RUN con filtro ec: ATTIVO
   @paperTracker890
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_1_890] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -41,6 +44,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
     # Test da lanciare in modalità DRY-RUN con filtro ec: ATTIVO
   @paperTracker890
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_2_890] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -57,6 +61,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GiacenzaDelegato-gt10_890"
 
   @paperTracker890
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence FAIL-EVENTO-INESISTENTE verifico che l'ultimo evento di SEND_ANALOG_PROGRESS contenga RECAG001B
   e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
     Given viene generata una nuova notifica
@@ -115,6 +120,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 
   @paperTracker890
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Per la sequence @OK-Retry_AR sono previsti due .PCRETRY
   si verifica che l'unione di entrambi dia gli stessi elementi presenti in timeline
     Given viene generata una nuova notifica
@@ -136,6 +142,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-NonRendicontabile_890 |
 
   @paperTrackerRunMode890
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario: [PAPER_TRACKER_RUN_MODE_890_1] Viene verificato che tutti gli elementi desiderati per la sequence OK-GIACENZA-LTE10_890  siano generati
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -201,7 +208,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_responseStatus     | OK       |
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GIACENZA-LTE10_890"
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_RUN_MODE_890_2] Viene verificato che tutti gli elementi desiderati per la sequence OK-GIACENZA-GT10_890 siano generati
@@ -460,6 +467,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
 # Test da lanciare in modalità RUN con filtro ec: DISATTIVO
   @paperTrackerRunMode890
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_890_1] Si verifica che gli elementi di timeline attesi siano generati correttamente nella modalità RUN
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -473,6 +481,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                         |
       | OK_890                           |

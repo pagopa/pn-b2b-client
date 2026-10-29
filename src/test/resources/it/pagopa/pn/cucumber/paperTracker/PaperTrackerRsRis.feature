@@ -1,7 +1,10 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1 e 2.2; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto RS/RIS
 
   # ---------------- DRY RUN MODE ----------------
   @paperTrackerRSDryRunMode
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -31,6 +34,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISDryRunMode
+  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -58,6 +62,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
   # ---------------- RUN MODE ----------------
   @paperTrackerRSRunMode
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -73,7 +78,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName                       |
       | OK_RS                              |
@@ -89,6 +94,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISRunMode
+  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -109,7 +115,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName |
       | OK_RIS       |
