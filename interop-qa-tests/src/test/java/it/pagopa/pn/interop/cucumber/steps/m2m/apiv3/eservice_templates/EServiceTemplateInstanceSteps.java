@@ -5,6 +5,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
@@ -12,6 +13,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateESer
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
+import it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUtility;
 
 import java.util.UUID;
 
@@ -23,6 +25,9 @@ public class EServiceTemplateInstanceSteps {
     private final IHttpExecutor httpCallExecutor;
     private final IM2MV3EServiceTemplateClient templateClient;
     private UpdateEServiceTemplateInstanceSeed lastInstanceUpdateSeed;
+    private final EServiceTemplateInstanceUtility instanceUtility;
+    private EServiceInstanceLabelUpdateSeed lastInstanceLabelUpdateSeed;
+    private UUID lastInstanceLabelUpdateEServiceId;
 
     /** Uses the explicit v3 client, authenticated by the existing M2M authentication steps. */
     public EServiceTemplateInstanceSteps(
@@ -32,6 +37,7 @@ public class EServiceTemplateInstanceSteps {
         this.sharedStepsContext = sharedStepsContext;
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.templateClient = clientTokenConfigurator.getM2mV3EServiceTemplateClient();
+        this.instanceUtility = new EServiceTemplateInstanceUtility(sharedStepsContext);
     }
 
     /** Creates an instance with the required request body and no optional configuration. */
@@ -72,6 +78,36 @@ public class EServiceTemplateInstanceSteps {
                     .isEqualTo(lastInstanceUpdateSeed.getIsConsumerDelegable());
                 softly.assertThat(updated.getIsSignalHubEnabled()).as("Signal Hub")
                     .isEqualTo(lastInstanceUpdateSeed.getIsSignalHubEnabled());
+            }));
+    }
+
+    /** Updates a published instance label through M2M v3 without changing the authentication. */
+    @When("l'utente m2m v3 tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} in stato PUBLISHED con {string}")
+    public void updateEServiceTemplateInstanceLabel(String eserviceId, String instanceLabel) {
+        lastInstanceLabelUpdateEServiceId = instanceUtility.resolveEServiceTemplateInstanceId(eserviceId);
+        lastInstanceLabelUpdateSeed = new EServiceInstanceLabelUpdateSeed()
+            .instanceLabel(instanceUtility.parseSuffix(instanceLabel));
+        httpCallExecutor.performCallSavingBodyResponse(
+            () -> templateClient.updateEServiceTemplateInstanceLabel(lastInstanceLabelUpdateEServiceId, lastInstanceLabelUpdateSeed));
+    }
+
+    /** Checks the returned instance identity, label and resulting name without further API calls. */
+    @Then("l'e-service restituito dalla modifica dell'etichetta M2M v3 è coerente con il suffisso richiesto")
+    public void checkUpdatedEServiceLabelResponse() {
+        EServiceTemplateInfo template = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        assertThat(lastInstanceLabelUpdateSeed).as("Richiesta di modifica dell'etichetta").isNotNull();
+        String expectedName = instanceUtility.expectedEServiceInstanceName(
+            template.getName(), lastInstanceLabelUpdateSeed.getInstanceLabel());
+
+        assertThat(httpCallExecutor.getResponse())
+            .as("E-service restituito dalla modifica dell'etichetta M2M v3")
+            .isInstanceOfSatisfying(EService.class, updated -> assertSoftly(softly -> {
+                softly.assertThat(updated.getId()).as("ID dell'istanza modificata")
+                    .isEqualTo(lastInstanceLabelUpdateEServiceId);
+                softly.assertThat(updated.getTemplateId()).as("Template di origine").isEqualTo(template.getId());
+                softly.assertThat(updated.getInstanceLabel()).as("Etichetta dell'istanza")
+                    .isEqualTo(lastInstanceLabelUpdateSeed.getInstanceLabel());
+                softly.assertThat(updated.getName()).as("Nome risultante dell'istanza").isEqualTo(expectedName);
             }));
     }
 
