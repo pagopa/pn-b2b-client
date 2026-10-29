@@ -88,6 +88,11 @@ Feature: Cambio modalità di revisione e gestione dei dati dell'analisi del risc
     Then si ottiene status code 204
     And l'utente è un "admin" di "GSP"
     And alla finalità risultano associati esclusivamente i seguenti valutatori: <reviewerFinali>, in modalità <mode>
+    And lo stato della compilazione dell'analisi del rischio è "DRAFT"
+    When l'utente è un "reviewer" di "GSP"
+    And interroga l'endpoint delle assegnazioni del valutatore filtrando per il primo e-service creato
+    Then si ottiene status code 200
+    And la risposta contiene 0 risultati nelle assegnazioni
 
     Examples:
       | mode                     | reviewerFinali |
