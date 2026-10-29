@@ -8,6 +8,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.ReviewerPayloadOwner;
+import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
 
@@ -32,8 +33,9 @@ public class PurposeRiskAnalysisAssignmentDeniedSteps {
         initialPurposeId = UUID.fromString(context.getPurposeCommonContext().getPurposeId());
         context.getRiskAnalysisCommonContext().setReviewerPayloadOwner(new ReviewerPayloadOwner(initialPurposeId, ownerTenant));
         tokens.setBearerToken(context.getUserToken());
-        initialAssignment = tokens.getPurposeApiClient().getPurpose(initialPurposeId);
-        initialMetadataVersion = tokens.getPurposeApiClient().getPurposeMetadataVersion(initialPurposeId);
+        ResponseEntity<Purpose> purposeWithHttpInfo = tokens.getPurposeApiClient().getPurposeWithHttpInfo(initialPurposeId);
+        initialAssignment = purposeWithHttpInfo.getBody();
+        initialMetadataVersion = tokens.getPurposeApiClient().extractPurposeMetadataVersion(purposeWithHttpInfo);
     }
 
     @Then("l'assegnazione e i dati dell'analisi del rischio sono rimasti invariati")
