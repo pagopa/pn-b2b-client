@@ -8,8 +8,15 @@ import java.util.UUID;
 
 public class EServiceTemplateInstanceUtility extends AbstractResolver {
 
-    protected EServiceTemplateInstanceUtility(SharedStepsContext sharedStepsContext) {
+    public EServiceTemplateInstanceUtility(SharedStepsContext sharedStepsContext) {
         super(sharedStepsContext);
+    }
+
+    public String expectedEServiceInstanceName(String templateName, String suffix) {
+        String parsedSuffix = parseSuffix(suffix);
+        return templateName + (
+                parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
+        );
     }
 
     public String parseSuffix(String suffix) {
