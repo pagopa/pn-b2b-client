@@ -79,7 +79,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
-    When il delegato all'erogazione assegna a "PA1" l'attributo verificato precedentemente creato
+    When il delegato all'erogazione assegna a "PA2" l'attributo verificato precedentemente creato
     Then si ottiene status code 400
 
   @nrt-minimal @wait_for_fix
