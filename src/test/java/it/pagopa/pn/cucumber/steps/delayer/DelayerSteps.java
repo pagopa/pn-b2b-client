@@ -24,7 +24,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext.GATE_TIMEOUT;
@@ -489,6 +493,39 @@ public class DelayerSteps {
     public void verifyNoSenderLimits(String deliveryDate, String pk) {
         var usedSenderLimit = service.getUsedSenderLimitSize(deliveryDate, pk);
         Assertions.assertThat(usedSenderLimit).isEqualTo(0);
+    }
+
+    @When("vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES")
+    public void deleteMockTables() {
+        service.deleteMockTables();
+    }
+
+    // Le tabelle mock vengono ricreate in modo asincrono: finché non tornano ACTIVE la lettura può fallire
+    @Then("non devono esistere limiti mittente mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyNoMockSenderLimits(String deliveryDate, String province) {
+        awaitEmptyMockTable(
+                () -> service.getMockSenderLimitsSize(deliveryDate, province),
+                "pn-PaperDeliverySenderLimitMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
+    @Then("non devono esistere contatori mock per la deliveryDate {string}, la provincia {string} e il prodotto {string}")
+    public void verifyNoMockCounters(String deliveryDate, String province, String product) {
+        awaitEmptyMockTable(
+                () -> service.getMockCountersSumEstimatesSize(deliveryDate, province, product),
+                "pn-PaperDeliveryCountersMock contiene ancora record per deliveryDate '%s', provincia '%s' e prodotto '%s'".formatted(deliveryDate, province, product));
+    }
+
+    private void awaitEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(5))
+                    .pollInterval(Duration.ofSeconds(10))
+                    .pollDelay(Duration.ZERO)
+                    .ignoreExceptions()
+                    .until(() -> sizeSupplier.get() == 0);
+        } catch (ConditionTimeoutException e) {
+            Assertions.fail(failMessage);
+        }
     }
 
     @And("verifica che le spedizioni spostate alla settimana successiva siano lo stesso valore")

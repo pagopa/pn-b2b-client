@@ -15,6 +15,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimitItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerStatusExecution;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerUsedCapacity;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -133,6 +134,24 @@ public class DelayerSevice {
             }
 
         });
+    }
+
+    public void deleteMockTables() {
+        lambdaClient.deleteMockTables();
+    }
+
+    public void deleteMockTables(String table) {
+        lambdaClient.deleteMockTables(table);
+    }
+
+    public Integer getMockSenderLimitsSize(String deliveryDate, String province) {
+        var response = lambdaClient.getSenderLimitByProvinceWithTable(DelayerTable.PaperDeliverySenderLimitMock.tableName, deliveryDate, province);
+        return response == null || response.getItems() == null ? 0 : response.getItems().size();
+    }
+
+    public Integer getMockCountersSumEstimatesSize(String deliveryDate, String province, String product) {
+        var response = lambdaClient.getCountersSumEstimates(deliveryDate, province, product, true);
+        return response == null || response.getItems() == null ? 0 : response.getItems().size();
     }
 
     public int getAvailableCapacity(String entityId, String deliveryDate) {
