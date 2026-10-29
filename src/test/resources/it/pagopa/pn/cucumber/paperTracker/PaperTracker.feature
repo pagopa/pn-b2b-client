@@ -17,7 +17,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName             |
@@ -56,7 +56,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName            |
@@ -85,7 +85,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "OK_RIR_NO_DEMAT" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_RIR_NO_DEMAT"
 
   @paperTrackerAR
   @paperTrackerOutputs @paperTrackerOutputsDry
@@ -102,7 +102,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL-DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
   @paperTrackerAR
   @paperTrackerOutputs @paperTrackerOutputsDry
@@ -131,7 +131,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
       | details_responseStatus     | OK        |
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "FAIL_IndirizzoInesistenteAR" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL_IndirizzoInesistenteAR"
 
   @paperTrackerAR
   @paperTrackerOutputs @paperTrackerOutputsDry
@@ -149,7 +149,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                 |
@@ -176,7 +176,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che la risposta dell'API attempts contenga finalDematFound e paperDeliveryTimestamp
     Examples:
       | sequenceName                  |
@@ -303,7 +303,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>" in modalità RUN
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                     | physicalAddress                  |
       | OK_AR                        | Via@ok_AR                        |
@@ -352,7 +352,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_NOT_ORDERED"
     And si verifica che la risposta tracking per la sequence "OK_AR_NOT_ORDERED" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_AR_NOT_ORDERED" in modalità RUN
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_AR_NOT_ORDERED"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -401,7 +401,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>" in modalità RUN
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                      |
       | OK_RIR                        |

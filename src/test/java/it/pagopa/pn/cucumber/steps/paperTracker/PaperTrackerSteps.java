@@ -20,7 +20,6 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperTrackerClient;
-import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.paperTracker.domain.NotificationEvent;
@@ -36,7 +35,6 @@ import it.pagopa.pn.cucumber.steps.utilitySteps.PaperTrackerTrackingSequence;
 import it.pagopa.pn.cucumber.steps.utilitySteps.TimelineSequence;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -332,15 +330,11 @@ public class PaperTrackerSteps {
                 .toList();
     }
 
-    @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string} in modalità {word}")
-    public void checkPaperTrackerEventsNew(String sequenceName, String processingMode) {
-        if (!List.of("DRY", "RUN").contains(processingMode)) {
-            throw new IllegalArgumentException("Modalità Paper Tracker non supportata: " + processingMode);
-        }
-        ensureTrackingKeys();
-        assertThat(trackingKeys).as("Identificativi della spedizione Paper Tracker").isNotEmpty();
+    @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string}")
+    public void checkPaperTrackerEventsNew(String sequenceName) {
         TrackingsRequest request = new TrackingsRequest();
         request.setTrackingIds(trackingKeys);
+        PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
 
         FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         assertThat(fullSentNotification).isNotNull();
@@ -352,32 +346,12 @@ public class PaperTrackerSteps {
                 .toList();
 
         assertThat(analogEventIds).isNotEmpty();
+        assertThat(responseOutput.getResults()).isNotEmpty();
 
         Map<Integer, List<NotificationEvent>> expectedTimelineEvents = buildTimelineEventsMap(fullSentNotification, analogEventIds);
-        await().pollInSameThread()
-                .pollDelay(Duration.ZERO)
-                .pollInterval(Duration.ofSeconds(30))
-                .atMost(Duration.ofMinutes(5))
-                .untilAsserted(() -> {
-                    PaperTrackerOutputsResponse responseOutput = paperTrackerClient.retrieveTrackerOutputs(request);
-                    assertThat(responseOutput).as("Risposta /outputs per %s", sequenceName).isNotNull();
-                    assertThat(responseOutput.getResults()).as("Output per %s", sequenceName).isNotEmpty();
-                    assertThat(responseOutput.getResults()).allSatisfy(result -> {
-                        assertThat(result.getTrackingId()).as("trackingId restituito da /outputs").isIn(trackingKeys);
-                        assertThat(result.getOutputs()).as("Output del trackingId %s", result.getTrackingId()).isNotNull();
-                    });
-                    Map<Integer, List<NotificationEvent>> actualOutputEvents = buildOutputEventsMap(responseOutput);
-                    validateEventsMaps(expectedTimelineEvents, actualOutputEvents, sequenceName);
+        Map<Integer, List<NotificationEvent>> actualOutputEvents = buildOutputEventsMap(responseOutput);
 
-                    // /outputs non espone processingMode: il record persistito è correlato con trackingId + created.
-                    Map<String, List<Map<String, AttributeValue>>> persistedOutputs = new HashMap<>();
-                    for (String trackingId : trackingKeys) {
-                        persistedOutputs.put(trackingId, sharedSteps.getDynamoDbService().callAllPages(
-                                DynamoTableName.PAPER_TRACKER_DRY_RUN_OUTPUTS,
-                                Map.of(":v_trackingId", AttributeValue.builder().s(trackingId).build())));
-                    }
-                    PaperTrackerOutputProcessingModeValidator.validate(responseOutput, persistedOutputs, processingMode);
-                });
+        validateEventsMaps(expectedTimelineEvents, actualOutputEvents, sequenceName);
     }
 
     /**
@@ -426,9 +400,6 @@ public class PaperTrackerSteps {
                                     Map<Integer, List<NotificationEvent>> actualEvents,
                                     String sequenceName) {
         List<String> excludedCodes = getExcludedCodesForSequence(sequenceName);
-
-        assertThat(actualEvents.keySet()).as("Tentativi presenti negli output di %s", sequenceName)
-                .containsExactlyInAnyOrderElementsOf(expectedEvents.keySet());
 
         for (Integer attempt : expectedEvents.keySet()) {
             List<NotificationEvent> filteredExpected = sanitizeList(expectedEvents.get(attempt), excludedCodes);

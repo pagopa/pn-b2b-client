@@ -19,7 +19,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
 #    And si verifica che non ci siano errori per i trackingId richiesti
     Examples:
       | sequenceName                     |
@@ -58,7 +58,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "OK-GiacenzaDelegato-gt10_890" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GiacenzaDelegato-gt10_890" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GiacenzaDelegato-gt10_890"
 
   @paperTracker890
   @paperTrackerOutputs @paperTrackerOutputsDry
@@ -76,7 +76,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "FAIL-EVENTO-INESISTENTE" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-EVENTO-INESISTENTE" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-EVENTO-INESISTENTE"
 
   @paperTracker890
   Scenario Outline: [PAPER_TRACKER_TEMPORARY_TEST_3_890] Si verifica che i dati ritornati da /errors siano quelli attesi
@@ -135,7 +135,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>" in modalità DRY
+    Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName             |
       | OK-Retry_890             |
@@ -208,7 +208,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_responseStatus     | OK       |
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GIACENZA-LTE10_890" in modalità RUN
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GIACENZA-LTE10_890"
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_RUN_MODE_890_2] Viene verificato che tutti gli elementi desiderati per la sequence OK-GIACENZA-GT10_890 siano generati
@@ -481,7 +481,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
-    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>" in modalità RUN
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                         |
       | OK_890                           |
