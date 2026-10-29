@@ -70,6 +70,7 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
    # TO TEST: l'ultima prova effettuava riscontrava un problema invalidante allo step -> Given "PA1" ha già creato e pubblicato 1 e-service
    # per cui non veniva mai trovato l'e-service appena creato (continuo 404).
    # PST: Scenario 17 - Caso 17.2
+   @happy-path
    Scenario: [AWRS_COMPILAZIONE_17_2_DOPO_RIFIUTO] Nuova compilazione amministratore dopo rifiuto reviewer (positivo)
      Given "PA1" ha già creato e pubblicato 1 e-service
      And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -202,3 +203,4 @@ Feature: Messa in atto dei flusso AdminWritesReviewerSigns della feature Nuovi O
      When l'utente è un "admin" di "PA2"
      And l'utente attiva la finalità in stato "DRAFT" per quell'e-service
      Then si ottiene status code 200 e la finalità in stato "ACTIVE"
+

@@ -27,6 +27,7 @@ public enum InteropEvent {
     NEW_PURPOSE_VERSION_ACTIVATED("NewPurposeVersionActivated", Family.PURPOSE),
     PURPOSE_VERSION_ACTIVATED("PurposeVersionActivated", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_ASSIGNED("PurposeRiskAnalysisAssignedV2", Family.PURPOSE),
+    PURPOSE_RISK_ANALYSIS_SELF_ASSIGNED("PurposeRiskAnalysisSelfAssignedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_WORKFLOW_CREATED("PurposeRiskAnalysisWorkflowCreatedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_FORM_EDITED("PurposeRiskAnalysisFormEditedV2", Family.PURPOSE),
     PURPOSE_RISK_ANALYSIS_SUBMITTED("PurposeRiskAnalysisSubmittedV2", Family.PURPOSE),

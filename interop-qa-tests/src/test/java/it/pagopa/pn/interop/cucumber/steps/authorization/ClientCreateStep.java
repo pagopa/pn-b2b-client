@@ -7,13 +7,17 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.IAuthorizationClient;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
+import it.pagopa.pn.interop.cucumber.steps.m2m.M2MAuthSteps;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 import java.util.Random;
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ClientCreateStep {
@@ -23,24 +27,65 @@ public class ClientCreateStep {
     private final IdentityService identityService;
     private final IHttpExecutor httpCallExecutor;
     private final SharedStepsContext sharedStepsContext;
+    private final ApiProfile apiProfile;
 
+    @Autowired
     public ClientCreateStep(ClientTokenConfigurator clientTokenConfigurator,
-                            SharedStepsContext sharedStepsContext) {
+                            SharedStepsContext sharedStepsContext,
+                            ApiProfile apiProfile) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.authorizationClientCreate = clientTokenConfigurator.getAuthorizationClient();
         this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.sharedStepsContext = sharedStepsContext;
+        this.apiProfile = apiProfile;
     }
 
     @Given("l'utente è un {string} di {string}")
     public void setRole(String role, String tenantType) {
-        setRole(1, role, tenantType);
+        doSetRole(1, role, tenantType, clientTokenConfigurator, identityService, sharedStepsContext);
         sharedStepsContext.setTenantType(tenantType);
+    }
+
+    @Given("l'utente è un amministratore del profilo API {apiSet} dell'ente {string}")
+    public void setRole(ApiProfile.ApiSet apiSet, String tenant) {
+        setProfileRole(apiSet == ApiProfile.ApiSet.M2M ? "m2m-admin" : "admin", apiSet, tenant);
+    }
+
+    @Given("l'utente ha ruolo {string} nel profilo API {apiSet} dell'ente {string}")
+    public void setProfileRole(String role, ApiProfile.ApiSet apiSet, String tenant) {
+        validateProfileRole(role, apiSet);
+        if (apiSet == ApiProfile.ApiSet.BFF) {
+            doSetRole(1, role, tenant, clientTokenConfigurator, identityService, sharedStepsContext);
+        } else {
+            M2MAuthSteps.doAuthenticateM2MUser("admin", tenant, M2MAuthSteps.m2mRole(role),
+                    clientTokenConfigurator, sharedStepsContext, identityService, apiProfile);
+        }
+    }
+
+    static void validateProfileRole(String role, ApiProfile.ApiSet apiSet) {
+        if (apiSet == null || role == null) {
+            throw new IllegalArgumentException("Ruolo e profilo API devono essere valorizzati");
+        }
+        boolean m2mRole = "m2m".equalsIgnoreCase(role) || "m2m-admin".equalsIgnoreCase(role);
+        if (m2mRole != (apiSet == ApiProfile.ApiSet.M2M)) {
+            throw new IllegalArgumentException("Ruolo " + role + " non compatibile con il profilo API " + apiSet);
+        }
+        if (apiSet == ApiProfile.ApiSet.BFF) {
+            // Validazione sintattica prima di acquisire token o modificare il contesto.
+            Role.fromValue(role.toUpperCase(java.util.Locale.ROOT));
+        }
     }
 
     @Given("l'utente è il numero {int} ad avere ruolo {string} di {string}")
     public void setRole(int userIndex, String role, String tenantType) {
+        doSetRole(userIndex, role, tenantType, clientTokenConfigurator, identityService, sharedStepsContext);
+    }
+
+    public static void doSetRole(int userIndex, String role, String tenantType,
+                                 ClientTokenConfigurator clientTokenConfigurator,
+                                 IdentityService identityService,
+                                 SharedStepsContext sharedStepsContext) {
         // La numerazione di userIndex parte da 1 dal pdv del chiamante
         String token = identityService.getToken(tenantType, role, --userIndex);
 
@@ -48,6 +93,7 @@ public class ClientCreateStep {
         sharedStepsContext.setUserToken(token);
         sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
+        sharedStepsContext.setApiSet(ApiProfile.ApiSet.BFF);
     }
 
     // Di esclusiva utilità per test e debug locali
@@ -59,7 +105,7 @@ public class ClientCreateStep {
     @Given("l'utente è un {string} dell'ente {delegationRole}")
     public void setRole(String role, DelegationRole delegationRole) {
         String tenant = sharedStepsContext.getDelegationCommonContext().getTenantBy(delegationRole);
-        setRole(role, tenant);
+        doSetRole(1, role, tenant, clientTokenConfigurator, identityService, sharedStepsContext);
     }
 
     @When("l'utente richiede la creazione di un client {string}")
