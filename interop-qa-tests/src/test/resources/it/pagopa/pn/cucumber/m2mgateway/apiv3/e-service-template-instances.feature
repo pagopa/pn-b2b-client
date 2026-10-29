@@ -31,7 +31,7 @@ Feature: (M2M v3) Gestione delle istanze di e-service template
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     When l'utente m2m v3 tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 200
-    And i campi dell'istanza dell'e-service template sono stati modificati correttamente
+    And l'e-service restituito dalla modifica M2M v3 è coerente con i campi richiesti
 
     Examples:
       | mode       |
