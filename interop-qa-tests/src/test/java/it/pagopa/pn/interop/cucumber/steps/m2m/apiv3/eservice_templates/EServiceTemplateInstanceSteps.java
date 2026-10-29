@@ -39,7 +39,6 @@ public class EServiceTemplateInstanceSteps {
     private UpdateEServiceTemplateInstanceDescriptorQuotasSeed lastDescriptorQuotasUpdateSeed;
     private EServiceInstanceDescriptorSeed lastDescriptorCreationSeed;
 
-    /** Uses the explicit v3 client, authenticated by the existing M2M authentication steps. */
     public EServiceTemplateInstanceSteps(
         ClientTokenConfigurator clientTokenConfigurator,
         SharedStepsContext sharedStepsContext
@@ -50,7 +49,6 @@ public class EServiceTemplateInstanceSteps {
         this.instanceUtility = new EServiceTemplateInstanceUtility(sharedStepsContext);
     }
 
-    /** Creates an instance with the required request body and no optional configuration. */
     @When("l'utente m2m v3 tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie")
     public void createEServiceFromTemplateMinimalSpec() {
         UUID templateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
@@ -58,7 +56,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.createEServiceInstanceFromTemplate(templateId, new InstanceEServiceSeed()));
     }
 
-    /** Updates the instance flags through M2M v3 and preserves the HTTP status and body. */
     @When("l'utente m2m v3 tenta la modifica dei campi dell'istanza dell'e-service template")
     public void updateEServiceTemplateInstance() {
         UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
@@ -70,7 +67,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.updateEServiceTemplateInstance(eserviceId, lastInstanceUpdateSeed));
     }
 
-    /** Checks the update response against the target instance and the submitted flags. */
     @Then("l'e-service restituito dalla modifica M2M v3 è coerente con i campi richiesti")
     public void checkUpdatedEServiceResponse() {
         UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
@@ -91,7 +87,6 @@ public class EServiceTemplateInstanceSteps {
             }));
     }
 
-    /** Updates a published instance label through M2M v3 without changing the authentication. */
     @When("l'utente m2m v3 tenta la modifica del campo instanceLabel dell'istanza dell'e-service template {string} in stato PUBLISHED con {string}")
     public void updateEServiceTemplateInstanceLabel(String eserviceId, String instanceLabel) {
         lastInstanceLabelUpdateEServiceId = instanceUtility.resolveEServiceTemplateInstanceId(eserviceId);
@@ -101,7 +96,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.updateEServiceTemplateInstanceLabel(lastInstanceLabelUpdateEServiceId, lastInstanceLabelUpdateSeed));
     }
 
-    /** Checks the returned instance identity, label and resulting name without further API calls. */
     @Then("l'e-service restituito dalla modifica dell'etichetta M2M v3 è coerente con il suffisso richiesto")
     public void checkUpdatedEServiceLabelResponse() {
         EServiceTemplateInfo template = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
@@ -121,7 +115,6 @@ public class EServiceTemplateInstanceSteps {
             }));
     }
 
-    /** Updates a draft instance descriptor through M2M v3, preserving its HTTP response. */
     @When("l'utente m2m v3 tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template")
     public void updateDraftDescriptorTemplateInstance() {
         UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
@@ -135,7 +128,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.updateDraftDescriptorTemplateInstance(eserviceId, descriptorId, lastDescriptorUpdateSeed));
     }
 
-    /** Checks the returned draft descriptor against the target, template version and request. */
     @Then("il descriptor restituito dalla modifica M2M v3 è coerente con i campi richiesti")
     public void checkUpdatedDraftDescriptorResponse() {
         UUID descriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
@@ -160,7 +152,6 @@ public class EServiceTemplateInstanceSteps {
             }));
     }
 
-    /** Updates daily call quotas through M2M v3, preserving the HTTP status and body. */
     @When("l'utente m2m v3 tenta la modifica delle soglie di chiamate del descriptor dell'istanza dell'e-service template")
     public void updateTemplateInstanceDescriptorQuotas() {
         UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
@@ -172,11 +163,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.updateTemplateInstanceDescriptorQuotas(eserviceId, descriptorId, lastDescriptorQuotasUpdateSeed));
     }
 
-    /**
-     * Checks the returned descriptor quotas and confirms that its lifecycle state is unchanged.
-     *
-     * @param expectedState descriptor state established by the BFF preconditions
-     */
     @Then("il descriptor restituito dalla modifica delle soglie M2M v3 è coerente con i valori richiesti e resta in stato {eServiceDescriptorState}")
     public void checkUpdatedDescriptorQuotasResponse(
         it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState expectedState
@@ -200,11 +186,9 @@ public class EServiceTemplateInstanceSteps {
             }));
     }
 
-    /** Creates the next draft through M2M v3 with a fixed configuration. */
     @When("l'utente m2m v3 tenta la creazione di una nuova versione in bozza dell'istanza dell'e-service template indicando nuovi dati")
     public void createTemplateInstanceDescriptor() {
         UUID eserviceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
-        // Different from BFFDataPreparationService.updateTemplateInstanceDraftDescriptor's published setup.
         lastDescriptorCreationSeed = new EServiceInstanceDescriptorSeed()
             .addAudienceItem("new audience item")
             .dailyCallsPerConsumer(5)
@@ -214,7 +198,6 @@ public class EServiceTemplateInstanceSteps {
             () -> templateClient.createTemplateInstanceDescriptor(eserviceId, lastDescriptorCreationSeed));
     }
 
-    /** Checks the new descriptor directly from the POST response without replacing current context IDs. */
     @Then("il descriptor restituito dalla creazione M2M v3 è coerente con i dati richiesti")
     public void checkCreatedDescriptorResponse() {
         UUID previousDescriptorId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceDescriptorIdCreatedFromTemplate();
@@ -241,7 +224,6 @@ public class EServiceTemplateInstanceSteps {
             }));
     }
 
-    /** Checks the creation response against the BFF setup without performing further API calls. */
     @Then("l'e-service restituito dalla creazione M2M v3 è coerente con il template di origine")
     public void checkCreatedEServiceResponse() {
         EServiceTemplateInfo template = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
