@@ -1,10 +1,93 @@
 Feature: Censimento stime mittenti
 
-  Scenario:[UNIT_TEST_1] Test degli stepper
-    And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
-      | classpath:/t0_tc_modulo_commessa_gennaio_25.json  |
-      | classpath:/t0_tc_modulo_commessa_febbraio_25.json |
-    And si verifica che la tabella pn-PaperDeliverySenderLimit contenga i nuovi limiti mittenti per la provincia "P1"
+
+  Scenario: [TC_CENSIMENTO_test] Verifica del calcolo delle stime settimanali a cavallo di due mesi e dell'aggiornamento delle stime a seguito di modifiche sui moduli commessa
+    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
+    #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_mock_aprile_26.zip"
+    #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+
+
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_luglio_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_marzo_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_febbraio_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_maggio_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_dicembre_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_marzo_27.zip"
+#
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_26.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_26.zip"
+
+    # Non presenti: Aprile, Giugno, Ottobre,
+
+
+# aprile n , Luglio s ,
+  Scenario: [CHECK_PORTFAT_01_1_A] Controllo su commessa con mese successivo mancante, esito negativo
+    When eseguo la lambda sender order check per il mese "2026-03"
+    Then il risultato del controllo è "KO"
+    And le mensilità mancanti sono
+      | X+1 (2026-04) |
+
+
+# Marzo s , giugno n
+  Scenario: [CHECK_PORTFAT_01_1_B] Controllo su commessa con quarto mese successivo mancante, esito negativo
+    When eseguo la lambda sender order check per il mese "2026-02"
+    Then il risultato del controllo è "KO"
+    And le mensilità mancanti sono
+      | X+4 (2026-06) |
+
+
+#giugno n , ottobre n
+  Scenario: [CHECK_PORTFAT_01_1_C] Controllo su commessa con entrambi i mesi mancanti, esito negativo
+    When eseguo la lambda sender order check per il mese "2026-05"
+    Then il risultato del controllo è "KO"
+    And le mensilità mancanti sono
+      | X+1 (2026-06) |
+      | X+4 (2026-10) |
+
+
+
+# Febbraio s, Maggio s
+  Scenario: [CHECK_PORTFAT_01_2_A] Controllo su commesse presenti, esito positivo
+    When eseguo la lambda sender order check per il mese "2026-01"
+    Then il risultato del controllo è "OK"
+
+
+
+#se novembre -> dicembre s , marzo_27 s
+  Scenario: [CHECK_PORTFAT_01_2_B] Controllo su commessa con mese che ricade nell'anno successivo, esito positivo
+    When eseguo la lambda sender order check per il mese "2026-11"
+    Then il risultato del controllo è "OK"
+
+
+#se dicembre
+
+
+# maggio s , agosto x2
+  Scenario: [CHECK_PORTFAT_02_1_A] Controllo su commessa con mese successivo duplicato, esito positivo
+    When eseguo la lambda sender order check per il mese "2026-04"
+    Then il risultato del controllo è "OK"
+
+
+# agosto x2  , luglio s
+  Scenario: [CHECK_PORTFAT_02_1_B] Controllo su commessa con quarto mese successivo duplicato, esito positivo
+    When eseguo la lambda sender order check per il mese "2026-07"
+    Then il risultato del controllo è "OK"
+
+
+#entrambe duplicate
+
+
+  #se novembre -> dicembre s , marzo_27 s
+  Scenario: [CHECK_PORTFAT_04_1] Controllo su commessa senza specificare il mese, esito positivo
+    When eseguo la lambda sender order check
+    Then il risultato del controllo è "OK"
+
+
+  #se novembre -> dicembre s , marzo_27 n
+  Scenario: [CHECK_PORTFAT_04_2] Controllo su commessa senza specificare il mese, esito negativo
+    When eseguo la lambda sender order check
+    Then il risultato del controllo è "KO"
+
 
   @controlloCalcoloStimeMittenti
   Scenario: [SM_02] Verifica il calcolo delle stime settimanali provinciali a partire dai dati delle stime mensili regionali

@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
@@ -12,6 +13,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
+import it.pagopa.pn.cucumber.steps.delayer.utils.SenderOrderCheckResponse;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +42,7 @@ public class CensimentoStimeMittentiSteps {
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
+    //private final DynamoDbService dynamoDbService;
 
     @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
     public String senderLimitTable(String tableName) {
@@ -50,6 +53,44 @@ public class CensimentoStimeMittentiSteps {
     public boolean containsOrNot(String value) {
         return value.equals("contenga");
     }
+
+
+    @When("eseguo la lambda sender order check per il mese {string}")
+    public void executeSenderOrderCheck(String currentMonth) {
+
+        SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck(currentMonth);
+        log.info("SenderOrderCheck response: {}", response);
+        context.setSenderOrderCheckResponse(response);
+    }
+
+    @When("eseguo la lambda sender order check")
+    public void executeSenderOrderCheck() {
+
+        SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck();
+        log.info("SenderOrderCheck response: {}", response);
+        context.setSenderOrderCheckResponse(response);
+    }
+
+    @Then("il risultato del controllo è {string}")
+    public void verifySenderOrderCheckResult(String expectedResult) {
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse())
+                .as("La risposta della lambda non deve essere null")
+                .isNotNull();
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse().getCheckResult())
+                .as("Esito controllo inatteso")
+                .isEqualTo(expectedResult);
+    }
+
+    @Then("le mensilità mancanti sono")
+    public void verifyMissingMonths(List<String> expectedMonths) {
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse()
+                        .getMissingMonths())
+                .containsExactlyInAnyOrderElementsOf(expectedMonths);
+    }
+
 
     @When("si verifica che la tabella {senderLimitTable} {containsOrNot} i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String senderLimitTable, boolean shouldContain, String province) {
@@ -81,17 +122,17 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
-private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
-    if (actual == null || actual.getItems() == null) {
-        return false;
+    private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+        if (actual == null || actual.getItems() == null) {
+            return false;
+        }
+        return actual.getItems().stream()
+                .anyMatch(item -> item.getPk().equals(expected.getPk())
+                        && item.getDeliveryDate().equals(expected.getDeliveryDate())
+                        && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
+                        && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
+                        && item.getOriginalEstimate() == expected.getOriginalEstimate());
     }
-    return actual.getItems().stream()
-            .anyMatch(item -> item.getPk().equals(expected.getPk())
-                    && item.getDeliveryDate().equals(expected.getDeliveryDate())
-                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
-                    && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
-                    && item.getOriginalEstimate() == expected.getOriginalEstimate());
-}
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
     public void getSenderLimits(String meseAnnoDa, String meseAnnoA, String provincia) throws Exception {
@@ -178,13 +219,14 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
      * La stima attesa è calcolata internamente in base alla distribuzione dei giorni della settimana considerando anche i giorni a cavallo tra due mesi e al valore di commessa di ciascun mese.
      * Formula:
      * - numberOfShipments = (valore commessa primo mese / giorni totali primo mese) * giorni della settimana a cavallo del primo mese + (valore commessa secondo mese / giorni totali secondo mese) * giorni della settimana a cavallo del secondo mese
+     *
      * @param deliveryDate la settimana di riferimento (formato yyyy-MM-dd, deve essere un lunedì)
-     * @param product il prodotto di riferimento
-     * @param province la provincia di riferimento
-     * @param dataTable la tabella con le stime attese, con le seguenti colonne:
-     *                  - numberOfShipments: la stima settimanale provinciale attesa
-     *                  - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
-     *                  - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
+     * @param product      il prodotto di riferimento
+     * @param province     la provincia di riferimento
+     * @param dataTable    la tabella con le stime attese, con le seguenti colonne:
+     *                     - numberOfShipments: la stima settimanale provinciale attesa
+     *                     - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
+     *                     - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
      */
     @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {

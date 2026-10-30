@@ -2,20 +2,12 @@ package it.pagopa.pn.cucumber.steps.delayer.service;
 
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimitCondition;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatControlLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerDeclaredCapacity;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPayload;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimitItem;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerStatusExecution;
-import it.pagopa.pn.cucumber.steps.delayer.model.DelayerUsedCapacity;
+import it.pagopa.pn.cucumber.steps.delayer.model.*;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.utils.SenderOrderCheckResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -23,16 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -50,7 +33,16 @@ public class DelayerSevice {
     private final DelayerLambdaClient lambdaClient;
     private final PortfatLambdaClient portfatLambdaClient;
     private final DelayerCsvLoader csvLoader;
+    private final PortfatControlLambdaClient portfatControlLambdaClient;
 
+//todo t portfat
+    public SenderOrderCheckResponse executeSenderOrderCheck(String currentMonth) {
+        return portfatControlLambdaClient.executeSenderOrderCheck(currentMonth);
+    }
+
+    public SenderOrderCheckResponse executeSenderOrderCheck() {
+        return portfatControlLambdaClient.executeSenderOrderCheck();
+    }
 
     public DelayerCountersPrintItem getPrintCapacityCounter(String deliveryDate) {
         try {
