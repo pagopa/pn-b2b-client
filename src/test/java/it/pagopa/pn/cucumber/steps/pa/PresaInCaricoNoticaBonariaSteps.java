@@ -342,7 +342,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero documento della notifica bonaria")
     public void getDocument() {
         try {
-            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationDocument(currentCxId, 0, apiKeyType);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, 0, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {

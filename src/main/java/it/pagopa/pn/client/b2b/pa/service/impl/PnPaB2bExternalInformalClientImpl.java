@@ -10,11 +10,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bExternalInformalClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import lombok.extern.slf4j.Slf4j;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -22,8 +18,6 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
-
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 import java.util.UUID;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
@@ -47,41 +41,56 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
     private final String apiKeySon;
     private final String apiKeyRoot;
 
-    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate,
-                                              @Value("${pn.external.informal-base-url}") String basePath,
-                                              @Value("${pn.interop.enable}") String enableInterop,
-                                              InteropTokenSingleton interopTokenSingleton) {
     private MessagesApi messagesApi;
     private SenderReadInformalNotificationB2BApi senderReadApi;
     private NewInformalNotificationApi notificationApi;
     private InformalNotificationTerminationApi terminationApi;
 
-    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url.pagopa}") String basePath, @Value("${pn.external.api-key}") String apiKeyMvp1, @Value("${pn.external.api-key-2}") String apiKeyMvp2, @Value("${pn.external.api-key-GA}") String apiKeyGa, @Value("${pn.external.api-key-SON}") String apiKeySon, @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
+    public PnPaB2bExternalInformalClientImpl(
+            RestTemplate restTemplate,
+            @Value("${pn.external.informal-base-url.pagopa}") String basePath,
+            @Value("${pn.interop.enable}") String enableInterop,
+            InteropTokenSingleton interopTokenSingleton,
+            @Value("${pn.external.api-key}") String apiKeyMvp1,
+            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+            @Value("${pn.external.api-key-GA}") String apiKeyGa,
+            @Value("${pn.external.api-key-SON}") String apiKeySon,
+            @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
 
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.enableInterop = enableInterop;
         this.interopTokenSingleton = interopTokenSingleton;
-    }
-
-    @Override
-    public List<InformalPreLoadResponse> informalPresignedUploadRequest(String apiKey, List<InformalPreLoadRequest> requests) {
-        NewInformalNotificationApi api = new NewInformalNotificationApi(newExternalInformalApiClient(apiKey));
-        return api.informalPresignedUploadRequest(requests);
+        this.messagesApi = new MessagesApi();
+        this.senderReadApi = new SenderReadInformalNotificationB2BApi();
+        this.notificationApi = new NewInformalNotificationApi();
+        this.terminationApi = new InformalNotificationTerminationApi();
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
         this.apiKeyRoot = apiKeyRoot;
-        this.apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
-        this.messagesApi = new MessagesApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
-        this.senderReadApi = new SenderReadInformalNotificationB2BApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
-        this.notificationApi = new NewInformalNotificationApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
-        this.terminationApi = new InformalNotificationTerminationApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
     }
 
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newExternalInformalApiClient(String apiKey) {
-    private static ApiClient newExternalInformalApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
+//    @Override
+//    public List<InformalPreLoadResponse> informalPresignedUploadRequest(String apiKey, List<InformalPreLoadRequest> requests) {
+//        NewInformalNotificationApi api = new NewInformalNotificationApi(newExternalInformalApiClient(apiKey));
+//        return api.informalPresignedUploadRequest(requests);
+//        this.apiKeyMvp1 = apiKeyMvp1;
+//        this.apiKeyMvp2 = apiKeyMvp2;
+//        this.apiKeyGa = apiKeyGa;
+//        this.apiKeySon = apiKeySon;
+//        this.apiKeyRoot = apiKeyRoot;
+//        this.apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
+//        this.messagesApi = new MessagesApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
+//        this.senderReadApi = new SenderReadInformalNotificationB2BApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
+//        this.notificationApi = new NewInformalNotificationApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
+//        this.terminationApi = new InformalNotificationTerminationApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
+//    }
+
+    //private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newExternalInformalApiClient(String apiKey) {
+
+    private ApiClient newExternalInformalApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
 
         var client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
         client.setBasePath(basePath);
@@ -93,10 +102,9 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
 
         return client;
     }
-}
 
 
-    private String resolveApiKey(SettableApiKey.ApiKeyType apiKeyType) {
+private String resolveApiKey(SettableApiKey.ApiKeyType apiKeyType) {
 
         return switch (apiKeyType) {
             case MVP_1 -> apiKeyMvp1;
@@ -242,6 +250,9 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
                     setApiKey(apiKeyRoot);
                     this.apiKeySetted = SettableApiKey.ApiKeyType.ROOT;
                 }
+                beenSet = true;
+            }
+            case SUPPORT_1 -> {
                 beenSet = true;
             }
         }
