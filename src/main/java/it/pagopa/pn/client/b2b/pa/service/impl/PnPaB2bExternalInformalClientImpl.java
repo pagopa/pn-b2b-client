@@ -7,9 +7,14 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bExternalInformalClient;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import lombok.extern.slf4j.Slf4j;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -17,22 +22,35 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+
+import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 import java.util.UUID;
+
+import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 @Component
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInformalClient {
 
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
+
     private final RestTemplate restTemplate;
     private SettableApiKey.ApiKeyType apiKeySetted;
     private final String basePath;
+    private final String enableInterop;
+    private final InteropTokenSingleton interopTokenSingleton;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySon;
     private final String apiKeyRoot;
 
+    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate,
+                                              @Value("${pn.external.informal-base-url}") String basePath,
+                                              @Value("${pn.interop.enable}") String enableInterop,
+                                              InteropTokenSingleton interopTokenSingleton) {
     private MessagesApi messagesApi;
     private SenderReadInformalNotificationB2BApi senderReadApi;
     private NewInformalNotificationApi notificationApi;
@@ -42,6 +60,14 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
 
         this.restTemplate = restTemplate;
         this.basePath = basePath;
+        this.enableInterop = enableInterop;
+        this.interopTokenSingleton = interopTokenSingleton;
+    }
+
+    @Override
+    public List<InformalPreLoadResponse> informalPresignedUploadRequest(String apiKey, List<InformalPreLoadRequest> requests) {
+        NewInformalNotificationApi api = new NewInformalNotificationApi(newExternalInformalApiClient(apiKey));
+        return api.informalPresignedUploadRequest(requests);
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
@@ -54,14 +80,21 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
         this.terminationApi = new InformalNotificationTerminationApi(newExternalInformalApiClient(restTemplate, basePath, apiKeyMvp1));
     }
 
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient newExternalInformalApiClient(String apiKey) {
     private static ApiClient newExternalInformalApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
 
-        var client = new ApiClient(restTemplate);
+        var client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
         client.setBasePath(basePath);
+        client.addDefaultHeader("x-api-key", apiKey);
+        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
+            client.addDefaultHeader(AUTHORIZATION, BEARER + interopTokenSingleton.getTokenInterop());
+        }
         client.setApiKey(apiKey);
 
         return client;
     }
+}
+
 
     private String resolveApiKey(SettableApiKey.ApiKeyType apiKeyType) {
 

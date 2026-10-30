@@ -37,6 +37,7 @@ Feature: Correzione timeline fase 3 costi
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And la richiesta di restart è rifiutata per il pagamento del destinatario 0
     And viene verificato che l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" non esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
@@ -80,6 +81,7 @@ Feature: Correzione timeline fase 3 costi
     When viene invocata una richiesta di restart per la notifica appena creata
     Then si verifica che la richiesta di restart effettuata sia in stato "CREATED" entro 60 secondi controllando ogni 5 secondi
     And si verifica che la richiesta di restart effettuata sia in stato "ERROR" entro 130 secondi controllando ogni 5 secondi
+    And la richiesta di restart è rifiutata per il pagamento del destinatario 0
     And viene verificato che l'elemento di timeline "NOTIFICATION_TIMELINE_REWORKED" non esista
       | loadTimeline     | true     |
       | details          | NOT_NULL |
