@@ -1373,7 +1373,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PG             |
       | taxId               | 20517490320    |
       | denomination        | Cucumber srl   |
-      | messageId           | ${SAVED-IT-FR} |
+      | messageId           | ${NEW-IT-FR}  |
       | additionalLanguages | FR             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
@@ -1472,7 +1472,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PG             |
       | taxId               | 20517490320    |
       | denomination        | Cucumber srl   |
-      | messageId           | ${SAVED-IT-FR} |
+      | messageId           | ${NEW-IT-FR}  |
       | additionalLanguages | FR             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
@@ -1533,7 +1533,7 @@ Feature: Sottomissione di una notifica bonaria.
       | recipientType       | PG             |
       | taxId               | 20517490320    |
       | denomination        | Cucumber srl   |
-      | messageId           | ${SAVED-IT-FR} |
+      | messageId           | ${NEW-IT-FR}  |
       | additionalLanguages | FR             |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "REFUSED"
     Then la notifica bonaria è stata rifiutata per l'errore: "MESSAGE_LANGUAGE_MISMATCH"
