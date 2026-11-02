@@ -38,6 +38,7 @@ Feature: Censimento stime mittenti
 #    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_2x.zip"
 
 
+#Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip" anno 2027 mese 3
 
 
     # Non presenti: Aprile, Giugno, Ottobre,

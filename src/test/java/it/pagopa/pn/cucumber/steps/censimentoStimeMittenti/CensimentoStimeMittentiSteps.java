@@ -195,17 +195,36 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
+    @Given("vengono caricati i moduli commessa come file zip su portfat: {string} anno {int} mese {int}")
+    public void uploadZipFile(String fileName, Integer year, Integer month) {
+
+        try {
+            String storagePath = String.format("modulicommessazip/%04d_%02d", year, month);
+            String preloadUrlDownload = preloadZipFile(fileName, storagePath, true);
+            Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
+
+            delayerSevice.invokePortfatLambda(preloadUrlDownload);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+        }
+    }
 
     private String preloadZipFile(String fileName, boolean withDownload) {
+        return preloadZipFile(fileName, null, withDownload);
+    }
+
+    private String preloadZipFile(String fileName, String storagePath, boolean withDownload) {
+
         String preloadUrl = null;
+        String fileNameForStorage = storagePath == null ? fileName : storagePath + "/" + fileName;
+
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            // viene caricato il file zip su S3 tramite il presigned url ottenuto
-            preloadUrl = delayerSevice.getPresignedUploadUrl(fileName, sha256);
+            preloadUrl = delayerSevice.getPresignedUploadUrl(fileNameForStorage, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
             if (withDownload) {
-                // viene ottenuto il presigned url per il download del file elaborato
-                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileName);
+                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileNameForStorage);
             }
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
@@ -240,8 +259,7 @@ public class CensimentoStimeMittentiSteps {
                 () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product, true));
     }
 
-    private void verifyWeeklyProvincialEstimates(Map<String, String> dataTable,
-                                                 Supplier<DelayerCountersSumEstimatesItem> estimatesSupplier) {
+    private void verifyWeeklyProvincialEstimates(Map<String, String> dataTable, Supplier<DelayerCountersSumEstimatesItem> estimatesSupplier) {
         int expectedTotal = Integer.parseInt(dataTable.get("numberOfShipments"));
         int expectedFirstWeek = Integer.parseInt(dataTable.get("firstWeekNumberOfShipments"));
         int expectedSecondWeek = Integer.parseInt(dataTable.get("secondWeekNumberOfShipments"));
