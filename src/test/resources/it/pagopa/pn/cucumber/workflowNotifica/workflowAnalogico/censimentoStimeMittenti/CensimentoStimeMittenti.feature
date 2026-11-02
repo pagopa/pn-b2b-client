@@ -2,9 +2,12 @@ Feature: Censimento stime mittenti
 
 
   Scenario: [TC_CENSIMENTO_test] Verifica del calcolo delle stime settimanali a cavallo di due mesi e dell'aggiornamento delle stime a seguito di modifiche sui moduli commessa
-    Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
-    #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_mock_aprile_26.zip"
+    #Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
+
+    #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_26.zip"
     #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
+    #Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_26.zip"
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip"
 
 
 #    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_luglio_26.zip"
@@ -16,6 +19,26 @@ Feature: Censimento stime mittenti
 #
 #    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_26.zip"
 #    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_26.zip"
+
+
+# STATI DIVERSI DA COMPLETATO:
+ #
+ #    X = Febbraio 202x
+ #    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_giugno_2x.zip" #stato non completato.
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_marzo_2x.zip"
+
+#     X = Marzo 202x
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_luglio_2x.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_aprile_2x.zip" #stato non completato.
+
+
+#   X = Aprile 202x
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_maggio_2x.zip"
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_2x.zip" #stato non completato.
+#    Given vengono caricati i moduli commessa mock tramite il seguente zip: "_agosto_2x.zip"
+
+
+
 
     # Non presenti: Aprile, Giugno, Ottobre,
 
@@ -74,7 +97,7 @@ Feature: Censimento stime mittenti
     Then il risultato del controllo è "OK"
 
 
-#entrambe duplicate
+# entrambe duplicate
 
 
   #se novembre -> dicembre s , marzo_27 s
@@ -87,6 +110,35 @@ Feature: Censimento stime mittenti
   Scenario: [CHECK_PORTFAT_04_2] Controllo su commessa senza specificare il mese, esito negativo
     When eseguo la lambda sender order check
     Then il risultato del controllo è "KO"
+
+
+  # Stati diversi da completato
+
+
+
+  # febbaraio
+  Scenario: [CHECK_PORTFAT_03_1_A] Controllo su commessa con mese successivo mancante, esito negativo
+    When eseguo la lambda sender order check per il mese "202x-02"
+    Then il risultato del controllo è "KO"
+    And le mensilità mancanti sono
+      | X+1 (202x-06) |
+
+
+  # marzo
+  Scenario: [CHECK_PORTFAT_03_1_B] Controllo su commessa con mese successivo mancante, esito negativo
+    When eseguo la lambda sender order check per il mese "202x-03"
+    Then il risultato del controllo è "KO"
+    And le mensilità mancanti sono
+      | X+1 (202x-04) |
+
+
+  # aprile
+  Scenario: [CHECK_PORTFAT_03_1_C] Controllo su commessa con mese successivo mancante, esito negativo
+    When eseguo la lambda sender order check per il mese "2026-04"
+    Then il risultato del controllo è "OK"
+
+
+
 
 
   @controlloCalcoloStimeMittenti
