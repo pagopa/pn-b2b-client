@@ -74,6 +74,7 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
@@ -328,7 +329,7 @@ public class RicezioneNotificheWebSteps {
         informalNotificationSearchResponse = null;
         lastMittenteSearchParam = searchParam;
         try {
-        notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
+            notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
         } catch (HttpStatusCodeException e) {
             notificationError = e;
         }
@@ -450,7 +451,7 @@ public class RicezioneNotificheWebSteps {
     @Then("il documento notificato può essere correttamente recuperato da {string}")
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument(0);
         if (downloadResponse.getSha256() != null) {
             AtomicReference<String> sha256 = new AtomicReference<>("");
             Assertions.assertDoesNotThrow(() -> {
@@ -466,21 +467,31 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @Then("{string} prova a recuperare senza successo un documento passando un index non valido")
+    public void theRetrievalOfANonPresentDocumentCannotBeProperlyRetrievedBy(String recipient) {
+        sharedSteps.selectUser(recipient);
+        try {
+            getReceivedNotificationDocument(1000);
+        } catch (HttpStatusCodeException e) {
+            Assertions.assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
+        }
+    }
+
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
     public void theDocumentCanNotBeProperlyRetrievedBy(String recipient) {
         try {
             sharedSteps.selectUser(recipient);
-            getReceivedNotificationDocument();
+            getReceivedNotificationDocument(0);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
     }
 
-    private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
+    private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(int documentIndex) {
         FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
         return webRecipientClient.getReceivedNotificationDocument(
                 fullSentNotification.getIun(),
-                Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(fullSentNotification).getDocuments()).get(0).getDocIdx())),
+                documentIndex,
                 null
         );
     }
@@ -607,9 +618,9 @@ public class RicezioneNotificheWebSteps {
 
     @Then("si verifica che sia stato restituito un errore di tipo {string}")
     public void verifyApiErrorType(String errorType) {
-            assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
-                    .as("Il tipo di errore non coincide con quanto atteso")
-                    .contains(errorType.toUpperCase());
+        assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
+                .as("Il tipo di errore non coincide con quanto atteso")
+                .contains(errorType.toUpperCase());
     }
 
     @And("download attestazione opponibile AAR da parte {string}")
@@ -698,6 +709,7 @@ public class RicezioneNotificheWebSteps {
 
     /**
      * Metodo di conversione dei parametri di ricerca delle notifiche da DataTable in oggetto NotificationSearchParam
+     *
      * @param data
      * @return
      */
