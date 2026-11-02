@@ -374,7 +374,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And gli attributi verificati del gruppo sono rimasti invariati
 
   @wait_for_fix
-  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_1] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla verifica e alla revoca dell'attributo
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_1] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -390,7 +390,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     Then si ottiene status code 400
 
   @deleghe2 @wait_for_fix
-  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_2] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla verifica e alla revoca dell'attributo
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_2] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -405,7 +405,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     Then si ottiene status code 200
 
   @deleghe2 @wait_for_fix
-  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_3] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla verifica e alla revoca dell'attributo
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_3] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"

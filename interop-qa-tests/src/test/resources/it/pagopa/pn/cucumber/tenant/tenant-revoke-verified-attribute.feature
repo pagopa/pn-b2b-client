@@ -72,7 +72,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_revoke_verified_attribute5 @no-parallel
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_05] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla revoca dell'attributo
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_05] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -83,7 +83,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_revoke_verified_attribute6 @no-parallel @deleghe2
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla revoca dell'attributo
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -97,7 +97,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_revoke_verified_attribute7 @no-parallel @deleghe2
-  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla revoca dell'attributo
+  Scenario: [TENANT_REVOKE_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"

@@ -74,7 +74,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute6
-  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID alla verifica dell'attributo
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -84,7 +84,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute7 @deleghe2
-  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID alla verifica dell'attributo
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
@@ -97,7 +97,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
 
   @nrt-minimal @wait_for_fix
   @tenant_assign_verified_attribute8 @deleghe2
-  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_08] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID alla verifica dell'attributo
+  Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_08] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
