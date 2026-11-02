@@ -500,7 +500,7 @@ public class DelayerSteps {
         service.deleteMockTables();
     }
 
-    // Le tabelle mock vengono ricreate in modo asincrono: finché non tornano ACTIVE la lettura può fallire
+    // La disponibilità delle tabelle mock è garantita dallo step DELETE_MOCK_TABLES: qui un errore di lettura fa fallire il test
     @Then("non devono esistere limiti mittente mock per la deliveryDate {string} e la provincia {string}")
     public void verifyNoMockSenderLimits(String deliveryDate, String province) {
         awaitEmptyMockTable(
@@ -521,7 +521,6 @@ public class DelayerSteps {
                     .atMost(Duration.ofMinutes(5))
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
-                    .ignoreExceptions()
                     .until(() -> sizeSupplier.get() == 0);
         } catch (ConditionTimeoutException e) {
             Assertions.fail(failMessage);

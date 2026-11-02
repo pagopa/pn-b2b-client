@@ -20,8 +20,11 @@ import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,8 +32,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -138,6 +143,42 @@ public class DelayerSevice {
 
     public void deleteMockTables() {
         lambdaClient.deleteMockTables();
+        awaitMockTablesReady();
+    }
+
+    // DELETE_MOCK_TABLES ricrea le tabelle in modo asincrono: si attende che una lettura vada a buon fine su ciascuna delle sei tabelle mock
+    private void awaitMockTablesReady() {
+        String deliveryDate = "2026-04-27";
+        String province = "P1";
+        Map<DelayerTable, Runnable> probes = new LinkedHashMap<>();
+        probes.put(DelayerTable.PaperDeliverySenderLimitMock, () -> getMockSenderLimitsSize(deliveryDate, province));
+        probes.put(DelayerTable.PaperDeliveryCountersMock, () -> getMockCountersSumEstimatesSize(deliveryDate, province, "890"));
+        probes.put(DelayerTable.PaperDeliveryUsedSenderLimitMock, () -> lambdaClient.getUsedSenderLimitByProvince(DelayerTable.PaperDeliveryUsedSenderLimitMock, deliveryDate, province));
+        probes.put(DelayerTable.PaperDeliveryDriverUsedCapacitiesMock, () -> lambdaClient.getUsedCapacity(DelayerTable.PaperDeliveryDriverUsedCapacitiesMock, "PROBE", province, deliveryDate));
+        probes.put(DelayerTable.PaperDeliveryDriverCapacitiesMock, () -> lambdaClient.getDeclaredCapacity(DelayerTable.PaperDeliveryDriverCapacitiesMock, province, deliveryDate));
+        probes.put(DelayerTable.DelayerPaperDeliveryMock, () -> lambdaClient.getPaperDelivery(DelayerTable.DelayerPaperDeliveryMock, deliveryDate, WorkflowSteps.EVALUATE_SENDER_LIMIT, null));
+
+        Set<DelayerTable> notReady = new LinkedHashSet<>(probes.keySet());
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(5))
+                    .pollInterval(Duration.ofSeconds(10))
+                    .pollDelay(Duration.ZERO)
+                    .until(() -> {
+                        notReady.removeIf(table -> {
+                            try {
+                                probes.get(table).run();
+                                return true;
+                            } catch (Exception e) {
+                                log.info("[DELETE_MOCK_TABLES] Tabella {} non ancora disponibile: {}", table, e.getMessage());
+                                return false;
+                            }
+                        });
+                        return notReady.isEmpty();
+                    });
+        } catch (ConditionTimeoutException e) {
+            throw new IllegalStateException("Tabelle mock non disponibili dopo DELETE_MOCK_TABLES: " + notReady, e);
+        }
     }
 
     public void deleteMockTables(String table) {
@@ -146,12 +187,16 @@ public class DelayerSevice {
 
     public Integer getMockSenderLimitsSize(String deliveryDate, String province) {
         var response = lambdaClient.getSenderLimitByProvinceWithTable(DelayerTable.PaperDeliverySenderLimitMock.tableName, deliveryDate, province);
-        return response == null || response.getItems() == null ? 0 : response.getItems().size();
+        if (response == null || response.getItems() == null)
+            throw new IllegalStateException("GET_SENDER_LIMIT returned no items list for the mock table");
+        return response.getItems().size();
     }
 
     public Integer getMockCountersSumEstimatesSize(String deliveryDate, String province, String product) {
         var response = lambdaClient.getCountersSumEstimates(deliveryDate, province, product, true);
-        return response == null || response.getItems() == null ? 0 : response.getItems().size();
+        if (response == null || response.getItems() == null)
+            throw new IllegalStateException("GET_COUNTERS returned no items list for the mock table");
+        return response.getItems().size();
     }
 
     public int getAvailableCapacity(String entityId, String deliveryDate) {

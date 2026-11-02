@@ -93,8 +93,15 @@ public class DelayerLambdaClient {
     public Optional<DelayerUsedCapacity> getUsedCapacity(String unifiedDeliveryDriver,
                                                          String geoKey,
                                                          String deliveryDate) {
+        return getUsedCapacity(DelayerTable.PaperDeliveryDriverUsedCapacities, unifiedDeliveryDriver, geoKey, deliveryDate);
+    }
+
+    public Optional<DelayerUsedCapacity> getUsedCapacity(DelayerTable table,
+                                                         String unifiedDeliveryDriver,
+                                                         String geoKey,
+                                                         String deliveryDate) {
         var params = paramsOf(
-                DelayerTable.PaperDeliveryDriverUsedCapacities,
+                table,
                 mandatory("unifiedDeliveryDriver", unifiedDeliveryDriver),
                 mandatory("geokey", geoKey),
                 mandatory("deliveryDate", deliveryDate)
@@ -149,8 +156,12 @@ public class DelayerLambdaClient {
     }
 
     public DelayerPaperDeliverys getPaperDelivery(String deliveryDate, WorkflowSteps workFlowStep, String lastEvaluatedKey) {
+        return getPaperDelivery(DelayerTable.DelayerPaperDelivery, deliveryDate, workFlowStep, lastEvaluatedKey);
+    }
+
+    public DelayerPaperDeliverys getPaperDelivery(DelayerTable table, String deliveryDate, WorkflowSteps workFlowStep, String lastEvaluatedKey) {
         var params = paramsOf(
-                DelayerTable.DelayerPaperDelivery,
+                table,
                 mandatory("deliveryDate", deliveryDate),
                 mandatory("workFlowStep", workFlowStep),
                 lastEvaluatedKey
@@ -198,8 +209,12 @@ public class DelayerLambdaClient {
     }
 
     public DelayerUsedSenderLimit getUsedSenderLimitByProvince(String deliveryDate, String province) {
+        return getUsedSenderLimitByProvince(DelayerTable.PaperDeliveryUsedSenderLimit, deliveryDate, province);
+    }
+
+    public DelayerUsedSenderLimit getUsedSenderLimitByProvince(DelayerTable table, String deliveryDate, String province) {
         var params = mapOf(
-                entry("table", DelayerTable.PaperDeliveryUsedSenderLimit),
+                entry("table", table),
                 mandatoryEntry("deliveryDate", deliveryDate),
                 mandatoryEntry("province", province)
         );
@@ -243,9 +258,12 @@ public class DelayerLambdaClient {
     }
 
     public DelayerDeclaredCapacity getDeclaredCapacity(String province, String deliveryDate) {
+        return getDeclaredCapacity(DelayerTable.PaperDeliveryDriverCapacities, province, deliveryDate);
+    }
+
+    public DelayerDeclaredCapacity getDeclaredCapacity(DelayerTable table, String province, String deliveryDate) {
         var params = paramsOf(
-                //DelayerTable.PaperDeliveryDriverCapacitiesMock,
-                DelayerTable.PaperDeliveryDriverCapacities,
+                table,
                 mandatory("province", province),
                 mandatory("deliveryDate", deliveryDate)
         );
