@@ -50,7 +50,8 @@ public class TenantRevokeVerifiedAttributeSteps {
             clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
         }
 
-        // TODO serve chiamare un metodo che usi delegationId, ma attendo l'implementazione in DEV/QA
+        // TODO serve chiamare un metodo che usi delegationId
+        // TODO si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
         revokeAttribute();
     }
 

@@ -58,7 +58,7 @@ public class M2MTenantClientImpl implements IM2MTenantClient {
 
     @Override
     public void revokeTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId) {
-        // TODO tuning per delegationId
+        // TODO tuning per delegationId: si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
         this.tenantsApi.revokeTenantVerifiedAttribute(tenantId, attributeId, agreementId);
     }
 
@@ -69,7 +69,7 @@ public class M2MTenantClientImpl implements IM2MTenantClient {
 
     @Override
     public void assignTenantVerifiedAttribute(UUID tenantId, UUID delegationId, UUID attributeId, UUID agreementId, String expirationDate) {
-        // TODO tuning per delegationId
+        // TODO tuning per delegationId: si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
         TenantVerifiedAttributeSeed seed = new TenantVerifiedAttributeSeed();
         seed.setId(attributeId);
         seed.setAgreementId(agreementId);
