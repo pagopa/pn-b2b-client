@@ -391,9 +391,19 @@ Feature: avanzamento notifiche webhook b2b V30
       | Comune_1     | 70000           |
 
 
-
-
-
+  Scenario: [B2B-STREAM_NOTIFICATION_CANCELLED] Creazione di uno stream con apiKey e controllo che la consume restituisca l'elemento di timeline "NOTIFICATION_CANCELLED" correttamente popolato
+    Given viene generata una nuova notifica con la versione "V2"
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V30"
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And si crea il nuovo stream con versione "V30" per il "Comune_Multi" con un gruppo disponibile "FIRST"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V30"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
 
 
 

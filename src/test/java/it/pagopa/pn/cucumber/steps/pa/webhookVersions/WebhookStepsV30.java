@@ -601,6 +601,14 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
                 .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
                 .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        if (timelineElementInternalCategory == TimelineElementCategoryV28.NOTIFICATION_CANCELLED) {
+            assertThat(convertedProgressResponseElement.getElement().getDetails())
+                    .as("I details dell'elemento NOTIFICATION_CANCELLED non devono essere null")
+                    .isNotNull();
+            assertThat(convertedProgressResponseElement.getElement().getDetails().getNotRefinedRecipientIndexes())
+                    .as("notRefinedRecipientIndexes è un campo obbligatorio per NOTIFICATION_CANCELLED")
+                    .isNotNull();
+        }
         log.info("EventProgress: " + progressResponseElement);
     }
 
