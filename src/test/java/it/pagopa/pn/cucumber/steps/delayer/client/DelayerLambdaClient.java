@@ -44,11 +44,38 @@ public class DelayerLambdaClient {
     private String lambdaName;
 
     public void importData(String filename, String deliveryWeek) {
-        var params = paramsOf(
+        importData(
                 DelayerTable.DelayerPaperDelivery,
                 DelayerTable.PaperDeliveryCounters,
                 DelayerTable.PaperDeliverySenderLimit,
                 DelayerTable.PaperDeliveryUsedSenderLimit,
+                filename,
+                deliveryWeek
+        );
+    }
+
+    public void importDataMock(String filename, String deliveryWeek) {
+        importData(
+                DelayerTable.DelayerPaperDeliveryMock,
+                DelayerTable.PaperDeliveryCountersMock,
+                DelayerTable.PaperDeliverySenderLimitMock,
+                DelayerTable.PaperDeliveryUsedSenderLimitMock,
+                filename,
+                deliveryWeek
+        );
+    }
+
+    private void importData(DelayerTable paperDeliveryTable,
+                            DelayerTable countersTable,
+                            DelayerTable senderLimitTable,
+                            DelayerTable usedSenderLimitTable,
+                            String filename,
+                            String deliveryWeek) {
+        var params = paramsOf(
+                paperDeliveryTable,
+                countersTable,
+                senderLimitTable,
+                usedSenderLimitTable,
                 mandatory("filename", filename),
                 deliveryWeek
         );
@@ -125,19 +152,51 @@ public class DelayerLambdaClient {
     }
 
     public DelayerPayload runAlgorithm(Integer printCapacity, String deliveryWeek) {
-        var params = paramsOf(
+        return runAlgorithm(
                 DelayerTable.DelayerPaperDelivery,
                 DelayerTable.PaperDeliveryDriverCapacities,
                 DelayerTable.PaperDeliveryDriverUsedCapacities,
                 DelayerTable.PaperDeliverySenderLimit,
                 DelayerTable.PaperDeliveryUsedSenderLimit,
                 DelayerTable.PaperDeliveryCounters,
+                printCapacity,
+                deliveryWeek
+        );
+    }
+
+    public DelayerPayload runAlgorithmMock(Integer printCapacity, String deliveryWeek) {
+        return runAlgorithm(
+                DelayerTable.DelayerPaperDeliveryMock,
+                DelayerTable.PaperDeliveryDriverCapacitiesMock,
+                DelayerTable.PaperDeliveryDriverUsedCapacitiesMock,
+                DelayerTable.PaperDeliverySenderLimitMock,
+                DelayerTable.PaperDeliveryUsedSenderLimitMock,
+                DelayerTable.PaperDeliveryCountersMock,
+                printCapacity,
+                deliveryWeek
+        );
+    }
+
+    private DelayerPayload runAlgorithm(DelayerTable paperDeliveryTable,
+                                        DelayerTable driverCapacitiesTable,
+                                        DelayerTable driverUsedCapacitiesTable,
+                                        DelayerTable senderLimitTable,
+                                        DelayerTable usedSenderLimitTable,
+                                        DelayerTable countersTable,
+                                        Integer printCapacity,
+                                        String deliveryWeek) {
+        var params = paramsOf(
+                paperDeliveryTable,
+                driverCapacitiesTable,
+                driverUsedCapacitiesTable,
+                senderLimitTable,
+                usedSenderLimitTable,
+                countersTable,
                 mandatory("printCapacity", printCapacity),
                 mandatory("deliveryWeek", deliveryWeek)
         );
 
         return invoke(DelayerOperation.RUN_ALGORITHM, FirstStepFunctionResponseWrapper.class, params).getBody();
-
     }
 
     public DelayerPayload delayerToPaperChannel() {

@@ -199,6 +199,37 @@ public class DelayerSevice {
         return response.getItems().size();
     }
 
+    public Integer getMockPaperDeliverySize(String deliveryDate) {
+        return Arrays.stream(WorkflowSteps.values())
+                .mapToInt(ws -> {
+                    var response = lambdaClient.getPaperDelivery(DelayerTable.DelayerPaperDeliveryMock, deliveryDate, ws, null);
+                    if (response == null || response.getItems() == null)
+                        throw new IllegalStateException("GET_PAPER_DELIVERY returned no items list for the mock table");
+                    return response.getItems().size();
+                })
+                .sum();
+    }
+
+    public Integer getMockDeclaredCapacitySize(String province, String deliveryDate) {
+        var response = lambdaClient.getDeclaredCapacity(DelayerTable.PaperDeliveryDriverCapacitiesMock, province, deliveryDate);
+        if (response == null || response.getItems() == null)
+            throw new IllegalStateException("GET_DECLARED_CAPACITY returned no items list for the mock table");
+        return response.getItems().size();
+    }
+
+    public Integer getMockUsedCapacitySize(String unifiedDeliveryDriver, String geoKey, String deliveryDate) {
+        return lambdaClient.getUsedCapacity(DelayerTable.PaperDeliveryDriverUsedCapacitiesMock, unifiedDeliveryDriver, geoKey, deliveryDate)
+                .map(usedCapacity -> 1)
+                .orElse(0);
+    }
+
+    public Integer getMockUsedSenderLimitSize(String deliveryDate, String province) {
+        var response = lambdaClient.getUsedSenderLimitByProvince(DelayerTable.PaperDeliveryUsedSenderLimitMock, deliveryDate, province);
+        if (response == null || response.getItems() == null)
+            throw new IllegalStateException("GET_USED_SENDER_LIMIT returned no items list for the mock table");
+        return response.getItems().size();
+    }
+
     public int getAvailableCapacity(String entityId, String deliveryDate) {
         var driver = entityId.split("~")[0];
         var province = entityId.split("~")[1];
@@ -231,8 +262,16 @@ public class DelayerSevice {
         lambdaClient.importData(csvName, deliveryWeek);
     }
 
+    public void importDataMock(String csvName, String deliveryWeek) {
+        lambdaClient.importDataMock(csvName, deliveryWeek);
+    }
+
     public String runBatchWorkflowStateMachine(Integer printCapacity, String currentMonday) {
         return lambdaClient.runAlgorithm(printCapacity, currentMonday).getExecutionArn();
+    }
+
+    public String runBatchWorkflowStateMachineMock(Integer printCapacity, String deliveryWeek) {
+        return lambdaClient.runAlgorithmMock(printCapacity, deliveryWeek).getExecutionArn();
     }
 
     public void waitUntilStepFunctionEnd(DelayerContext context) throws InterruptedException {
@@ -583,6 +622,14 @@ public class DelayerSevice {
     public void insertMockSenderLimit(String filename) {
         try {
             lambdaClient.insertMockSenderLimits(filename);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void insertMockCapacities(String filename) {
+        try {
+            lambdaClient.insertMockCapacities(filename);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

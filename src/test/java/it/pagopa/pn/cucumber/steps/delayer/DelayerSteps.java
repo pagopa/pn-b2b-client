@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -515,13 +516,94 @@ public class DelayerSteps {
                 "pn-PaperDeliveryCountersMock contiene ancora record per deliveryDate '%s', provincia '%s' e prodotto '%s'".formatted(deliveryDate, province, product));
     }
 
+    @Given("vengono caricate le capacità dei recapitisti mock tramite il file {string}")
+    public void insertMockCapacities(String filename) {
+        service.insertMockCapacities(filename);
+    }
+
+    @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek {string}")
+    public void populateMockTargetTable(String csvName, String deliveryWeek) {
+        service.importDataMock(csvName, deliveryWeek);
+    }
+
+    // Esecuzione isolata sulle tabelle mock: non partecipa ai gate della suite parallela @delayer1-5
+    @When("viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate {string} e capacità di stampa giornaliera {int}")
+    public void runFirstStepFunctionOnMockTables(String deliveryWeek, int printCapacity) throws Exception {
+        context.currentExecutionArn = service.runBatchWorkflowStateMachineMock(printCapacity, deliveryWeek);
+        service.waitUntilStepFunctionEnd(context);
+    }
+
+    @Then("devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate {string}")
+    public void verifyMockPaperDeliveries(String deliveryDate) {
+        awaitNotEmptyMockTable(
+                () -> service.getMockPaperDeliverySize(deliveryDate),
+                "pn-DelayerPaperDeliveryMock non contiene record per deliveryDate '%s'".formatted(deliveryDate));
+    }
+
+    @Then("non devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate {string}")
+    public void verifyNoMockPaperDeliveries(String deliveryDate) {
+        awaitEmptyMockTable(
+                () -> service.getMockPaperDeliverySize(deliveryDate),
+                "pn-DelayerPaperDeliveryMock contiene ancora record per deliveryDate '%s'".formatted(deliveryDate));
+    }
+
+    @Then("devono esistere capacità dichiarate mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyMockDeclaredCapacities(String deliveryDate, String province) {
+        awaitNotEmptyMockTable(
+                () -> service.getMockDeclaredCapacitySize(province, deliveryDate),
+                "pn-PaperDeliveryDriverCapacitiesMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
+    @Then("non devono esistere capacità dichiarate mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyNoMockDeclaredCapacities(String deliveryDate, String province) {
+        awaitEmptyMockTable(
+                () -> service.getMockDeclaredCapacitySize(province, deliveryDate),
+                "pn-PaperDeliveryDriverCapacitiesMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
+    @Then("devono esistere capacità utilizzate mock per la deliveryDate {string}, il recapitista {string} e la geokey {string}")
+    public void verifyMockUsedCapacities(String deliveryDate, String driver, String geoKey) {
+        awaitNotEmptyMockTable(
+                () -> service.getMockUsedCapacitySize(driver, geoKey, deliveryDate),
+                "pn-PaperDeliveryDriverUsedCapacitiesMock non contiene record per deliveryDate '%s', recapitista '%s' e geokey '%s'".formatted(deliveryDate, driver, geoKey));
+    }
+
+    @Then("non devono esistere capacità utilizzate mock per la deliveryDate {string}, il recapitista {string} e la geokey {string}")
+    public void verifyNoMockUsedCapacities(String deliveryDate, String driver, String geoKey) {
+        awaitEmptyMockTable(
+                () -> service.getMockUsedCapacitySize(driver, geoKey, deliveryDate),
+                "pn-PaperDeliveryDriverUsedCapacitiesMock contiene ancora record per deliveryDate '%s', recapitista '%s' e geokey '%s'".formatted(deliveryDate, driver, geoKey));
+    }
+
+    @Then("devono esistere limiti mittente utilizzati mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyMockUsedSenderLimits(String deliveryDate, String province) {
+        awaitNotEmptyMockTable(
+                () -> service.getMockUsedSenderLimitSize(deliveryDate, province),
+                "pn-PaperDeliveryUsedSenderLimitMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
+    @Then("non devono esistere limiti mittente utilizzati mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyNoMockUsedSenderLimits(String deliveryDate, String province) {
+        awaitEmptyMockTable(
+                () -> service.getMockUsedSenderLimitSize(deliveryDate, province),
+                "pn-PaperDeliveryUsedSenderLimitMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
     private void awaitEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
+        awaitMockTableSize(sizeSupplier, size -> size == 0, failMessage);
+    }
+
+    private void awaitNotEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
+        awaitMockTableSize(sizeSupplier, size -> size > 0, failMessage);
+    }
+
+    private void awaitMockTableSize(Supplier<Integer> sizeSupplier, IntPredicate condition, String failMessage) {
         try {
             Awaitility.await()
                     .atMost(Duration.ofMinutes(5))
                     .pollInterval(Duration.ofSeconds(10))
                     .pollDelay(Duration.ZERO)
-                    .until(() -> sizeSupplier.get() == 0);
+                    .until(() -> condition.test(sizeSupplier.get()));
         } catch (ConditionTimeoutException e) {
             Assertions.fail(failMessage);
         }
