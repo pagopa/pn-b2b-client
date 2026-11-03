@@ -79,6 +79,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_1.1] L'ente delegante può duplicare un e-service in delega in erogazione in stato PUBLISHED o SUSPENDED
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -107,6 +108,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_1.2] L'ente delegante può duplicare un e-service in stato PUBLISHED con richiesta di delega in erogazione pending
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -126,6 +128,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.1] L'ente delegato NON può duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -148,6 +151,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.2] L'ente delegante può duplicare un e-service in delega in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -175,6 +179,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.3] L'ente delegato NON può duplicare la vecchia versione in stato DEPRECATED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -194,6 +199,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.4] L'ente delegante può duplicare la vecchia versione in stato DEPRECATED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -220,6 +226,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.5] L'ente delegato NON può duplicare la vecchia versione in stato ARCHIVED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -238,6 +245,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.6] L'ente delegante può duplicare la vecchia versione in stato ARCHIVED di un e-service in delega in erogazione
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -263,6 +271,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_2.7] L'ente delegante NON può duplicare una versione in stato WAITING_FOR_APPROVAL di un e-service in delega in erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "PA1"
@@ -273,6 +282,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_3.1] L'ente delegato o un ente terzo NON può duplicare un e-service in stato PUBLISHED o SUSPENDED con delega in erogazione attiva
     Given l'ente delegato "PA2"
     And l'ente delegante "PA1"
@@ -295,6 +305,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_3.2] L'ente delegato NON può duplicare un e-service in stato PUBLISHED con richiesta di delega in erogazione pending
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -307,6 +318,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_REVOCATION_1.1] L'erogatore può duplicare un e-service in stato PUBLISHED dopo aver revocato la delega in erogazione precedentemente attiva
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -328,6 +340,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_REVOCATION_1.2] L'ente ex-delegato NON può duplicare un e-service in stato PUBLISHED dopo la revoca della delega in erogazione precedentemente attiva
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -342,6 +355,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_PRODUCER_DELEGATION_REJECTION_1.1] Il potenziale delegato NON può duplicare un e-service in stato PUBLISHED dopo aver rifiutato la richiesta di delega in erogazione
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -355,6 +369,7 @@ Feature: Clonazione di un e-service
   @delegation-duplication
   @deleghe2
   @ignore
+  @work-item:QA-18290
   Scenario Outline: [ESERVICE_CLONING_PRODUCER_DELEGATION_REJECTION_1.2] L'erogatore può duplicare un e-service in stato PUBLISHED dopo il rifiuto della richiesta di delega in erogazione da parte del potenziale delegato
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -375,6 +390,7 @@ Feature: Clonazione di un e-service
   @sad-path
   @delegation-duplication
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_CONSUMER_DELEGATION_1.1] Il delegante in fruizione NON può duplicare un e-service in stato PUBLISHED con delega in fruizione attiva
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'ente delegante "PA2"
@@ -391,6 +407,7 @@ Feature: Clonazione di un e-service
   @sad-path
   @delegation-duplication
   @ignore
+  @work-item:QA-18290
   Scenario: [ESERVICE_CLONING_CONSUMER_DELEGATION_1.2] Il potenziale delegante in fruizione NON può duplicare un e-service in stato PUBLISHED con richiesta di delega in fruizione pending
     Given "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED" e impostando delega amministrativa a "true" e delega tecnica a "true"
     And l'ente delegante "PA2"
