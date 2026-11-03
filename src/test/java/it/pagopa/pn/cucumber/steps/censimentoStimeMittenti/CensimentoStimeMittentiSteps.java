@@ -195,6 +195,10 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
+    /*
+    Per effettuare il controllo tramite lambda è necessario che i file delle commesse siano caricati in un path che contenga
+    /anno_mese/ -> 2026_05
+     */
     @Given("vengono caricati i moduli commessa come file zip su portfat: {string} anno {int} mese {int}")
     public void uploadZipFile(String fileName, Integer year, Integer month) {
 
