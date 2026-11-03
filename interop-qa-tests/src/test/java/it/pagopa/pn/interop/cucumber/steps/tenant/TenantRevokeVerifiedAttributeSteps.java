@@ -43,6 +43,17 @@ public class TenantRevokeVerifiedAttributeSteps {
 
     @When("il delegato all'erogazione revoca l'attributo precedentemente verificato")
     public void delegatedProducerRevokeAttributePreviouslyCreated() {
+        delegatedProducerRevokeAttributePreviouslyCreated(
+                sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreatedWithRandomDelegationId() {
+        delegatedProducerRevokeAttributePreviouslyCreated(UUID.randomUUID());
+    }
+
+    private void delegatedProducerRevokeAttributePreviouslyCreated(UUID delegationId) {
         String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
         if (delegateTenant == null) {
             clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

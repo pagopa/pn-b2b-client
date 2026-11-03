@@ -206,13 +206,20 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("via M2M il delegato all'erogazione assegna a {string} l'attributo verificato precedentemente creato")
     public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
         // Lo step prevede che sia impostato il tenant effettivamente delegato dallo step precedente
+        delegatedProducerAssignVerifiedAttribute(
+                tenantType, sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("via M2M specificando un ID delega casuale l'utente assegna a {string} l'attributo verificato precedentemente creato")
+    public void producerAssignVerifiedAttributeWithRandomDelegationId(String tenantType) {
+        delegatedProducerAssignVerifiedAttribute(tenantType, UUID.randomUUID());
+    }
+
+    private void delegatedProducerAssignVerifiedAttribute(String tenantType, UUID delegationId) {
         UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(tenantType);
         UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
-        UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
-                UUID.randomUUID() :
-                sharedStepsContext.getDelegationCommonContext().getDelegationId();
         sharedStepsContext.getAttributeCommonContext().setAttributeConsumerTenant(tenantType);
-
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> tenantClient.assignTenantVerifiedAttribute(
                         tenantId,
@@ -240,12 +247,20 @@ public class VerifiedAttributeSteps extends AbstractCommonSteps<VerifiedAttribut
     @When("via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato")
     public void delegatedProducerRevokeAttributePreviouslyCreated() {
         // Lo step prevede che sia impostato il tenant effettivamente delegato dallo step precedente
+        delegatedProducerRevokeAttributePreviouslyCreated(
+                sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("via M2M specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreatedWithRandomDelegationId() {
+        delegatedProducerRevokeAttributePreviouslyCreated(UUID.randomUUID());
+    }
+
+    private void delegatedProducerRevokeAttributePreviouslyCreated(UUID delegationId) {
         UUID tenantId = sharedStepsContext.getIdentityService().getOrganizationId(
                 sharedStepsContext.getAttributeCommonContext().getAttributeConsumerTenant()
         );
-        UUID delegationId = (sharedStepsContext.getDelegationCommonContext().getDelegationId() == null) ?
-                UUID.randomUUID() :
-                sharedStepsContext.getDelegationCommonContext().getDelegationId();
         httpExecutor.performCall(
                 () -> tenantClient.revokeTenantVerifiedAttribute(
                         tenantId,

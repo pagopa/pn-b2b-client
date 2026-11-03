@@ -78,7 +78,7 @@ Feature: Revoca di un attributo verificato posseduto da uno specifico aderente
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     And "PA1" ha già verificato l'attributo verificato a "PA2"
-    When il delegato all'erogazione revoca l'attributo precedentemente verificato
+    When specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato
     Then si ottiene status code 400
 
   @nrt-minimal @wait_for_fix
