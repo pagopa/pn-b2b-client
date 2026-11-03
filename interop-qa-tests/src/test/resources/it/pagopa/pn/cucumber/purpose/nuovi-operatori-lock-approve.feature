@@ -86,6 +86,13 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
   # NB: il controllo riguarda nello specifico il campo "hasUnreadNotifications" dell'oggetto Purpose, NON le notifiche in-app.
   # Si usano i reviewer 2 e 3 perché al momento 1 non è abilitato alla ricezione delle notifiche
   Scenario: [RA_ASSIGN_NOTIFICATION_01] Ad ogni valutatore a cui è stata assegnata una finalità risultano delle notifiche associate a quella finalità
+    Given l'utente è il numero 2 ad avere ruolo "reviewer" di "GSP"
+    And si prende nota dell'attuale configurazione delle notifiche InApp per l'utente corrente
+    And si attivano tutte le notifiche InApp possibili per l'utente "reviewer"
+    Given l'utente è il numero 3 ad avere ruolo "reviewer" di "GSP"
+    And si prende nota dell'attuale configurazione delle notifiche InApp per l'utente corrente
+    And si attivano tutte le notifiche InApp possibili per l'utente "reviewer"
+
     Given "PA1" ha già creato e pubblicato 1 e-service
     And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     And "GSP" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
@@ -97,3 +104,8 @@ Feature: Validazione della versione dei metadati durante la firma dell'analisi d
     When l'utente è il numero 3 ad avere ruolo "reviewer" di "GSP"
     And l'utente acquisisce la finalità e la versione dei metadati per la convalida
     Then all'utente risultano delle notifiche per quella finalità
+
+    Then l'utente è il numero 2 ad avere ruolo "reviewer" di "GSP"
+    And si ripristinano le notifiche InApp originariamente previste per l'utente corrente
+    And l'utente è il numero 3 ad avere ruolo "reviewer" di "GSP"
+    And si ripristinano le notifiche InApp originariamente previste per l'utente corrente

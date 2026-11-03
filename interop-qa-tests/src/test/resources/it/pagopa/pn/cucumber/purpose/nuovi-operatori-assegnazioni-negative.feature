@@ -1,7 +1,6 @@
 @purpose @nuovi-operatori @evol-nuovi-operatori @sad-path
 Feature: Diniego delle modifiche di assegnazione dell'analisi del rischio
 
-  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-11237
   # CDT 1.4, 1.5, 7.5 e sola scrittura di 7.7.
   # La preparazione usa l'admin BFF GSP e una richiesta valida per isolare il motivo del diniego.
   # "reviewer": 1 -> 2, mode invariata. "mode": reviewer 1 invariato, mode 2 <-> 3.

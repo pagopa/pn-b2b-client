@@ -87,10 +87,12 @@ public class ClientCreateStep {
                                  IdentityService identityService,
                                  SharedStepsContext sharedStepsContext) {
         // La numerazione di userIndex parte da 1 dal pdv del chiamante
-        String token = identityService.getToken(tenantType, role, --userIndex);
+        int zeroBasedIndex = userIndex - 1;
+        String token = identityService.getToken(tenantType, role, zeroBasedIndex);
 
         clientTokenConfigurator.setBearerToken(token);
         sharedStepsContext.setUserToken(token);
+        sharedStepsContext.setUserId(identityService.getUserId(tenantType, role, zeroBasedIndex));
         sharedStepsContext.setRole(Role.fromValue(role.toUpperCase()));
         sharedStepsContext.setTenantType(tenantType);
         sharedStepsContext.setApiSet(ApiProfile.ApiSet.BFF);
