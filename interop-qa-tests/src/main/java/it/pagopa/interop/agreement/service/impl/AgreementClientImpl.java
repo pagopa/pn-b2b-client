@@ -217,7 +217,8 @@ public class AgreementClientImpl implements IAgreementClient {
     }
 
     @Override
-    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q) {
+    public ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q, List<AgreementState> states) {
+        // TODO inserire 4° parametro: ', states' appena OpenAPI sarà aggiornato
         return agreementsApi.getAgreementsProducerEServicesWithHttpInfo(offset, limit, q);
     }
 
