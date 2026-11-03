@@ -279,7 +279,7 @@ public class PurposeRiskAnalysisCompilationSteps {
                 .description("Updated description")
                 .dailyCalls(1)
                 .isFreeOfCharge(true)
-                .riskAnalysisForm(compiledRiskAnalysis.getRiskAnalysisForm());
+                .riskAnalysisForm(lastCompiledForm);
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
     }
 
