@@ -4,10 +4,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.RiskAnalysisReviewer;
 import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,9 +47,19 @@ public class PurposeRiskAnalysisM2MReadSteps {
         assertThat(purpose.getId()).isEqualTo(purposeId());
         assertThat(purpose.getRiskAnalysisReviewMode()).isNotNull();
         assertThat(purpose.getRiskAnalysisReviewMode().getValue()).isEqualTo(mode.getValue());
-        // NOTA 19/10/2026: al momento si sta verificando solo la modalità per i motivi noti (blocco OpenAPI su GET M2M,
-        // ticket https://pagopa.atlassian.net/browse/PIN-11189). Una volta rilasciata la fix, aggiungere qui sotto
-        // il controllo dei valutatori confrontando gli ID presenti nel body M2M con initialReviewerActors nel contesto.
+        if (mode != RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS) {
+            assertThat(purpose.getReviewerWorkflow()).isNotNull();
+            List<RiskAnalysisCommonContext.AssignedReviewerActorRef> initialReviewerActors = context.getRiskAnalysisCommonContext().getInitialReviewerActors();
+            List<UUID> expectedReviewers = initialReviewerActors.stream()
+                    .map(actor -> context.getIdentityService().getUserId(actor.tenantType(), actor.role(), actor.index()))
+                    .toList();
+            List<UUID> actualReviewers = purpose.getReviewerWorkflow().getReviewers() == null
+                    ? Collections.emptyList()
+                    : purpose.getReviewerWorkflow().getReviewers().stream()
+                        .map(RiskAnalysisReviewer::getUserId)
+                        .toList();
+            assertThat(actualReviewers).containsExactlyInAnyOrderElementsOf(expectedReviewers);
+        }
     }
 
     private UUID purposeId() {
