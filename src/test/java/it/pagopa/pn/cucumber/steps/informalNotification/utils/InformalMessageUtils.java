@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestAdditionalMessage;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequestPrimaryMessage;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.NewMessageRequestAdditionalMessage;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.NewMessageRequestPrimaryMessage;
 import it.pagopa.pn.cucumber.steps.informalNotification.InformalDto.InformalMessageContent;
 
 public final class InformalMessageUtils {
