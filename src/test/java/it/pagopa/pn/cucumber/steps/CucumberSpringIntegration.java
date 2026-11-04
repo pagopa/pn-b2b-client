@@ -165,6 +165,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperChannelClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPtInstitutionsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
@@ -426,6 +427,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
+        PnPtInstitutionsClientImpl.class,
         OtpCodeService.class,
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,
