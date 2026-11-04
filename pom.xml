@@ -3004,7 +3004,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-ec/refs/heads/bug/PN-21731/docs/openapi/internal/externalchannel/gestore-repository-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-ec/refs/heads/develop/docs/openapi/internal/externalchannel/gestore-repository-v1.yaml</inputSpec>
                             <skipValidateSpec>true</skipValidateSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>

@@ -59,7 +59,7 @@ public class RichiestaCartaceaSteps {
     private PaperEngageRequest buildPaperEngageRequest(String requestIdx) {
         PaperEngageRequestAttachmentsInner allegato = new PaperEngageRequestAttachmentsInner()
                 .uri(URI_ALLEGATO)
-                .order(BigDecimal.ONE)
+                .order(BigDecimal.ZERO)
                 .documentType("ATTO")
                 .sha256(SHA256_ALLEGATO);
 
