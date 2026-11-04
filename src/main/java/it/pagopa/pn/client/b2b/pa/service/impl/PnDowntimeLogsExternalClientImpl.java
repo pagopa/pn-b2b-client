@@ -1,6 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsHttpClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.DowntimeInternalApi;
@@ -14,13 +14,12 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
 @Component
-public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsHttpClient {
+public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsClient {
     private final DowntimeApi downtimeApi;
     private final DowntimeInternalApi internalApi;
     private final StatusApi statusApi;
@@ -46,12 +45,7 @@ public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsHttpClie
     }
 
     public LegalFactDownloadMetadataResponse getLegalFact(String legalFactId) throws RestClientException {
-        return getLegalFactWithHttpInfo(legalFactId).getBody();
-    }
-
-    @Override
-    public ResponseEntity<LegalFactDownloadMetadataResponse> getLegalFactWithHttpInfo(String legalFactId) throws RestClientException {
-        return downtimeApi.getLegalFactWithHttpInfo(legalFactId);
+        return this.downtimeApi.getLegalFact(legalFactId);
     }
 
     public PnStatusResponse status() throws RestClientException {
@@ -59,12 +53,7 @@ public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsHttpClie
     }
 
     public PnDowntimeHistoryResponse statusHistory(OffsetDateTime fromTime, OffsetDateTime toTime, List<PnFunctionality> functionality, String page, String size) throws RestClientException {
-        return statusHistoryWithHttpInfo(fromTime, toTime, functionality, page, size).getBody();
-    }
-
-    @Override
-    public ResponseEntity<PnDowntimeHistoryResponse> statusHistoryWithHttpInfo(OffsetDateTime fromTime, OffsetDateTime toTime, List<PnFunctionality> functionality, String page, String size) throws RestClientException {
-        return downtimeApi.statusHistoryWithHttpInfo(fromTime, toTime, functionality, page, size);
+        return this.downtimeApi.statusHistory(fromTime, toTime, functionality, page, size);
     }
 
     public void addStatusChangeEvent(String xPagopaPnUid, List<PnStatusUpdateEvent> pnStatusUpdateEvent) throws RestClientException {
@@ -73,11 +62,6 @@ public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsHttpClie
 
     @Override
     public PnDowntimeHistoryResponse getResolved(Integer year, Integer month) throws RestClientException {
-        return getResolvedWithHttpInfo(year, month).getBody();
-    }
-
-    @Override
-    public ResponseEntity<PnDowntimeHistoryResponse> getResolvedWithHttpInfo(Integer year, Integer month) throws RestClientException {
-        return downtimeApi.getResolvedWithHttpInfo(year, month);
+        return downtimeApi.getResolved(year, month);
     }
 }
