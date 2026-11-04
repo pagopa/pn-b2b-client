@@ -628,11 +628,7 @@ public class DelayerSevice {
     }
 
     public void insertMockCapacities(String filename) {
-        try {
-            lambdaClient.insertMockCapacities(filename);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        lambdaClient.insertMockCapacities(filename);
     }
 
     public void invokePortfatLambda(String downloadUrl) {
