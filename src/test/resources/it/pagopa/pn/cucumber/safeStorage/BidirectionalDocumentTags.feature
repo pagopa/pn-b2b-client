@@ -76,7 +76,7 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
   # notifica riporta gia' il riferimento al documento trasformato, l'esecuzione non e' valida e
   # lo scenario viene interrotto senza esito (skipped), da ripetere.
   @e2e @bidirectionalTags
-  Scenario Outline: [SS-BIDIRECTIONAL-TAGS-2.1] Il collegamento non cancella ne modifica le informazioni gia presenti sul documento originale
+  Scenario Outline: [SS-BIDIRECTIONAL-TAGS-2.1] Il collegamento non cancella né modifica le informazioni già presenti sul documento originale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
