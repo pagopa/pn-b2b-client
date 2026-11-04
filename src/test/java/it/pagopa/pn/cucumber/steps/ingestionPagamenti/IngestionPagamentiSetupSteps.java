@@ -7,6 +7,8 @@ import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.common.InformalNotificationContext;
+import it.pagopa.pn.cucumber.steps.informalNotification.InformalTemplateMessage.InformalMessageTemplates;
+import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentNotice;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
@@ -47,9 +49,9 @@ public class IngestionPagamentiSetupSteps {
     private static final String INFORMAL_RECIPIENT_PEC = "example@OK-pecSuccess.it";
 
     private static final String INFORMAL_SUBJECT = "Comunicazione bonaria con avviso pagoPA";
-    // La sequenza OK_READ_THEN_PAID fa restituire PAID al polling di pn-io-connector sul mock di App IO
-    // TODO(PN-20853): verificare che il subject della bonaria arrivi al mock e che la campagna preveda il canale IO
-    private static final String INFORMAL_SUBJECT_PAID_ON_APP_IO = "Comunicazione bonaria pagata su App IO @io:OK_READ_THEN_PAID";
+    // Il router di pn-io-connector-mock instrada sul mock i messaggi IO il cui oggetto contiene @io:<sequenza>.
+    // Con OK_READ_THEN_PAID il mock risponde READ a 60-90 s e PAID dopo 90 s al polling di pn-io-connector
+    private static final String IO_MOCK_SEQUENCE_TAG = " @io:OK_READ_THEN_PAID";
 
     private static final String PAYMENT_NOTICE_PAID = "PAYMENT_NOTICE_PAID";
     private static final String NOTIFICATION_PAID = "NOTIFICATION_PAID";
@@ -65,6 +67,7 @@ public class IngestionPagamentiSetupSteps {
     private final PresaInCaricoNoticaBonariaSteps informalNotificationSteps;
     private final AvanzamentoNotificheB2bSteps legalNotificationSteps;
     private final DynamoDbService dynamoDbService;
+    private final InformalMessageProvider informalMessageProvider;
 
     // =========================================================================
     // NOTIFICHE LEGALI
@@ -152,8 +155,8 @@ public class IngestionPagamentiSetupSteps {
     private void sendInformalNotificationWithPagoPaNotice(String paName, String campaignId, Map<String, String> additionalData) throws IOException {
         Map<String, String> data = new HashMap<>(additionalData);
         data.put("campaignId", campaignId);
-        data.put("messageId", "${NEW-IT}");
-        data.put("subject", context.isPaidAlsoOnAppIo() ? INFORMAL_SUBJECT_PAID_ON_APP_IO : INFORMAL_SUBJECT);
+        data.put("messageId", context.isPaidAlsoOnAppIo() ? messagePaidOnAppIo(paName) : "${NEW-IT}");
+        data.put("subject", INFORMAL_SUBJECT);
         data.put("recipientType", "PF");
         data.put("taxId", INFORMAL_RECIPIENT_TAX_ID);
         data.put("denomination", INFORMAL_RECIPIENT_DENOMINATION);
@@ -167,6 +170,16 @@ public class IngestionPagamentiSetupSteps {
         InformalNotificationContext.InformalRecipientContext recipient = sendSharedContext.getInformalNotificationContext().getRecipient();
         context.setNotice(new PaymentNotice(recipient.getPaymentCreditorTaxId(), recipient.getPaymentNoticeCode(), INFORMAL_PAYMENT_AMOUNT));
         log.info("Comunicazione bonaria {} con avviso {}", sharedSteps.getNotificationIun(), context.getNotice());
+    }
+
+    /**
+     * pn-workflow-manager usa come oggetto del messaggio App IO quello del messaggio del destinatario, non l'oggetto
+     * della comunicazione bonaria: il tag della sequenza del mock va quindi nel messaggio.
+     */
+    private String messagePaidOnAppIo(String paName) {
+        String senderId = sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
+        String subject = InformalMessageTemplates.RISCUOTI_IT.getContent().getSubject() + IO_MOCK_SEQUENCE_TAG;
+        return informalMessageProvider.createMessageITWithSubject(senderId, subject);
     }
 
     @Given("la comunicazione bonaria ha concluso il proprio workflow")
