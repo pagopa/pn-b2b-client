@@ -4,7 +4,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
   # ---------------- DRY RUN MODE ----------------
   @paperTrackerRSDryRunMode
-  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -34,7 +33,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISDryRunMode
-  @paperTrackerOutputs @paperTrackerOutputsDry
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -62,7 +60,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
 
   # ---------------- RUN MODE ----------------
   @paperTrackerRSRunMode
-  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -94,7 +91,6 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-CausaForzaMaggiore_RS           |
 
   @paperTrackerRISRunMode
-  @paperTrackerOutputs @paperTrackerOutputsRun
   Scenario Outline: [PAPER_TRACKER_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
