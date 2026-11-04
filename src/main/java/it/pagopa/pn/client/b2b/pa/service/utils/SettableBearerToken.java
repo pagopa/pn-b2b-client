@@ -23,7 +23,11 @@ public interface SettableBearerToken {
         ROOT,
         SUPPORT_1,
         TENANT_1,
-        TENANT_2
+        TENANT_2;
+
+        public boolean isPf() {
+            return this == USER_1 || this == USER_2 || this == USER_3 || this == USER_4 || this == USER_5;
+        }
     }
 
     boolean setBearerToken(BearerTokenType bearerToken);
