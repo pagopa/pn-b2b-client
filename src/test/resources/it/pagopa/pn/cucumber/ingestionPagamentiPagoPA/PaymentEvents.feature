@@ -31,7 +31,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
   # la usano (01_5_B, 02_1, 04_2_A) non sono eseguibili. Nessuno di questi dipende da PAID o da stopOnPaid: dopo la
   # migrazione vanno solo rieseguiti.
   #
-  # Stato al 27/10/2026: nessun componente della feature è rilasciato in DEV, TEST o UAT.
+  # Stato al 04/11/2026: nessun componente della feature è rilasciato in DEV, TEST o UAT.
   # Gli scenari non ancora eseguibili sono marcati @ignore (esclusi dai runner) e con i tag delle dipendenze mancanti:
   #   @attesaKafkaMock          pn-kafka-mock non disponibile; endpoint e contratto da confermare
   #   @attesaPaymentNoticePaid  elemento di timeline PAYMENT_NOTICE_PAID non ancora implementato
@@ -225,7 +225,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
 
   @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaDlqPagamenti
   Scenario: [PAYMENT_EVENTS_DATA_03_1_B] Un evento malformato oltre 1MB viene scartato con un errore FATAL e non finisce nella DLQ
-    # Da verificare che pn-kafka-mock e il cluster Kafka di collaudo accettino messaggi oltre 1MB (limite predefinito di Kafka)
+    # Da verificare che pn-kafka-mock e il cluster Kafka mock accettino messaggi oltre 1MB (limite predefinito di Kafka)
     When pagoPA pubblica un evento di pagamento di dimensione superiore a 1MB
     Then pn-kafka-bridge scarta l'evento registrando un errore FATAL
     And l'evento non è presente nella coda degli eventi di pagamento malformati

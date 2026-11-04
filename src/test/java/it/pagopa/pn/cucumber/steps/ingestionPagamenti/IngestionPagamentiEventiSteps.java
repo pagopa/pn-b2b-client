@@ -57,7 +57,7 @@ public class IngestionPagamentiEventiSteps {
 
     /**
      * Il pagamento da App IO non viene inviato dal test: lo segnala il mock di App IO al polling di pn-io-connector,
-     * perché la comunicazione bonaria è stata inviata con la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
+     * perché il messaggio App IO della comunicazione bonaria ha nell'oggetto la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
      * Lo step attende il PAYMENT scritto dal flusso App IO.
      */
     @When("App IO comunica il pagamento dell'avviso")
@@ -68,7 +68,7 @@ public class IngestionPagamentiEventiSteps {
 
     /**
      * Il pagamento da App IO non viene inviato dal test: lo segnala il mock di App IO al polling di pn-io-connector,
-     * perché la comunicazione bonaria è stata inviata con la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
+     * perché il messaggio App IO della comunicazione bonaria ha nell'oggetto la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
      * In entrambi gli ordini si attende il PAYMENT del primo canale prima che possa intervenire il secondo:
      * se l'ordine non viene rispettato, la verifica sul paymentSourceChannel del PAYMENT lo rileva.
      */

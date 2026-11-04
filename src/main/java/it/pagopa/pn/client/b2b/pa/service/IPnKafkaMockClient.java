@@ -4,7 +4,7 @@ import it.pagopa.pn.client.b2b.pa.model.kafka.PaymentEventRequest;
 import org.springframework.web.client.RestClientException;
 
 /**
- * Client di pn-kafka-mock, che pubblica sul cluster Kafka di collaudo eventi conformi al tracciato pagoPA.
+ * Client di pn-kafka-mock, che pubblica sul cluster Kafka mock di SEND eventi conformi al tracciato pagoPA.
  */
 public interface IPnKafkaMockClient {
 
