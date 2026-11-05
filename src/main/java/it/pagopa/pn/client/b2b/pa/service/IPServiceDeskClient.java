@@ -45,6 +45,8 @@ public interface IPServiceDeskClient {
 
     List<PaSummary> getListOfOnboardedPA() throws RestClientException;
 
+    List<PaSummary> getListOfOnboardedPA(String paNameFilter) throws RestClientException;
+
     SearchNotificationsResponse searchNotificationsFromSenderId(Integer size, String nextPagesKey, PaNotificationsRequest paNotificationsRequest) throws RestClientException;
 
     ProfileResponse getProfileFromTaxId(ProfileRequest profileRequest) throws RestClientException;

@@ -147,7 +147,11 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClient {
     }
 
     public List<PaSummary> getListOfOnboardedPA() throws RestClientException {
-        return paApi.getListOfOnboardedPA(operatorId, null);
+        return getListOfOnboardedPA(null);
+    }
+
+    public List<PaSummary> getListOfOnboardedPA(String paNameFilter) throws RestClientException {
+        return paApi.getListOfOnboardedPA(operatorId, paNameFilter);
     }
 
     public SearchNotificationsResponse searchNotificationsFromSenderId(Integer size, String nextPagesKey, PaNotificationsRequest paNotificationsRequest) throws RestClientException {
