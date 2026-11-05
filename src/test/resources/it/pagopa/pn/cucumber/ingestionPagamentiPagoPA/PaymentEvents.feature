@@ -16,7 +16,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
   #   annullata viene scartato: con lo stato CANCELLED lo IUN viene rimosso da pn-PaymentInfo.
   #
   # Gli ID seguono il PST "Recupero eventi di pagamento da piattaforma pagoPA" (PAYMENT_EVENTS_<SCENARIO>_<NN>_<caso>_<variante>).
-  # Casi aggiunti rispetto al PST, sui requisiti dell'SRS non coperti: RACE_02_2_A (REQ-CMP-03), RACE_02_3 (REQ-IDM-04).
+  # Casi aggiunti rispetto al PST, sui requisiti dell'SRS non coperti: BASIC_01_7_A (REQ-CMP-03), RACE_02_2 (REQ-IDM-04).
   #
   # Mock del Nodo pagoPA (pn-external-channels, POST /external-channels/nodo-pagopa/v1/payment): il test valorizza solo
   # noticeNumber, creditorTaxId, paymentDateTime e amount; il resto dell'evento è statico (paymentChannel "IO", id
@@ -151,6 +151,21 @@ Feature: Recupero degli eventi di pagamento pagoPA
     And l'evento non è presente nella coda degli eventi di pagamento malformati
     And SEND ignora il pagamento senza registrare errori
 
+  @ingestionPagamentiPagoPA @ignore @attesaStopOnPaid @verificaCanaleIo
+  Scenario: [PAYMENT_EVENTS_BASIC_01_7_A] Il pagamento da App IO conclude il workflow della bonaria se la campagna lo prevede
+    # REQ-CMP-03: nel flusso App IO la chiusura dipende da stopOnPaid, non più da desiredFeedback = PAID.
+    # Template: StopOnPaid-IO-QA non esiste ancora (vedi intestazione). Il canale IO non deve avere READ tra i feedback
+    # desiderati, perché la sequenza OK_READ_THEN_PAID legge il messaggio prima di pagarlo: la chiusura sarebbe per lettura.
+    # La durata del canale IO deve superare i 90 secondi del PAID del mock più un margine, così il pagamento arriva
+    # prima dell'escalation.
+    Given la campagna "StopOnPaid-IO-QA" del "Comune_Multi" conclude il workflow al pagamento
+    And il destinatario paga gli avvisi anche tramite App IO
+    And il "Comune_Multi" ha inviato una comunicazione bonaria con avviso pagoPA nella campagna "StopOnPaid-IO-QA"
+    When App IO comunica il pagamento dell'avviso
+    Then App IO ha comunicato il pagamento dell'avviso
+    And l'elemento PAYMENT della comunicazione bonaria è stato scritto dal pagamento comunicato da "App IO"
+    And il workflow della comunicazione bonaria si interrompe al pagamento senza proseguire sugli altri canali
+
   # =========================================================================================
   # SCENARIO 2 - Race condition App IO e Kafka
   # =========================================================================================
@@ -176,26 +191,10 @@ Feature: Recupero degli eventi di pagamento pagoPA
       | A        | pagoPA | App IO  |
       | B        | App IO | pagoPA  |
 
-  @ingestionPagamentiPagoPA @ignore @attesaStopOnPaid @verificaCanaleIo
-  Scenario: [PAYMENT_EVENTS_RACE_02_2_A] Il pagamento da App IO conclude il workflow della bonaria per stopOnPaid
-    # REQ-CMP-03: nel flusso App IO la chiusura dipende da stopOnPaid, non più da desiredFeedback = PAID.
-    # Template: StopOnPaid-IO-QA non esiste ancora (vedi intestazione). Il canale IO non deve avere READ tra i feedback
-    # desiderati, perché la sequenza OK_READ_THEN_PAID legge il messaggio prima di pagarlo: la chiusura sarebbe per lettura.
-    # La durata del canale IO deve superare i 90 secondi del PAID del mock più un margine, così il pagamento arriva
-    # prima dell'escalation.
-    Given la campagna "StopOnPaid-IO-QA" del "Comune_Multi" conclude il workflow al pagamento
-    And il destinatario paga gli avvisi anche tramite App IO
-    And il "Comune_Multi" ha inviato una comunicazione bonaria con avviso pagoPA nella campagna "StopOnPaid-IO-QA"
-    When App IO comunica il pagamento dell'avviso
-    Then App IO ha comunicato il pagamento dell'avviso
-    And l'elemento PAYMENT della comunicazione bonaria è stato scritto dal pagamento comunicato da "App IO"
-    And SEND non registra il pagamento pagoPA nella timeline della notifica
-    And il workflow della comunicazione bonaria si interrompe al pagamento senza proseguire sugli altri canali
-
   @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStopOnPaid @verificaCanaleIo
-  Scenario Outline: [PAYMENT_EVENTS_RACE_02_3_<variante>] Se App IO e pagoPA chiedono entrambi la chiusura del workflow la bonaria si chiude una sola volta (<primo> poi <secondo>)
+  Scenario Outline: [PAYMENT_EVENTS_RACE_02_2_<variante>] Se App IO e pagoPA chiedono entrambi la chiusura del workflow la bonaria si chiude una sola volta (<primo> poi <secondo>)
     # REQ-IDM-04: entrambi i flussi schedulano WORKFLOW_DONE, senza effetti oltre la singola chiusura.
-    # Template: StopOnPaid-IO-QA non esiste ancora (vedi intestazione), con gli stessi vincoli di RACE_02_2_A.
+    # Template: StopOnPaid-IO-QA non esiste ancora (vedi intestazione), con gli stessi vincoli di BASIC_01_7_A.
     # Variante A: da verificare al primo run che pn-io-connector continui a interrogare App IO dopo la chiusura del
     # workflow, altrimenti il PAID del mock non arriva e il secondo WORKFLOW_DONE non viene mai richiesto.
     Given la campagna "StopOnPaid-IO-QA" del "Comune_Multi" conclude il workflow al pagamento
