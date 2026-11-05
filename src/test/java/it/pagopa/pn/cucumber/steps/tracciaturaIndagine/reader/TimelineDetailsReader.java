@@ -31,10 +31,10 @@ public class TimelineDetailsReader {
      * Se sentAttemptMade è null non viene applicato alcun filtro sul tentativo.
      */
     public List<Map<String, String>> readDetails(String iun, String category, int recIndex, Integer sentAttemptMade) {
-        List<Map<String, AttributeValue>> items = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.TIMELINE, Map.of(
                 ":v_iun", AttributeValue.builder().s(iun).build(),
                 ":v_category", AttributeValue.builder().s(category).build()
-        )).items();
+        ));
         return items.stream()
                 .map(item -> item.get(DETAILS))
                 .filter(details -> details != null && details.hasM())

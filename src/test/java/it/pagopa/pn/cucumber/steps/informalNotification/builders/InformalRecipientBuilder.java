@@ -1,12 +1,14 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
 
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationPaymentItem;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPaymentAttachment;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPhysicalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.PagoPaPaymentBase;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
@@ -51,6 +53,7 @@ public class InformalRecipientBuilder {
 
     private final InformalNotificationRequestMapper mapper;
     private final InformalMessageProvider messageProvider;
+    private final DestinatarioRegistry destinatarioRegistry;
 
     public InformalNotificationRecipientV1 build(Map<String, String> data, String currentCxId) {
 
@@ -64,7 +67,7 @@ public class InformalRecipientBuilder {
             recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
         }
         recipient.setMessageId(resolveMessageId(data, currentCxId));
-        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
+        recipient.setTaxId(resolveTaxId(getValue(data, RECIPIENT_TAX_ID.key)));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
         recipient.setAdditionalLanguages(buildAdditionalLanguages(data));
@@ -166,6 +169,26 @@ public class InformalRecipientBuilder {
             payments.add(item);
         }
         return payments;
+    }
+
+    // =========================================================
+    // TAX ID
+    // =========================================================
+
+    /**
+     * Un valore nella forma ${nome destinatario} viene risolto con il codice fiscale configurato per l'ambiente
+     * (config/taxids-{env}.properties), es. ${Utenza con Indirizzo Valido da ANPR}. Gli altri valori restano invariati.
+     */
+    private String resolveTaxId(String value) {
+        if (value == null || !value.startsWith("${") || !value.endsWith("}")) {
+            return value;
+        }
+        String name = value.substring(2, value.length() - 1);
+        Destinatario destinatario = destinatarioRegistry.destinatario(name);
+        if (destinatario == null) {
+            throw new IllegalArgumentException("Nessun destinatario configurato con nome: " + name);
+        }
+        return destinatario.getTaxId();
     }
 
     // =========================================================

@@ -18,10 +18,12 @@ public enum ElementoCartaceo {
     ESITO_PRIMO_TENTATIVO("l'esito del primo tentativo", "SEND_ANALOG_FEEDBACK", 0),
     ESITO_SECONDO_TENTATIVO("l'esito del secondo tentativo", "SEND_ANALOG_FEEDBACK", 1),
     RACCOMANDATA_SEMPLICE("la raccomandata semplice", "SEND_SIMPLE_REGISTERED_LETTER", null),
-    INVIO_BONARIA("l'invio cartaceo della comunicazione bonaria", "SEND_ANALOG_MESSAGE", null);
+    INVIO_BONARIA("l'invio cartaceo della comunicazione bonaria", "SEND_ANALOG_MESSAGE", null),
+    ESITO_BONARIA("l'esito dell'invio cartaceo della comunicazione bonaria", "SEND_ANALOG_MESSAGE_FEEDBACK", null);
 
     public static final String REGEX = "il primo invio cartaceo|il secondo invio cartaceo|l'esito del primo tentativo"
-            + "|l'esito del secondo tentativo|la raccomandata semplice|l'invio cartaceo della comunicazione bonaria";
+            + "|l'esito del secondo tentativo|la raccomandata semplice|l'invio cartaceo della comunicazione bonaria"
+            + "|l'esito dell'invio cartaceo della comunicazione bonaria";
 
     private final String descrizione;
     private final String category;

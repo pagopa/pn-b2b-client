@@ -55,6 +55,28 @@ public class TracciaturaIndagineInLocoSteps {
     }
 
     /**
+     * Per gli elementi prodotti prima del rilascio della feature, che non hanno ancora la fonte dell'indirizzo.
+     */
+    @Then("{elementoCartaceo} del destinatario {int} non riporta la fonte dell'indirizzo")
+    public void checkAddressSourceMissing(ElementoCartaceo elemento, int recIndex) {
+        checkField(elemento, recIndex, RECEIVER_ADDRESS_SOURCE_TYPE, null);
+    }
+
+    /**
+     * Attende che l'elemento sia prodotto, es. l'esito di un recapito ripreso dopo il rilascio.
+     */
+    @Then("{elementoCartaceo} del destinatario {int} è presente")
+    public void checkPresent(ElementoCartaceo elemento, int recIndex) {
+        try {
+            awaitDetails(elemento, recIndex);
+        } catch (ConditionTimeoutException timeoutException) {
+            sharedSteps.throwAssertionErrorWithIUN(new AssertionError(timeoutException.getMessage(), timeoutException));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    /**
      * Da usare dopo aver atteso la conclusione del workflow: la verifica è immediata, senza polling.
      */
     @Then("{elementoCartaceo} del destinatario {int} non è presente")
