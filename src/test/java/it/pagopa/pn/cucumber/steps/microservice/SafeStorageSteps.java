@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.service.IPnCfgClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -59,6 +61,7 @@ public class SafeStorageSteps {
     private final SafeStorageStepsPojo safeStorageStepsPojo;
     private int waitingTime;
     private String clientId;
+    private int uploadedPdfPageCount;
 
     @Autowired
     public SafeStorageSteps(ApplicationContext context, IPnSafeStoragePrivateClient safeStorageClient, IPnCfgClient cfgClient) {
@@ -305,7 +308,17 @@ public class SafeStorageSteps {
     public void uploadPdfDocumentForClient(String safeStorageClientId, String documentName, String documentType) {
         clientId = safeStorageClientId;
         safeStorageClient.setClientId(safeStorageClientId);
-        uploadPdfDocument("classpath:/" + documentName, documentType);
+        String resourcePath = "classpath:/" + documentName;
+        uploadPdfDocument(resourcePath, documentType);
+        uploadedPdfPageCount = countPdfPages(resourcePath);
+    }
+
+    private int countPdfPages(String resourcePath) {
+        try (InputStream content = context.getResource(resourcePath).getInputStream()) {
+            return PDFUtility.getNumberOfPages(content.readAllBytes());
+        } catch (IOException exception) {
+            throw new IllegalStateException("Impossibile leggere il documento " + resourcePath, exception);
+        }
     }
 
     /**
@@ -341,9 +354,10 @@ public class SafeStorageSteps {
     }
 
     /**
-     * Verifica che ogni pagina del documento rasterizzato abbia una quota di pixel scuri almeno pari a
-     * {@link PdfDarkPixelUtils#MIN_DARK_PIXEL_RATIO}. La regola presuppone documenti con pagine prevalentemente scure,
-     * come i PDF {@code JPEG2000_*}: un'immagine non decodificata in rasterizzazione lascia la pagina bianca.
+     * Verifica che il documento rasterizzato abbia lo stesso numero di pagine del documento caricato e che ogni
+     * pagina abbia una quota di pixel scuri almeno pari a {@link PdfDarkPixelUtils#MIN_DARK_PIXEL_RATIO}.
+     * La regola presuppone documenti con pagine prevalentemente scure, come i PDF {@code JPEG2000_*}:
+     * un'immagine non decodificata in rasterizzazione lascia la pagina bianca.
      */
     @Then("il documento rasterizzato non ha pagine bianche")
     public void checkRasterizedDocumentHasNoBlankPages() {
@@ -360,7 +374,10 @@ public class SafeStorageSteps {
             throw new IllegalStateException("Il documento rasterizzato " + fileKey + " non è un PDF leggibile", exception);
         }
         log.info("Documento rasterizzato {}: quota di pixel scuri per pagina {}", fileKey, darkPixelRatios);
-        Assertions.assertFalse(darkPixelRatios.isEmpty(), "Il documento rasterizzato " + fileKey + " non ha pagine");
+        Assertions.assertTrue(uploadedPdfPageCount > 0, "Il numero di pagine del documento caricato non è disponibile");
+        Assertions.assertEquals(uploadedPdfPageCount, darkPixelRatios.size(),
+                "Il documento rasterizzato " + fileKey + " ha " + darkPixelRatios.size()
+                        + " pagine, il documento caricato " + uploadedPdfPageCount);
 
         List<Integer> blankPages = new ArrayList<>();
         for (int pageIndex = 0; pageIndex < darkPixelRatios.size(); pageIndex++) {
