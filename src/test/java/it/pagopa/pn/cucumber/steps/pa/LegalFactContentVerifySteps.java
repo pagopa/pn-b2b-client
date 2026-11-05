@@ -4,6 +4,8 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.util.PDFUtility;
+import it.pagopa.common.util.PdfSignatureVerifier;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -19,7 +21,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -58,6 +59,7 @@ public class LegalFactContentVerifySteps {
 
     @Value("${pn.legalFact-mario.gherkin.older-10-years}")
     private String legalFactId10years;
+
 
     @Autowired
     public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
@@ -741,4 +743,18 @@ public class LegalFactContentVerifySteps {
             assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
         }
     }
+
+    @Then("scarico l'AAR della notifica analogica e verifico la firma")
+    public void scaricoAarDellaNotificaAnalogicaEVerificoFirma() {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse
+                legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
+
+        byte[] source = B2bUtils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+        Assertions.assertNotNull(source);
+
+        Assertions.assertTrue(PdfSignatureVerifier.hasSignature(source));
+        Assertions.assertTrue(PdfSignatureVerifier.verifyPdfSignature(source));
+    }
+
+
 }
