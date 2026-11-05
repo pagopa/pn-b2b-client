@@ -20,7 +20,7 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
       | numberOfShipments           | 46 |
       | firstWeekNumberOfShipments  | 27 |
       | secondWeekNumberOfShipments | 19 |
-    #And vengono caricate le capacità dei recapitisti mock tramite il file "TBD_capacities_mock"
+    And vengono caricate le capacità dei recapitisti mock tramite il file "Capacity_v2.csv"
     And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek "2026-04-27"
     And viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate "2026-04-27" e capacità di stampa giornaliera 10
     And devono esistere capacità dichiarate mock per la deliveryDate "2026-04-27" e la provincia "P1"
@@ -44,7 +44,7 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
     And vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_ranking2nd_890_mock_aprile.json |
-    #And vengono caricate le capacità dei recapitisti mock tramite il file "TBD_capacities_mock"
+    And vengono caricate le capacità dei recapitisti mock tramite il file "Capacity_v2.csv"
     And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek "2026-04-27"
     And viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate "2026-04-27" e capacità di stampa giornaliera 10
     Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
