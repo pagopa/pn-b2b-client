@@ -6,10 +6,12 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.pa.service.IPnCfgClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.*;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.pn.cucumber.utils.PdfDarkPixelUtils;
 import it.pagopa.pn.cucumber.utils.SafeStorageStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -32,9 +35,11 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class SafeStorageSteps {
@@ -46,6 +51,9 @@ public class SafeStorageSteps {
     // (ora italiana): la data salvata e restituita e' normalizzata a questo orario.
     private static final LocalTime AVAILABILITY_END_OF_DAY = LocalTime.of(23, 59, 59);
     private static final String UNREADABLE_REQUEST_MESSAGE = "Failed to read HTTP message";
+    // pn-pdfraster legge la coda di trasformazione ogni 10 secondi: il tempo massimo copre code e ritentativi.
+    private static final Duration RASTERIZATION_TIMEOUT = Duration.ofMinutes(5);
+    private static final Duration RASTERIZATION_POLL_INTERVAL = Duration.ofSeconds(10);
 
     private final ApplicationContext context;
     private final IPnSafeStoragePrivateClient safeStorageClient;
@@ -53,6 +61,7 @@ public class SafeStorageSteps {
     private final SafeStorageStepsPojo safeStorageStepsPojo;
     private int waitingTime;
     private String clientId;
+    private int uploadedPdfPageCount;
 
     @Autowired
     public SafeStorageSteps(ApplicationContext context, IPnSafeStoragePrivateClient safeStorageClient, IPnCfgClient cfgClient) {
@@ -273,7 +282,10 @@ public class SafeStorageSteps {
 
     @Given("Viene caricato un nuovo documento di tipo {string}")
     public void uploadNewDocument(String type) {
-        String resourcePath = "classpath:/multa.pdf";
+        uploadPdfDocument("classpath:/multa.pdf", type);
+    }
+
+    private void uploadPdfDocument(String resourcePath, String type) {
         String sha256 = computeAndSetSha(resourcePath);
 
         FileCreationRequest request = new FileCreationRequest();
@@ -290,6 +302,93 @@ public class SafeStorageSteps {
         clientId = safeStorageClientId;
         safeStorageClient.setClientId(safeStorageClientId);
         uploadNewDocument(documentType);
+    }
+
+    @Given("il client SafeStorage {string} carica il documento {string} di tipo {string}")
+    public void uploadPdfDocumentForClient(String safeStorageClientId, String documentName, String documentType) {
+        clientId = safeStorageClientId;
+        safeStorageClient.setClientId(safeStorageClientId);
+        String resourcePath = "classpath:/" + documentName;
+        uploadPdfDocument(resourcePath, documentType);
+        uploadedPdfPageCount = countPdfPages(resourcePath);
+    }
+
+    private int countPdfPages(String resourcePath) {
+        try (InputStream content = context.getResource(resourcePath).getInputStream()) {
+            return PDFUtility.getNumberOfPages(content.readAllBytes());
+        } catch (IOException exception) {
+            throw new IllegalStateException("Impossibile leggere il documento " + resourcePath, exception);
+        }
+    }
+
+    /**
+     * Attende che SafeStorage renda disponibile il documento caricato, cioè che ne abbia completato le trasformazioni.
+     * Finché il documento è in staging, in attesa della trasformazione, SafeStorage risponde 404 alla lettura.
+     */
+    @When("si attende che il documento caricato venga rasterizzato")
+    public void waitForRasterizedDocument() {
+        String fileKey = getCreatedFileKey(1);
+        AtomicReference<FileDownloadResponse> availableDocument = new AtomicReference<>();
+        await("Rasterizzazione su SafeStorage del documento " + fileKey)
+                .atMost(RASTERIZATION_TIMEOUT)
+                .pollInterval(RASTERIZATION_POLL_INTERVAL)
+                .until(() -> {
+                    FileDownloadResponse document = readDocumentIfAvailable(fileKey);
+                    availableDocument.set(document);
+                    return document != null;
+                });
+        safeStorageStepsPojo.setFileDownloadResponse(availableDocument.get());
+    }
+
+    private FileDownloadResponse readDocumentIfAvailable(String fileKey) {
+        try {
+            FileDownloadResponse document = safeStorageClient.getFileWithHttpInfo(fileKey, clientId, false, false).getBody();
+            boolean downloadable = document != null && document.getDownload() != null && document.getDownload().getUrl() != null;
+            return downloadable ? document : null;
+        } catch (HttpClientErrorException exception) {
+            if (exception.getStatusCode().value() == HttpStatus.NOT_FOUND.value()) {
+                return null;
+            }
+            throw exception;
+        }
+    }
+
+    /**
+     * Verifica che il documento rasterizzato abbia lo stesso numero di pagine del documento caricato e che ogni
+     * pagina abbia una quota di pixel scuri almeno pari a {@link PdfDarkPixelUtils#MIN_DARK_PIXEL_RATIO}.
+     * La regola presuppone documenti con pagine prevalentemente scure, come i PDF {@code JPEG2000_*}:
+     * un'immagine non decodificata in rasterizzazione lascia la pagina bianca.
+     */
+    @Then("il documento rasterizzato non ha pagine bianche")
+    public void checkRasterizedDocumentHasNoBlankPages() {
+        FileDownloadResponse document = safeStorageStepsPojo.getFileDownloadResponse();
+        Assertions.assertNotNull(document, "Il documento rasterizzato non risulta disponibile su SafeStorage");
+        String fileKey = document.getKey();
+        byte[] content = B2bUtils.downloadFile(document.getDownload().getUrl());
+        Assertions.assertTrue(content.length > 0, "Il documento rasterizzato " + fileKey + " è vuoto");
+
+        List<Double> darkPixelRatios;
+        try {
+            darkPixelRatios = PdfDarkPixelUtils.darkPixelRatioPerPage(content);
+        } catch (IOException exception) {
+            throw new IllegalStateException("Il documento rasterizzato " + fileKey + " non è un PDF leggibile", exception);
+        }
+        log.info("Documento rasterizzato {}: quota di pixel scuri per pagina {}", fileKey, darkPixelRatios);
+        Assertions.assertTrue(uploadedPdfPageCount > 0, "Il numero di pagine del documento caricato non è disponibile");
+        Assertions.assertEquals(uploadedPdfPageCount, darkPixelRatios.size(),
+                "Il documento rasterizzato " + fileKey + " ha " + darkPixelRatios.size()
+                        + " pagine, il documento caricato " + uploadedPdfPageCount);
+
+        List<Integer> blankPages = new ArrayList<>();
+        for (int pageIndex = 0; pageIndex < darkPixelRatios.size(); pageIndex++) {
+            if (darkPixelRatios.get(pageIndex) < PdfDarkPixelUtils.MIN_DARK_PIXEL_RATIO) {
+                blankPages.add(pageIndex + 1);
+            }
+        }
+        Assertions.assertTrue(blankPages.isEmpty(),
+                "Il documento rasterizzato " + fileKey + " ha pagine bianche: " + blankPages
+                        + ". Quota di pixel scuri per pagina: " + darkPixelRatios
+                        + ", minima attesa: " + PdfDarkPixelUtils.MIN_DARK_PIXEL_RATIO);
     }
 
     @Given("il client SafeStorage {string} carica un nuovo documento di tipo {string} con il tag {string}")
