@@ -257,7 +257,7 @@ public class EServiceTemplateInstanceCreateSteps {
                         .isEqualTo(expectedState);
 
                 String templateName = eServiceSourceTemplate.getEserviceTemplate().getName();
-                String instanceDefaultName = expectedEServiceInstanceName(templateName, instanceLabel);
+                String instanceDefaultName = eServiceTemplateInstanceUtility.expectedEServiceInstanceName(templateName, instanceLabel);
                 softly.assertThat(eServiceName)
                         .as("Check correttezza del nome dell'istanza creata")
                         .isEqualTo(instanceDefaultName);
@@ -304,7 +304,7 @@ public class EServiceTemplateInstanceCreateSteps {
 
         UUID eServiceId = sharedStepsContext.getEServiceTemplateStepContext().getLastEServiceIdCreatedFromTemplate();
 
-        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+        String expectedEServiceInstanceName = eServiceTemplateInstanceUtility.expectedEServiceInstanceName(templateEServiceName, suffix);
 
         pollingService.makePolling(
                 () -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId),
@@ -327,7 +327,7 @@ public class EServiceTemplateInstanceCreateSteps {
             default -> throw new IllegalArgumentException("Invalid position: " + position);
         };
 
-        String expectedEServiceInstanceName = this.expectedEServiceInstanceName(templateEServiceName, suffix);
+        String expectedEServiceInstanceName = eServiceTemplateInstanceUtility.expectedEServiceInstanceName(templateEServiceName, suffix);
         pollingService.makePolling(
                 () -> this.eServiceClient.getProducerEServiceDetailsWithHttpInfo(
                         sharedStepsContext.getEServiceTemplateStepContext().getEServiceCreatedFromTemplateWithIndex(index).getId()
@@ -390,10 +390,4 @@ public class EServiceTemplateInstanceCreateSteps {
                 ResponseEntity::getStatusCode);
     }
 
-    private String expectedEServiceInstanceName(String templateEServiceName, String suffix) {
-        String parsedSuffix = eServiceTemplateInstanceUtility.parseSuffix(suffix);
-        return templateEServiceName + (
-                parsedSuffix == null || parsedSuffix.trim().isEmpty() ? "" : " - " + parsedSuffix.trim()
-        );
-    }
 }
