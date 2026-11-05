@@ -18,6 +18,14 @@ Feature: Recupero degli eventi di pagamento pagoPA
   # Gli ID seguono il PST "Recupero eventi di pagamento da piattaforma pagoPA" (PAYMENT_EVENTS_<SCENARIO>_<NN>_<caso>_<variante>).
   # Casi aggiunti rispetto al PST, sui requisiti dell'SRS non coperti: RACE_02_2_A (REQ-CMP-03), RACE_02_3 (REQ-IDM-04).
   #
+  # Mock del Nodo pagoPA (pn-external-channels, POST /external-channels/nodo-pagopa/v1/payment): il test valorizza solo
+  # noticeNumber, creditorTaxId, paymentDateTime e amount; il resto dell'evento è statico (paymentChannel "IO", id
+  # generato dal mock). Casi del PST non riproducibili e quindi non coperti: importo mancante (il mock lo valorizza),
+  # identificativo mancante o più lungo di 20 caratteri, contenuto non JSON (DATA_03_1_A), evento malformato oltre 1MB
+  # (DATA_03_1_B), sezioni assenti (DATA_03_1_C). Con paymentChannel fisso il paymentSourceChannel del PAYMENT non
+  # distingue App IO da pagoPA: il canale che ha scritto il PAYMENT si ricava dall'eventTimestamp, che nel flusso
+  # pagoPA è la data di pagamento pubblicata dal test (WI-5.7).
+  #
   # Campagne di test: le campagne con stopOnPaid verranno create dal team SEND al rilascio del flag (i test non possono
   # crearle: il client delle campagne è in sola lettura). Gli scenari che le usano sono template con nomi provvisori:
   #   StopOnPaid-QA       stopOnPaid = true,  stessa escalation di BonarieAllChannels (EMAIL PT4M -> PEC -> SMS, nessun feedback)
@@ -33,7 +41,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
   #
   # Stato al 04/11/2026: nessun componente della feature è rilasciato in DEV, TEST o UAT.
   # Gli scenari non ancora eseguibili sono marcati @ignore (esclusi dai runner) e con i tag delle dipendenze mancanti:
-  #   @attesaKafkaMock          pn-kafka-mock non disponibile; endpoint e contratto da confermare
+  #   @attesaKafkaMock          mock del Nodo pagoPA di pn-external-channels non rilasciato (branch feature/kafka-tests)
   #   @attesaPaymentNoticePaid  elemento di timeline PAYMENT_NOTICE_PAID non ancora implementato
   #   @attesaCommunicationType  campo communicationType su pn-PaymentInfo non ancora rilasciato
   #   @attesaStopOnPaid         flag stopOnPaid non rilasciato; campagne di test non ancora create (vedi sopra)
@@ -47,7 +55,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
   # SCENARIO 1 - Invio eventi di pagamento per bonarie e legali
   # =========================================================================================
 
-  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStreamPaymentNoticePaid @cleanWebhook
+  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStreamPaymentNoticePaid @webhook3 @cleanWebhook
   Scenario: [PAYMENT_EVENTS_BASIC_01_1_A] Il pagamento pagoPA di una notifica legale viene registrato in timeline
     # La notifica viene pagata in uno stato stabile, così un eventuale cambio di stato è attribuibile solo al pagamento.
     # Lo stream viene creato prima della notifica, così ne riceve tutti gli eventi; @cleanWebhook lo cancella a fine scenario
@@ -85,7 +93,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
     And il pagamento pagoPA non è esposto nella timeline della notifica
     And il workflow della comunicazione bonaria prosegue sugli altri canali dopo il pagamento
 
-  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStopOnPaid @attesaStreamPaymentNoticePaid @cleanWebhook
+  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStopOnPaid @attesaStreamPaymentNoticePaid @webhook3 @cleanWebhook
   Scenario: [PAYMENT_EVENTS_BASIC_01_2_C] Il pagamento pagoPA non conclude il workflow di una bonaria di una campagna senza stopOnPaid
     # Le campagne censite prima del rilascio non hanno stopOnPaid: l'assenza equivale a false.
     # BonarieAllChannels (EMAIL PT4M -> PEC -> SMS, nessun feedback desiderato) esiste in DEV e TEST: il workflow
@@ -123,7 +131,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
     Then la posizione debitoria dell'avviso è censita come "LEGAL"
 
-  @ingestionPagamentiPagoPA @ignore @attesaCommunicationType @cleanWebhook
+  @ingestionPagamentiPagoPA @ignore @attesaCommunicationType @webhook3 @cleanWebhook
   Scenario: [PAYMENT_EVENTS_BASIC_01_5_B] L'avviso di una comunicazione bonaria è censito come posizione debitoria bonaria
     # Gli elementi della validazione compaiono per la prima volta nelle bonarie: lo stream INFORMAL verifica che restino diagnostici
     Given si predispone 1 nuovo stream denominato "stream-payment-events" con eventType "TIMELINE" con versione "V30"
@@ -153,7 +161,8 @@ Feature: Recupero degli eventi di pagamento pagoPA
     # Ogni canale ha una prova di elaborazione propria, indipendente dal PAYMENT che può scrivere uno solo dei due:
     #   pagoPA -> PAYMENT_NOTICE_PAID (scritto solo dal flusso pagoPA)
     #   App IO -> SEND_DIGITAL_MESSAGE_PROGRESS con code PAID
-    # Il paymentSourceChannel del PAYMENT indica quale canale lo ha scritto: deve essere il primo
+    # Il PAYMENT deve essere quello del primo canale: il secondo non lo scrive né lo sovrascrive. Lo indica
+    # l'eventTimestamp, uguale alla data di pagamento pubblicata solo se il PAYMENT è stato scritto da pagoPA
     Given il destinatario paga gli avvisi anche tramite App IO
     And il "Comune_Multi" ha inviato una comunicazione bonaria con avviso pagoPA nella campagna "FattOrd"
     When il pagamento dell'avviso viene comunicato prima da "<primo>" e poi da "<secondo>"
@@ -218,35 +227,11 @@ Feature: Recupero degli eventi di pagamento pagoPA
       | numero avviso mancante                      |
       | codice fiscale dell'ente creditore mancante |
       | data di pagamento mancante                  |
-      | importo mancante                            |
-      | identificativo mancante                     |
-      | identificativo più lungo di 20 caratteri    |
-      | contenuto non in formato JSON               |
-
-  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaDlqPagamenti
-  Scenario: [PAYMENT_EVENTS_DATA_03_1_B] Un evento malformato oltre 1MB viene scartato con un errore FATAL e non finisce nella DLQ
-    # Da verificare che pn-kafka-mock e il cluster Kafka mock accettino messaggi oltre 1MB (limite predefinito di Kafka)
-    When pagoPA pubblica un evento di pagamento di dimensione superiore a 1MB
-    Then pn-kafka-bridge scarta l'evento registrando un errore FATAL
-    And l'evento non è presente nella coda degli eventi di pagamento malformati
-
-  @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaDlqPagamenti
-  Scenario Outline: [PAYMENT_EVENTS_DATA_03_1_C] Un evento di pagamento privo di un'intera sezione viene scartato nella DLQ: <anomalia>
-    # In feature/PN-21937 le sezioni sono @Valid ma non @NotNull: un evento senza sezione potrebbe superare
-    # la validazione e fallire nella conversione invece di essere scartato nella DLQ
-    When pagoPA pubblica un evento di pagamento con "<anomalia>"
-    Then l'evento malformato viene scartato nella coda degli eventi di pagamento malformati
-
-    Examples:
-      | anomalia                            |
-      | sezione posizione debitoria assente |
-      | sezione ente creditore assente      |
-      | sezione dati di pagamento assente   |
 
   @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaDlqPagamenti
   Scenario: [PAYMENT_EVENTS_DATA_03_2_A] Un evento malformato non blocca l'elaborazione dei pagamenti successivi
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
-    When pagoPA pubblica un evento di pagamento con "contenuto non in formato JSON"
+    When pagoPA pubblica un evento di pagamento con "data di pagamento mancante"
     And pagoPA comunica il pagamento dell'avviso
     Then l'evento malformato viene scartato nella coda degli eventi di pagamento malformati
     And SEND registra il pagamento pagoPA nella timeline della notifica

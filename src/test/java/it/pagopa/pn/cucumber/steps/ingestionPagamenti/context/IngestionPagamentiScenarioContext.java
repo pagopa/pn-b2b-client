@@ -35,4 +35,10 @@ public class IngestionPagamentiScenarioContext {
     private String malformedEventMarker;
 
     private Instant lastEventPublishedAt;
+
+    /**
+     * Data di pagamento dell'ultimo pagamento pagoPA pubblicato: il flusso pagoPA la copia nell'eventTimestamp del
+     * PAYMENT delle bonarie (WI-5.7), quindi indica se il PAYMENT è stato scritto da pagoPA.
+     */
+    private Instant pagoPaPaymentDateTime;
 }

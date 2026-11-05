@@ -54,6 +54,7 @@ public class IngestionPagamentiVerificheSteps {
     private static final String NOTIFICATION_COST_LOG_GROUP = "/aws/ecs/pn-notification-cost-service";
     private static final String IO_PAYMENT_PROGRESS = "SEND_DIGITAL_MESSAGE_PROGRESS";
     private static final String IO_PAYMENT_PROGRESS_CODE = "PAID";
+    private static final String APP_IO_PAYMENT_SOURCE_CHANNEL = "IO";
     private static final String COST_VALIDATION_REQUEST = "NOTIFICATION_COST_VALIDATION_REQUEST";
     private static final String COST_VALIDATION_RESPONSE = "NOTIFICATION_COST_VALIDATION_RESPONSE";
     private static final String COST_VALIDATION_ELEMENT_PREFIX = "NOTIFICATION_COST_VALIDATION";
@@ -114,15 +115,20 @@ public class IngestionPagamentiVerificheSteps {
 
     /**
      * Per le bonarie non si calcolano i costi di notificazione (REQ-VAL-06): pn-NotificationDeliveryCost non ha record.
+     * Il record verrebbe scritto in modo asincrono, quindi l'assenza va verificata per tutta la finestra di osservazione.
      */
     @Then("SEND non registra costi di notificazione per la comunicazione bonaria")
     public void noDeliveryCostForInformal() {
-        QueryResponse response = dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST, Map.of(
+        await().during(SIDE_EFFECT_OBSERVATION_WINDOW)
+                .atMost(SIDE_EFFECT_OBSERVATION_WINDOW.plus(Duration.ofSeconds(30)))
+                .pollInterval(Duration.ofSeconds(5))
+                .until(() -> deliveryCostItems().isEmpty());
+    }
+
+    private List<Map<String, AttributeValue>> deliveryCostItems() {
+        return dynamoDbService.call(DynamoTableName.NOTIFICATION_DELIVERY_COST, Map.of(
                 ":v_pk", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
-                ":v_sk", AttributeValue.builder().n("0").build()));
-        assertThat(response.items())
-                .as("%s non deve contenere record per la comunicazione bonaria %s", DynamoTableName.NOTIFICATION_DELIVERY_COST.getValue(), sharedSteps.getNotificationIun())
-                .isEmpty();
+                ":v_sk", AttributeValue.builder().n("0").build())).items();
     }
 
     @Then("la posizione debitoria dell'avviso è censita come {string}")
@@ -296,17 +302,38 @@ public class IngestionPagamentiVerificheSteps {
                 .isEqualTo(1);
     }
 
+    /**
+     * Il paymentSourceChannel non distingue i canali (vedi {@link PaymentChannel}): il PAYMENT scritto da pagoPA ha
+     * come eventTimestamp la data di pagamento pubblicata dal test (WI-5.7), quello scritto da App IO no.
+     * Con entrambi i canali la verifica rileva anche la sovrascrittura del PAYMENT da parte del secondo canale,
+     * che il solo conteggio degli elementi non distingue.
+     */
     @Then("l'elemento PAYMENT della comunicazione bonaria è stato scritto dal pagamento comunicato da {string}")
     public void informalPaymentWrittenBy(String channel) {
         List<InformalTimelineElementV1> payments = NotificationInformalUtilsWorkFlowV1
                 .getTimelineElementsByCategory(sharedSteps.getSentInformalSentNotificationLastVersion(), INFORMAL_PAYMENT);
         assertThat(payments).as("Elemento %s non presente nella comunicazione bonaria %s", INFORMAL_PAYMENT, sharedSteps.getNotificationIun()).hasSize(1);
-        assertThat(payments.get(0).getDetails())
-                .as("Details dell'elemento %s non valorizzati", INFORMAL_PAYMENT)
-                .isNotNull()
-                .extracting(InformalTimelineElementDetailsV1::getPaymentSourceChannel)
-                .as("Il %s deve essere scritto dal primo canale che ha comunicato il pagamento (%s)", INFORMAL_PAYMENT, channel)
-                .isEqualTo(PaymentChannel.fromLabel(channel).paymentSourceChannel());
+        InformalTimelineElementDetailsV1 details = payments.get(0).getDetails();
+        assertThat(details).as("Details dell'elemento %s non valorizzati", INFORMAL_PAYMENT).isNotNull();
+        assertThat(details.getEventTimestamp()).as("eventTimestamp dell'elemento %s non valorizzato", INFORMAL_PAYMENT).isNotNull();
+
+        Instant paymentDate = details.getEventTimestamp().toInstant();
+        Instant pagoPaPaymentDate = context.getPagoPaPaymentDateTime();
+        if (PaymentChannel.fromLabel(channel) == PaymentChannel.PAGOPA) {
+            assertThat(pagoPaPaymentDate).as("Nessun pagamento pagoPA pubblicato nello scenario").isNotNull();
+            assertThat(paymentDate)
+                    .as("Il %s deve riportare la data del pagamento pubblicato da pagoPA", INFORMAL_PAYMENT)
+                    .isEqualTo(pagoPaPaymentDate);
+        } else {
+            assertThat(details.getPaymentSourceChannel())
+                    .as("Il %s deve essere scritto dal flusso App IO", INFORMAL_PAYMENT)
+                    .isEqualTo(APP_IO_PAYMENT_SOURCE_CHANNEL);
+            if (pagoPaPaymentDate != null) {
+                assertThat(paymentDate)
+                        .as("Il %s non deve riportare la data del pagamento pubblicato da pagoPA", INFORMAL_PAYMENT)
+                        .isNotEqualTo(pagoPaPaymentDate);
+            }
+        }
     }
 
     // =========================================================================
@@ -406,12 +433,17 @@ public class IngestionPagamentiVerificheSteps {
         }
     }
 
+    /**
+     * Va usato dopo la verifica dello scarto: per tutta la finestra di osservazione non devono comparire errori,
+     * così è coperto anche un log scritto o indicizzato da CloudWatch dopo quello di scarto.
+     */
     @Then("SEND ignora il pagamento senza registrare errori")
     public void paymentIgnoredWithoutErrors() {
         String errorLogQuery = String.format("\"ERROR\" \"%s\"", context.getNotice().noticeCode());
-        assertThat(logCount(NOTIFICATION_COST_LOG_GROUP, errorLogQuery))
-                .as("Nessun errore deve essere registrato su %s per l'avviso %s", NOTIFICATION_COST_LOG_GROUP, context.getNotice().noticeCode())
-                .isZero();
+        await().during(IGNORED_PAYMENT_OBSERVATION_WINDOW)
+                .atMost(IGNORED_PAYMENT_OBSERVATION_WINDOW.plus(Duration.ofMinutes(1)))
+                .pollInterval(Duration.ofSeconds(10))
+                .until(() -> logCount(NOTIFICATION_COST_LOG_GROUP, errorLogQuery) == 0);
     }
 
     private void awaitTimelineElementOnDynamo(String category) {

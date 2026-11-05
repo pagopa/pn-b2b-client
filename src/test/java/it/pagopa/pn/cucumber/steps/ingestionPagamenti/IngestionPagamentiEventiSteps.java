@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Comunicazione dei pagamenti a SEND dai diversi canali: pagoPA (via pn-kafka-mock), App IO e API B2B dell'ente.
+ * Comunicazione dei pagamenti a SEND dai diversi canali: pagoPA (via il mock del Nodo pagoPA), App IO e API B2B dell'ente.
  */
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
@@ -45,11 +45,6 @@ public class IngestionPagamentiEventiSteps {
         paymentEventService.publishMalformed(PaymentEventAnomaly.fromLabel(anomaly));
     }
 
-    @When("pagoPA pubblica un evento di pagamento di dimensione superiore a 1MB")
-    public void pagoPaPublishesOversizeEvent() {
-        paymentEventService.publishOversizeMalformed();
-    }
-
     @When("l'ente comunica il pagamento dell'avviso tramite API B2B")
     public void senderNotifiesPaymentViaB2b() {
         legalNotificationSteps.laNotificaVienePagata();
@@ -70,7 +65,7 @@ public class IngestionPagamentiEventiSteps {
      * Il pagamento da App IO non viene inviato dal test: lo segnala il mock di App IO al polling di pn-io-connector,
      * perché il messaggio App IO della comunicazione bonaria ha nell'oggetto la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
      * In entrambi gli ordini si attende il PAYMENT del primo canale prima che possa intervenire il secondo:
-     * se l'ordine non viene rispettato, la verifica sul paymentSourceChannel del PAYMENT lo rileva.
+     * se l'ordine non viene rispettato, la verifica su chi ha scritto il PAYMENT lo rileva.
      */
     @When("il pagamento dell'avviso viene comunicato prima da {string} e poi da {string}")
     public void paymentNotifiedByBothChannels(String firstChannel, String secondChannel) {
