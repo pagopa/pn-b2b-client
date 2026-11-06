@@ -143,6 +143,7 @@ public class InvioNotificheB2bSteps {
     private RequestStatus cancellationResponse;
     private String originalDocumentKey;
     private String transformedDocumentKey;
+    private final List<String> transformedDocumentKeys = new ArrayList<>();
     private Map<String, List<String>> originalDocumentTags;
     private boolean testTagAdded;
 
@@ -1377,6 +1378,7 @@ public class InvioNotificheB2bSteps {
                     .as("Documenti trasformati tramite %s ricevuti dal recapitista per il destinatario %d", trasformazione, destinatario)
                     .hasSize(1);
             transformedDocumentKey = transformedKeys.get(0);
+            transformedDocumentKeys.add(transformedDocumentKey);
             log.info("Documento trasformato ricevuto dal recapitista: {}", transformedDocumentKey);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -1388,6 +1390,12 @@ public class InvioNotificheB2bSteps {
         // Multivalore: ogni trasformazione aggiunge un riferimento
         checkTagValues(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG,
                 values -> values.contains(transformedDocumentKey));
+    }
+
+    @Then("il documento della notifica riporta il riferimento a ogni documento trasformato")
+    public void checkAllTransformedDocumentReferences() {
+        checkTagValues(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG,
+                values -> values.containsAll(transformedDocumentKeys));
     }
 
     @Then("il documento trasformato riporta il riferimento al documento della notifica")

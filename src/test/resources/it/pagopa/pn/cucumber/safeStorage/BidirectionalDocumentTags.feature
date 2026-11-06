@@ -8,7 +8,7 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
   # con il retry dopo CON996, come in B2B-LEGALFACT_RASTER_2; la normalizzazione richiede un
   # mittente abilitato nell'ambiente.
 
-  @e2e @bidirectionalTags
+  @e2e @bidirectionalTags @work-item:QA-18590
   Scenario Outline: [SS-BIDIRECTIONAL-TAGS-1.1] Il documento originale riporta il riferimento al documento trasformato
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -28,13 +28,9 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
     Examples:
       | trasformazione  | mittente     | indirizzo                |
       | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
+      | normalizzazione | Comune_Multi | Via@ok_AR                |
 
-    @ignore
-    Examples:
-      | trasformazione  | mittente        | indirizzo |
-      | normalizzazione | DA_DEFINIRE_PR4 | Via@ok_AR |
-
-  @e2e @bidirectionalTags
+  @e2e @bidirectionalTags @work-item:QA-18590
   Scenario Outline: [SS-BIDIRECTIONAL-TAGS-1.2] Il documento trasformato riporta il riferimento al documento originale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -54,15 +50,30 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
     Examples:
       | trasformazione  | mittente     | indirizzo                |
       | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
+      | normalizzazione | Comune_Multi | Via@ok_AR                |
 
-    @ignore
-    Examples:
-      | trasformazione  | mittente        | indirizzo |
-      | normalizzazione | DA_DEFINIRE_PR4 | Via@ok_AR |
+  # Il documento viene normalizzato al primo invio e rasterizzato dopo il CON996.
+  @e2e @bidirectionalTags @work-item:QA-18590
+  Scenario: [SS-BIDIRECTIONAL-TAGS-1.3] Il documento originale trasformato più volte riporta il riferimento a ogni documento trasformato
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | denomination            | Test AR trasformazione   |
+      | taxId                   | CLMCST42R12D969Z         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@OK_PCRETRY_CON996_AR |
+      | payment                 | NULL                     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "normalizzazione"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "rasterizzazione"
+    Then il documento della notifica riporta il riferimento a ogni documento trasformato
 
   # Il tag di prova va associato prima della trasformazione: se all'accettazione il collegamento
   # è già presente, lo scenario viene saltato.
-  @e2e @bidirectionalTags
+  @e2e @bidirectionalTags @work-item:QA-18590
   Scenario Outline: [SS-BIDIRECTIONAL-TAGS-2.1] Il collegamento non cancella né modifica le informazioni già presenti sul documento originale
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -85,8 +96,4 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
     Examples:
       | trasformazione  | mittente     | indirizzo                |
       | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
-
-    @ignore
-    Examples:
-      | trasformazione  | mittente        | indirizzo |
-      | normalizzazione | DA_DEFINIRE_PR4 | Via@ok_AR |
+      | normalizzazione | Comune_Multi | Via@ok_AR                |
