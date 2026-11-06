@@ -54,6 +54,7 @@ import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.ListAssert;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Assumptions;
@@ -86,6 +87,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
@@ -99,10 +101,10 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class InvioNotificheB2bSteps {
 
-    // Tag SafeStorage con cui i canali esterni collegano il documento originale a quello trasformato (QA-18586)
+    // Tag di collegamento tra documento originale e trasformato (QA-18586)
     private static final String TRANSFORMED_DOCUMENT_KEY_TAG = "transformedDocumentKey";
     private static final String ORIGINAL_DOCUMENT_KEY_TAG = "originalDocumentKey";
-    // Informazione di prova: tag non indicizzato gia' usato dagli scenari di IndicizzazioneFile.feature
+    // Tag di prova, lo stesso usato in IndicizzazioneFile.feature
     private static final String TEST_TAG = "global_singlevalue";
     private static final String TEST_TAG_VALUE = "test1";
     private static final Map<String, String> TRANSFORMED_DOCUMENT_PREFIXES = Map.of(
@@ -1370,7 +1372,7 @@ public class InvioNotificheB2bSteps {
                     .filter(fileKey -> fileKey != null && fileKey.startsWith(transformedPrefix))
                     .distinct()
                     .toList();
-            // La notifica ha un solo documento da trasformare: piu' documenti trasformati renderebbero il riscontro non univoco
+            // Un solo documento nella notifica, quindi un solo trasformato
             assertThat(transformedKeys)
                     .as("Documenti trasformati tramite %s ricevuti dal recapitista per il destinatario %d", trasformazione, destinatario)
                     .hasSize(1);
@@ -1383,12 +1385,15 @@ public class InvioNotificheB2bSteps {
 
     @Then("il documento della notifica riporta il riferimento al documento trasformato")
     public void checkTransformedDocumentReference() {
-        checkSingleTagValue(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG, transformedDocumentKey);
+        // Multivalore: ogni trasformazione aggiunge un riferimento
+        checkTagValues(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG,
+                values -> values.contains(transformedDocumentKey));
     }
 
     @Then("il documento trasformato riporta il riferimento al documento della notifica")
     public void checkOriginalDocumentReference() {
-        checkSingleTagValue(transformedDocumentKey, ORIGINAL_DOCUMENT_KEY_TAG, getOriginalDocumentKey());
+        checkTagValues(transformedDocumentKey, ORIGINAL_DOCUMENT_KEY_TAG,
+                values -> values.containsExactly(getOriginalDocumentKey()));
     }
 
     @And("al documento della notifica viene associata un'informazione di prova")
@@ -1403,7 +1408,7 @@ public class InvioNotificheB2bSteps {
     @And("si registrano le informazioni associate al documento della notifica, ancora privo del riferimento al documento trasformato")
     public void registerOriginalDocumentTags() {
         Map<String, List<String>> tags = getDocumentTags(getOriginalDocumentKey());
-        // Riferimento gia' presente: la trasformazione e' avvenuta prima dell'informazione di prova e l'esecuzione va ripetuta
+        // Collegamento già presente: la trasformazione è avvenuta prima del tag di prova
         Assumptions.assumeFalse(tags.containsKey(TRANSFORMED_DOCUMENT_KEY_TAG),
                 "Esecuzione non valida, da ripetere: il documento della notifica è stato trasformato prima della registrazione delle informazioni - IUN: "
                         + sharedSteps.getNotificationIun());
@@ -1460,12 +1465,11 @@ public class InvioNotificheB2bSteps {
         return Optional.ofNullable(safeStoragePrivateClient.additionalFileTagsGet(fileKey).getTags()).orElse(Map.of());
     }
 
-    private void checkSingleTagValue(String fileKey, String tag, String expectedValue) {
+    private void checkTagValues(String fileKey, String tag, Consumer<ListAssert<String>> valuesCheck) {
         try {
             Assertions.assertNotNull(transformedDocumentKey, "Documento trasformato non individuato tra quelli ricevuti dal recapitista");
-            assertThat(getDocumentTags(fileKey).get(tag))
-                    .as("Valori del tag %s sul documento %s", tag, fileKey)
-                    .containsExactly(expectedValue);
+            valuesCheck.accept(assertThat(getDocumentTags(fileKey).get(tag))
+                    .as("Valori del tag %s sul documento %s", tag, fileKey));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
