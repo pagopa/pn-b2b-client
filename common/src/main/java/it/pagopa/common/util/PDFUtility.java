@@ -149,6 +149,12 @@ public final class PDFUtility {
         return pdfStripper.getText(document);
     }
 
+/**
+     * Verifica se il contenuto è un PDF leggibile.
+     *
+     * @param bytes contenuto PDF
+     * @return {@code true} se il contenuto è un PDF valido, altrimenti {@code false}
+     */
     public static boolean isValidPdf(byte[] bytes) {
         if (bytes == null) return false;
         // controllo struttura valida del pdf
