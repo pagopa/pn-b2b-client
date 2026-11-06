@@ -567,6 +567,44 @@ public class TimelineReworkSteps {
         }
     }
 
+    @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline non risultino in stato {invoicingType}")
+    public void checkReworkedTimelinesNotInvoiced(String invoicingType, Map<String, String> unexpectedElements) {
+        FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
+        String paId = fsn.getSenderPaId();
+        String sentAt = fsn.getSentAt().toLocalDate().toString();
+        String iun = fsn.getIun();
+        String pk = paId + "_" + sentAt;
+
+        try {
+            // l'assenza deve reggere per tutta la finestra: una lettura singola può arrivare prima della scrittura
+            await().during(1, TimeUnit.MINUTES).atMost(2, TimeUnit.MINUTES).pollInterval(15, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+                List<Map<String, AttributeValue>> response = dynamoDbService.callAllPages(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
+                        ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
+                        ":v_iun", AttributeValue.builder().s(iun).build()
+                ));
+                log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", response);
+                assertThat(response.isEmpty())
+                        .as("Nessun record su pn-ReworkedTimelinesForInvoicing per il giorno %s. IUN = %s", sentAt, iun)
+                        .isFalse();
+                List<Map<String, AttributeValue>> records = response.stream().filter(
+                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+
+                unexpectedElements.forEach((key, value) -> {
+                    String[] requirements = value.split(";");
+                    Map<String, AttributeValue> unexpectedFound = records.stream()
+                            .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                            .findFirst().orElse(null);
+                    assertThat(unexpectedFound)
+                            .as("È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s", invoicingType, Arrays.toString(requirements), iun)
+                            .isNull();
+                });
+            });
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
     @Then("verifico la che il reworkId del {timelineInvalidation} generato sia corretto, con rework {int} try {int} e recIndex {int}")
     public void checkReworkId(String requestType, int reworkIndex, int tryIndex, int recIndex) {
         String reworkId = resolveReworkId(requestType);
