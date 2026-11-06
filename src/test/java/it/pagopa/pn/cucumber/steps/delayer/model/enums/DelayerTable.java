@@ -10,6 +10,10 @@ public enum DelayerTable {
     PaperDeliverySenderLimit("pn-PaperDeliverySenderLimit"),
     PaperDeliveryUsedSenderLimit("pn-PaperDeliveryUsedSenderLimit"),
     PaperDeliveryDriverCapacitiesMock("pn-PaperDeliveryDriverCapacitiesMock"),
+    DelayerPaperDeliveryMock("pn-DelayerPaperDeliveryMock"),
+    PaperDeliveryDriverUsedCapacitiesMock("pn-PaperDeliveryDriverUsedCapacitiesMock"),
+    PaperDeliverySenderLimitMock("pn-PaperDeliverySenderLimitMock"),
+    PaperDeliveryUsedSenderLimitMock("pn-PaperDeliveryUsedSenderLimitMock"),
     DelayerPaperDeliveryJsonView("pn_delayer_paper_delivery_json_view");
     public final String tableName;
 
