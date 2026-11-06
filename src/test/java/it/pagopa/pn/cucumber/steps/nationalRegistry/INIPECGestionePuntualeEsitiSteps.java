@@ -54,6 +54,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     private final DynamoDbService dynamoDbService;
     private final SharedSteps sharedSteps;
     private String notificationSentTimestamp;
+    private static final String MIN_ATTEMPT_AFTER = "2000-01-01T00:00:00Z";
 
     /**
      * Tempo massimo di attesa che il dato venga scritto/aggiornato sul DB.
@@ -72,6 +73,198 @@ public class INIPECGestionePuntualeEsitiSteps {
         this.dynamoDbService = dynamoDbService;
         this.sharedSteps = sharedSteps;
     }
+
+    @Then("l'assenza di recapiti su INAD per il cf {string} risulta correttamente registrata")
+    public void verifyMissingInadAddressCorrectlyRecorded(String cf) {
+
+        String iun = sharedSteps.getNotificationIun();
+
+        await()
+                .atMost(DB_POLL_TIMEOUT)
+                .pollInterval(DB_POLL_INTERVAL)
+                .untilAsserted(() -> {
+
+                    List<Map<String, AttributeValue>> items = retrieveWorkedInadRequests(cf, iun);
+
+                    assertThat(items)
+                            .as("Nessuna request INAD completata trovata per cf=%s", cf)
+                            .isNotEmpty();
+
+                    assertThat(items)
+                            .allSatisfy(item -> {
+
+                                assertThat(item.get("status").s())
+                                        .isEqualTo("WORKED");
+
+                                assertThat(item.containsKey("resultPayload"))
+                                        .as("Atteso resultPayload valorizzato")
+                                        .isTrue();
+                            });
+                });
+    }
+
+    @Then("la risposta sul registro {eservice} per il cf {string} risulta registrata con esito {string}")
+    public void verifyMissingAddressRecorded(
+            Eservice eservice,
+            String cf,
+            String expectedOutcome) {
+
+        String iun = sharedSteps.getNotificationIun();
+
+        await()
+                .atMost(DB_POLL_TIMEOUT)
+                .pollInterval(DB_POLL_INTERVAL)
+                .untilAsserted(() -> {
+
+                    List<Map<String, AttributeValue>> items =
+                            retrieveNationalRegistryRequests(
+                                    cf,
+                                    eservice,
+                                    iun
+                            );
+
+                    assertThat(items)
+                            .as("Nessuna request %s trovata per cf=%s",
+                                    eservice, cf)
+                            .isNotEmpty();
+
+                    assertThat(items)
+                            .anySatisfy(item -> {
+
+                                assertThat(item.get("status").s())
+                                        .as("La request deve risultare completata")
+                                        .isEqualTo("WORKED");
+
+                                assertThat(item)
+                                        .containsKey("resultPayload");
+
+                                String resultPayload =
+                                        item.get("resultPayload").s();
+
+                                assertThat(resultPayload)
+                                        .as("Esito atteso %s nel payload", expectedOutcome)
+                                        .contains(expectedOutcome);
+                            });
+                });
+    }
+
+    private List<Map<String, AttributeValue>> retrieveWorkedInadRequests(String cf, String iun) {
+
+        Map<String, AttributeValue> attributeValues = Map.of(
+                ":v_correlationId",
+                AttributeValue.builder()
+                        .s("NATIONAL_REGISTRY_CALL." + iun)
+                        .build()
+        );
+
+        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS, attributeValues);
+
+        return items.stream()
+                .filter(item -> item.containsKey("taxId"))
+                .filter(item -> cf.equals(item.get("taxId").s()))
+                .filter(item -> item.containsKey("registry"))
+                .filter(item -> "INAD".equals(item.get("registry").s()))
+                .filter(item -> item.containsKey("status"))
+                .filter(item -> "WORKED".equals(item.get("status").s()))
+                .toList();
+    }
+
+    @Then("la richiesta verso il servizio {eservice} per il cf {string} viene tracciata correttamente")
+    public void verifyNationalRegistryRequestExists(Eservice eservice, String cf) {
+
+        String iun = sharedSteps.getNotificationIun();
+
+        await()
+                .atMost(Duration.ofSeconds(30))
+                .pollInterval(DB_POLL_INTERVAL)
+                .untilAsserted(() -> {
+
+                    List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequests(cf, eservice, iun);
+
+                    assertThat(items)
+                            .as("Nessuna request %s trovata per cf=%s e iun=%s", eservice, cf, iun)
+                            .isNotEmpty();
+                });
+    }
+
+    private List<Map<String, AttributeValue>> retrieveNationalRegistryRequests(String cf, Eservice eservice, String iun) {
+
+        Map<String, AttributeValue> attributeValues = Map.of(
+                ":v_registryStatus",
+                AttributeValue.builder()
+                        .s(eservice.name() + "~NOT_WORKED")
+                        .build(), ":v_attemptAfter", AttributeValue.builder()
+                        .s(MIN_ATTEMPT_AFTER)
+                        .build()
+        );
+
+        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS, attributeValues);
+
+        return items.stream()
+                .filter(item -> cf.equals(item.get("taxId").s()))
+                .filter(item -> item.get("correlationId").s().contains(iun))
+                .toList();
+    }
+
+    @Then("il ritentativo della chiamata verso {eservice} per il cf {string} risulta correttamente registrato")
+    public void verifyBatchInRetry(Eservice eservice, String cf) {
+
+        String iun = sharedSteps.getNotificationIun();
+
+        await()
+                .atMost(DB_POLL_TIMEOUT)
+                .pollInterval(DB_POLL_INTERVAL)
+                .untilAsserted(() -> {
+
+                    Map<String, AttributeValue> batch = retrieveBatchInRetry(cf, eservice, iun);
+
+                    assertThat(batch)
+                            .as("Nessun batch %s in retry trovato per cf=%s", eservice, cf)
+                            .isNotNull();
+                });
+    }
+
+    private Map<String, AttributeValue> retrieveBatchInRetry(String cf, Eservice eservice, String iun) {
+
+        List<Map<String, AttributeValue>> requests = retrieveNationalRegistryRequests(cf, eservice, iun);
+
+        assertThat(requests).isNotEmpty();
+
+        String batchId = requests.get(0).get("batchId").s();
+
+        Map<String, AttributeValue> attributes = Map.of(
+                ":v_batchId",
+                AttributeValue.builder()
+                        .s(batchId)
+                        .build()
+        );
+        List<Map<String, AttributeValue>> batches =
+                dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
+
+        return batches.stream()
+                .filter(item -> getNumber(item, "errorRetryCount") > 0 || getNumber(item, "inProgressRetryCount") > 0)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private static int getNumber(Map<String, AttributeValue> item, String field) {
+
+        AttributeValue value = item.get(field);
+
+        if (value == null || value.n() == null) {
+            return 0;
+        }
+        return Integer.parseInt(value.n());
+    }
+
+
+
+
+
+
+
+
+
 
 
     @Then("la richiesta INIPEC per il cf {string} risulta INVIATA al primo tentativo")

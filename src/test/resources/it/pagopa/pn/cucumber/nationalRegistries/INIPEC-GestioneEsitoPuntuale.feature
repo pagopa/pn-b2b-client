@@ -1,5 +1,193 @@
 Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch verso INIPEC
 
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_A] Come PA invio una notifica verso una PG per il quale si ha una chiamata al registro INIPEC,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | 19854070638 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la richiesta verso il servizio INIPEC per il cf "19854070638" viene tracciata correttamente
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | GNFRSS80A01G203W |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la risposta sul registro INIPEC per il cf "GNFRSS80A01G203W" risulta registrata con esito "ND"
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_C] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | MRGVPC67R10H501Y |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la risposta sul registro INIPEC per il cf "MRGVPC67R10H501Y" risulta registrata con esito "NF"
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_E] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | TSTGNN80A01F839X |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la risposta sul registro INIPEC per il cf "TSTGNN80A01F839X" risulta registrata con esito "ER"
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | CTNMCP34B16H501T |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la richiesta verso il servizio INIPEC per il cf "CTNMCP34B16H501T" viene tracciata correttamente
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | PPPPLT80A01H501V |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then la richiesta verso il servizio INAD per il cf "PPPPLT80A01H501V" viene tracciata correttamente
+
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_B] Come PA invio una notifica verso una PG per il quale si ha una chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | 28223913097 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then la richiesta verso il servizio INAD per il cf "28223913097" viene tracciata correttamente
+
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF per il quale si ha un errore 500 sulla chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | CIACIA80A01H501X |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then il ritentativo della chiamata verso INAD per il cf "CIACIA80A01H501X" risulta correttamente registrato
+
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG per il quale si ha un errore 500 sulla chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | 62583510995 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then il ritentativo della chiamata verso INAD per il cf "62583510995" risulta correttamente registrato
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF per il quale si ha un errore lista non trovata sulla chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | VDADGI80A01F839E |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then il ritentativo della chiamata verso INAD per il cf "VDADGI80A01F839E" risulta correttamente registrato
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A3] Come PA invio una notifica verso una PF per il quale si ha un errore 400 sulla chiamata al registro INAD,
+  quindi la richiesta è tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | MTTBNN14A01A001N |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then il ritentativo della chiamata verso INAD per il cf "MTTBNN14A01A001N" risulta correttamente registrato
+
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD senza recuperare indirizzi,
+  la richiesta è riprogrammata e tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | CLMCST42R12D969Z |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then l'assenza di recapiti su INAD per il cf "CLMCST42R12D969Z" risulta correttamente registrata
+
+
+  @inadMassive @mockNR @work-item:QA-18515
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD senza recuperare indirizzi,
+  la richiesta è riprogrammata e tracciata nella tabella dedicata.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | taxId           | 85385800199 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then l'assenza di recapiti su INAD per il cf "85385800199" risulta correttamente registrata
+
   # COSA VERIFICHIAMO
   # Una notifica verso una PG priva di domicilio digitale fa interrogare INIPEC per recuperarne
   # la PEC. L'esito per ciascun CF viene tracciato su DynamoDB `pn-batchRequests` tramite i campi

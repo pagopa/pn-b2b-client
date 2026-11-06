@@ -44,11 +44,37 @@ public class DynamoDbService {
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
             case BATCH_REQUESTS_WITH_INDEX_STATUS -> buildBatchRequestsByStatus(attributeValues);
+            case NATIONAL_REGISTRIES_BATCHES -> queryWithoutFilters(tableName, "batchId", attributeValues);
+            case NATIONAL_REGISTRIES_REQUESTS -> queryWithoutFilters(tableName, "correlationId", attributeValues);
+            case NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS -> buildNationalRegistriesRequestsByRegistryStatus(attributeValues);
+            case NATIONAL_REGISTRIES_BATCHES_WITH_INDEX_STATUS -> buildNationalRegistriesBatchesByStatus(attributeValues);
         };
     }
 
     private static QueryRequest queryWithoutFilters(DynamoTableName tableName, String column, Map<String, AttributeValue> attributeValues) {
         return queryWithoutFilters(tableName, List.of(column), attributeValues);
+    }
+
+    private static QueryRequest buildNationalRegistriesRequestsByRegistryStatus(Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.NATIONAL_REGISTRIES_REQUESTS.getValue(),
+                "registryStatus = :v_registryStatus",
+                "attemptAfter > :v_attemptAfter",
+                attributeValues,
+                "registryStatusAttemptAfter-index"
+        );
+    }
+
+    private static QueryRequest buildNationalRegistriesBatchesByStatus(Map<String, AttributeValue> attributeValues) {
+
+        return DynamoQueryBuilder.withIndex(
+                DynamoTableName.NATIONAL_REGISTRIES_BATCHES.getValue(),
+                "status = :v_status",
+                "attemptAfter > :v_attemptAfter",
+                attributeValues,
+                "StatusAttemptAfterIndex"
+        );
     }
 
     /**
