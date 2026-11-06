@@ -2,9 +2,11 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.api.DigitalCourtesyMessagesApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.api.PaperMessagesApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.CourtesyMessageProgressEvent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.DigitalCourtesyMailRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.DigitalCourtesySmsRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalChannelsInternalClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -20,11 +22,13 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnExternalChannelsInternalClientImpl implements IPnExternalChannelsInternalClient {
     private final DigitalCourtesyMessagesApi digitalCourtesyMessagesApi;
+    private final PaperMessagesApi paperMessagesApi;
 
     public PnExternalChannelsInternalClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.safeStorage.base-url}") String safeStorageBaseUrl) {
         this.digitalCourtesyMessagesApi = new DigitalCourtesyMessagesApi(newApiClient(restTemplate, safeStorageBaseUrl));
+        this.paperMessagesApi = new PaperMessagesApi(newApiClient(restTemplate, safeStorageBaseUrl));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String baseUrl) {
@@ -51,5 +55,10 @@ public class PnExternalChannelsInternalClientImpl implements IPnExternalChannels
     @Override
     public ResponseEntity<Void> sendDigitalCourtesyMessage(String requestIdx, String xPagopaExtchCxId, DigitalCourtesyMailRequest digitalCourtesyMailRequest) throws RestClientException {
         return digitalCourtesyMessagesApi.sendDigitalCourtesyMessageWithHttpInfo(requestIdx, xPagopaExtchCxId, digitalCourtesyMailRequest);
+    }
+
+    @Override
+    public ResponseEntity<Void> sendPaperEngageRequest(String requestIdx, String xPagopaExtchCxId, PaperEngageRequest paperEngageRequest) throws RestClientException {
+        return paperMessagesApi.sendPaperEngageRequestWithHttpInfo(requestIdx, xPagopaExtchCxId, paperEngageRequest);
     }
 }
