@@ -18,4 +18,7 @@ public interface IPnPtInstitutionsClient {
     void setPt(String ptName);
 
     String getPtSetted();
+
+    // cx-id dell'Ente PT, coincide con il suo institutionId Selfcare
+    String getPtCxId(String ptName);
 }

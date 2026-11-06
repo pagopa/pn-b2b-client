@@ -72,13 +72,18 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
 
     @Override
     public void setPt(String ptName) {
-        switch (ptName.toUpperCase()) {
-            case PT_A -> this.xPagopaPnCxId = ptACxId;
-            case PT_B -> this.xPagopaPnCxId = ptBCxId;
-            case PT_SENZA_DELEGHE -> this.xPagopaPnCxId = ptSenzaDelegheCxId;
-            default -> throw new IllegalArgumentException("Ente PT non gestito: " + ptName);
-        }
+        this.xPagopaPnCxId = getPtCxId(ptName);
         this.ptSetted = ptName.toUpperCase();
+    }
+
+    @Override
+    public String getPtCxId(String ptName) {
+        return switch (ptName.toUpperCase()) {
+            case PT_A -> ptACxId;
+            case PT_B -> ptBCxId;
+            case PT_SENZA_DELEGHE -> ptSenzaDelegheCxId;
+            default -> throw new IllegalArgumentException("Ente PT non gestito: " + ptName);
+        };
     }
 
     @Override

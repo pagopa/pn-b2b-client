@@ -166,6 +166,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaperTrackerClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPtInstitutionsClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnSelfcareDelegationsClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
@@ -195,6 +196,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
+import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
@@ -428,6 +430,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
         PnPtInstitutionsClientImpl.class,
+        PnSelfcareDelegationsClientImpl.class,
+        PtEntiDelegantiService.class,
         OtpCodeService.class,
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,

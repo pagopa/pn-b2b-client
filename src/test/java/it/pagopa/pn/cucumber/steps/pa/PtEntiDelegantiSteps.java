@@ -1,14 +1,14 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtDelegationStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitution;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitutionsResponse;
-import it.pagopa.pn.client.b2b.pa.service.IPnPtInstitutionsClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPtInstitutionsClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,29 +36,35 @@ public class PtEntiDelegantiSteps {
     private static final String TOKEN_LUNGHEZZA = "@lunghezza_";
     private static final int MAX_LIMIT = 50;
 
-    private final IPnPtInstitutionsClient ptInstitutionsClient;
+    private final PtEntiDelegantiService ptEntiDelegantiService;
     private final SharedSteps sharedSteps;
 
     private PtInstitutionsResponse lastResponse;
     private final List<PtInstitution> allReadInstitutions = new ArrayList<>();
     private final Map<String, String> savedValues = new HashMap<>();
+    private String lastPt;
     private String lastSearch;
     private PtDelegationStatus lastStatus;
     private Integer lastLimit;
 
-    public PtEntiDelegantiSteps(PnPtInstitutionsClientImpl ptInstitutionsClient, SharedSteps sharedSteps) {
-        this.ptInstitutionsClient = ptInstitutionsClient;
+    public PtEntiDelegantiSteps(PtEntiDelegantiService ptEntiDelegantiService, SharedSteps sharedSteps) {
+        this.ptEntiDelegantiService = ptEntiDelegantiService;
         this.sharedSteps = sharedSteps;
     }
 
-    //TODO: funzionalità di creazione/revoca deleghe PA→PT non ancora disponibile. Gli step che le richiamano sono commentati nella feature
-//    @Given("l'Ente PA {string} crea una delega per l'Ente PT {string}")
-//    public void createPtDelegation(String paName, String ptName) {
-//    }
-//
-//    @Given("l'Ente PA {string} revoca la delega per l'Ente PT {string}")
-//    public void revokePtDelegation(String paName, String ptName) {
-//    }
+    @Given("l'Ente PA {string} crea una delega per l'Ente PT {string}")
+    public void createPtDelegation(String paName, String ptName) {
+        assertThat(ptEntiDelegantiService.createDelegation(paName, ptName))
+                .as("Delega dell'Ente PA %s per l'Ente PT %s non creata", paName, ptName)
+                .isNotBlank();
+    }
+
+    @Given("l'Ente PA {string} revoca la delega per l'Ente PT {string}")
+    public void revokePtDelegation(String paName, String ptName) {
+        assertThat(ptEntiDelegantiService.revokeDelegation(paName, ptName))
+                .as("Nessuna delega attiva dell'Ente PA %s per l'Ente PT %s da revocare", paName, ptName)
+                .isNotBlank();
+    }
 
     @When("l'Ente PT {string} richiede l'elenco degli Enti deleganti")
     public void ptRequestsInstitutions(String ptName) {
@@ -76,15 +83,14 @@ public class PtEntiDelegantiSteps {
 
     @When("l'Ente PT {string} richiede l'elenco degli Enti deleganti con i seguenti parametri non validi:")
     public void ptRequestsInstitutionsWithInvalidParams(String ptName, Map<String, String> params) {
-        ptInstitutionsClient.setPt(ptName);
         Map<String, String> queryParams = new LinkedHashMap<>();
         params.forEach((key, value) -> queryParams.put(key, resolveValue(value)));
-        requestPtInstitutionsRaw(queryParams, true);
+        requestPtInstitutionsRaw(ptName, queryParams);
     }
 
     @When("viene richiesto l'elenco degli Enti deleganti senza indicare l'Ente PT")
     public void requestInstitutionsWithoutPt() {
-        requestPtInstitutionsRaw(new LinkedHashMap<>(), false);
+        requestPtInstitutionsRaw(null, new LinkedHashMap<>());
     }
 
     @When("l'Ente PT {string} richiede la pagina successiva")
@@ -100,8 +106,11 @@ public class PtEntiDelegantiSteps {
 
     @When("l'Ente PT {string} legge tutte le pagine dell'elenco degli Enti deleganti con limit {int}")
     public void ptReadsAllPages(String ptName, Integer limit) {
+        PtEntiDelegantiService.AllPages allPages = ptEntiDelegantiService.readAllPages(ptName, null, null, limit);
+        this.lastPt = ptName;
+        this.lastResponse = allPages.lastPage();
         allReadInstitutions.clear();
-        allReadInstitutions.addAll(readAllPages(ptName, null, null, limit));
+        allReadInstitutions.addAll(allPages.institutions());
     }
 
     @And("si memorizzano ragione sociale e codice fiscale del primo Ente restituito")
@@ -164,7 +173,7 @@ public class PtEntiDelegantiSteps {
     public void eachInstitutionAppearsOnce() {
         List<String> readDelegationIds = allReadInstitutions.stream().map(PtInstitution::getDelegationId).toList();
         // riferimento indipendente dalla paginazione usata: lettura completa con il limit massimo
-        Set<String> expectedDelegationIds = readAllPages(ptInstitutionsClient.getPtSetted(), lastSearch, lastStatus, MAX_LIMIT).stream()
+        Set<String> expectedDelegationIds = ptEntiDelegantiService.readAllPages(lastPt, lastSearch, lastStatus, MAX_LIMIT).institutions().stream()
                 .map(PtInstitution::getDelegationId)
                 .collect(Collectors.toSet());
 
@@ -226,41 +235,50 @@ public class PtEntiDelegantiSteps {
     @Then("l'Ente con codice fiscale {string} compare una sola volta con stato {string}")
     public void institutionAppearsOnceWithStatus(String taxCode, String status) {
         String expected = resolveValue(taxCode);
+        assertAppearsOnceWithStatus("con codice fiscale " + expected, status,
+                institution -> expected.equalsIgnoreCase(institution.getInstitutionTaxCode()));
+    }
+
+    @Then("l'Ente PA {string} compare una sola volta con stato {string}")
+    public void paAppearsOnceWithStatus(String paName, String status) {
+        String paId = ptEntiDelegantiService.getPaInstitutionId(paName);
+        assertAppearsOnceWithStatus(paName, status, institution -> paId.equals(institution.getInstitutionId()));
+    }
+
+    @Then("nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT {string}")
+    public void noInstitutionInOtherPtList(String otherPtName) {
+        Set<String> otherPtInstitutionIds = ptEntiDelegantiService.readAllPages(otherPtName, null, null, MAX_LIMIT).institutions().stream()
+                .map(PtInstitution::getInstitutionId)
+                .collect(Collectors.toSet());
+
+        assertThat(allReadInstitutions)
+                .as("L'elenco dell'Ente PT %s non contiene Enti", lastPt)
+                .isNotEmpty()
+                .noneMatch(institution -> otherPtInstitutionIds.contains(institution.getInstitutionId()));
+    }
+
+    private void assertAppearsOnceWithStatus(String description, String status, Predicate<PtInstitution> matcher) {
         List<PtInstitution> found = allReadInstitutions.stream()
-                .filter(institution -> expected.equalsIgnoreCase(institution.getInstitutionTaxCode()))
+                .filter(matcher)
                 .toList();
         assertThat(found)
-                .as("L'Ente con codice fiscale %s non compare una sola volta", expected)
+                .as("L'Ente %s non compare una sola volta", description)
                 .hasSize(1);
         assertThat(found.get(0).getStatus())
-                .as("Lo stato della delega dell'Ente con codice fiscale %s non corrisponde", expected)
+                .as("Lo stato della delega dell'Ente %s non corrisponde", description)
                 .isEqualTo(PtDelegationStatus.fromValue(status));
         assertThat(found.get(0).getStatusChangedAt())
                 .as("La data dello stato della delega non è valorizzata")
                 .isNotBlank();
     }
 
-    @Then("nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT {string}")
-    public void noInstitutionInOtherPtList(String otherPtName) {
-        String currentPt = ptInstitutionsClient.getPtSetted();
-        Set<String> otherPtInstitutionIds = readAllPages(otherPtName, null, null, MAX_LIMIT).stream()
-                .map(PtInstitution::getInstitutionId)
-                .collect(Collectors.toSet());
-        ptInstitutionsClient.setPt(currentPt);
-
-        assertThat(allReadInstitutions)
-                .as("L'elenco dell'Ente PT %s non contiene Enti", currentPt)
-                .isNotEmpty()
-                .noneMatch(institution -> otherPtInstitutionIds.contains(institution.getInstitutionId()));
-    }
-
     private void requestPtInstitutions(String ptName, String search, PtDelegationStatus status, Integer limit, String lastKey) {
-        ptInstitutionsClient.setPt(ptName);
+        this.lastPt = ptName;
         this.lastSearch = search;
         this.lastStatus = status;
         this.lastLimit = limit;
         try {
-            this.lastResponse = ptInstitutionsClient.getPtInstitutions(search, status, limit, lastKey);
+            this.lastResponse = ptEntiDelegantiService.getInstitutions(ptName, search, status, limit, lastKey);
             allReadInstitutions.addAll(lastResponse.getItems());
         } catch (HttpStatusCodeException httpStatusCodeException) {
             this.lastResponse = null;
@@ -268,25 +286,12 @@ public class PtEntiDelegantiSteps {
         }
     }
 
-    private void requestPtInstitutionsRaw(Map<String, String> queryParams, boolean sendCxId) {
+    private void requestPtInstitutionsRaw(String ptName, Map<String, String> queryParams) {
         try {
-            ptInstitutionsClient.getPtInstitutionsRaw(queryParams, sendCxId);
+            ptEntiDelegantiService.getInstitutionsRaw(ptName, queryParams);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
-    }
-
-    private List<PtInstitution> readAllPages(String ptName, String search, PtDelegationStatus status, Integer limit) {
-        ptInstitutionsClient.setPt(ptName);
-        List<PtInstitution> institutions = new ArrayList<>();
-        String lastKey = null;
-        do {
-            PtInstitutionsResponse response = ptInstitutionsClient.getPtInstitutions(search, status, limit, lastKey);
-            institutions.addAll(response.getItems());
-            lastKey = response.getLastKey();
-            this.lastResponse = response;
-        } while (lastKey != null);
-        return institutions;
     }
 
     private String resolveValue(String value) {

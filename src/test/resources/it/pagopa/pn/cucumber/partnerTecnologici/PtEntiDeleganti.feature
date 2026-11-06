@@ -15,8 +15,8 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_2] Il numero di Enti PA per pagina è al minimo ammesso (1).
   SEND restituisce un solo Ente PA, con il riferimento alla pagina successiva
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | limit | 1 |
     Then la risposta contiene esattamente 1 Enti
@@ -74,10 +74,10 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_8] L'Ente PT passa alla pagina successiva dopo un filtro per stato.
   I risultati sono coerenti tra le pagine e rispettano il filtro
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | status | ACTIVE |
       | limit  | 1      |
@@ -88,8 +88,8 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_9] L'Ente PT passa alla pagina successiva dopo una ricerca.
   I risultati sono coerenti tra le pagine e rispettano la ricerca
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | search | Comune |
       | limit  | 1      |
@@ -102,7 +102,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_10] L'Ente PT richiede l'elenco degli Enti deleganti usando un valore non valido (<caso>).
   Il servizio rifiuta la richiesta perché non valida
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri non validi:
       | <parametro> | <valore> |
     Then l'operazione ha prodotto un errore con status code "400"
@@ -133,8 +133,8 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_12] La richiesta è effettuata dall'Ente PT A.
   Il servizio restituisce solo gli Enti PA dell'Ente PT A e non quelli dell'Ente PT B
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_B"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_B"
     When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
     Then nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT "PT_B"
 
@@ -149,39 +149,37 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_14] Nessun filtro: l'Ente PT ha Enti con delega attiva e revocata.
   L'elenco comprende tutti gli Enti, ciascuno con ragione sociale, codice fiscale, identificativo della delega, stato e data
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
     Then ogni Ente restituito ha valorizzati ragione sociale, codice fiscale, id delega, stato e data
     And l'elenco degli Enti deleganti contiene almeno un Ente con stato delega "ACTIVE"
     And l'elenco degli Enti deleganti contiene almeno un Ente con stato delega "REVOKED"
 
-  # Il codice fiscale è un placeholder: va allineato al codice fiscale dell'Ente PA che ha modificato più volte la delega
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_15] Nessun filtro: un Ente ha modificato più volte la delega.
   L'elenco comprende l'Ente PA una sola volta, con la situazione più recente
-#    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
-    Then l'Ente con codice fiscale "PLACEHOLDER_CF_ENTE_MODIFICATO" compare una sola volta con stato "ACTIVE"
+    Then l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE"
 
-  # Il codice fiscale è un placeholder: va allineato al codice fiscale dell'Ente PA che ha revocato la delega
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_16] Nessun filtro: un Ente ha revocato la delega.
   L'Ente PA compare nell'elenco con stato revocata e data della revoca
-#    Given l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
-    Then l'Ente con codice fiscale "PLACEHOLDER_CF_ENTE_REVOCATO" compare una sola volta con stato "REVOKED"
+    Then l'Ente PA "Comune_2" compare una sola volta con stato "REVOKED"
 
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_17] Filtro per stato <stato>.
   L'elenco comprende solo gli Enti con delega nello stato indicato
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | status | <stato> |
     Then tutti gli Enti restituiti hanno stato delega "<stato>"
@@ -193,7 +191,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_18] Ricerca per ragione sociale (<caso>).
   L'elenco comprende gli Enti la cui ragione sociale contiene il testo cercato, senza distinguere maiuscole e minuscole
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti
     And si memorizzano ragione sociale e codice fiscale del primo Ente restituito
     And l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
@@ -208,7 +206,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_19] Ricerca per codice fiscale di un Ente delegante.
   L'elenco comprende solo l'Ente PA con quel codice fiscale
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti
     And si memorizzano ragione sociale e codice fiscale del primo Ente restituito
     And l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
@@ -219,7 +217,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_20] Filtro o ricerca senza risultati (<caso>).
   L'elenco è vuoto, senza errori
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | <parametro> | <valore> |
     Then l'elenco degli Enti deleganti è vuoto
@@ -232,9 +230,9 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_21] Ricerca per ragione sociale combinata con il filtro per stato.
   L'elenco comprende solo gli Enti che soddisfano entrambe le condizioni
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-#    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
     When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
       | search | Comune |
       | status | ACTIVE |
