@@ -576,24 +576,27 @@ public class TimelineReworkSteps {
         String pk = paId + "_" + sentAt;
 
         try {
-            QueryResponse response = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
-                    ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
-                    ":v_iun", AttributeValue.builder().s(iun).build()
-            ));
-            log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", response);
-            assertThat(response).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null. IUN = %s", iun).isNotNull();
-            List<Map<String, AttributeValue>> records = response.items().stream().filter(
-                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+            // l'assenza deve reggere per tutta la finestra: una lettura singola può arrivare prima della scrittura
+            await().during(1, TimeUnit.MINUTES).atMost(2, TimeUnit.MINUTES).pollInterval(15, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
+                QueryResponse response = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
+                        ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
+                        ":v_iun", AttributeValue.builder().s(iun).build()
+                ));
+                log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", response);
+                assertThat(response).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null. IUN = %s", iun).isNotNull();
+                List<Map<String, AttributeValue>> records = response.items().stream().filter(
+                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
 
-            unexpectedElements.forEach((key, value) -> {
-                String[] requirements = value.split(";");
-                Map<String, AttributeValue> unexpectedFound = records.stream()
-                        .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                                && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
-                        .findFirst().orElse(null);
-                assertThat(unexpectedFound)
-                        .as("È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s", invoicingType, Arrays.toString(requirements), iun)
-                        .isNull();
+                unexpectedElements.forEach((key, value) -> {
+                    String[] requirements = value.split(";");
+                    Map<String, AttributeValue> unexpectedFound = records.stream()
+                            .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
+                            .findFirst().orElse(null);
+                    assertThat(unexpectedFound)
+                            .as("È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s", invoicingType, Arrays.toString(requirements), iun)
+                            .isNull();
+                });
             });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
