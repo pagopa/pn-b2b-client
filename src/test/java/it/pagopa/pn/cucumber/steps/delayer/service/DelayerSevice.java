@@ -141,15 +141,13 @@ public class DelayerSevice {
         });
     }
 
-    public void deleteMockTables() {
+    public void deleteMockTables(String deliveryDate, String province) {
         lambdaClient.deleteMockTables();
-        awaitMockTablesReady();
+        awaitMockTablesReady(deliveryDate, province);
     }
 
     // DELETE_MOCK_TABLES ricrea le tabelle in modo asincrono: si attende che una lettura vada a buon fine su ciascuna delle sei tabelle mock
-    private void awaitMockTablesReady() {
-        String deliveryDate = "2026-04-27";
-        String province = "P1";
+    private void awaitMockTablesReady(String deliveryDate, String province) {
         Map<DelayerTable, Runnable> probes = new LinkedHashMap<>();
         probes.put(DelayerTable.PaperDeliverySenderLimitMock, () -> getMockSenderLimitsSize(deliveryDate, province));
         probes.put(DelayerTable.PaperDeliveryCountersMock, () -> getMockCountersSumEstimatesSize(deliveryDate, province, "890"));

@@ -7,7 +7,6 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
   # - IMPORT_DATA (mock)        -> pn-DelayerPaperDeliveryMock
   # - RUN_ALGORITHM (mock)      -> pn-PaperDeliveryDriverUsedCapacitiesMock, pn-PaperDeliveryUsedSenderLimitMock
   # I limiti mittente utilizzati sono scritti alla settimana precedente la deliveryDate (cfr. checkSenderLimitForPA)
-  # TODO: sostituire "TBD_capacities_mock" con il file di capacità mock (driverRanking2nd_890 su P1/CAP1_P1 dal 2026-04-27)
 
   @delayerMockTables
   Scenario: [DELAYER-MOCK-TABLES-1] Verifica che DELETE_MOCK_TABLES rimuova completamente i dati dalle tabelle mock

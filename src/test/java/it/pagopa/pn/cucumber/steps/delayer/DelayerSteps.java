@@ -496,9 +496,9 @@ public class DelayerSteps {
         Assertions.assertThat(usedSenderLimit).isEqualTo(0);
     }
 
-    @When("vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES")
-    public void deleteMockTables() {
-        service.deleteMockTables();
+    @When("vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES per la deliveryDate {string} e la provincia {string}")
+    public void deleteMockTables(String deliveryDate, String province) {
+        service.deleteMockTables(deliveryDate, province);
     }
 
     // La disponibilità delle tabelle mock è garantita dallo step DELETE_MOCK_TABLES: qui un errore di lettura fa fallire il test
