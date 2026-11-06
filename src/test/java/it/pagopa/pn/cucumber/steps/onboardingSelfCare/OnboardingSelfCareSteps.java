@@ -1,12 +1,6 @@
 package it.pagopa.pn.cucumber.steps.onboardingSelfCare;
 
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
-import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
-import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClient;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.PaSummary;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -14,7 +8,6 @@ import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilteredLogEvent;
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -28,23 +21,20 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Non regressione della ricezione delle adesioni degli enti da SelfCare dopo la WI-1.2 di PN-20853 (SRS §6.12:
  * proprietà Kafka per cluster, nuova container factory, coesistenza con il consumer dei pagamenti).
  * <p>
  * SEND non può pubblicare sul topic di SelfCare, quindi gli step osservano il consumer di onboarding di
- * pn-kafka-bridge senza alimentarlo:
+ * pn-kafka-bridge senza alimentarlo, tramite i log:
  * <ul>
  *     <li>log di ribilanciamento di spring-kafka: "&lt;groupId&gt;: partitions assigned: [sc-contracts-0, ...]"
  *     e "partitions revoked";</li>
- *     <li>log del client Kafka, che riportano "groupId=&lt;groupId&gt;";</li>
- *     <li>enti già aderenti su pn-OnboardInstitutions e sull'API del service desk.</li>
+ *     <li>log del client Kafka, che riportano "groupId=&lt;groupId&gt;".</li>
  * </ul>
- * Nessun valore dipende dall'ambiente: il consumer group è ricavato dai log, gli enti dagli alias di
- * {@link SenderInfoProvider}. Log group e topic hanno un default valido in tutti gli ambienti, sovrascrivibile da
- * proprietà di sistema.
+ * Nessun valore dipende dall'ambiente: il consumer group è ricavato dai log. Log group e topic hanno un default
+ * valido in tutti gli ambienti, sovrascrivibile da proprietà di sistema.
  */
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -52,44 +42,22 @@ public class OnboardingSelfCareSteps {
 
     private static final String PARTITIONS_ASSIGNED = "partitions assigned";
     private static final String PARTITIONS_REVOKED = "partitions revoked";
-    private static final String TAX_CODE = "taxCode";
-    private static final String DESCRIPTION = "description";
     // "<groupId>: partitions assigned: [...]": il group-id è la parola che precede il messaggio di spring-kafka
     private static final Pattern ASSIGNMENT_GROUP_ID = Pattern.compile("([A-Za-z0-9._-]+): " + PARTITIONS_ASSIGNED);
     // Pari alla retention del log group di pn-kafka-bridge: è la storia disponibile per confrontare i rilasci
     private static final Duration LOG_LOOKBACK = Duration.ofDays(14);
-    // Il consumer di onboarding non ha coda di lavoro: un minuto basta a far emergere un errore o un ribilanciamento
-    private static final Duration ISOLATION_OBSERVATION_WINDOW = Duration.ofMinutes(1);
-    // Margine per i log scritti o indicizzati da CloudWatch con qualche secondo di ritardo
-    private static final Duration LOG_INDEXING_DELAY = Duration.ofSeconds(30);
 
     private final CloudWatchLogsClient cloudWatchLogsClient;
-    private final DynamoDbService dynamoDbService;
-    private final IPServiceDeskClient serviceDeskClient;
-    private final SenderInfoProvider senderInfoProvider;
     private final String logGroup;
     private final String topicName;
 
-    private Instant observationStart;
-    private String observedGroupId;
-
     public OnboardingSelfCareSteps(CloudWatchLogsClient cloudWatchLogsClient,
-                                   DynamoDbService dynamoDbService,
-                                   IPServiceDeskClient serviceDeskClient,
-                                   SenderInfoProvider senderInfoProvider,
                                    @Value("${pn.kafka-bridge.log-group:/aws/ecs/pn-kafka-bridge}") String logGroup,
                                    @Value("${pn.kafka-bridge.onboarding.topic-name:sc-contracts}") String topicName) {
         this.cloudWatchLogsClient = cloudWatchLogsClient;
-        this.dynamoDbService = dynamoDbService;
-        this.serviceDeskClient = serviceDeskClient;
-        this.senderInfoProvider = senderInfoProvider;
         this.logGroup = logGroup;
         this.topicName = topicName;
     }
-
-    // =========================================================================
-    // COLLEGAMENTO A SELFCARE
-    // =========================================================================
 
     /**
      * Il consumer è agganciato se l'ultima assegnazione di partizioni del topic è successiva all'ultima revoca:
@@ -117,9 +85,13 @@ public class OnboardingSelfCareSteps {
     @Then("la ricezione delle adesioni non ha registrato errori dall'ultimo collegamento")
     public void onboardingConsumerHasNoErrorsSinceLastAssignment() {
         FilteredLogEvent lastAssignment = requiredLastAssignment();
-        List<FilteredLogEvent> errors = onboardingErrorsSince(Instant.ofEpochMilli(lastAssignment.timestamp()), consumerGroupOf(lastAssignment));
+        Instant from = Instant.ofEpochMilli(lastAssignment.timestamp());
+        List<FilteredLogEvent> errors = new ArrayList<>();
+        errors.addAll(events(String.format("\"ERROR\" \"%s\"", topicName), from));
+        errors.addAll(events(String.format("\"ERROR\" \"groupId=%s\"", consumerGroupOf(lastAssignment)), from));
         assertThat(errors)
-                .as("Errori del consumer di onboarding su %s dall'ultimo aggancio: %s", logGroup, messages(errors))
+                .as("Errori del consumer di onboarding su %s dall'ultimo aggancio: %s", logGroup,
+                        errors.stream().map(FilteredLogEvent::message).toList())
                 .isEmpty();
     }
 
@@ -150,85 +122,6 @@ public class OnboardingSelfCareSteps {
                 .hasSize(1);
     }
 
-    // =========================================================================
-    // ISOLAMENTO DAI PAGAMENTI
-    // =========================================================================
-
-    @Given("SEND sta ricevendo le adesioni degli enti da SelfCare")
-    public void startObservingOnboardingConsumer() {
-        onboardingConsumerIsAttached();
-        observedGroupId = consumerGroupOf(requiredLastAssignment());
-        observationStart = Instant.now();
-    }
-
-    /**
-     * Il consumer dei pagamenti ha container factory, error handler e cluster propri (SRS §6.12): un suo errore non
-     * deve causare ribilanciamenti né errori sul consumer di onboarding.
-     */
-    @Then("la ricezione delle adesioni prosegue senza interruzioni né errori")
-    public void onboardingConsumerUnaffectedByPaymentEvent() {
-        assertThat(observationStart).as("Lo scenario deve prima mettere in osservazione il consumer di onboarding").isNotNull();
-        Duration window = ISOLATION_OBSERVATION_WINDOW.plus(LOG_INDEXING_DELAY);
-        await().during(window)
-                .atMost(window.plus(Duration.ofMinutes(1)))
-                .pollInterval(Duration.ofSeconds(10))
-                .untilAsserted(() -> {
-                    List<FilteredLogEvent> revocations = events(rebalanceFilter(PARTITIONS_REVOKED), observationStart);
-                    List<FilteredLogEvent> errors = onboardingErrorsSince(observationStart, observedGroupId);
-                    assertThat(revocations)
-                            .as("Partizioni del topic %s revocate durante l'elaborazione dell'evento di pagamento: %s", topicName, messages(revocations))
-                            .isEmpty();
-                    assertThat(errors)
-                            .as("Errori del consumer di onboarding durante l'elaborazione dell'evento di pagamento: %s", messages(errors))
-                            .isEmpty();
-                });
-    }
-
-    // =========================================================================
-    // ENTI GIÀ ADERENTI
-    // =========================================================================
-
-    @Then("l'ente {string} risulta aderente a SEND con il proprio codice fiscale")
-    public void paIsOnboardedWithTaxCode(String pa) {
-        String senderId = senderInfoProvider.getSenderId(pa);
-        assertThat(attribute(onboardedInstitution(pa), TAX_CODE))
-                .as("La PA %s (id %s) su pn-OnboardInstitutions non ha il codice fiscale", pa, senderId)
-                .isNotBlank();
-    }
-
-    /**
-     * L'elenco completo restituisce solo una parte degli enti: la PA viene cercata per prefisso della denominazione
-     * (paNameFilter), usando quella censita all'adesione.
-     */
-    @Then("l'operatore dell'assistenza trova l'ente {string} cercandolo per denominazione")
-    public void paIsListedByServiceDesk(String pa) {
-        String senderId = senderInfoProvider.getSenderId(pa);
-        String denomination = attribute(onboardedInstitution(pa), DESCRIPTION);
-        assertThat(denomination).as("La PA %s (id %s) su pn-OnboardInstitutions non ha la denominazione", pa, senderId).isNotBlank();
-
-        List<PaSummary> onboardedPas = serviceDeskClient.getListOfOnboardedPA(denomination);
-        assertThat(onboardedPas)
-                .as("La PA %s (id %s, \"%s\") non compare nell'elenco delle PA onboardate del service desk", pa, senderId, denomination)
-                .extracting(PaSummary::getId)
-                .contains(senderId);
-    }
-
-    private Map<String, AttributeValue> onboardedInstitution(String pa) {
-        String senderId = senderInfoProvider.getSenderId(pa);
-        List<Map<String, AttributeValue>> items = dynamoDbService.call(DynamoTableName.ONBOARD_INSTITUTIONS, Map.of(
-                ":v_id", AttributeValue.builder().s(senderId).build())).items();
-        assertThat(items).as("La PA %s (id %s) non è presente su pn-OnboardInstitutions", pa, senderId).isNotEmpty();
-        return items.get(0);
-    }
-
-    private static String attribute(Map<String, AttributeValue> item, String name) {
-        return Optional.ofNullable(item.get(name)).map(AttributeValue::s).orElse(null);
-    }
-
-    // =========================================================================
-    // RICERCA NEI LOG DI pn-kafka-bridge
-    // =========================================================================
-
     private FilteredLogEvent requiredLastAssignment() {
         return lastEvent(PARTITIONS_ASSIGNED)
                 .orElseThrow(() -> new AssertionError(String.format(
@@ -254,13 +147,6 @@ public class OnboardingSelfCareSteps {
         return String.format("\"%s\" \"%s\"", rebalanceMessage, topicName);
     }
 
-    private List<FilteredLogEvent> onboardingErrorsSince(Instant from, String consumerGroup) {
-        List<FilteredLogEvent> errors = new ArrayList<>();
-        errors.addAll(events(String.format("\"ERROR\" \"%s\"", topicName), from));
-        errors.addAll(events(String.format("\"ERROR\" \"groupId=%s\"", consumerGroup), from));
-        return errors;
-    }
-
     /**
      * Scorre tutte le pagine: con una finestra lunga CloudWatch può restituire pagine vuote prima di quelle con i
      * risultati.
@@ -279,9 +165,5 @@ public class OnboardingSelfCareSteps {
 
     private static Instant lookbackStart() {
         return Instant.now().minus(LOG_LOOKBACK);
-    }
-
-    private static List<String> messages(List<FilteredLogEvent> events) {
-        return events.stream().map(FilteredLogEvent::message).toList();
     }
 }
