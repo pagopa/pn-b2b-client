@@ -1,7 +1,8 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.mapper;
 
-
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalDocument;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,8 @@ public class InformalNotificationRequestMapper {
     }
 
     // New Informal Notification
-    public InformalNotificationRequestV1 buildInformalNotificationRequest(Map<String, String> data) {
-        InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
+    public InformalCommunication buildInformalNotificationRequest(Map<String, String> data) {
+        InformalCommunication request = new InformalCommunication();
 
         request.setSenderDenomination(getValue(data, SENDER_DENOMINATION.key));
         request.setPaProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key));
@@ -32,8 +33,7 @@ public class InformalNotificationRequestMapper {
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
-        request.setGroup(getValue(data, GROUP.key));
-        //  NESSUN DESTINATARIO DI DEFAULT
+        // NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
         request.setDocuments(buildDocuments(data));
         return request;
@@ -66,7 +66,7 @@ public class InformalNotificationRequestMapper {
         return content;
     }
 
-    private List<NotificationDocument> buildDocuments(Map<String, String> data) {
+    private List<InformalDocument> buildDocuments(Map<String, String> data) {
 
         if (!data.containsKey(DOCUMENT.key)) {
             return List.of(buildDefaultDocument(data));
@@ -79,11 +79,11 @@ public class InformalNotificationRequestMapper {
         if (documentsToAdd == null || documentsToAdd.trim().isEmpty()) {
             return List.of(buildDefaultDocument(data));
         }
-        List<NotificationDocument> result = new ArrayList<>();
+        List<InformalDocument> result = new ArrayList<>();
 
         for (String doc : documentsToAdd.split(";")) {
             String path = getDocumentPath(doc);
-            result.add(new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path)));
+            result.add(InformalDocument.builder().contentType("application/pdf").key(path).build());
         }
         return result;
     }
@@ -105,8 +105,8 @@ public class InformalNotificationRequestMapper {
     }
 
     // fallback
-    private NotificationDocument buildDefaultDocument(Map<String, String> data) {
-        return new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key("classpath:/sample_1pg.pdf"));
+    private InformalDocument buildDefaultDocument(Map<String, String> data) {
+        return InformalDocument.builder().contentType("application/pdf").key("classpath:/sample_1pg.pdf").build();
     }
 
     // =========================
@@ -124,8 +124,3 @@ public class InformalNotificationRequestMapper {
         return attachment;
     }
 }
-
-
-
-
-
