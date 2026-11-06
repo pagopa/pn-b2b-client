@@ -53,6 +53,18 @@ public class InformalMessageProvider {
 
     }
 
+    /**
+     * Messaggio IT con l'oggetto del template sostituito da {@code subject}, senza salvarlo come messaggio IT condiviso.
+     * L'oggetto del messaggio è quello che pn-workflow-manager invia su App IO.
+     */
+    public String createMessageITWithSubject(String cxId, String subject) {
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()).subject(subject));
+        String messageId = pnPaB2bInternalInformalClientImpl.createMessage(cxId, request).getMessageId().toString();
+        verifyMessageCreated(messageId, cxId);
+        return messageId;
+    }
+
     public String getSavedMessageIT() {
 
         if (messageIdIT == null) {
