@@ -5,11 +5,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +31,8 @@ import static org.awaitility.Awaitility.await;
  *   <li><b>INVIATA al primo tentativo</b> &rarr; {@code sendStatus = SENT}, {@code retry = 0}</li>
  *   <li><b>RIMESSA in retry</b>           &rarr; {@code sendStatus = NOT_SENT}, {@code retry > 0}</li>
  *   <li><b>Nessuna richiesta INIPEC</b>   &rarr; nessun record, né {@code SENT} né {@code NOT_SENT}</li>
+ *   <li><b>In ERROR e inviata in DLQ</b>  &rarr; {@code sendStatus = SENT_TO_DLQ}, {@code status = ERROR} e messaggio
+ *       presente su {@code pn-national_registry_gateway_inputs-DLQ}</li>
  * </ul>
  */
 @Slf4j
@@ -42,7 +47,7 @@ public class INIPECGestionePuntualeEsitiSteps {
      * Valori del campo {@code sendStatus} sull'indice usato dalla query su pn-batchRequests.
      */
     private enum SendStatus {
-        SENT, NOT_SENT
+        SENT, NOT_SENT, SENT_TO_DLQ
     }
 
     public enum Eservice {
@@ -50,8 +55,11 @@ public class INIPECGestionePuntualeEsitiSteps {
     }
 
     private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
+    private static final String STATUS_ERROR = "ERROR";
+    private static final String NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ = "pn-national_registry_gateway_inputs-DLQ";
 
     private final DynamoDbService dynamoDbService;
+    private final SqsService sqsService;
     private final SharedSteps sharedSteps;
     private String notificationSentTimestamp;
 
@@ -67,9 +75,18 @@ public class INIPECGestionePuntualeEsitiSteps {
      * Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto").
      */
     private static final Duration DB_ABSENCE_STABILITY = Duration.ofSeconds(30);
+    /**
+     * Tempo massimo di attesa per l'invio in DLQ: il servizio deve prima esaurire internamente tutti i retry.
+     */
+    private static final Duration DLQ_POLL_TIMEOUT = Duration.ofMinutes(10);
+    /**
+     * Intervallo fra una lettura della DLQ e la successiva.
+     */
+    private static final Duration DLQ_POLL_INTERVAL = Duration.ofSeconds(30);
 
-    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService, SharedSteps sharedSteps) {
+    public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService, SqsService sqsService, SharedSteps sharedSteps) {
         this.dynamoDbService = dynamoDbService;
+        this.sqsService = sqsService;
         this.sharedSteps = sharedSteps;
     }
 
@@ -109,6 +126,49 @@ public class INIPECGestionePuntualeEsitiSteps {
                             assertThat(retryOf(item))
                                     .as("cf=%s: atteso retry>0 (richiesta rimessa in coda)", cf)
                                     .isNotZero());
+                });
+    }
+
+
+    // Il servizio esegue internamente i retry fino al massimo: il numero di tentativi non viene verificato.
+    // Ripete query + assert finché il dato non è presente su DB come SENT_TO_DLQ con status = ERROR, oppure scade il timeout.
+    @Then("la richiesta INIPEC per il cf {string} risulta in ERROR e inviata in DLQ")
+    public void requestInErrorAndSentToDlq(String cf) {
+        List<Map<String, AttributeValue>> dlqItems = new ArrayList<>();
+        await().atMost(DLQ_POLL_TIMEOUT)
+                .pollInterval(DB_POLL_INTERVAL)
+                .untilAsserted(() -> {
+                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ);
+
+                    assertThat(items)
+                            .as("Nessuna richiesta SENT_TO_DLQ trovata per cf=%s nella finestra temporale", cf)
+                            .isNotEmpty();
+
+                    // `status` è parola riservata su DynamoDB: si verifica lato client invece di interrogare lo status-index.
+                    assertThat(items).allSatisfy(item ->
+                            assertThat(item.containsKey("status") ? item.get("status").s() : null)
+                                    .as("cf=%s: atteso status=ERROR (retry esauriti)", cf)
+                                    .isEqualTo(STATUS_ERROR));
+
+                    dlqItems.clear();
+                    dlqItems.addAll(items);
+                });
+
+        // Il messaggio in DLQ viene riconosciuto tramite il correlationId del record (o il CF, se assente).
+        List<String> expectedReferences = dlqItems.stream()
+                .map(item -> item.containsKey("correlationId") ? item.get("correlationId").s() : cf)
+                .distinct()
+                .toList();
+
+        await().atMost(DLQ_POLL_TIMEOUT)
+                .pollInterval(DLQ_POLL_INTERVAL)
+                .untilAsserted(() -> {
+                    List<Message> messages = sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ);
+
+                    assertThat(expectedReferences).allSatisfy(reference ->
+                            assertThat(messages)
+                                    .as("cf=%s: nessun messaggio in %s contenente %s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, reference)
+                                    .anyMatch(message -> message.body() != null && message.body().contains(reference)));
                 });
     }
 
