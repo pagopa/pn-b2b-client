@@ -476,7 +476,7 @@ public class LegalFactContentVerifySteps {
                 .filter(elem -> elem.getDetails() != null)
                 .filter(elem -> Objects.equals(elem.getDetails().getRecIndex(), recIndex))
                 .filter(elem -> elem.getDetails().getAttachments() != null && !elem.getDetails().getAttachments().isEmpty())
-                .filter(elem -> elem.getDetails().getDeliveryDetailCode().equals("CON020"))
+.filter(elem -> Objects.equals(elem.getDetails().getDeliveryDetailCode(), "CON020"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Nessun SEND_ANALOG_PROGRESS per recIndex=" + recIndex));
 
