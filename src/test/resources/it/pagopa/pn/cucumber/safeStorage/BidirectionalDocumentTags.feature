@@ -7,6 +7,7 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
   # Il trasformato è il documento ricevuto dal recapitista simulato. La rasterizzazione si ottiene
   # con il retry dopo CON996, come in B2B-LEGALFACT_RASTER_2; la normalizzazione richiede un
   # mittente abilitato nell'ambiente.
+  # Il CAP del destinatario è fuori dalla copertura RADD, altrimenti nella busta c'è solo l'AAR.
 
   @e2e @bidirectionalTags @work-item:QA-18590
   Scenario Outline: [SS-BIDIRECTIONAL-TAGS-1.1] Il documento originale riporta il riferimento al documento trasformato
@@ -15,11 +16,14 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR trasformazione |
-      | taxId                   | CLMCST42R12D969Z       |
-      | digitalDomicile         | NULL                   |
-      | physicalAddress_address | <indirizzo>            |
-      | payment                 | NULL                   |
+      | denomination                 | Test AR trasformazione |
+      | taxId                        | CLMCST42R12D969Z       |
+      | digitalDomicile              | NULL                   |
+      | physicalAddress_address      | <indirizzo>            |
+      | physicalAddress_municipality | BORGO SANTA MARIA      |
+      | physicalAddress_province     | RM                     |
+      | physicalAddress_zip          | 00010                  |
+      | payment                      | NULL                   |
     When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "<trasformazione>"
@@ -37,11 +41,14 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR trasformazione |
-      | taxId                   | CLMCST42R12D969Z       |
-      | digitalDomicile         | NULL                   |
-      | physicalAddress_address | <indirizzo>            |
-      | payment                 | NULL                   |
+      | denomination                 | Test AR trasformazione |
+      | taxId                        | CLMCST42R12D969Z       |
+      | digitalDomicile              | NULL                   |
+      | physicalAddress_address      | <indirizzo>            |
+      | physicalAddress_municipality | BORGO SANTA MARIA      |
+      | physicalAddress_province     | RM                     |
+      | physicalAddress_zip          | 00010                  |
+      | payment                      | NULL                   |
     When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "<trasformazione>"
@@ -60,11 +67,14 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR trasformazione   |
-      | taxId                   | CLMCST42R12D969Z         |
-      | digitalDomicile         | NULL                     |
-      | physicalAddress_address | Via@OK_PCRETRY_CON996_AR |
-      | payment                 | NULL                     |
+      | denomination                 | Test AR trasformazione   |
+      | taxId                        | CLMCST42R12D969Z         |
+      | digitalDomicile              | NULL                     |
+      | physicalAddress_address      | Via@OK_PCRETRY_CON996_AR |
+      | physicalAddress_municipality | BORGO SANTA MARIA        |
+      | physicalAddress_province     | RM                       |
+      | physicalAddress_zip          | 00010                    |
+      | payment                      | NULL                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "normalizzazione"
@@ -80,11 +90,14 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination            | Test AR trasformazione |
-      | taxId                   | CLMCST42R12D969Z       |
-      | digitalDomicile         | NULL                   |
-      | physicalAddress_address | <indirizzo>            |
-      | payment                 | NULL                   |
+      | denomination                 | Test AR trasformazione |
+      | taxId                        | CLMCST42R12D969Z       |
+      | digitalDomicile              | NULL                   |
+      | physicalAddress_address      | <indirizzo>            |
+      | physicalAddress_municipality | BORGO SANTA MARIA      |
+      | physicalAddress_province     | RM                     |
+      | physicalAddress_zip          | 00010                  |
+      | payment                      | NULL                   |
     When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
     And al documento della notifica viene associata un'informazione di prova
     And si registrano le informazioni associate al documento della notifica, ancora privo del riferimento al documento trasformato
