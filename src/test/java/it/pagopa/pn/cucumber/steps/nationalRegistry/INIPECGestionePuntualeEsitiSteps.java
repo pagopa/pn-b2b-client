@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -32,7 +35,8 @@ import static org.awaitility.Awaitility.await;
  *   <li><b>RIMESSA in retry</b>           &rarr; {@code sendStatus = NOT_SENT}, {@code retry > 0}</li>
  *   <li><b>Nessuna richiesta INIPEC</b>   &rarr; nessun record, né {@code SENT} né {@code NOT_SENT}</li>
  *   <li><b>In ERROR e inviata in DLQ</b>  &rarr; {@code sendStatus = SENT_TO_DLQ}, {@code status = ERROR} e messaggio
- *       presente su {@code pn-national_registry_gateway_inputs-DLQ}</li>
+ *       (InternalCodeSqsDto con {@code taxId} e prefisso del {@code correlationId}) presente su
+ *       {@code pn-national_registry_gateway_inputs-DLQ}</li>
  * </ul>
  */
 @Slf4j
@@ -57,6 +61,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
     private static final String STATUS_ERROR = "ERROR";
     private static final String NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ = "pn-national_registry_gateway_inputs-DLQ";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final DynamoDbService dynamoDbService;
     private final SqsService sqsService;
@@ -154,22 +159,46 @@ public class INIPECGestionePuntualeEsitiSteps {
                     dlqItems.addAll(items);
                 });
 
-        // Il messaggio in DLQ viene riconosciuto tramite il correlationId del record (o il CF, se assente).
-        List<String> expectedReferences = dlqItems.stream()
-                .map(item -> item.containsKey("correlationId") ? item.get("correlationId").s() : cf)
+        assertThat(dlqItems)
+                .as("cf=%s: record SENT_TO_DLQ privo di correlationId", cf)
+                .allSatisfy(item -> assertThat(item).containsKey("correlationId"));
+
+        List<String> expectedCorrelationIds = dlqItems.stream()
+                .map(item -> item.get("correlationId").s())
                 .distinct()
                 .toList();
 
+        // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record:
+        // il correlationId contiene lo IUN, quindi esclude messaggi residui di run precedenti con lo stesso CF.
         await().atMost(DLQ_POLL_TIMEOUT)
                 .pollInterval(DLQ_POLL_INTERVAL)
                 .untilAsserted(() -> {
                     List<Message> messages = sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ);
 
-                    assertThat(expectedReferences).allSatisfy(reference ->
+                    assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
                             assertThat(messages)
-                                    .as("cf=%s: nessun messaggio in %s contenente %s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, reference)
-                                    .anyMatch(message -> message.body() != null && message.body().contains(reference)));
+                                    .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
+                                    .anyMatch(message -> isDlqMessageFor(message, cf, correlationId)));
                 });
+    }
+
+    /**
+     * Verifica che il body del messaggio (InternalCodeSqsDto) abbia {@code taxId = cf} e un {@code correlationId}
+     * pari al prefisso del correlationId su DB (il servizio pubblica {@code correlationId.split(batchRequestPkSeparator)[0]}).
+     */
+    private static boolean isDlqMessageFor(Message message, String cf, String dbCorrelationId) {
+        if (message.body() == null) {
+            return false;
+        }
+        try {
+            JsonNode body = OBJECT_MAPPER.readTree(message.body());
+            String messageCorrelationId = body.path("correlationId").asText();
+            return cf.equals(body.path("taxId").asText())
+                    && !messageCorrelationId.isEmpty()
+                    && dbCorrelationId.startsWith(messageCorrelationId);
+        } catch (JsonProcessingException e) {
+            return false;
+        }
     }
 
     @Then("per i cf {string} e {string} non risulta alcuna richiesta INIPEC")
