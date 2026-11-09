@@ -12,7 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Accesso in sola lettura alla DLQ in cui pn-kafka-bridge scarta gli eventi di pagamento malformati.
+ * Accesso in sola lettura alla DLQ in cui pn-kafka-bridge scarta gli eventi di pagamento malformati
+ * (env PN_KAFKA_BRIDGE_SQS_TOPICS_ERROR_EVENT_INPUT, stesso nome in tutti gli ambienti; sovrascrivibile con
+ * -Dpn.kafka-bridge.payments-dlq-name). È anche la redrive DLQ della coda pn-kafka-bridge-payments.
  * La DLQ non ha consumer (SRS §5.2) e conserva i messaggi per 14 giorni, quindi ogni ricerca la scorre per intero.
  * I messaggi letti restano nascosti per VISIBILITY_TIMEOUT_SECONDS: una ricerca successiva vede solo quelli arrivati
  * nel frattempo. Il timeout resta inferiore alle finestre di attesa degli step: se l'evento atteso viene nascosto
@@ -29,7 +31,7 @@ public class PaymentErrorQueueService {
 
     public PaymentErrorQueueService(SqsService sqsService,
                                     ObjectMapper objectMapper,
-                                    @Value("${pn.kafka-bridge.payments-dlq-name}") String dlqName) {
+                                    @Value("${pn.kafka-bridge.payments-dlq-name:pn-kafka-bridge-payments-DLQ}") String dlqName) {
         this.sqsService = sqsService;
         this.objectMapper = objectMapper;
         this.dlqName = dlqName;

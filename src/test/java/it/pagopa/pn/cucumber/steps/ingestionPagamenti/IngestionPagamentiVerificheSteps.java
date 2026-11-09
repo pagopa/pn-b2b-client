@@ -45,7 +45,9 @@ import static org.awaitility.Awaitility.await;
 public class IngestionPagamentiVerificheSteps {
 
     private static final String PAYMENT_NOTICE_PAID = "PAYMENT_NOTICE_PAID";
-    private static final String NOTIFICATION_PAID = "NOTIFICATION_PAID";
+    // Il pagamento comunicato dall'ente è esposto come NOTIFICATION_PAID (id NOTIFICATION_PAID.IUN_...), ma su
+    // pn-Timelines la sua categoria è PAYMENT: le query su DynamoDB filtrano per categoria
+    private static final String SENDER_PAYMENT_CATEGORY = "PAYMENT";
     private static final String INFORMAL_PAYMENT = "PAYMENT";
     private static final String WORKFLOW_DONE_REACHED = "WORKFLOW_DONE_REACHED";
     private static final String SEND_DIGITAL_MESSAGE = "SEND_DIGITAL_MESSAGE";
@@ -159,6 +161,21 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     /**
+     * PAYMENT_NOTICE_PAID è diagnostico e l'API della timeline non lo espone: il conteggio si fa su DynamoDB.
+     * Per tutta la finestra di osservazione non deve comparire una seconda occorrenza.
+     */
+    @Then("nella timeline della notifica è presente un solo pagamento pagoPA")
+    public void singlePaymentNoticePaid() {
+        await().during(SIDE_EFFECT_OBSERVATION_WINDOW)
+                .atMost(SIDE_EFFECT_OBSERVATION_WINDOW.plus(Duration.ofSeconds(30)))
+                .pollInterval(Duration.ofSeconds(5))
+                .until(() -> timelineItems(PAYMENT_NOTICE_PAID).size() <= 1);
+        assertThat(timelineItems(PAYMENT_NOTICE_PAID))
+                .as("Attesa una sola occorrenza di %s nella timeline della notifica %s", PAYMENT_NOTICE_PAID, sharedSteps.getNotificationIun())
+                .hasSize(1);
+    }
+
+    /**
      * Per tutta la finestra di osservazione l'elemento PAYMENT_NOTICE_PAID non deve comparire.
      */
     @Then("SEND non registra il pagamento pagoPA nella timeline della notifica")
@@ -178,7 +195,7 @@ public class IngestionPagamentiVerificheSteps {
         await().during(SIDE_EFFECT_OBSERVATION_WINDOW)
                 .atMost(SIDE_EFFECT_OBSERVATION_WINDOW.plus(Duration.ofSeconds(30)))
                 .pollInterval(Duration.ofSeconds(5))
-                .until(() -> timelineItems(NOTIFICATION_PAID).isEmpty());
+                .until(() -> timelineItems(SENDER_PAYMENT_CATEGORY).isEmpty());
     }
 
     /**
@@ -258,7 +275,7 @@ public class IngestionPagamentiVerificheSteps {
 
     @Then("il pagamento risulta comunicato dall'ente")
     public void paymentNotifiedBySender() {
-        awaitTimelineElementOnDynamo(NOTIFICATION_PAID);
+        awaitTimelineElementOnDynamo(SENDER_PAYMENT_CATEGORY);
     }
 
     @Then("la comunicazione bonaria risulta pagata")

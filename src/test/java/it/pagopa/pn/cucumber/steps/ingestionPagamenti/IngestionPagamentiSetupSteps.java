@@ -54,7 +54,8 @@ public class IngestionPagamentiSetupSteps {
     private static final String IO_MOCK_SEQUENCE_TAG = " @io:OK_READ_THEN_PAID";
 
     private static final String PAYMENT_NOTICE_PAID = "PAYMENT_NOTICE_PAID";
-    private static final String NOTIFICATION_PAID = "NOTIFICATION_PAID";
+    // Su pn-Timelines il pagamento comunicato dall'ente (NOTIFICATION_PAID nell'API) ha categoria PAYMENT
+    private static final String SENDER_PAYMENT_CATEGORY = "PAYMENT";
     private static final String STOP_ON_PAID = "stopOnPaid";
     private static final String COMMUNICATION_TYPE = "communicationType";
     private static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
@@ -125,7 +126,7 @@ public class IngestionPagamentiSetupSteps {
     }
 
     private boolean isNotPaid(String iun) {
-        return Stream.of(PAYMENT_NOTICE_PAID, NOTIFICATION_PAID).allMatch(category -> dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+        return Stream.of(PAYMENT_NOTICE_PAID, SENDER_PAYMENT_CATEGORY).allMatch(category -> dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
                 ":v_iun", AttributeValue.builder().s(iun).build(),
                 ":v_category", AttributeValue.builder().s(category).build())).items().isEmpty());
     }

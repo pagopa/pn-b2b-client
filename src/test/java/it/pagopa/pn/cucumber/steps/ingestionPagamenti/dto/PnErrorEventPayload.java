@@ -5,7 +5,8 @@ import lombok.Data;
 
 /**
  * Body dei messaggi che pn-kafka-bridge scrive nella DLQ dei pagamenti per gli eventi malformati.
- * L'header dell'evento (eventType ERROR_EVENT, publisher KAFKA_BRIDGE) viaggia negli attributi del messaggio SQS.
+ * L'header dell'evento (eventId MALFORMED_EVENT_&lt;uuid&gt;, eventType ERROR_EVENT, publisher KAFKA_BRIDGE, createdAt)
+ * viaggia negli attributi del messaggio SQS. Il body contiene il record Kafka così come ricevuto.
  */
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)

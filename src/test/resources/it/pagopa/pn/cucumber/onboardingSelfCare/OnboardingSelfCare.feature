@@ -10,14 +10,12 @@ Feature: Non regressione della ricezione delle adesioni degli enti da SelfCare
   # sua continuità tra i rilasci, ma non l'elaborazione di una nuova adesione.
   # TODO: il team di sviluppo estenderà il mock per pubblicare adesioni di prova; con il mock disponibile vanno
   # aggiunti gli scenari sull'elaborazione di una nuova adesione.
-  #
-  # Gli scenari valgono prima e dopo i rilasci (PN-20853, PN-22132) e in qualunque ambiente.
 
-  @onboardingSelfCare
+  @onboardingSelfCare @work-item:QA-18904
   Scenario: [ONBOARDING_NR_01_1] SEND riceve le adesioni degli enti da SelfCare senza errori
     Then SEND è collegato al canale con cui SelfCare comunica le adesioni degli enti
     And la ricezione delle adesioni non ha registrato errori dall'ultimo collegamento
 
-  @onboardingSelfCare
+  @onboardingSelfCare @work-item:QA-18904
   Scenario: [ONBOARDING_NR_01_2] SEND riprende la ricezione delle adesioni dal punto in cui era arrivato
     Then la ricezione delle adesioni usa la stessa sottoscrizione dei rilasci precedenti
