@@ -11,11 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Legge i details degli elementi di timeline direttamente da pn-Timelines.
+ * Legge i details degli elementi di timeline direttamente da pn-Timelines (legali e bonarie).
  * <p>
- * I campi receiverAddressSourceType e hasOnSiteInvestigation non sono esposti dalle API B2B di pn-delivery-push
- * (GET della notifica inviata): quando lo saranno, basta sostituire questa classe con una lettura via API,
- * senza toccare step e feature.
+ * I campi receiverAddressSourceType e hasOnSiteInvestigation sono persistiti con questi nomi di attributo
+ * (pn-timeline-service, TimelineElementDetailsEntity) ed esposti solo dalle API private di pn-timeline-service,
+ * non dalle API B2B di pn-delivery-push (GET della notifica inviata) né dallo stream: se lo saranno, basta sostituire
+ * questa classe con una lettura via API, senza toccare step e feature.
  */
 @Component
 @RequiredArgsConstructor

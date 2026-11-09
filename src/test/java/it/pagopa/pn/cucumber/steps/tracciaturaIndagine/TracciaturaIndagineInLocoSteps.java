@@ -41,9 +41,14 @@ public class TracciaturaIndagineInLocoSteps {
 
     @Then("{elementoCartaceo} del destinatario {int} riporta come fonte dell'indirizzo {string}")
     public void checkAddressSource(ElementoCartaceo elemento, int recIndex, String expectedSource) {
-        checkField(elemento, recIndex, RECEIVER_ADDRESS_SOURCE_TYPE, expectedSource);
+        checkField(elemento, recIndex, RECEIVER_ADDRESS_SOURCE_TYPE, FonteIndirizzo.fromValue(expectedSource).name());
     }
 
+    /**
+     * hasOnSiteInvestigation è valorizzato (true se il postino ha individuato un nuovo indirizzo, false altrimenti)
+     * sull'esito del primo tentativo e sul secondo invio; sul primo invio e sull'esito del secondo tentativo è assente
+     * (pn-delivery-push-workflow, TimelineUtils.hasDiscoveredAddress e PaperChannelServiceImpl.sendAnalogNotification).
+     */
     @Then("{elementoCartaceo} del destinatario {int} riporta che l'indagine in loco {is} stata effettuata")
     public void checkOnSiteInvestigation(ElementoCartaceo elemento, int recIndex, boolean performed) {
         checkField(elemento, recIndex, HAS_ON_SITE_INVESTIGATION, String.valueOf(performed));

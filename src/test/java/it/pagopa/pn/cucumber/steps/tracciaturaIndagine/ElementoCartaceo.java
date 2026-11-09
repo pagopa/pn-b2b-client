@@ -9,6 +9,10 @@ import java.util.Arrays;
  * Elementi del recapito cartaceo che tracciano la fonte dell'indirizzo e l'indagine in loco del postino,
  * con la descrizione usata nei file feature e l'elemento di timeline corrispondente.
  * Il tentativo è null per gli elementi unici per destinatario (raccomandata semplice e invio della bonaria).
+ * <p>
+ * Campi per categoria (pn-timeline-service): SEND_ANALOG_DOMICILE riporta receiverAddressSourceType e
+ * hasOnSiteInvestigation, SEND_ANALOG_FEEDBACK solo hasOnSiteInvestigation, SEND_SIMPLE_REGISTERED_LETTER e
+ * SEND_ANALOG_MESSAGE solo receiverAddressSourceType; SEND_ANALOG_MESSAGE_FEEDBACK nessuno dei due.
  */
 @Getter
 @RequiredArgsConstructor
