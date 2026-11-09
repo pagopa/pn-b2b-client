@@ -83,9 +83,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     }
 
     @Then("l'assenza di recapiti su {eservice} per il cf {string} risulta correttamente registrata")
-    public void verifyMissingAddressCorrectlyRecorded(
-            Eservice eservice,
-            String cf) {
+    public void verifyMissingAddressCorrectlyRecorded(Eservice eservice, String cf) {
 
         String iun = sharedSteps.getNotificationIun();
 
@@ -94,49 +92,27 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .pollInterval(DB_POLL_INTERVAL)
                 .untilAsserted(() -> {
 
-                    List<Map<String, AttributeValue>> items =
-                            retrieveWorkedRequests(
-                                    cf,
-                                    eservice,
-                                    iun
-                            );
+                    List<Map<String, AttributeValue>> items = retrieveWorkedRequests(cf, eservice, iun);
 
                     assertThat(items)
-                            .as("Nessuna request %s completata trovata per cf=%s",
-                                    eservice,
-                                    cf)
+                            .as("Nessuna request %s completata trovata per cf=%s", eservice, cf)
                             .isNotEmpty();
 
                     assertThat(items)
                             .allSatisfy(item -> {
 
-                                assertThat(item.get("status").s())
-                                        .isEqualTo("WORKED");
-
-                                assertThat(item.containsKey("resultPayload"))
-                                        .isTrue();
+                                assertThat(item.get("status").s()).isEqualTo("WORKED");
+                                assertThat(item.containsKey("resultPayload")).isTrue();
                             });
                 });
     }
 
-    private List<Map<String, AttributeValue>> retrieveWorkedRequests(
-            String cf,
-            Eservice eservice,
-            String iun) {
-
-        return retrieveNationalRegistryRequests(
-                cf,
-                eservice,
-                iun,
-                RequestStatus.WORKED
-        );
+    private List<Map<String, AttributeValue>> retrieveWorkedRequests(String cf, Eservice eservice, String iun) {
+        return retrieveNationalRegistryRequests(cf, eservice, iun, RequestStatus.WORKED);
     }
 
     @Then("la risposta sul registro {eservice} per il cf {string} risulta registrata con esito {string}")
-    public void verifyMissingAddressRecorded(
-            Eservice eservice,
-            String cf,
-            String expectedOutcome) {
+    public void verifyMissingAddressRecorded(Eservice eservice, String cf, String expectedOutcome) {
 
         String iun = sharedSteps.getNotificationIun();
 
@@ -145,16 +121,10 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .pollInterval(DB_POLL_INTERVAL)
                 .untilAsserted(() -> {
 
-                    List<Map<String, AttributeValue>> items =
-                            retrieveNationalRegistryRequests(
-                                    cf,
-                                    eservice,
-                                    iun
-                            );
+                    List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequests(cf, eservice, iun);
 
                     assertThat(items)
-                            .as("Nessuna request %s trovata per cf=%s",
-                                    eservice, cf)
+                            .as("Nessuna request %s trovata per cf=%s", eservice, cf)
                             .isNotEmpty();
 
                     assertThat(items)
@@ -249,8 +219,7 @@ public class INIPECGestionePuntualeEsitiSteps {
                         .s(batchId)
                         .build()
         );
-        List<Map<String, AttributeValue>> batches =
-                dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
+        List<Map<String, AttributeValue>> batches = dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
 
         return batches.stream()
                 .filter(item -> getNumber(item, "errorRetryCount") > 0 || getNumber(item, "inProgressRetryCount") > 0)
@@ -286,10 +255,7 @@ public class INIPECGestionePuntualeEsitiSteps {
         );
 
         List<Map<String, AttributeValue>> items =
-                dynamoDbService.callAllPages(
-                        DynamoTableName.NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS,
-                        attributeValues
-                );
+                dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS, attributeValues);
 
         return items.stream()
                 .filter(item -> cf.equals(item.get("taxId").s()))
@@ -303,20 +269,13 @@ public class INIPECGestionePuntualeEsitiSteps {
             String iun) {
 
         return Stream.of(RequestStatus.values())
-                .flatMap(status ->
-                        retrieveNationalRegistryRequests(
-                                cf,
-                                eservice,
-                                iun,
-                                status
-                        ).stream())
+                .flatMap(status -> retrieveNationalRegistryRequests(cf, eservice, iun, status)
+                        .stream())
                 .toList();
     }
 
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in errore")
-    public void verifyRequestInError(
-            Eservice eservice,
-            String cf) {
+    public void verifyRequestInError(Eservice eservice, String cf) {
 
         String iun = sharedSteps.getNotificationIun();
 
@@ -326,17 +285,10 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .untilAsserted(() -> {
 
                     List<Map<String, AttributeValue>> items =
-                            retrieveNationalRegistryRequests(
-                                    cf,
-                                    eservice,
-                                    iun,
-                                    RequestStatus.ERROR
-                            );
+                            retrieveNationalRegistryRequests(cf, eservice, iun, RequestStatus.ERROR);
 
                     assertThat(items)
-                            .as("Nessuna request %s in errore trovata per cf=%s",
-                                    eservice,
-                                    cf)
+                            .as("Nessuna request %s in errore trovata per cf=%s", eservice, cf)
                             .isNotEmpty();
                 });
     }
