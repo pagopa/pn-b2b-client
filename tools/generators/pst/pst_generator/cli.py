@@ -10,7 +10,7 @@ from pathlib import Path
 import yaml
 
 from .core import parse_test_cases
-from .collection import ScenarioCollector, CollectionError, active_sources, active_source_specs, collect_from_sources
+from .collection import ScenarioCollector, CollectionError, active_sources, active_source_specs, collect_from_sources, validate_qa_epic
 from .markdown import _group_steps, render_document, replace_quoted_values
 
 
@@ -21,6 +21,7 @@ def collect_test_cases(repo: Path, qa_epic: str, branch: str | list[str], patter
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
                  collector: ScenarioCollector | None = None, include_html: bool = False,
                  output_dir: Path | None = None, cases: list | None = None) -> int:
+    validate_qa_epic(qa_epic)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     input_config = config.get("input", {})
     pattern = input_config.get("id_pattern", r"\[([^\]]+)\]")

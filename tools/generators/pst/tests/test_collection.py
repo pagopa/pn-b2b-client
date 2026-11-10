@@ -24,6 +24,26 @@ class CollectionTest(unittest.TestCase):
             generate_pst(self.repo, 'QA-999', ['base'], config, include_html=True)
         self.assertFalse((self.repo / 'pst' / 'pst_QA-999.md').exists())
 
+    def test_invalid_epic_cannot_escape_output_directory(self):
+        config = self.repo / 'config.yaml'
+        config.write_text('{}', encoding='utf-8')
+        cases = self.collector().collect('QA-123', ['base'])
+        output = self.repo / 'pst'
+        with self.assertRaisesRegex(CollectionError, 'Invalid QA Epic'):
+            generate_pst(self.repo, 'QA-123/../../escaped', [], config,
+                         output_dir=output, cases=cases)
+        self.assertFalse(output.exists())
+        self.assertFalse((self.repo / 'escaped.md').exists())
+
+    def test_invalid_epic_in_release_is_rejected(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True, exist_ok=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - qa_epic: QA-123/../../escaped\n'
+                           '      branch: base\n', encoding='utf-8')
+        with self.assertRaisesRegex(CollectionError, 'Invalid QA Epic'):
+            active_source_specs(self.repo)
+
     def setUp(self):
         self.temp = TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -195,6 +215,25 @@ class CollectionTest(unittest.TestCase):
         cases = collect_from_sources(self.repo, 'QA-123', specs, r'\[([^\]]+)\]')
         self.assertEqual([case.test_id for case in cases], ['CASE_1'])
         self.assertEqual(cases[0].sources[0]['repo'], 'qe_suit')
+
+    def test_default_repository_name_is_normalized(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True, exist_ok=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - qa_epic: QA-123\n      repo: pn-b2b-client\n'
+                           '      branch: base\n', encoding='utf-8')
+        self.assertEqual(active_source_specs(self.repo)['QA-123'], [('', 'base')])
+
+    def test_rejects_unlisted_repository_before_resolving_its_path(self):
+        with self.assertRaisesRegex(CollectionError, 'Unsupported source repository'):
+            collect_from_sources(self.repo, 'QA-123', [('../other', 'base')], r'\[([^\]]+)\]')
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True, exist_ok=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - qa_epic: QA-123\n      repo: ../other\n'
+                           '      branch: base\n', encoding='utf-8')
+        with self.assertRaisesRegex(CollectionError, 'Unsupported source repository'):
+            active_source_specs(self.repo)
 
     def test_conflicting_duplicate_ids_in_same_branch_are_not_overwritten(self):
         self.write_scenario('duplicate.feature', 'CASE_1', 'different')

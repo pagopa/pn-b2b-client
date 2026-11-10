@@ -20,14 +20,14 @@ jobs:
         working-directory: tools/generators/pst
     steps:
       - name: Checkout develop snapshot and all branch histories
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
 
       - name: Checkout qe_suit scenario histories
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           repository: pagopa/qe_suit
           path: source-repos/qe_suit
@@ -36,7 +36,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.13'
           cache: pip
@@ -61,7 +61,7 @@ jobs:
 
       - name: Upload generated PSTs, including partial successes
         if: ${{ !cancelled() && (steps.generate.outcome == 'success' || steps.generate.outcome == 'failure') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pst-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/pst-generated/

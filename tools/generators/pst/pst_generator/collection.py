@@ -15,6 +15,20 @@ class CollectionError(RuntimeError):
     pass
 
 
+def validate_qa_epic(epic: str) -> None:
+    if not isinstance(epic, str) or not re.fullmatch(r'QA-[0-9]+', epic):
+        raise CollectionError(f"Invalid QA Epic {epic!r}; expected QA-<number>")
+
+
+def source_repo_name(name: str | None) -> str:
+    """Normalize the two supported release repositories."""
+    if name in (None, '', 'pn-b2b-client'):
+        return ''
+    if name == 'qe_suit':
+        return name
+    raise CollectionError(f"Unsupported source repository {name!r}; expected pn-b2b-client or qe_suit")
+
+
 def active_sources(repo: Path) -> dict[str, list[str]]:
     sources: dict[str, set[str]] = {}
     for path in sorted((repo / 'releases').rglob('*')):
@@ -27,6 +41,7 @@ def active_sources(repo: Path) -> dict[str, list[str]]:
         for item in release.get('work-items', []):
             epic = item.get('qa_epic')
             if epic:
+                validate_qa_epic(epic)
                 own.setdefault(epic, set())
                 if item.get('branch'):
                     own[epic].add(item['branch'])
@@ -51,9 +66,11 @@ def active_source_specs(repo: Path) -> dict[str, list[tuple[str, str]]]:
         for item in release.get('work-items', []):
             epic = item.get('qa_epic')
             if epic:
+                validate_qa_epic(epic)
+                name = source_repo_name(item.get('repo'))
                 own.setdefault(epic, set())
                 if item.get('branch'):
-                    own[epic].add((item.get('repo') or '', item['branch']))
+                    own[epic].add((name, item['branch']))
         pool = {source for epic, explicit in own.items()
                 for source in (explicit or {('', f'feature/{epic}')})}
         for epic in own:
@@ -63,9 +80,10 @@ def active_source_specs(repo: Path) -> dict[str, list[tuple[str, str]]]:
 
 def collect_from_sources(repo: Path, epic: str, specs: list[tuple[str, str]],
                          pattern: str, repo_paths: dict[str, Path] | None = None) -> list:
+    validate_qa_epic(epic)
     grouped: dict[str, list[str]] = {}
     for name, branch in specs:
-        grouped.setdefault(name, []).append(branch)
+        grouped.setdefault(source_repo_name(name), []).append(branch)
     selected = {}
     for name, branches in grouped.items():
         if name:
