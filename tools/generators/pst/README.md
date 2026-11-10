@@ -1,13 +1,15 @@
 # Gherkin-to-PST Generator
 
 Genera un PST Markdown per ciascuna QA Epic delle release in corso, raccogliendo
-gli scenari Gherkin dai branch della release. Può anche elaborare un singolo
-feature file e produrre HTML opzionale.
+gli scenari Gherkin dai branch della release. Con `generate` e `generate-all`,
+`--html` produce anche l'HTML;
+può inoltre elaborare un singolo feature file in Markdown.
 
 ## Uso
 
 Prerequisiti: Python 3.12 o successivo e Git con la storia completa dei branch
-da consultare. Dalla radice di `pn-b2b-client`:
+da consultare. Le dipendenze Python sono fissate in `requirements.txt`.
+Dalla radice di `pn-b2b-client`:
 
 ```bash
 cd tools/generators/pst
@@ -57,6 +59,7 @@ merge e conflitti. Non modificano i branch o i PST del repository di lavoro.
 
 Il workflow [`Generate PST`](../../../.github/workflows/generate-pst.yml) esegue
 il generatore su richiesta (`workflow_dispatch`), esclusivamente su `develop`.
+Le Action usate dal workflow sono fissate a commit specifici.
 Il workflow e il codice devono prima essere integrati in quel branch.
 
 Da GitHub: **Actions → Generate PST → Run workflow → develop**.
@@ -79,9 +82,9 @@ La strategia per versionare i PST ed evitare rigenerazioni è fissata nella sezi
 
 - Le release sono definite nei file YAML contenuti nelle sottocartelle di `releases/`, una per prodotto.
 - Sono considerate solo le release con `status: in-progress`.
-- Le QA Epic valide sono i valori `qa_epic` presenti nei relativi `work-items`.
+- Le QA Epic valide sono i valori `qa_epic` presenti nei relativi `work-items`, nel formato `QA-<numero>`.
 - Per ogni QA Epic si raccolgono i `branch` espliciti dei work-item; se non ne esistono si usa `feature/<qa_epic>`.
-- Un work-item può indicare `repo: nome-repository` accanto a `branch`. Se manca, il branch appartiene a `pn-b2b-client`. Il generatore cerca il checkout esterno in `source-repos/<nome-repository>/` dentro `pn-b2b-client`, poi in una directory sorella; `--source-repo nome=percorso` consente di indicare un altro percorso locale.
+- Un work-item può indicare `repo: qe_suit` accanto a `branch`. Se `repo` manca o vale `pn-b2b-client`, il branch appartiene a `pn-b2b-client`. Sono accettati solo questi due nomi; altri valori producono un errore. Per `qe_suit`, il generatore cerca il checkout in `source-repos/qe_suit/` dentro `pn-b2b-client`, poi in una directory sorella. `--source-repo qe_suit=percorso` consente di indicare un altro percorso locale.
 - Tutti i branch così individuati nella stessa release sono fonti comuni per tutte le sue QA Epic, anche quando un tag si trova nel branch associato a un'altra QA Epic. Le release distinte mantengono fonti separate; una QA Epic presente in più release ne unisce le fonti.
 - Gli scenari sono contenuti esclusivamente in file `.feature`.
 - Un tag `@work-item:<qa_epic>` identifica l'associazione tra scenario e QA Epic.
@@ -160,15 +163,15 @@ la continuità tra percorsi rinominati. L'elaborazione di un singolo `.feature`
 senza raccolta dal repository non dispone di questa attribuzione.
 
 Il grafo e i metadati degli autori sono caricati insieme; versioni dei file e
-risultati storici sono condivisi tra scenari e QA Epic nella stessa esecuzione.
+risultati storici sono riutilizzati tra gli scenari della stessa QA Epic e dello
+stesso repository.
 Per i casi senza conflitti, ricavare gli autori richiede comunque una ricerca
 storica aggiuntiva: il costo dipende dalla storia dei file coinvolti.
 
 ### Approccio di ricerca e aggregazione
 
-Il generatore costruisce indici condivisi durante l'esecuzione. Aggiungere
-work-item che fanno riferimento agli stessi branch non provoca una nuova scansione
-dei file per ogni QA Epic.
+Il generatore costruisce indici per ogni coppia QA Epic/repository. Branch
+ripetuti per una QA Epic vengono deduplicati prima della raccolta.
 
 1. **Costruzione delle fonti.** Dai work-item delle release attive si ricavano le
    QA Epic e i branch secondo le regole di individuazione. I branch ripetuti
@@ -195,9 +198,9 @@ dei file per ogni QA Epic.
    conflitto non si scrive il PST interessato; si prosegue con le altre QA Epic.
 
 Per esempio, una release può associare `QA-123` a `feature/anna` e `QA-456` a
-`feature/luca`. Entrambi i branch vengono indicizzati una volta. Uno scenario con
+`feature/luca`. Uno scenario con
 tag `@work-item:QA-123` trovato su `feature/luca` contribuisce al PST di `QA-123`;
-non è necessario ripetere la scansione per costruire quello di `QA-456`.
+la raccolta di `QA-456` resta indipendente.
 
 ### Ricostruzione della storia ed efficienza
 
@@ -214,29 +217,32 @@ raggruppate in blocchi; non viene avviato un processo Git per ogni commit.
 La risalita delle versioni e i controlli di precedenza usano il grafo in memoria.
 Un commit che modifica altro o un merge che conserva lo scenario invariato non
 diventa una nuova origine dello scenario. Le parti del grafo già caricate e i
-risultati dei confronti vengono riutilizzati anche per le QA Epic successive.
+risultati dei confronti vengono riutilizzati durante la raccolta della stessa
+QA Epic.
 
-Le cache durano una singola esecuzione e il checkout completo rimane necessario.
+Le cache durano la raccolta di una QA Epic per repository e il checkout completo
+rimane necessario.
 Il numero di scansioni dipende dagli snapshot di branch distinti, mentre il
 parsing dipende dai contenuti distinti effettivamente analizzati. La ricostruzione
 storica richiede comunque lavoro e memoria proporzionati alla storia e ai file
 coinvolti: l'ottimizzazione riduce i processi Git e le letture ripetute, senza
 eliminare la necessità di esaminare i legami tra i commit.
 
-I test verificano i risultati sui merge e sui conflitti, il riuso di una scansione
-tra molte QA Epic e il contenimento delle chiamate Git con storie lunghe.
+I test verificano i risultati sui merge e sui conflitti, il riuso degli indici
+tra branch della stessa QA Epic e il contenimento delle chiamate Git con storie lunghe.
 
 ### Output
 
 Per ogni QA Epic viene generato o aggiornato il file:
 
 ```text
-pst/pst_<qa_epic>.md
+pst/pst_QA-<numero>.md
+pst/pst_QA-<numero>.html  # con --html
 ```
 
 La cartella `pst/` viene creata se non esiste, salvo uso di `--output-dir`.
-In locale il Markdown viene scritto solo se il contenuto cambia, ma viene comunque
-ricostruito; l'HTML viene riscritto e riporta la data dell'esecuzione. Nella Action,
+In locale i documenti vengono scritti solo se il contenuto cambia, ma vengono comunque
+ricostruiti; l'HTML riporta la data dell'esecuzione. Nella Action,
 la directory temporanea è nuova a ogni esecuzione. Al momento non si recuperano
 artifact precedenti e non si rimuovono automaticamente documenti obsoleti dal repository.
 
