@@ -117,10 +117,3 @@ def parse_test_cases(source: str, id_pattern: str) -> list[TestCase]:
         cases.append(TestCase(match.group(1), title, tags, steps, examples, content,
                               description=dedent(scenario.get("description", "")).strip()))
     return cases
-
-
-def parse_test_case(source: str, id_pattern: str) -> TestCase:
-    cases = parse_test_cases(source, id_pattern)
-    if len(cases) != 1:
-        raise ValueError(f"Expected exactly one Scenario, found {len(cases)}")
-    return cases[0]

@@ -1,9 +1,6 @@
 input:
   id_pattern: "\\[([^\\]]+)\\]"
 
-transformation:
-  mode: business-readable
-
 business_terms:
   requestId: "ID della richiesta"
   attachmentUrls: "URL degli allegati"

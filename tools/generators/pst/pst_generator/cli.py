@@ -10,12 +10,8 @@ from pathlib import Path
 import yaml
 
 from .core import parse_test_cases
-from .collection import ScenarioCollector, CollectionError, active_sources, active_source_specs, collect_from_sources, validate_qa_epic
+from .collection import ScenarioCollector, CollectionError, active_source_specs, collect_from_sources, validate_qa_epic
 from .markdown import _group_steps, render_document, replace_quoted_values
-
-
-def collect_test_cases(repo: Path, qa_epic: str, branch: str | list[str], pattern: str) -> list:
-    return ScenarioCollector(repo, pattern).collect(qa_epic, [branch] if isinstance(branch, str) else branch)
 
 
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
@@ -25,7 +21,6 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     input_config = config.get("input", {})
     pattern = input_config.get("id_pattern", r"\[([^\]]+)\]")
-    transformation = config.get("transformation", {})
     output_config = config.get("output", {})
     if cases is None:
         collector = collector or ScenarioCollector(repo, pattern)
@@ -35,7 +30,6 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
         raise CollectionError(f"No scenarios tagged @work-item:{qa_epic} were found in the configured sources")
     document = render_document(
         cases,
-        transformation.get("mode", "deterministic"),
         config.get("business_terms", {}),
         config.get("value_terms", {}),
         config.get("status_terms", {}),
@@ -71,85 +65,6 @@ def work_item_ids_for_qa_epic(repo: Path, qa_epic: str) -> list[str]:
             continue
         ids.extend(item["id"] for item in release.get("work-items", []) if item.get("qa_epic") == qa_epic and item.get("id"))
     return sorted(set(ids))
-
-
-def generate_html(markdown_path: Path, html_path: Path, qa_epic: str, work_item_ids: list[str], scenario_count: int, cases: list | None = None) -> None:
-    if cases is not None:
-        generate_structured_html(html_path, qa_epic, work_item_ids, cases)
-        return
-    source = markdown_path.read_text(encoding="utf-8").splitlines()
-    output = [
-        "<!doctype html>",
-        '<html lang="it"><head><meta charset="utf-8">',
-        f"<title>{html.escape(markdown_path.stem)}</title>",
-        """<style>
-        :root { --blue:#0066cc; --green:#174a3a; --ink:#292d32; --line:#d2d6da; --info:#eaf3ff; --soft:#eef5f2; }
-        body { max-width:1100px; margin:0 auto; padding:26px 44px; font-family:Arial,sans-serif; color:var(--ink); line-height:1.45; }
-        .doc-header { display:flex; align-items:center; gap:14px; border-bottom:3px solid var(--blue); padding-bottom:16px; margin-bottom:22px; }
-        .check { width:34px; height:34px; border-radius:6px; background:#69b34c; color:white; display:grid; place-items:center; font-size:24px; font-weight:bold; }
-        .doc-title { font-size:25px; font-weight:700; }
-        .toc { border-bottom:1px solid var(--line); padding:4px 0 18px; margin-bottom:18px; }
-        .toc a { color:var(--blue); display:block; margin:4px 0; text-decoration:none; }
-        h1 { font-size:26px; border-bottom:2px solid var(--line); padding-bottom:10px; }
-        h2 { margin-top:32px; border-bottom:1px solid var(--line); padding-bottom:8px; }
-        h3 { color:var(--green); margin-top:28px; }
-        blockquote { margin:12px 0 18px; padding:14px 18px; background:var(--info); border-left:5px solid var(--blue); border-radius:5px; }
-        table { border-collapse:collapse; width:100%; margin:12px 0 20px; }
-        th,td { border:1px solid var(--line); padding:9px 11px; text-align:left; vertical-align:top; }
-        th { background:#f0f1f2; }
-        .section { color:var(--green); font-weight:bold; font-size:1.08em; margin-top:20px; margin-bottom:7px; }
-        .bullet { margin:5px 0 5px 18px; }
-        .trace { color:#68736d; font-size:.85em; }
-        code { background:#f3f4f4; padding:2px 4px; border-radius:3px; }
-        </style></head><body>
-        <header class="doc-header"><div class="check">✓</div><div class="doc-title">PST - QA Validation Report</div></header>
-        <nav class="toc"><strong>Sommario</strong><a href="#general">Informazioni generali</a><a href="#cases">Casi di test</a></nav>
-        <section id="general"><h2>Informazioni generali</h2><table><tr><th>Campo</th><th>Valore</th><th>Note</th></tr><tr><td>Work-item</td><td>__WORK_ITEMS__</td><td>Work-item associati alla QA Epic</td></tr><tr><td>QA Epic</td><td>__QA_EPIC__</td><td>Release attiva</td></tr><tr><td>Responsabile</td><td>Da definire</td><td>Fonte da definire</td></tr><tr><td>Data aggiornamento</td><td>__DATE__</td><td>Generata automaticamente</td></tr><tr><td>Scenari</td><td>__SCENARIOS__</td><td></td></tr></table></section>
-        <div class="section">DISCLAIMER</div><blockquote>Le verifiche descritte in questo documento coprono esclusivamente le funzionalità applicative lato software. Operazioni che coinvolgono hardware dei dispositivi (es. camera, lettura QR code, NFC, sensori, risoluzioni) vengono eseguite se possibile, in funzione del device disponibile al momento, ma non sono testate su dispositivi diversi.</blockquote>
-        <section id="cases"><h2>Casi di test</h2>""",
-    ]
-    output = [item.replace("__WORK_ITEMS__", html.escape(", ".join(work_item_ids) or "Da definire")).replace("__QA_EPIC__", html.escape(qa_epic)).replace("__DATE__", date.today().strftime("%d/%m/%Y")).replace("__SCENARIOS__", str(scenario_count)) for item in output]
-    index = 0
-    while index < len(source):
-        line = source[index]
-        if line.startswith("# ") or line in {"## Panoramica", "## Casi di test"}:
-            index += 1
-            continue
-        if line.startswith("## "):
-            output.append(f"<h2>{html.escape(line[3:])}</h2>")
-        elif line.startswith("### "):
-            output.append(f"<h3>{html.escape(line[4:])}</h3>")
-        elif line.startswith("> "):
-            output.append(f"<blockquote>{render_inline(line[2:])}</blockquote>")
-        elif line.startswith("**") and line.endswith("**"):
-            output.append(f'<div class="section">{render_inline(line.strip("*"))}</div>')
-        elif line.startswith("- "):
-            output.append(f'<div class="bullet">• {render_inline(line[2:])}</div>')
-        elif line.startswith("| "):
-            rows = []
-            while index < len(source) and source[index].startswith("| "):
-                cells = [cell.strip() for cell in source[index].strip("| ").split("|")]
-                if not all(set(cell) <= {"-", ":", " "} for cell in cells):
-                    rows.append(cells)
-                index += 1
-            if rows:
-                output.append("<table><thead><tr>" + "".join(f"<th>{html.escape(c)}</th>" for c in rows[0]) + "</tr></thead><tbody>")
-                for row in rows[1:]:
-                    output.append("<tr>" + "".join(f"<td>{render_inline(c)}</td>" for c in row) + "</tr>")
-                output.append("</tbody></table>")
-            continue
-        elif line.startswith("<details>"):
-            output.append('<details class="trace">')
-        elif line == "</details>":
-            output.append("</details>")
-        elif line.startswith("<summary>") or line.startswith("- "):
-            output.append(line)
-        elif line:
-            output.append(f"<p>{html.escape(line)}</p>")
-        index += 1
-    output.append("</body></html>")
-    html_path.write_text("\n".join(output), encoding="utf-8")
-    print(f"Generated {html_path}")
 
 
 def generate_structured_html(html_path: Path, qa_epic: str, work_item_ids: list[str],
@@ -251,14 +166,6 @@ def render_inline(value: str, value_terms: dict[str, str] | None = None) -> str:
     value = re.sub(r"`([^`]+)`", r"<code>\1</code>", value)
     value = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", value)
     return value
-
-
-def branch_for_qa_epic(repo: Path, qa_epic: str) -> str:
-    """Compatibility helper for callers expecting a single source."""
-    branches = active_sources(repo).get(qa_epic, [])
-    if len(branches) != 1:
-        raise CollectionError(f"Expected one source branch for {qa_epic}, found {branches}")
-    return branches[0]
 
 
 def discover_active_releases(repo: Path, ref: str | None) -> int:
@@ -369,8 +276,6 @@ def main() -> int:
 
     config = yaml.safe_load(args.config.read_text(encoding="utf-8")) or {}
     pattern = config.get("input", {}).get("id_pattern", r"\[([^\]]+)\]")
-    transformation = config.get("transformation", {})
-    mode = transformation.get("mode", "deterministic")
     business_terms = config.get("business_terms", {})
     value_terms = config.get("value_terms", {})
     status_terms = config.get("status_terms", {})
@@ -382,7 +287,6 @@ def main() -> int:
     args.output.write_text(
         render_document(
             tests,
-            mode,
             business_terms,
             value_terms,
             status_terms,

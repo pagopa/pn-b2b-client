@@ -2,9 +2,15 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from pst_generator.cli import branch_for_qa_epic, generate_structured_html, render_inline
-from pst_generator.core import parse_test_case, parse_test_cases
-from pst_generator.markdown import render_document, render_markdown
+from pst_generator.cli import generate_structured_html, render_inline
+from pst_generator.core import parse_test_cases
+from pst_generator.markdown import render_document
+
+
+def parse_test_case(source: str, pattern: str):
+    cases = parse_test_cases(source, pattern)
+    assert len(cases) == 1
+    return cases[0]
 
 
 class GeneratorTest(unittest.TestCase):
@@ -123,36 +129,6 @@ class GeneratorTest(unittest.TestCase):
             html = output.read_text(encoding="utf-8")
             self.assertIn("<div class='objective'><b>Receive service</b><p>Dato un servizio pubblicato<br>", html)
 
-    def test_qa_epic_branch_defaults_to_feature_key_and_accepts_override(self):
-        with TemporaryDirectory() as directory:
-            repo = Path(directory)
-            release = repo / "releases" / "interop" / "2.25.0.yaml"
-            release.parent.mkdir(parents=True)
-            release.write_text(
-                "release:\n  status: in-progress\n  work-items:\n    - qa_epic: QA-18290\n",
-                encoding="utf-8",
-            )
-            self.assertEqual(branch_for_qa_epic(repo, "QA-18290"), "feature/QA-18290")
-
-            release.write_text(
-                "release:\n  status: in-progress\n  work-items:\n"
-                "    - qa_epic: QA-18290\n      branch: feature/custom-branch\n",
-                encoding="utf-8",
-            )
-            self.assertEqual(branch_for_qa_epic(repo, "QA-18290"), "feature/custom-branch")
-
-    def test_example_is_parsed_and_traceable(self):
-        with (Path(__file__).parent / "fixtures" / "example.feature").open(encoding="utf-8") as feature_file:
-            source = feature_file.read()
-        case = parse_test_case(source, r"\[([^\]]+)\]")
-        output = render_markdown(case)
-
-        self.assertEqual(case.test_id, "TIMELINE_REWORK_2")
-        self.assertIn("feature line 3", output)
-        self.assertIn("| pcRetry |", output)
-        self.assertIn("| PCRETRY_1 |", output)
-        self.assertIn("feature line 17", output)
-
     def test_multiple_scenarios_are_rendered_in_compact_document(self):
         source = """Feature: Example
   Scenario: [CASE_1] First case
@@ -186,7 +162,6 @@ class GeneratorTest(unittest.TestCase):
         case = parse_test_case(source, r"\[([^\]]+)\]")
         output = render_document(
             [case],
-            "business-readable",
             {"requestId": "ID della richiesta"},
             {"[EMPTY]": "vuoto"},
         )

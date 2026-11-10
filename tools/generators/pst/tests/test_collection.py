@@ -9,7 +9,7 @@ import unittest
 from collections import Counter
 from unittest.mock import patch
 
-from pst_generator.collection import (ScenarioCollector, CollectionError, active_sources,
+from pst_generator.collection import (ScenarioCollector, CollectionError,
                                       active_source_specs, collect_from_sources)
 from pst_generator.cli import generate_active, generate_pst, generate_structured_html
 from pst_generator.core import parse_test_cases
@@ -83,9 +83,9 @@ class CollectionTest(unittest.TestCase):
         self.write_scenario('second.feature', 'CASE_2', 'second')
         self.commit('second scenario for QA-123 on QA-456 branch')
         self.release()
-        sources = active_sources(self.repo)
-        self.assertEqual(sources['QA-123'], ['feature/anna', 'feature/luca'])
-        cases = self.collector().collect('QA-123', sources['QA-123'])
+        sources = active_source_specs(self.repo)
+        self.assertEqual(sources['QA-123'], [('', 'feature/anna'), ('', 'feature/luca')])
+        cases = self.collector().collect('QA-123', [branch for _, branch in sources['QA-123']])
         self.assertEqual([case.test_id for case in cases], ['CASE_1', 'CASE_2'])
         self.assertEqual(len(cases[0].sources), 2)
 
@@ -161,8 +161,9 @@ class CollectionTest(unittest.TestCase):
         other.write_text('release:\n  status: in-progress\n  work-items:\n    - qa_epic: QA-789\n')
         inactive = path.with_name('3.yaml')
         inactive.write_text('release:\n  status: done\n  work-items:\n    - qa_epic: QA-999\n')
-        self.assertEqual(active_sources(self.repo), {
-            'QA-123': ['feature/anna', 'feature/luca'], 'QA-789': ['feature/QA-789']})
+        self.assertEqual(active_source_specs(self.repo), {
+            'QA-123': [('', 'feature/anna'), ('', 'feature/luca')],
+            'QA-789': [('', 'feature/QA-789')]})
 
     def test_ci_command_exports_only_current_successes(self):
         self.divergent()

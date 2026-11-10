@@ -29,30 +29,6 @@ def source_repo_name(name: str | None) -> str:
     raise CollectionError(f"Unsupported source repository {name!r}; expected pn-b2b-client or qe_suit")
 
 
-def active_sources(repo: Path) -> dict[str, list[str]]:
-    sources: dict[str, set[str]] = {}
-    for path in sorted((repo / 'releases').rglob('*')):
-        if path.suffix not in {'.yaml', '.yml'}:
-            continue
-        release = (yaml.safe_load(path.read_text(encoding='utf-8')) or {}).get('release', {})
-        if release.get('status') != 'in-progress':
-            continue
-        own: dict[str, set[str]] = {}
-        for item in release.get('work-items', []):
-            epic = item.get('qa_epic')
-            if epic:
-                validate_qa_epic(epic)
-                own.setdefault(epic, set())
-                if item.get('branch'):
-                    own[epic].add(item['branch'])
-        # Explicit branches override the convention for their QA Epic.
-        pool = {branch for epic, branches in own.items()
-                for branch in (branches or {f'feature/{epic}'})}
-        for epic in own:
-            sources.setdefault(epic, set()).update(pool)
-    return {epic: sorted(branches) for epic, branches in sorted(sources.items())}
-
-
 def active_source_specs(repo: Path) -> dict[str, list[tuple[str, str]]]:
     """Return (repository, branch) sources; empty repository means this repo."""
     sources: dict[str, set[tuple[str, str]]] = {}

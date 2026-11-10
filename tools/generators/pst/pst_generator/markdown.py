@@ -13,44 +13,8 @@ def replace_quoted_values(text: str, value_terms: dict[str, str]) -> str:
                   lambda match: f'“{value_terms.get(match.group(1), match.group(1))}”', text)
 
 
-def _render_table(step: Step) -> list[str]:
-    if not step.table:
-        return []
-    table = step.table
-    if table.headers is None:
-        lines = [""]
-        lines.extend("| " + " | ".join(row) + " |" for row in table.rows)
-        return lines
-    lines = ["", "| " + " | ".join(table.headers) + " |", "| " + " | ".join("---" for _ in table.headers) + " |"]
-    lines.extend("| " + " | ".join(row) + " |" for row in table.rows)
-    return lines
-
-
-def render_markdown(test: TestCase, mode: str = "deterministic") -> str:
-    groups: dict[str, list[Step]] = {"Given": [], "When": [], "Then": []}
-    current = "Given"
-    for step in test.steps:
-        keyword = step.keyword.split()[0]
-        if keyword in groups:
-            current = keyword
-        groups[current].append(step)
-
-    lines = [f"# {test.test_id} — {test.title}", "", "## Obiettivo", "", test.title, "", "## Metadati", ""]
-    lines.append(f"- Modalità: `{mode}`")
-    lines.append(f"- Tag: {', '.join(test.tags) if test.tags else 'nessuno'}")
-    lines.extend(["", "## Precondizioni", ""])
-    lines.extend(_render_steps(groups["Given"]))
-    lines.extend(["", "## Step e combinazioni", ""])
-    lines.extend(_render_steps(groups["When"]))
-    lines.extend(["", "## Esito atteso", ""])
-    lines.extend(_render_steps(groups["Then"]))
-    lines.extend(["", "## Tracciabilità", "", f"- Test ID: `{test.test_id}`", "- Riferimenti: righe del feature file riportate per ogni step.", ""])
-    return "\n".join(lines)
-
-
 def render_document(
     tests: list[TestCase],
-    mode: str = "deterministic",
     business_terms: dict[str, str] | None = None,
     value_terms: dict[str, str] | None = None,
     status_terms: dict[str, str] | None = None,
@@ -70,9 +34,6 @@ def render_document(
     lines = [f"# {title}", "", "## Panoramica", "", f"**{len(tests)} casi di test**", "", "## Casi di test", ""]
     for test in tests:
         groups = _group_steps(test.steps)
-        preconditions = _format_steps(groups["Given"])
-        operations = _format_steps(groups["When"])
-        expected = _format_steps(groups["Then"], status_terms, include_technical_codes)
         data_steps = test.steps if technical_details == "full" else groups["Given"]
         data = _format_tables(data_steps, business_terms, value_terms)
         short_id = _compact_id(test.test_id)
@@ -139,17 +100,6 @@ def _group_steps(steps: list[Step]) -> dict[str, list[Step]]:
             current = keyword
         groups[current].append(step)
     return groups
-
-
-def _format_steps(
-    steps: list[Step],
-    status_terms: dict[str, str] | None = None,
-    include_technical_codes: bool = False,
-) -> str:
-    if not steps:
-        return "—"
-    status_terms = status_terms or {}
-    return "<br>".join(_format_step(step.text, status_terms, include_technical_codes).replace("|", "\\|") for step in steps)
 
 
 def _format_step_list(
@@ -240,11 +190,3 @@ def _join_descriptions(descriptions: list[str]) -> str:
 def _humanize_field(field: str) -> str:
     words = re.sub(r"(?<!^)(?=[A-Z])", " ", field).replace("_", " ").lower()
     return words
-
-
-def _render_steps(steps: list[Step]) -> list[str]:
-    lines: list[str] = []
-    for step in steps:
-        lines.append(f"- **{step.keyword}** {step.text} _(feature line {step.line})_")
-        lines.extend(_render_table(step))
-    return lines or ["_Nessun elemento rilevato._"]
