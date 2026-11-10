@@ -39,8 +39,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
@@ -476,7 +476,7 @@ public class LegalFactContentVerifySteps {
                 .filter(elem -> elem.getDetails() != null)
                 .filter(elem -> Objects.equals(elem.getDetails().getRecIndex(), recIndex))
                 .filter(elem -> elem.getDetails().getAttachments() != null && !elem.getDetails().getAttachments().isEmpty())
-.filter(elem -> Objects.equals(elem.getDetails().getDeliveryDetailCode(), "CON020"))
+                .filter(elem -> Objects.equals(elem.getDetails().getDeliveryDetailCode(), "CON020"))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Nessun SEND_ANALOG_PROGRESS per recIndex=" + recIndex));
 
@@ -487,6 +487,8 @@ public class LegalFactContentVerifySteps {
 
         String keySearch = generatedAarUrl.contains(aarType)
                 ? generatedAarUrl.substring(generatedAarUrl.indexOf(aarType))
+                : generatedAarUrl.contains("PN_PRINTED")
+                ? generatedAarUrl.substring(generatedAarUrl.indexOf("PN_PRINTED"))
                 : null;
 
         Assertions.assertNotNull(keySearch);
@@ -774,8 +776,9 @@ public class LegalFactContentVerifySteps {
 
     @Then("scarico l'AAR della notifica analogica per il destinatario {int} e verifico che sia un PDF valido")
     public void scaricoAarDellaNotificaAnalogicaEVerificoFirma(int recindex) { //il nome del metotodo è volutamente specifico per la firma perhcè è la prossima implementazione che sarà richiesta una volta che il consolidatore invierà pdf singoli firmati. Per ora si verifica solo che sia un pdf valido.
+        // recuperiamo l'AAR salvato in safe storage con categoria SEND_ANALOG_PROGRESS e deliveryDetailCode CON020, che avrà prefisso PN_EXTERNAL_LEGAL_FACTS. Per retrocompatibilità, all'interno del metodo getLegalFactIdAAR ammettiamo che il prefisso sia anche PN_PRINTED, perchè ad oggi la logica deve rimanere questa in attesa che il consolidatore invierà il file pdf già firmato postel
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse
-                legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_PRINTED", recindex);
+                legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_EXTERNAL_LEGAL_FACTS", recindex);
 
         byte[] source = B2bUtils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
         Assertions.assertNotNull(source);
