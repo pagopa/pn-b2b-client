@@ -6,7 +6,7 @@ import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.*;
 
 import java.util.UUID;
 
-public interface IM2MV3ProducerKeychainsClient extends Authenticable, SettableHttpCallExecutor {
+public interface IM2MV3ProducerKeychainsClient extends IM2MProducerKeychainsClient, Authenticable, SettableHttpCallExecutor {
     ProducerKeychain createProducerKeychain(ProducerKeychainSeed producerKeychainSeed);
     void deleteProducerKeychain(UUID producerKeychainId);
     ProducerKeychain getProducerKeychains(UUID producerKeychainId);
