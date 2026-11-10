@@ -29,5 +29,5 @@ Feature: Associazione del producer-keychain agli e-services
   Scenario: [PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
     Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
-    Then si ottiene status code 200
-    And il portachiavi erogatore risulta associato all'e-service
+    Then si ottiene status code 409
+    And il portachiavi erogatore non risulta associato all'e-service
