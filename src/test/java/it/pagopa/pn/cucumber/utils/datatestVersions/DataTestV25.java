@@ -39,7 +39,10 @@ public class DataTestV25 extends AbstractDataTest {
         String parametriCalcoloCostoNotifica = getValue(data, PARAMETRI_CALCOLO_COSTO_NOTIFICA.key);
         String registry = getValue(data, DETAILS_REGISTRY.key);
         String foundAddress = getValue(data, DETAILS_FOUND_ADDRESS.key);
-        String attachmentUrlPrefix = getValue(data, AAR_TYPE.key);
+        String attachmentUrlPrefix =
+                getValue(data, DETAILS_ATTACHMENTS_URL.key) != null
+                        ? getValue(data, DETAILS_ATTACHMENTS_URL.key)
+                        : getValue(data, AAR_TYPE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -78,7 +81,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
                             .foundAddress(foundAddress != null ? getObjValue(PhysicalAddress.class, data, DETAILS_FOUND_ADDRESS.key) : null)
                             .failureCause(getValue(data, DETAILS_FAILURE_CAUSE.key))
-                            .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
+                            .attachments(attachments)
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
@@ -254,9 +257,19 @@ public class DataTestV25 extends AbstractDataTest {
                             }
 
                             if (expectedAttachment.getUrl() != null) {
-                                assertThat(actualAttachment.getUrl())
+                                String actualUrl = actualAttachment.getUrl();
+                                String expectedUrl = expectedAttachment.getUrl();
+
+                                if (actualUrl != null && actualUrl.startsWith("safestorage://")) {
+                                    actualUrl = actualUrl.substring("safestorage://".length());
+                                }
+                                if (expectedUrl != null && expectedUrl.startsWith("safestorage://")) {
+                                    expectedUrl = expectedUrl.substring("safestorage://".length());
+                                }
+
+                                assertThat(actualUrl)
                                         .as(error + "L'URL dell'allegato non inizia con il prefisso atteso")
-                                        .startsWith(expectedAttachment.getUrl());
+                                        .startsWith(expectedUrl);
                             }
                         }
                     }
