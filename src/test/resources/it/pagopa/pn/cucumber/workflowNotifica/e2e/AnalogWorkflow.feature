@@ -2087,6 +2087,12 @@ Feature: Workflow analogico
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 0                       |
+      | details_sentAttemptMade    | 0                       |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
     Then scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
 
 
@@ -2099,8 +2105,8 @@ Feature: Workflow analogico
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@OK-AR-CON020-PDF |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile | NULL      |
-      | physicalAddress | Via@ok_RS |
+      | digitalDomicile | NULL                 |
+      | physicalAddress | Via@OK-AR-CON020-PDF |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
@@ -2115,17 +2121,19 @@ Feature: Workflow analogico
       | details_recIndex        | 1        |
       | details_generatedAarUrl | NOT_NULL |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_sentAttemptMade    | 0        |
-      | pollingTime                | 30000    |
-      | details_deliveryDetailCode | CON020   |
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 0                       |
+      | details_sentAttemptMade    | 0                       |
+      | pollingTime                | 30000                   |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 1        |
-      | details_sentAttemptMade    | 0        |
-      | pollingTime                | 30000    |
-      | details_deliveryDetailCode | CON020   |
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 1                       |
+      | details_sentAttemptMade    | 0                       |
+      | pollingTime                | 30000                   |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
     And scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
     And scarico l'AAR della notifica analogica per il destinatario 1 e verifico che sia un PDF valido
 
@@ -2141,6 +2149,12 @@ Feature: Workflow analogico
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 0          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
     Then scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
 
   @PostelPDFInjection @work-item:QA-18635
@@ -2168,15 +2182,17 @@ Feature: Workflow analogico
       | details_recIndex        | 1        |
       | details_generatedAarUrl | NOT_NULL |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_sentAttemptMade    | 0        |
-      | details_deliveryDetailCode | CON020   |
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 0          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 1        |
-      | details_sentAttemptMade    | 0        |
-      | details_deliveryDetailCode | CON020   |
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 1          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
     And scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
     And scarico l'AAR della notifica analogica per il destinatario 1 e verifico che sia un PDF valido
 

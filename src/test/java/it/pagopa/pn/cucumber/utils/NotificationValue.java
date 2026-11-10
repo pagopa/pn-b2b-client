@@ -88,6 +88,8 @@ public enum NotificationValue {
     DETAILS_DELIVERY_DETAIL_CODE("details_deliveryDetailCode", null, false),
     DETAILS_DELIVERY_FAILURE_CAUSE("details_deliveryFailureCause", null, false),
     DETAILS_ATTACHMENTS("details_attachments", null, false),
+    DETAILS_ATTACHMENTS_URL("details_attachments[0]_url", null, false),
+    AAR_TYPE("aarType", null, false),
     DETAILS_PHYSICALADDRESS("details_physicalAddress", null, false),
     DETAILS_ANALOG_COST("details_analogCost", null, false),
     DETAILS_DELEGATE_INFO("details_delegateInfo", null, false),
