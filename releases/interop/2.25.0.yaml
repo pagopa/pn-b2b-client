@@ -10,8 +10,17 @@ release:
           status: todo
           size: S
           qa_epic: QA-18290
+          branch: feature/QA-18260-enable-delegator-eservice-duplication
         - id: PIN-10875
           title:
           status: todo
           size: S
           qa_epic: QA-18290
+          branch: feature/QA-18260-enable-delegator-eservice-duplication
+        - id: PIN-9388
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-17458
+          repo: qe_suit
+          branch: feature/QA-17458-link-eservice-receive
