@@ -31,7 +31,8 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
 
     protected ProducerKeychainSteps(SharedStepsContext context,
         ClientTokenConfigurator clientTokenConfigurator,
-        DelayService delayService) {
+        DelayService delayService
+    ) {
         super("producerKeychain", clientTokenConfigurator.getProducerKeychainClient(), context);
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = context.getIdentityService();
@@ -82,10 +83,11 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
         linkProducerKeychainToEservice(ruolo, tenant, eServiceId);
     }
 
-    @And("il portachiavi erogatore risulta associato all'e-service")
-    public void verifyProducerKeychainLinkedToEService() {
+    @And("all'utente {string} di {string} risulta che il portachiavi erogatore sia associato all'e-service")
+    public void verifyProducerKeychainLinkedToEService(String ruolo, String tenant) {
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
         UUID eServiceId = getContext().getEServicesCommonContext().getEserviceId();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         getContext().getPollingService().makePolling(
             () -> producerKeychainClient.getProducerKeychain(producerKeychainId),
             res -> res != null
@@ -93,14 +95,17 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
                 && res.getEservices().stream().map(CompactEService::getId).anyMatch(eServiceId::equals),
             "Il portachiavi erogatore non risulta associato all'e-service"
         );
+        clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
 
-    @And("il portachiavi erogatore non risulta associato all'e-service")
-    public void verifyProducerKeychainNotLinkedToEService() {
+    @And("all'utente {string} di {string} risulta che il portachiavi erogatore non sia associato all'e-service")
+    public void verifyProducerKeychainNotLinkedToEService(String ruolo, String tenant) {
         delayService.delay();
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
         UUID eServiceId = getContext().getEServicesCommonContext().getEserviceId();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         ProducerKeychain producerKeychain = producerKeychainClient.getProducerKeychain(producerKeychainId);
+        clientTokenConfigurator.setBearerToken(getContext().getUserToken());
         Assertions.assertThat(producerKeychain)
             .as("Il portachiavi erogatore non deve essere null")
             .isNotNull();
@@ -115,9 +120,9 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     private void linkProducerKeychainToEservice(String ruolo, String tenant, UUID eServiceId) {
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
-        producerKeychainClient.linkEService(
+        this.context.getHttpCallExecutor().performCall(() -> this.producerKeychainClient.linkEService(
             producerKeychainId,
-            new EServiceAdditionDetailsSeed().eserviceId(eServiceId));
+            new EServiceAdditionDetailsSeed().eserviceId(eServiceId)));
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
 
