@@ -37,6 +37,7 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = context.getIdentityService();
         this.producerKeychainClient = clientTokenConfigurator.getProducerKeychainClient();
+        this.producerKeychainClient.setHttpCallExecutor(context.getHttpCallExecutor());
         this.delayService = delayService;
     }
 
@@ -120,9 +121,9 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     private void linkProducerKeychainToEservice(String ruolo, String tenant, UUID eServiceId) {
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
-        this.context.getHttpCallExecutor().performCall(() -> this.producerKeychainClient.linkEService(
+        this.producerKeychainClient.linkEService(
             producerKeychainId,
-            new EServiceAdditionDetailsSeed().eserviceId(eServiceId)));
+            new EServiceAdditionDetailsSeed().eserviceId(eServiceId));
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
 
