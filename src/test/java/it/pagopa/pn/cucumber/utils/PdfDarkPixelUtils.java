@@ -26,6 +26,13 @@ public final class PdfDarkPixelUtils {
     private PdfDarkPixelUtils() {
     }
 
+    /**
+     * Calcola la quota di pixel scuri di ogni pagina del PDF.
+     *
+     * @param pdfContent contenuto del PDF
+     * @return una quota tra 0 e 1 per ogni pagina, nell'ordine del documento
+     * @throws IOException se il contenuto non è un PDF leggibile
+     */
     public static List<Double> darkPixelRatioPerPage(byte[] pdfContent) throws IOException {
         try (PDDocument document = Loader.loadPDF(pdfContent)) {
             PDFRenderer renderer = new PDFRenderer(document);
