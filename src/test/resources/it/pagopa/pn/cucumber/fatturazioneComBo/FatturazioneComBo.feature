@@ -86,7 +86,7 @@ Feature: Fatturazione delle comunicazioni bonarie (ComBo)
     Given il "Comune_Multi" riceve gli aggiornamenti di stato delle comunicazioni bonarie
     And il "Comune_Multi" ha inviato una comunicazione bonaria a un destinatario raggiungibile via email
     And il percorso della comunicazione bonaria si è concluso
-    When il "Comune_Multi" consulta la timeline della comunicazione bonaria e ne riceve gli aggiornamenti di stato
+    When il "Comune_Multi" consulta la comunicazione bonaria e ne riceve gli aggiornamenti di stato
     Then gli eventi esposti all'ente non riportano alcun costo
     And il formato degli eventi esposti all'ente non cambia
 
@@ -94,7 +94,7 @@ Feature: Fatturazione delle comunicazioni bonarie (ComBo)
   Scenario: [INFORMAL_INVOICING_PRIVACY_03_1_B] Il costo di una comunicazione bonaria rifiutata non è esposto all'ente
     Given il "Comune_Multi" riceve gli aggiornamenti di stato delle comunicazioni bonarie
     And il "Comune_Multi" ha inviato una comunicazione bonaria non conforme a 1 destinatario
-    When il "Comune_Multi" consulta la timeline della comunicazione bonaria e ne riceve gli aggiornamenti di stato
+    When il "Comune_Multi" consulta la comunicazione bonaria e ne riceve gli aggiornamenti di stato
     Then gli eventi esposti all'ente non riportano alcun costo
     And il formato degli eventi esposti all'ente non cambia
 

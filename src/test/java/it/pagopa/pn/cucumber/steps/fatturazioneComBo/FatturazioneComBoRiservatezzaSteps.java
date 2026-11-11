@@ -10,6 +10,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
@@ -28,13 +29,15 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
+import static it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain.REQUEST_REFUSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.awaitility.Awaitility.await;
 
 /**
- * Riservatezza dei costi: ciò che l'ente vede di una comunicazione bonaria, cioè la timeline letta dall'API di
- * consultazione e gli aggiornamenti di stato ricevuti sullo stream (pn-stream, API v3.0).
+ * Riservatezza dei costi: ciò che l'ente vede di una comunicazione bonaria, cioè la comunicazione letta dall'API di
+ * consultazione (timeline, o stato della richiesta se rifiutata) e gli aggiornamenti di stato ricevuti sullo stream
+ * (pn-stream, API v3.0).
  * <p>
  * Le risposte vengono lette come JSON grezzo: un campo non previsto dal contratto verrebbe scartato in silenzio dai
  * modelli generati e la verifica non lo vedrebbe.
@@ -78,14 +81,21 @@ public class FatturazioneComBoRiservatezzaSteps {
     }
 
     /**
-     * Legge la comunicazione dall'API di consultazione dell'ente e consuma lo stream finché non arriva l'evento di
+     * Legge ciò che l'ente può consultare della comunicazione e consuma lo stream finché non arriva l'evento di
      * chiusura (conclusione o rifiuto) della comunicazione dello scenario.
+     * <p>
+     * Una comunicazione accettata si consulta con la sua timeline ({@code GET /delivery/v1/notifications/sent/{iun}}).
+     * Una comunicazione rifiutata non è consultabile (404 PN_DELIVERY_NOTIFICATIONNOTFOUND): l'ente ne vede lo stato
+     * della richiesta ({@code GET /delivery/v1/requests}), REFUSED con gli errori.
      */
-    @When("il {string} consulta la timeline della comunicazione bonaria e ne riceve gli aggiornamenti di stato")
-    public void senderReadsTimelineAndStream(String sender) throws JsonProcessingException {
+    @When("il {string} consulta la comunicazione bonaria e ne riceve gli aggiornamenti di stato")
+    public void senderReadsCommunicationAndStream(String sender) throws JsonProcessingException {
         assertThat(context.getStreamId()).as("Lo scenario deve creare lo stream prima dell'invio").isNotNull();
         String senderId = sendSharedContext.getInformalNotificationContext().getSenderId();
-        context.setExposedNotification(objectMapper.readTree(informalClient.getSentInformalNotificationSenderAsJson(senderId, context.getIun())));
+        String exposed = isRefused()
+                ? informalClient.getNotificationStatusByRequestIdAsJson(senderId, context.getNotificationRequestId())
+                : informalClient.getSentInformalNotificationSenderAsJson(senderId, context.getIun());
+        context.setExposedNotification(objectMapper.readTree(exposed));
 
         webhookClient.setApiKeys(apiKeyOf(sender));
         String closureCategory = closureCategory();
@@ -101,16 +111,22 @@ public class FatturazioneComBoRiservatezzaSteps {
 
     @Then("gli eventi esposti all'ente non riportano alcun costo")
     public void costNotExposed() {
-        JsonNode timeline = context.getExposedNotification().path("timeline");
-        List<String> timelineCategories = StreamSupport.stream(timeline.spliterator(), false)
-                .map(element -> element.path("category").asText())
-                .toList();
+        JsonNode exposed = context.getExposedNotification();
         assertSoftly(softly -> {
-            softly.assertThat(timelineCategories)
-                    .as("La timeline esposta all'ente deve contenere la chiusura %s, altrimenti la verifica non è significativa", closureCategory())
-                    .contains(closureCategory());
-            softly.assertThat(timeline.findValues(NOTIFICATION_COST))
-                    .as("La timeline esposta all'ente per la comunicazione %s non deve riportare costi", context.getIun())
+            if (isRefused()) {
+                softly.assertThat(exposed.path("notificationRequestStatus").asText())
+                        .as("Lo stato della richiesta letto dall'ente deve essere REFUSED, altrimenti la verifica non è significativa")
+                        .isEqualTo("REFUSED");
+            } else {
+                List<String> timelineCategories = StreamSupport.stream(exposed.path("timeline").spliterator(), false)
+                        .map(element -> element.path("category").asText())
+                        .toList();
+                softly.assertThat(timelineCategories)
+                        .as("La timeline esposta all'ente deve contenere la chiusura %s, altrimenti la verifica non è significativa", closureCategory())
+                        .contains(closureCategory());
+            }
+            softly.assertThat(exposed.findValues(NOTIFICATION_COST))
+                    .as("Quanto l'ente legge della comunicazione %s non deve riportare costi", context.getIun())
                     .isEmpty();
             context.getExposedStreamEvents().forEach(event -> softly.assertThat(event.findValues(NOTIFICATION_COST))
                     .as("L'evento %s dello stream non deve riportare costi", event.path("eventId").asText())
@@ -126,7 +142,8 @@ public class FatturazioneComBoRiservatezzaSteps {
     @Then("il formato degli eventi esposti all'ente non cambia")
     public void exposedFormatUnchanged() {
         assertSoftly(softly -> {
-            softly.assertThatCode(() -> contractMapper.treeToValue(context.getExposedNotification(), FullSentInformalNotificationV1.class))
+            Class<?> contract = isRefused() ? NewInformalNotificationRequestStatusResponseV1.class : FullSentInformalNotificationV1.class;
+            softly.assertThatCode(() -> contractMapper.treeToValue(context.getExposedNotification(), contract))
                     .as("La comunicazione %s letta dall'ente deve rispettare il contratto pubblicato", context.getIun())
                     .doesNotThrowAnyException();
             context.getExposedStreamEvents().forEach(event -> softly
@@ -150,6 +167,10 @@ public class FatturazioneComBoRiservatezzaSteps {
 
     private String closureCategory() {
         return context.getFirstClosures().get(0).category();
+    }
+
+    private boolean isRefused() {
+        return REQUEST_REFUSED.equals(closureCategory());
     }
 
     /** Consuma lo stream fino all'ultimo evento disponibile e tiene quelli della comunicazione dello scenario. */

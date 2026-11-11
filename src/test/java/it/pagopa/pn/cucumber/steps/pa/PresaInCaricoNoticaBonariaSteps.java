@@ -61,6 +61,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedIun;
     private String currentGroupId;
     private String currentCxId;
+    @Getter
     private String savedNotificationRequestId;
     private TerminationRequestStatus terminationStatus;
     private String paName;

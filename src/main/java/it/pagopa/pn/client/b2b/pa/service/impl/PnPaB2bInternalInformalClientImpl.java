@@ -152,6 +152,32 @@ public class PnPaB2bInternalInformalClientImpl {
                 }).getBody();
     }
 
+    /**
+     * Stessa chiamata di {@link #getNotificationStatusByRequestId}, ma restituisce il body JSON così come ricevuto.
+     */
+    public String getNotificationStatusByRequestIdAsJson(String cxId, String notificationRequestId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-pagopa-pn-uid", operatorId);
+        headers.add("x-pagopa-pn-cx-type", CxTypeAuthFleet.PA.getValue());
+        headers.add("x-pagopa-pn-cx-id", cxId);
+        LinkedMultiValueMap<String, String> query = new LinkedMultiValueMap<>();
+        query.add("notificationRequestId", notificationRequestId);
+        return senderReadInformalNotificationB2BApi.getApiClient().invokeAPI(
+                "/delivery/v1/requests",
+                HttpMethod.GET,
+                Map.of(),
+                query,
+                null,
+                headers,
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{},
+                new ParameterizedTypeReference<String>() {
+                }).getBody();
+    }
+
     public FullReceivedInformalNotificationV1 getReceivedInformalNotification(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType) {
         return recipientReadInformalNotificationApi.getReceivedInformalNotificationV1(operatorId, recipientType, cxId, "WEB", iun, null, null, false);
     }

@@ -18,7 +18,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,6 +270,13 @@ public class FatturazioneComBoSetupSteps {
         }
         informalNotificationSteps.sendInformalAndWaitStatus(expectedStatus);
         context.setDomain(INFORMAL);
+        context.setNotificationRequestId(informalNotificationSteps.getSavedNotificationRequestId());
+        if (sendSharedContext.getInformalNotificationContext().getIun() == null) {
+            // Lo stato di una richiesta rifiutata non riporta lo IUN: pn-delivery assegna come id della richiesta
+            // lo IUN in base64.
+            sendSharedContext.getInformalNotificationContext().setIun(
+                    new String(Base64.getDecoder().decode(context.getNotificationRequestId()), StandardCharsets.UTF_8));
+        }
         context.setIun(sendSharedContext.getInformalNotificationContext().getIun());
         context.setRecipientsCount(recipients.length);
         assertThat(context.getIun()).as("La comunicazione bonaria inviata deve avere uno IUN").isNotBlank();

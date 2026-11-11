@@ -28,6 +28,11 @@ public class FatturazioneComBoScenarioContext {
     private String iun;
 
     /**
+     * Id della richiesta di invio, l'unico riferimento che l'ente ha per una comunicazione rifiutata.
+     */
+    private String notificationRequestId;
+
+    /**
      * Ente mittente come lo identificano la timeline e le tabelle di fatturazione.
      */
     private String paId;
