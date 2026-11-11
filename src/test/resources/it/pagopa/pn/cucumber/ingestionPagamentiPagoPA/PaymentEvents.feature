@@ -22,11 +22,14 @@ Feature: Recupero degli eventi di pagamento pagoPA
   #   StopOnPaid-IO-QA    stopOnPaid = true,  primo canale IO senza feedback desiderati, poi EMAIL
   # Alla creazione vanno aggiornati i nomi e, per StopOnPaid-IO-QA, la finestra di escalation degli step di workflow
   # (oggi tarata sui 4 minuti dell'EMAIL).
+  # 01_2_C usa BonarieAllChannels perché in TEST e UAT non ha l'attributo stopOnPaid. Al rilascio va verificato che
+  # la migrazione delle campagne non lo valorizzi: in DEV tutte le campagne lo hanno ricevuto (false), e in quel caso
+  # serve una campagna creata senza l'attributo.
   #
-  # Campagna FattOrd: oggi ha desiredFeedback [READ, PAID] sul canale IO. Con US-4 PAID non è più un valore ammesso
-  # (SRS 13.14) e la campagna verrà migrata; finché non lo è, la lettura della campagna può fallire e gli scenari che
-  # la usano (01_5_B, 02_1, 04_2_A) non sono eseguibili. Nessuno di questi dipende da PAID o da stopOnPaid: dopo la
-  # migrazione vanno solo rieseguiti.
+  # Campagna FattOrd: in TEST e UAT ha desiredFeedback [READ, PAID] sul canale IO. Con US-4 PAID non è più un valore
+  # ammesso (SRS 13.14) e la campagna verrà migrata (in DEV lo è già: [READ] e stopOnPaid = true); finché non lo è, la
+  # lettura della campagna può fallire e gli scenari che la usano (01_5_B, 02_1, 04_2_A) non sono eseguibili. Nessuno
+  # di questi dipende da PAID o da stopOnPaid: dopo la migrazione vanno solo rieseguiti.
   #
   # Gli scenari non ancora eseguibili sono marcati @ignore (esclusi dai runner) e con i tag delle dipendenze mancanti:
   #   @attesaKafkaMock          mock del Nodo pagoPA di pn-external-channels non ancora disponibile in tutti gli ambienti
@@ -39,7 +42,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
   #   @verificaCanaleIo         simulazione del pagamento da App IO tramite il mock di pn-io-connector da validare
   #   @attesaStreamPaymentNoticePaid
   #                             PAYMENT_NOTICE_PAID come elemento diagnostico di pn-stream (US-6) non ancora rilasciato
-  #   @attesaMetadatoPaid       attributo paid dei metadati di ricerca delle bonarie (US-7) non ancora sviluppato
+  #   @attesaMetadatoPaid       attributo paid dei metadati di ricerca delle bonarie (US-7) non ancora rilasciato
 
   # =========================================================================================
   # SCENARIO 1 - Invio eventi di pagamento per bonarie e legali
@@ -56,7 +59,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
     And SEND non registra il pagamento pagoPA come pagamento comunicato dall'ente
     And il pagamento pagoPA non è esposto nella timeline della notifica
     And il pagamento pagoPA non è esposto negli eventi dello stream dell'ente
-    And la notifica legale resta nello stato "EFFECTIVE_DATE"
+    And lo stato della notifica legale non cambia dopo il pagamento
 
   @ingestionPagamentiPagoPA @ignore @attesaKafkaMock @attesaPaymentNoticePaid @attesaStopOnPaid @work-item:QA-18904
   Scenario: [PAYMENT_EVENTS_BASIC_01_2_A] Il pagamento pagoPA conclude il workflow della bonaria se la campagna lo prevede

@@ -62,7 +62,9 @@ public class IngestionPagamentiVerificheSteps {
     private static final String COST_VALIDATION_ELEMENT_PREFIX = "NOTIFICATION_COST_VALIDATION";
     private static final String PAID_METADATA = "paid";
     private static final String INFORMAL_RECIPIENT_TYPE = "PF";
-    // L'SRS chiede un log INFO per lo scarto (REQ-FIL-02) senza definirne il testo: è quello di pn-notification-cost-service (PN-21959)
+    // L'SRS chiede un log per lo scarto (REQ-FIL-02) senza definirne il testo. pn-notification-cost-service scrive
+    // "PaymentInfo not found for iuv=<creditorTaxId>##<noticeCode>" a livello DEBUG, che arriva comunque su CloudWatch
+    // perché pn-commons imposta il logger it.pagopa.pn a DEBUG
     private static final String PAYMENT_DISCARDED_LOG_MESSAGE = "PaymentInfo not found";
 
     private static final Duration ASYNC_PROCESSING_TIMEOUT = Duration.ofMinutes(3);
@@ -422,6 +424,14 @@ public class IngestionPagamentiVerificheSteps {
                 .isEqualTo(expectedStatus);
     }
 
+    @Then("lo stato della notifica legale non cambia dopo il pagamento")
+    public void legalNotificationStatusUnchangedAfterPayment() {
+        assertThat(context.getLegalStatusBeforePayment())
+                .as("Stato della notifica legale prima del pagamento non registrato nello scenario")
+                .isNotNull();
+        legalNotificationStatusUnchanged(context.getLegalStatusBeforePayment());
+    }
+
     @Then("la comunicazione bonaria resta nello stato {string}")
     public void informalNotificationStatusUnchanged(String expectedStatus) {
         assertThat(sharedSteps.getSentInformalSentNotificationLastVersion().getNotificationStatus().getValue())
@@ -440,9 +450,10 @@ public class IngestionPagamentiVerificheSteps {
     @Then("SEND scarta il pagamento perché l'avviso non è censito")
     public void paymentDiscardedForUnknownNotice() {
         String query = String.format("\"%s\" \"%s\"", PAYMENT_DISCARDED_LOG_MESSAGE, context.getNotice().paymentInfoPk());
+        Instant publishedAt = context.getLastEventPublishedAt();
         try {
             await().atMost(ASYNC_PROCESSING_TIMEOUT).pollInterval(Duration.ofSeconds(10)).untilAsserted(() ->
-                    assertThat(logCount(NOTIFICATION_COST_LOG_GROUP, query))
+                    assertThat(logCount(NOTIFICATION_COST_LOG_GROUP, query, publishedAt))
                             .as("Nessun log di scarto su %s per la ricerca %s", NOTIFICATION_COST_LOG_GROUP, query)
                             .isPositive());
         } catch (AssertionError assertionError) {
@@ -457,10 +468,11 @@ public class IngestionPagamentiVerificheSteps {
     @Then("SEND ignora il pagamento senza registrare errori")
     public void paymentIgnoredWithoutErrors() {
         String errorLogQuery = String.format("\"ERROR\" \"%s\"", context.getNotice().noticeCode());
+        Instant publishedAt = context.getLastEventPublishedAt();
         await().during(IGNORED_PAYMENT_OBSERVATION_WINDOW)
                 .atMost(IGNORED_PAYMENT_OBSERVATION_WINDOW.plus(Duration.ofMinutes(1)))
                 .pollInterval(Duration.ofSeconds(10))
-                .until(() -> logCount(NOTIFICATION_COST_LOG_GROUP, errorLogQuery) == 0);
+                .until(() -> logCount(NOTIFICATION_COST_LOG_GROUP, errorLogQuery, publishedAt) == 0);
     }
 
     private void awaitTimelineElementOnDynamo(String category) {
@@ -490,8 +502,12 @@ public class IngestionPagamentiVerificheSteps {
                 .size();
     }
 
-    private int logCount(String logGroup, String query) {
-        long minutesSincePublish = Duration.between(context.getLastEventPublishedAt(), Instant.now()).toMinutes() + 1;
+    /**
+     * Awaitility valuta le condizioni in un thread separato, dove il contesto di scenario non è accessibile:
+     * l'istante di pubblicazione va letto prima dell'attesa e passato qui.
+     */
+    private int logCount(String logGroup, String query, Instant publishedAt) {
+        long minutesSincePublish = Duration.between(publishedAt, Instant.now()).toMinutes() + 1;
         return cloudWatchLogsClient.filterLogEvents(CloudWatchQueryBuilder.search(logGroup, query, minutesSincePublish))
                 .events()
                 .size();

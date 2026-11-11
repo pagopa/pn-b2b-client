@@ -37,6 +37,11 @@ public class IngestionPagamentiScenarioContext {
     private Instant lastEventPublishedAt;
 
     /**
+     * Stato della notifica legale al termine del workflow, prima del pagamento.
+     */
+    private String legalStatusBeforePayment;
+
+    /**
      * Data di pagamento dell'ultimo pagamento pagoPA pubblicato: il flusso pagoPA la copia nell'eventTimestamp del
      * PAYMENT delle bonarie (WI-5.7), quindi indica se il PAYMENT è stato scritto da pagoPA.
      */

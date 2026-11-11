@@ -21,11 +21,13 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 /**
  * Preparazione delle notifiche legali, delle comunicazioni bonarie e delle campagne su cui vengono simulati i pagamenti.
@@ -59,8 +61,10 @@ public class IngestionPagamentiSetupSteps {
     private static final String STOP_ON_PAID = "stopOnPaid";
     private static final String COMMUNICATION_TYPE = "communicationType";
     private static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
-    private static final String LEGAL_STATUS_COMPLETED = "EFFECTIVE_DATE";
+    private static final String LEGAL_WORKFLOW_COMPLETED_CATEGORY = "REFINEMENT";
+    private static final Duration LEGAL_WORKFLOW_TIMEOUT = Duration.ofMinutes(20);
     private static final String INFORMAL_STATUS_COMPLETED = "COMPLETED_REACHED";
+    private static final Duration PAYMENT_INFO_REMOVAL_TIMEOUT = Duration.ofMinutes(2);
 
     private final IngestionPagamentiScenarioContext context;
     private final SharedSteps sharedSteps;
@@ -94,18 +98,42 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * EFFECTIVE_DATE è uno stato stabile raggiungibile senza azioni del destinatario: un cambio di stato dopo il
-     * pagamento sarebbe attribuibile solo al pagamento.
+     * Il workflow si conclude con il perfezionamento (REFINEMENT): da lì lo stato resta stabile senza azioni del
+     * destinatario, quindi un cambio di stato dopo il pagamento sarebbe attribuibile solo al pagamento. Lo stato
+     * raggiunto dipende dalle tempistiche dell'ambiente (EFFECTIVE_DATE, oppure DELIVERED quando il perfezionamento
+     * ha un timestamp precedente alla consegna, come in DEV) e viene registrato per il confronto successivo.
      */
     @Given("la notifica legale ha concluso il proprio workflow")
     public void legalWorkflowCompleted() {
-        legalNotificationSteps.readingEventUpToTheStatusOfNotification(LEGAL_STATUS_COMPLETED);
+        String iun = sharedSteps.getNotificationIun();
+        await().atMost(LEGAL_WORKFLOW_TIMEOUT).pollInterval(Duration.ofSeconds(15)).untilAsserted(() ->
+                assertThat(dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+                        ":v_iun", AttributeValue.builder().s(iun).build(),
+                        ":v_category", AttributeValue.builder().s(LEGAL_WORKFLOW_COMPLETED_CATEGORY).build())).items())
+                        .as("La notifica legale %s non ha ancora l'elemento %s", iun, LEGAL_WORKFLOW_COMPLETED_CATEGORY)
+                        .isNotEmpty());
+        context.setLegalStatusBeforePayment(sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue());
+        log.info("Notifica legale {} perfezionata nello stato {}", iun, context.getLegalStatusBeforePayment());
     }
 
     @Given("il {string} ha annullato la notifica legale")
     public void cancelLegalNotification(String paName) {
         sharedSteps.notificationCanBeCanceledWithIunByComune("può", paName);
         legalNotificationSteps.readingEventUpToTheStatusOfNotification(NOTIFICATION_STATUS_CANCELLED);
+        awaitNoticeRemovedFromPaymentInfo();
+    }
+
+    /**
+     * pn-notification-cost-service rimuove gli avvisi da pn-PaymentInfo in modo asincrono dopo NOTIFICATION_CANCELLED:
+     * un pagamento pubblicato prima della rimozione verrebbe ancora correlato alla notifica annullata.
+     */
+    private void awaitNoticeRemovedFromPaymentInfo() {
+        String pk = context.getNotice().paymentInfoPk();
+        await().atMost(PAYMENT_INFO_REMOVAL_TIMEOUT).pollInterval(Duration.ofSeconds(5)).untilAsserted(() ->
+                assertThat(dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of(
+                        ":v_pk", AttributeValue.builder().s(pk).build())).items())
+                        .as("L'avviso %s è ancora censito su pn-PaymentInfo dopo l'annullamento della notifica", pk)
+                        .isEmpty());
     }
 
     /**
