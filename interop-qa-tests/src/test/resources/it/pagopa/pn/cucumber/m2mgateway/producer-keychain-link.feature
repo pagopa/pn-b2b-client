@@ -19,7 +19,7 @@ Feature: Associazione del producer-keychain agli e-services
       | ARCHIVING           |
       | ARCHIVING_SUSPENDED |
 
-  @work-item:QA-17417
+  @work-item:QA-17417 @deleghe2
   Scenario: [PRODUCER_KEYCHAIN_LINK_2] - Associazione del producer-keychain a un e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
