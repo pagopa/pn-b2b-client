@@ -42,6 +42,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClientImpl;
 import it.pagopa.interop.purpose.RiskAnalysisDataInitializer;
 import it.pagopa.interop.purpose.service.IPurposeTemplateClient;
 import it.pagopa.interop.purpose.service.impl.*;
+import it.pagopa.interop.purpose.service.mapper.PurposeUpdateMapperImpl;
 import it.pagopa.interop.selfcare.service.ISelfcareClient;
 import it.pagopa.interop.selfcare.service.impl.SelfcareClientImpl;
 import it.pagopa.interop.tenant.service.ITenantsApi;
@@ -52,6 +53,7 @@ import it.pagopa.interop.tracing.service.impl.DevAbstractInteropTracingClient;
 import it.pagopa.interop.tracing.service.impl.ExtraQaAbstractInteropTracingClient;
 import it.pagopa.interop.users.service.M2MV3UsersClient;
 import it.pagopa.interop.utils.HttpCallExecutor;
+import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.common.PurposeTemplateCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
@@ -88,7 +90,6 @@ import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.pn.interop.cucumber.utility.NotificationStore;
 import it.pagopa.pn.interop.cucumber.utility.TracingFileUtils;
-import it.pagopa.interop.utils.delay_service.DelayServiceImpl;
 import it.pagopa.pn.interop.cucumber.utility.property_resolver.PropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -228,7 +229,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         EnvDebugLogger.class,
         TenantMapperImpl.class,
         TenantsProcessApiClientImpl.class,
-        TenantSetupState.class
+        TenantSetupState.class,
+        PurposeUpdateMapperImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

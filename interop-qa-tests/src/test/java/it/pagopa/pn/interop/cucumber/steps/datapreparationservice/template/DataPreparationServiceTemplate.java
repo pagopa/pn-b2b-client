@@ -3,12 +3,17 @@ package it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.agreement.domain.ClientType;
+import it.pagopa.interop.agreement.service.IAgreementClient;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.common.operation.IOperation;
 import it.pagopa.interop.common.operation.SimpleOperation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.AddConsumerDocumentOperation.AddConsumerDocumentParams;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.CreateAgreementOperation.CreateAgreementParams;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
@@ -35,17 +40,25 @@ public class DataPreparationServiceTemplate {
     private static final ResourcePatternResolver RESOURCE_RESOLVER = new PathMatchingResourcePatternResolver();
     private static final String RISK_ANALYSIS_EXAMPLES_PATTERN = "classpath*:riskAnalysis/*";
     private final PollingService pollingService;
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final IAgreementClient agreementClient;
     private final IHttpExecutor httpCallExecutor;
     private final CommonUtils commonUtils;
+    private final SharedStepsContext sharedStepsContext;
     public static final String ERROR_RETRIEVING_AGREEMENT = "There was an error while retrieving the agreement by ID!";
 
     public DataPreparationServiceTemplate(
+            ClientTokenConfigurator clientTokenConfigurator,
             IHttpExecutor httpCallExecutor,
             PollingService pollingService,
-            CommonUtils commonUtils) {
+            CommonUtils commonUtils,
+            SharedStepsContext sharedStepsContext) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.agreementClient = clientTokenConfigurator.getAgreementClient();
         this.httpCallExecutor = httpCallExecutor;
         this.pollingService = pollingService;
         this.commonUtils = commonUtils;
+        this.sharedStepsContext = sharedStepsContext;
     }
 
     public Optional<UUID> createAgreement(CreateAgreementOperation operation, UUID eServiceID, UUID descriptorId, @Nullable UUID delegationId) {
@@ -82,6 +95,28 @@ public class DataPreparationServiceTemplate {
         );
     }
 
+    public void rejectAgreement(UUID agreementId) {
+        String previousToken = clientTokenConfigurator.getLastToken();
+
+        // Imposta il token del tenant principale
+        clientTokenConfigurator.setBearerToken(
+                sharedStepsContext.getIdentityService().getToken(sharedStepsContext.getTenantType(), null)
+        );
+        httpCallExecutor.performCall(() -> agreementClient.rejectAgreement(
+                agreementId,
+                new AgreementRejectionPayload().reason("Agreement rejected during QA"))
+        );
+        assertValidResponse();
+
+        pollingService.makePolling(
+                () -> agreementClient.getAgreementById(agreementId),
+                res -> res.getState().equals(AgreementState.REJECTED),
+                "There was an error while rejecting the agreement"
+        );
+        // Ripristina il token del tenant corrente se era impostato
+        if (previousToken != null) clientTokenConfigurator.setBearerToken(previousToken);
+    }
+
     public UUID createAgreementWithGivenState(CreateAgreementWithStateOperation op, UpperAgreementState agreementState, UUID eServiceID, UUID descriptorId, UUID delegationId, File doc) {
         // agreement in state DRAFT
         UUID agreementId = createAndCheckAgreement(op.getCreateAndCheckAgreementOperation(), eServiceID, descriptorId, delegationId);
@@ -90,6 +125,11 @@ public class DataPreparationServiceTemplate {
             case DRAFT -> agreementId;
             case PENDING, ACTIVE -> {
                 submitAgreement(op.getSubmitAgreementOperation(), agreementId, agreementState);
+                yield agreementId;
+            }
+            case REJECTED -> {
+                submitAgreement(op.getSubmitAgreementOperation(), agreementId, UpperAgreementState.PENDING);
+                rejectAgreement(agreementId);
                 yield agreementId;
             }
             case SUSPENDED -> {

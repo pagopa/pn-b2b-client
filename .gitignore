@@ -50,3 +50,6 @@ build/
 ### Data Preparation ###
 token.json
 tmp-files/
+
+# Local checkouts used by the PST generator
+/source-repos/

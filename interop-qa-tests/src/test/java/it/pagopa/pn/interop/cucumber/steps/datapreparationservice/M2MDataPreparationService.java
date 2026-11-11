@@ -42,9 +42,11 @@ public class M2MDataPreparationService {
         this.eserviceClient = clientTokenConfigurator.getM2meServiceClient();
         this.eserviceTemplateClient = clientTokenConfigurator.getM2mEServiceTemplateClient();
         this.templateService = new DataPreparationServiceTemplate(
+            clientTokenConfigurator,
             sharedStepsContext.getHttpCallExecutor(),
             sharedStepsContext.getPollingService(),
-            commonUtils
+            commonUtils,
+            sharedStepsContext
         );
         this.sharedStepsContext = sharedStepsContext;
         this.riskAnalysisMapper = riskAnalysisMapper;
