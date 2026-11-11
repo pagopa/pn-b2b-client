@@ -39,6 +39,8 @@ public class Costanti {
     public static final String NESSUNO = "nessuno";
     public static final String UTENZA_CON_INDIRIZZO_NON_VALIDO = "Utenza con Errore D01";
     public static final String UTENZA_CON_INDIRIZZO_VALIDO_ANPR = "Utenza con Indirizzo Valido da ANPR";
+    public static final String UTENZA_SENZA_INDIRIZZO_REGISTRI = "Utenza senza indirizzo sui registri nazionali";
+    public static final String PG_REGISTRO_IMPRESE = "PG censita sul Registro Imprese";
     // PA
     public static final String COMUNE_1 = "Comune_1";
     public static final String COMUNE_2 = "Comune_2";

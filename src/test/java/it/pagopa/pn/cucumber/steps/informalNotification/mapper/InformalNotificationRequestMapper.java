@@ -28,7 +28,7 @@ public class InformalNotificationRequestMapper {
         request.setSenderDenomination(getValue(data, SENDER_DENOMINATION.key));
         request.setPaProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key));
         request.setIdempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key));
-        request.setCampaignId(getValue(data, CAMPAIGN_ID.key));
+        request.setCampaignId(resolveExternalValue(getValue(data, CAMPAIGN_ID.key)));
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
@@ -37,6 +37,27 @@ public class InformalNotificationRequestMapper {
         request.setRecipients(new ArrayList<>());
         request.setDocuments(buildDocuments(data));
         return request;
+    }
+
+    /**
+     * Un valore nella forma ${chiave:default} viene letto dalla system property {@code chiave} (-Dchiave=...),
+     * poi dalla variabile d'ambiente corrispondente (maiuscolo, '.' e '-' sostituiti da '_'), altrimenti vale il default.
+     * Es. ${pn.paper-source.campaign-id:MessaMora} -> -Dpn.paper-source.campaign-id=CampAnalogic
+     * oppure PN_PAPER_SOURCE_CAMPAIGN_ID=CampAnalogic. Gli altri valori restano invariati.
+     */
+    static String resolveExternalValue(String value) {
+        if (value == null || !value.startsWith("${") || !value.endsWith("}")) {
+            return value;
+        }
+        String expression = value.substring(2, value.length() - 1);
+        int separator = expression.indexOf(':');
+        String key = separator < 0 ? expression : expression.substring(0, separator);
+        String defaultValue = separator < 0 ? null : expression.substring(separator + 1);
+        String resolved = System.getProperty(key);
+        if (resolved == null || resolved.isBlank()) {
+            resolved = System.getenv(key.toUpperCase().replace('.', '_').replace('-', '_'));
+        }
+        return resolved == null || resolved.isBlank() ? defaultValue : resolved;
     }
 
     // builder

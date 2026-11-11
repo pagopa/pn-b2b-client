@@ -7,7 +7,23 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # - PF con indirizzo su ANPR -> Utenza con Indirizzo Valido da ANPR (config/taxids-{env}.properties): in DEV e TEST
   #   ANPR è il mock, in UAT è ANPR reale (ambiente di validazione) e il codice fiscale configurato cambia di conseguenza.
   #   Nelle bonarie lo stesso codice fiscale si ottiene con taxId = ${Utenza con Indirizzo Valido da ANPR}.
-  # - PG censita sul Registro Imprese -> 01113570442: il Registro Imprese (Infocamere) è mock in tutti gli ambienti.
+  # - PG censita sul Registro Imprese, senza PEC sui registri -> PG censita sul Registro Imprese (legali e bonarie).
+  #   Default 34565000469 (Registro Imprese mock di DEV e TEST); in UAT il Registro Imprese è reale e serve una PG censita lì:
+  #   -Dpn.recipient.pg-registro-imprese.tax-id=<PIVA> oppure PN_RECIPIENT_PGREGISTROIMPRESE_TAXID=<PIVA>.
+  # - PF senza indirizzo sui registri -> Utenza senza indirizzo sui registri nazionali, default FNTLCU80T25F205R
+  #   (assente su ANPR mock e reale); si cambia con -Dpn.recipient.user-senza-indirizzo-registri.tax-id=<CF>.
+  # - Campagna delle bonarie (canale cartaceo): default MessaMora, presente in DEV, TEST e UAT;
+  #   si cambia con -Dpn.paper-source.campaign-id=<id> oppure PN_PAPER_SOURCE_CAMPAIGN_ID=<id>.
+  #
+  # Tag:
+  # - @tracciaturaIndagineInLoco: tutta la suite; @work-item:QA-17058: tracciamento.
+  # - @rilascioAsincronoPre: fase 1 del rilascio asincrono, eseguita solo da TracciaturaIndagineInLocoPreRilascioTest
+  #   prima del rilascio; la fase 2 gira con TracciaturaIndagineInLocoTest e senza IUN annotati viene saltata.
+  # - @registroImprese: dipende da una PG censita sul Registro Imprese senza PEC (in UAT anche da INI-PEC di Infocamere).
+  # - @vasBonarie: dipende dall'abilitazione della PA mittente al VAS delle bonarie (SSM InformalPaActiveForPhysicalAddressLookup).
+  # Dove il runner non accetta filtri sui tag (es. CodeBuild) gli scenari si escludono con la variabile d'ambiente
+  # PN_PAPER_SOURCE_SKIP_TAGS=@registroImprese,@vasBonarie (o -Dpn.paper-source.skip-tags=...); per default non si esclude nulla.
+  # Un singolo scenario si lancia per nome, es. -Dcucumber.filter.name=".*PAPER_SOURCE_LEGAL_01_1_D.*".
   #
 
   # ====================================================================================================================
@@ -16,7 +32,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # la fonte dell'indirizzo utilizzato e l'eventuale indagine in loco del postino.
   # ====================================================================================================================
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_A @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_A] Indirizzo verificato sui registri nazionali, destinatario persona fisica e consegna al primo tentativo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -34,33 +50,27 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
 
   # PST 1.1.B è coperta da due scenari perché manca una PG censita sul Registro Imprese (mock)
   # il cui indirizzo restituito dal VAS produca una sequenza con indirizzo individuato dal postino (es. FAIL-Discovery_AR).
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_B_1 @work-item:QA-17058
+  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_B_1] Indirizzo verificato sui registri nazionali e destinatario persona giuridica
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination    | PG Censito  |
-      | recipientType   | PG          |
-      | taxId           | 01113570442 |
-      | digitalDomicile | NULL        |
-      | physicalAddress | NULL        |
+    And destinatario PG censita sul Registro Imprese e:
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then il primo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "REGISTRO_IMPRESE"
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_B_2 @work-item:QA-17058
+  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_B_2] Destinatario persona giuridica, tentativo fallito e nuovo indirizzo individuato dal postino utilizzato
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination            | PG Censito            |
-      | recipientType           | PG                    |
-      | taxId                   | 01113570442           |
+    And destinatario PG censita sul Registro Imprese e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -69,7 +79,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And il secondo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "INDAGINE"
     And il secondo invio cartaceo del destinatario 0 riporta che l'indagine in loco è stata effettuata
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_C @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_C] Indirizzo fornito dal mittente, destinatario persona fisica, tentativo fallito e indirizzo individuato dal postino non utilizzabile
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -85,16 +95,13 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And il secondo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "ANPR"
     And il secondo invio cartaceo del destinatario 0 riporta che l'indagine in loco è stata effettuata
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_D @work-item:QA-17058
+  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_D] Destinatario persona giuridica, primo tentativo fallito senza indagine in loco e secondo invio verso il Registro Imprese
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination            | PG Censito               |
-      | recipientType           | PG                       |
-      | taxId                   | 01113570442              |
+    And destinatario PG censita sul Registro Imprese e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -103,15 +110,13 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And il secondo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "REGISTRO_IMPRESE"
     And il secondo invio cartaceo del destinatario 0 riporta che l'indagine in loco non è stata effettuata
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_E @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_E] Primo tentativo fallito senza alcun indirizzo alternativo disponibile
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario
-      | denomination            | Test AR Fail 2           |
-      | taxId                   | FNTLCU80T25F205R         |
+    And destinatario Utenza senza indirizzo sui registri nazionali e:
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -119,7 +124,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     Then il primo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "MITTENTE"
     And il secondo invio cartaceo del destinatario 0 non è presente
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_1_F @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_F] Notifica multidestinatario con un solo destinatario verificato sui registri nazionali
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -142,7 +147,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # CASO DI TEST 1.2: Verificare che anche la raccomandata semplice riporti la fonte dell'indirizzo utilizzato.
   # ====================================================================================================================
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_2_A @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_2_A] Raccomandata semplice con indirizzo fornito dal mittente
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -154,7 +159,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then la raccomandata semplice del destinatario 0 riporta come fonte dell'indirizzo "MITTENTE"
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_LEGAL_01_2_B @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_2_B] Raccomandata semplice con indirizzo verificato sui registri nazionali
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -172,49 +177,49 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # CASO DI TEST 2.1: Verificare che l'invio cartaceo di una comunicazione bonaria riporti la fonte dell'indirizzo utilizzato.
   # ====================================================================================================================
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_INFORMAL_02_1_A @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_INFORMAL_02_1_A] Comunicazione bonaria con indirizzo fornito dal mittente
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId               | MessaMora                               |
-      | messageId                | ${NEW-IT}                               |
-      | subject                  | Test tracciatura fonte indirizzo        |
-      | recipientType            | PF                                      |
-      | taxId                    | FRMTTR76M06B715E                        |
-      | denomination             | Ettore Fieramosca                       |
-      | email                    | suppressionlist@simulator.amazonses.com |
-      | digitalDomicile          | NULL                                    |
-      | physical_address_address | Via@OK_RS                               |
+      | campaignId               | ${pn.paper-source.campaign-id:MessaMora} |
+      | messageId                | ${NEW-IT}                                |
+      | subject                  | Test tracciatura fonte indirizzo         |
+      | recipientType            | PF                                       |
+      | taxId                    | FRMTTR76M06B715E                         |
+      | denomination             | Ettore Fieramosca                        |
+      | email                    | suppressionlist@simulator.amazonses.com  |
+      | digitalDomicile          | NULL                                     |
+      | physical_address_address | Via@OK_RS                                |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     Then l'invio cartaceo della comunicazione bonaria del destinatario 0 riporta come fonte dell'indirizzo "MITTENTE"
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_INFORMAL_02_1_B @work-item:QA-17058
+  @tracciaturaIndagineInLoco @vasBonarie @work-item:QA-17058
   Scenario: [PAPER_SOURCE_INFORMAL_02_1_B] Comunicazione bonaria con indirizzo verificato sui registri nazionali per una persona fisica
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | MessaMora                               |
-      | messageId        | ${NEW-IT}                               |
-      | subject          | Test tracciatura fonte indirizzo        |
-      | recipientType    | PF                                      |
-      | taxId            | ${Utenza con Indirizzo Valido da ANPR}  |
-      | denomination     | PF censito vas                          |
-      | email            | suppressionlist@simulator.amazonses.com |
-      | digitalDomicile  | NULL                                    |
-      | physical_address | ${PHYSICAL_ADDRESS_NULL}                |
+      | campaignId       | ${pn.paper-source.campaign-id:MessaMora} |
+      | messageId        | ${NEW-IT}                                |
+      | subject          | Test tracciatura fonte indirizzo         |
+      | recipientType    | PF                                       |
+      | taxId            | ${Utenza con Indirizzo Valido da ANPR}   |
+      | denomination     | PF censito vas                           |
+      | email            | suppressionlist@simulator.amazonses.com  |
+      | digitalDomicile  | NULL                                     |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL}                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     Then l'invio cartaceo della comunicazione bonaria del destinatario 0 riporta come fonte dell'indirizzo "ANPR"
 
-  @tracciaturaIndagineInLoco @PAPER_SOURCE_INFORMAL_02_1_C @work-item:QA-17058
+  @tracciaturaIndagineInLoco @registroImprese @vasBonarie @work-item:QA-17058
   Scenario: [PAPER_SOURCE_INFORMAL_02_1_C] Comunicazione bonaria con indirizzo verificato sui registri nazionali per una persona giuridica
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId       | MessaMora                        |
-      | messageId        | ${NEW-IT}                        |
-      | subject          | Test tracciatura fonte indirizzo |
-      | recipientType    | PG                               |
-      | taxId            | 01113570442                      |
-      | denomination     | PG Censito VAS                   |
-      | digitalDomicile  | example@FAIL-pecFirstKO.it       |
-      | physical_address | ${PHYSICAL_ADDRESS_NULL}         |
+      | campaignId       | ${pn.paper-source.campaign-id:MessaMora} |
+      | messageId        | ${NEW-IT}                                |
+      | subject          | Test tracciatura fonte indirizzo         |
+      | recipientType    | PG                                       |
+      | taxId            | ${PG censita sul Registro Imprese}       |
+      | denomination     | PG Censito VAS                           |
+      | digitalDomicile  | example@FAIL-pecFirstKO.it               |
+      | physical_address | ${PHYSICAL_ADDRESS_NULL}                 |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     Then l'invio cartaceo della comunicazione bonaria del destinatario 0 riporta come fonte dell'indirizzo "REGISTRO_IMPRESE"
@@ -228,12 +233,12 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # - Preparazione (@rilascioAsincronoPre): si lancia a mano TracciaturaIndagineInLocoPreRilascioTest prima del rilascio.
   #   Le spedizioni vengono fermate con una sequence senza esito finale e gli IUN annotati nel log
   #   (pn.ripresa.iun.<chiave>=<IUN>). Questi scenari non fanno parte dell'esecuzione ordinaria.
-  # - Ripresa (@rilascioAsincronoPost): fa parte dell'esecuzione ordinaria. Se viene passato lo IUN di una notifica
-  #   preparata (-Dpn.ripresa.iun.<chiave>=<IUN>) la spedizione viene sbloccata inviando gli esiti tramite il consolidatore
+  # - Ripresa (scenari _POST): fa parte dell'esecuzione ordinaria. Se viene passato lo IUN di una notifica
+  #   preparata (-Dpn.ripresa.iun.<chiave>=<IUN> o PN_RIPRESA_IUN_<CHIAVE>=<IUN>) la spedizione viene sbloccata inviando gli esiti tramite il consolidatore
   #   e se ne verifica la conclusione; altrimenti lo scenario viene saltato.
   # ====================================================================================================================
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPre @PAPER_SOURCE_ROLLOUT_03_1_A @work-item:QA-17058
+  @tracciaturaIndagineInLoco @rilascioAsincronoPre @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_A_PRE] Notifica legale con primo invio cartaceo in corso al momento del rilascio - fase 1
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -246,7 +251,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018"
     Then si annota lo IUN della notifica con la chiave "PAPER_SOURCE_ROLLOUT_03_1_A"
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPost @PAPER_SOURCE_ROLLOUT_03_1_A @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_A_POST] Notifica legale con primo invio cartaceo in corso al momento del rilascio - fase 2
     Given si riprende la notifica annotata con la chiave "PAPER_SOURCE_ROLLOUT_03_1_A" inviata dal "Comune_Multi"
     When viene invocato il consolidatore con i seguenti dati:
@@ -264,23 +269,23 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And il secondo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "INDAGINE"
     And il secondo invio cartaceo del destinatario 0 riporta che l'indagine in loco è stata effettuata
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPre @PAPER_SOURCE_ROLLOUT_03_1_B @work-item:QA-17058
+  @tracciaturaIndagineInLoco @rilascioAsincronoPre @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_B_PRE] Comunicazione bonaria con invio cartaceo in corso al momento del rilascio - fase 1
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId               | MessaMora                               |
-      | messageId                | ${NEW-IT}                               |
-      | subject                  | Test tracciatura fonte indirizzo        |
-      | recipientType            | PF                                      |
-      | taxId                    | FRMTTR76M06B715E                        |
-      | denomination             | Ettore Fieramosca                       |
-      | email                    | suppressionlist@simulator.amazonses.com |
-      | digitalDomicile          | NULL                                    |
-      | physical_address_address | Via@OK_START_RS                         |
+      | campaignId               | ${pn.paper-source.campaign-id:MessaMora} |
+      | messageId                | ${NEW-IT}                                |
+      | subject                  | Test tracciatura fonte indirizzo         |
+      | recipientType            | PF                                       |
+      | taxId                    | FRMTTR76M06B715E                         |
+      | denomination             | Ettore Fieramosca                        |
+      | email                    | suppressionlist@simulator.amazonses.com  |
+      | digitalDomicile          | NULL                                     |
+      | physical_address_address | Via@OK_START_RS                          |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE_PROGRESS" della notifica bonaria
     Then si annota lo IUN della notifica con la chiave "PAPER_SOURCE_ROLLOUT_03_1_B"
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPost @PAPER_SOURCE_ROLLOUT_03_1_B @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_B_POST] Comunicazione bonaria con invio cartaceo in corso al momento del rilascio - fase 2
     Given si riprende la comunicazione bonaria annotata con la chiave "PAPER_SOURCE_ROLLOUT_03_1_B"
     When viene invocato il consolidatore con i seguenti dati:
@@ -289,20 +294,20 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     Then l'esito dell'invio cartaceo della comunicazione bonaria del destinatario 0 è presente
     And l'invio cartaceo della comunicazione bonaria del destinatario 0 non riporta la fonte dell'indirizzo
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPre @PAPER_SOURCE_ROLLOUT_03_1_C @work-item:QA-17058
+  @tracciaturaIndagineInLoco @rilascioAsincronoPre @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_C_PRE] Notifica legale con secondo invio cartaceo in corso al momento del rilascio - fase 1
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                                                                                                                                                                         |
+      | digitalDomicile         | NULL                                                                                                                                                                                                   |
       | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN002D[DISCOVERY;FAILCAUSE:M01].5s-RECRN002E[DOC:Plico;DOC:Indagine].5s-RECRN002F@discovered.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-CON018 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018"
     Then si annota lo IUN della notifica con la chiave "PAPER_SOURCE_ROLLOUT_03_1_C"
 
-  @tracciaturaIndagineInLoco @rilascioAsincronoPost @PAPER_SOURCE_ROLLOUT_03_1_C @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_ROLLOUT_03_1_C_POST] Notifica legale con secondo invio cartaceo in corso al momento del rilascio - fase 2
     Given si riprende la notifica annotata con la chiave "PAPER_SOURCE_ROLLOUT_03_1_C" inviata dal "Comune_Multi"
     When viene invocato il consolidatore con i seguenti dati:

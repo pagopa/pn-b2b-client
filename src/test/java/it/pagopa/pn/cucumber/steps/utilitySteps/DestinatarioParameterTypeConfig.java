@@ -45,7 +45,9 @@ public class DestinatarioParameterTypeConfig {
             UTENZA_CON_INDIRIZZO_NON_VALIDO + "|" +
             UTENZA_CON_INDIRIZZO_VALIDO_ANPR + "|" +
             ALDA_MERINI + "|" +
-            DINO_SAURO
+            DINO_SAURO + "|" +
+            UTENZA_SENZA_INDIRIZZO_REGISTRI + "|" +
+            PG_REGISTRO_IMPRESE
     )
     public Destinatario destinatario(String name) {
         return destinatarioRegistry.destinatario(name);
