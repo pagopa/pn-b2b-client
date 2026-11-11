@@ -2084,7 +2084,7 @@ Feature: Workflow analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@OK-AR-CON020-PDF |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -2105,9 +2105,9 @@ Feature: Workflow analogico
       | digitalDomicile         | NULL                 |
       | physicalAddress_address | Via@OK-AR-CON020-PDF |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile | NULL                 |
-      | physicalAddress | Via@OK-AR-CON020-PDF |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@OK-AR-CON020-PDF |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
@@ -2124,14 +2124,14 @@ Feature: Workflow analogico
       | details                    | NOT_NULL                |
       | details_recIndex           | 0                       |
       | details_sentAttemptMade    | 0                       |
-      | pollingTime                | 30000                   |
+      | pollingTime                | 40000                   |
       | details_deliveryDetailCode | CON020                  |
       | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details                    | NOT_NULL                |
       | details_recIndex           | 1                       |
       | details_sentAttemptMade    | 0                       |
-      | pollingTime                | 30000                   |
+      | pollingTime                | 40000                   |
       | details_deliveryDetailCode | CON020                  |
       | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
     And scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
@@ -2146,7 +2146,7 @@ Feature: Workflow analogico
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_RS |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -2166,9 +2166,9 @@ Feature: Workflow analogico
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile | NULL      |
-      | physicalAddress | Via@ok_RS |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
     Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
