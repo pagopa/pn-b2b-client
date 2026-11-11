@@ -773,7 +773,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         assertNotNull(timelineElement);
     }
 
-    @Then("viene restituito uno status code {int} in accesso al dettaglio notifica tramite API")
+    @Then("viene restituito uno status code {int} in accesso al dettaglio notifica tramite API per le notifiche bonarie")
     public void verifyStatusCode(int expectedStatus) {
         assertNotNull(savedIun, "IUN non valorizzato");
 
