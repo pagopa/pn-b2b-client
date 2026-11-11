@@ -37,11 +37,15 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
         output_config.get("layout", "cards"),
         output_config.get("technical_details", "none"),
         qa_epic=qa_epic,
+        work_item_ids=work_item_ids_for_qa_epic(repo, qa_epic),
     )
-    document += "\n## Fonti\n\n"
+    source_count = sum(len(case.sources) for case in cases)
+    document += f"\n<details>\n<summary>Fonti ({source_count})</summary>\n\n"
     for case in cases:
         for source in case.sources:
-            document += f"- `{case.test_id}`: `{source.get('repo', repo.resolve().name)}` · `{source['branch']}` · `{source['commit']}` · `{source['path']}`\n"
+            document += (f"- `{case.test_id}` · `{source.get('repo', repo.resolve().name)}` / "
+                         f"`{source['branch']}` · `{source['commit']}` · `{source['path']}`\n")
+    document += "\n</details>\n"
     output = (output_dir if output_dir is not None else repo / "pst") / f"pst_{qa_epic}.md"
     output.parent.mkdir(parents=True, exist_ok=True)
     if not output.exists() or output.read_text(encoding="utf-8") != document:

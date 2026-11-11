@@ -148,6 +148,7 @@ class CollectionTest(unittest.TestCase):
         self.assertEqual(previous.read_text(), 'previous valid document')
         self.assertEqual(previous.with_suffix('.html').read_text(), 'previous valid HTML')
         self.assertIn('CASE_2', (output / 'pst_QA-456.md').read_text())
+        self.assertIn('<summary>Fonti (1)</summary>', (output / 'pst_QA-456.md').read_text())
         self.assertIn(self.git('rev-parse', 'feature/luca'), (output / 'pst_QA-456.md').read_text())
         self.assertIn(self.git('rev-parse', 'feature/luca'), (output / 'pst_QA-456.html').read_text())
         self.assertIn('QA-123: ERRORE', summary.read_text())

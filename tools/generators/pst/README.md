@@ -125,9 +125,8 @@ Il comando controlla tutte le QA Epic attive e riscrive un Markdown solo se il
 contenuto generato è cambiato.
 
 La Action fa il checkout completo di `qe_suit` in `source-repos/qe_suit/`, quindi
-non passa `--source-repo`: la chiave `repo` nello YAML sceglie la codebase. Per
-accedere a `pagopa/qe_suit` se privato, configurare nel repository il secret
-`PST_QE_SUIT_READ_TOKEN` con accesso in lettura ai contenuti di quel repository.
+non passa `--source-repo`: la chiave `repo` nello YAML sceglie la codebase.
+`pagopa/qe_suit` è pubblico e non richiede un secret dedicato.
 
 La Action legge le release dallo snapshot di `develop` dell'esecuzione. Il generatore
 legge i riferimenti Git già disponibili, prima locali e poi `origin/`, e non esegue

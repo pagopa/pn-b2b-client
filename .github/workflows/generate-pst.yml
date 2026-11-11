@@ -32,7 +32,6 @@ jobs:
           repository: pagopa/qe_suit
           path: source-repos/qe_suit
           fetch-depth: 0
-          token: ${{ secrets.PST_QE_SUIT_READ_TOKEN }}
           persist-credentials: false
 
       - name: Set up Python

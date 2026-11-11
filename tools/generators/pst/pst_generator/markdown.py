@@ -1,6 +1,15 @@
 import re
+from datetime import date
 
 from .core import Step, TestCase
+
+
+DISCLAIMER = ("Le verifiche descritte in questo e in tutti i documenti di progettazione "
+              "coprono esclusivamente le funzionalità applicative lato software. "
+              "Operazioni che coinvolgono hardware dei dispositivi (es. camera, lettura "
+              "QR code, NFC, sensori, risoluzioni) vengono eseguite se possibile, in "
+              "funzione del device disponibile al momento, ma non sono testate su "
+              "dispositivi diversi.")
 
 
 def replace_quoted_values(text: str, value_terms: dict[str, str]) -> str:
@@ -22,6 +31,8 @@ def render_document(
     layout: str = "cards",
     technical_details: str = "none",
     qa_epic: str | None = None,
+    work_item_ids: list[str] | None = None,
+    updated_on: date | None = None,
 ) -> str:
     business_terms = business_terms or {}
     value_terms = value_terms or {}
@@ -31,7 +42,14 @@ def render_document(
     if technical_details not in {"none", "compact", "full"}:
         raise ValueError(f"Unsupported technical_details mode: {technical_details}")
     title = f"PST — {qa_epic}" if qa_epic else "PST — Casi di test"
-    lines = [f"# {title}", "", "## Panoramica", "", f"**{len(tests)} casi di test**", "", "## Casi di test", ""]
+    lines = [f"# {title}", "", "## Informazioni generali", "",
+             "| Campo | Valore | Note |", "| --- | --- | --- |",
+             f"| Work-item | {', '.join(work_item_ids or []) or 'Da definire'} | Work-item associati |",
+             f"| QA Epic | {qa_epic or 'Da definire'} | Release attiva |",
+             "| Responsabile | Da definire | Fonte da definire |",
+             f"| Data aggiornamento | {(updated_on or date.today()).strftime('%d/%m/%Y')} | Generata automaticamente |",
+             f"| Scenari | {len(tests)} | |", "", "**DISCLAIMER**", "", DISCLAIMER,
+             "", "## Casi di test", ""]
     for test in tests:
         groups = _group_steps(test.steps)
         data_steps = test.steps if technical_details == "full" else groups["Given"]
@@ -46,20 +64,27 @@ def render_document(
         if test.last_change_authors:
             authors = ", ".join(_escape_markdown(author) for author in test.last_change_authors)
             lines.extend([f"**Autori dell’ultima modifica:** {authors}", ""])
+        columns = []
         if groups["Given"]:
-            lines.extend(["**Precondizioni**", ""])
-            lines.extend(_format_step_list(groups["Given"], status_terms, include_technical_codes, value_terms))
-        if data != "—":
-            lines.extend(["", "**Dati rilevanti**", "", data])
+            given = _step_cell(groups["Given"], status_terms, include_technical_codes, value_terms)
+            if data != "—":
+                given += f"<br><br>**Dati rilevanti:** {data}"
+            columns.append(("Precondizioni<br><small>(Given)</small>", given))
         if groups["When"]:
-            lines.extend(["", "**Operazione**", ""])
-            lines.extend(_format_step_list(groups["When"], status_terms, include_technical_codes, value_terms))
+            columns.append(("Azione<br><small>(When)</small>",
+                            _step_cell(groups["When"], status_terms, include_technical_codes, value_terms)))
+        if test.examples and test.examples.rows:
+            columns.append(("Combinazioni<br><small>(Examples)</small>",
+                            _examples_cell(test.examples, business_terms, value_terms)))
         if groups["Then"]:
-            lines.extend(["", "**Risultato atteso**", ""])
-            lines.extend(_format_step_list(groups["Then"], status_terms, include_technical_codes, value_terms))
-        if test.examples:
-            lines.extend(["", "**Combinazioni**", "",
-                          _render_examples(test.examples, business_terms, value_terms), "", "---", ""])
+            expected_text = " ".join(step.text for step in groups["Then"])
+            outcome = ("🟢 **Positivo**<br>" if re.search(r"\b(200|201)\b", expected_text) else
+                       "🔴 **Negativo**<br>" if re.search(r"\b(403|409|400)\b", expected_text) else "")
+            columns.append(("Esito atteso<br><small>(Then)</small>", outcome +
+                            _step_cell(groups["Then"], status_terms, include_technical_codes, value_terms)))
+        lines.extend(["| " + " | ".join(label for label, _ in columns) + " |",
+                      "| " + " | ".join("---" for _ in columns) + " |",
+                      "| " + " | ".join(value for _, value in columns) + " |", ""])
         lines.extend(
             [
                 "<details>",
@@ -75,6 +100,22 @@ def render_document(
             ]
         )
     return "\n".join(lines).rstrip() + "\n"
+
+
+def _table_cell(value: str) -> str:
+    return value.replace("|", "\\|").replace("\n", "<br>")
+
+
+def _step_cell(steps: list[Step], status_terms: dict[str, str],
+               include_technical_codes: bool, value_terms: dict[str, str]) -> str:
+    return "<br>".join("• " + _table_cell(_format_step(step.text, status_terms,
+                                    include_technical_codes, value_terms)) for step in steps)
+
+
+def _examples_cell(table, business_terms: dict[str, str], value_terms: dict[str, str]) -> str:
+    headers = [business_terms.get(header, header) for header in table.headers or []]
+    return "<br>".join("; ".join(f"**{_table_cell(header)}:** {_table_cell(value_terms.get(value, value))}"
+                                  for header, value in zip(headers, row)) for row in table.rows)
 
 
 def _render_examples(table, business_terms: dict[str, str], value_terms: dict[str, str]) -> str:

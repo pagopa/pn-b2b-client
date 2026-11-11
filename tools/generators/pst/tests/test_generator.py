@@ -1,4 +1,5 @@
 import unittest
+from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -14,6 +15,23 @@ def parse_test_case(source: str, pattern: str):
 
 
 class GeneratorTest(unittest.TestCase):
+    def test_markdown_includes_html_report_information(self):
+        source = """Feature: Example
+  Scenario: [CASE_1] Rejected request
+    Given a ready service
+    Then response status code 403
+"""
+        cases = parse_test_cases(source, r"\[([^\]]+)\]")
+        markdown = render_document(cases, qa_epic="QA-123",
+                                   work_item_ids=["PN-456"], updated_on=date(2026, 11, 11))
+        self.assertIn("| Work-item | PN-456 | Work-item associati |", markdown)
+        self.assertIn("| QA Epic | QA-123 | Release attiva |", markdown)
+        self.assertIn("| Data aggiornamento | 11/11/2026 |", markdown)
+        self.assertIn("| Scenari | 1 |", markdown)
+        self.assertIn("**DISCLAIMER**", markdown)
+        self.assertIn("🔴 **Negativo**", markdown)
+        self.assertIn("| Precondizioni<br><small>(Given)</small> | Esito atteso<br><small>(Then)</small> |", markdown)
+
     def test_existing_dictionaries_cover_quoted_values_and_example_headers(self):
         source = """Feature: Example
   Scenario Outline: [CASE_<variante>] Payment
@@ -29,9 +47,9 @@ class GeneratorTest(unittest.TestCase):
         status_terms = {"403": "operazione non consentita"}
         markdown = render_document(cases, business_terms=business_terms,
                                    value_terms=value_terms, status_terms=status_terms)
-        self.assertIn('- il "Mittente" ha una notifica', markdown)
-        self.assertIn('| Variante |', markdown)
-        self.assertIn('- operazione non consentita', markdown)
+        self.assertIn('• il "Mittente" ha una notifica', markdown)
+        self.assertIn('**Variante:** A', markdown)
+        self.assertIn('• operazione non consentita', markdown)
         self.assertIn('"Comune_Multi"', cases[0].steps[0].text)
         with TemporaryDirectory() as directory:
             output = Path(directory) / "pst.html"
@@ -88,9 +106,9 @@ class GeneratorTest(unittest.TestCase):
         cases = parse_test_cases(source, r"\[([^\]]+)\]")
         markdown = render_document(cases)
         first = markdown.split("### CASE_1", 1)[1].split("### CASE_2", 1)[0]
-        self.assertNotIn("**Precondizioni**", first)
-        self.assertNotIn("**Operazione**", first)
-        self.assertIn("**Risultato atteso**", first)
+        self.assertNotIn("Precondizioni<br>", first)
+        self.assertNotIn("Azione<br>", first)
+        self.assertIn("Esito atteso<br>", first)
         with TemporaryDirectory() as directory:
             output = Path(directory) / "pst.html"
             generate_structured_html(output, "QA-123", [], cases)
@@ -122,7 +140,7 @@ class GeneratorTest(unittest.TestCase):
                          "Dato un servizio pubblicato\nallora l'associazione è negata")
         self.assertNotIn("**Descrizione dello scenario**", markdown)
         self.assertIn("> Receive service\n>\n> Dato un servizio pubblicato", markdown)
-        self.assertIn("- a published service", markdown)
+        self.assertIn("• a published service", markdown)
         with TemporaryDirectory() as directory:
             output = Path(directory) / "pst.html"
             generate_structured_html(output, "QA-123", [], cases)
@@ -147,7 +165,7 @@ class GeneratorTest(unittest.TestCase):
         self.assertIn("> First case", output)
         self.assertIn("### CASE_2", output)
         self.assertIn("> Second case", output)
-        self.assertIn("**Precondizioni**", output)
+        self.assertIn("Precondizioni<br>", output)
         self.assertIn("the first result is visible", output)
 
     def test_business_terms_normalize_field_and_special_value(self):
