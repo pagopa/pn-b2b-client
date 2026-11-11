@@ -38,7 +38,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | param2 | 5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce  |
 
   @workflowAnalogico @verapa #Feature flag: false
-  Scenario: [B2B_TIMELINE_ANALOG_AR_PC_PA_1] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
+  Scenario: [B2B_6] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -48,13 +48,13 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto         |
       | param1 | requestPaId: |
       | param2 | 80016350821  |
 
   @workflowAnalogico @verapa #Feature flag: false
-  Scenario: [B2B_TIMELINE_ANALOG_AR_PC_PA_11] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
+  Scenario: [B2B_5] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -64,10 +64,43 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto         |
       | param1 | requestPaId: |
       | param2 | 80016350821  |
+
+  @workflowAnalogico @verapa #Feature flag: false
+  Scenario: [B2B_4] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And verifico la presenza di un audit log su "/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto         |
+      | param1 | requestPaId: |
+      #| param2 | 80016350821  |
+
+
+  @workflowAnalogico @verapa #Feature flag: false
+  Scenario: [B2B_3] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | iun    | auto         |
+      | param1 | requestPaId: |
+      #| param2 | 80016350821  |
 
   @workflowAnalogico @verapa #Feature flag: false
   Scenario: [B2B_2] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
@@ -80,47 +113,14 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto         |
-      | param1 | requestPaId: |
-      #| param2 | 80016350821  |
-
-
-  @workflowAnalogico @verapa #Feature flag: false
-  Scenario: [B2B_TIMELINEo_ANALOG_AR_PC_PA_11] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di milano            |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
-      | iun    | auto         |
-      | param1 | requestPaId: |
-      #| param2 | 80016350821  |
-
-  @workflowAnalogico @verapa #Feature flag: false
-  Scenario: [B2B_2] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di milano            |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto         |
       #| param1 | requestPaId: |
       #| param2 | 80016350821  |
 
 
   @workflowAnalogico @verapa #Feature flag: false
-  Scenario: [B2B_TIMELoINE_ANALOG_AR_PC_PA_11] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
+  Scenario: [B2B_1] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -130,7 +130,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
-    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channels" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
       | iun    | auto         |
       #| param1 | requestPaId: |
       #| param2 | 80016350821  |
