@@ -70,7 +70,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Setter
     private HttpStatusCodeException notificationError;
     private Integer requestNumber;
-    private String streamEventType;
 
     private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = new HashMap<>();
     private final StreamVersionContext streamVersionContext;
@@ -251,7 +250,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string}{versione}")
     public void setUpStreamsWithEventType(int number, String title, String eventType, String version) {
         requestNumber = number;
-        streamEventType = eventType;
         StreamVersion streamVersion = getStreamVersion(version);
         createStreamRequest(streamVersion, new LinkedList<>(), number, title, eventType);
     }
