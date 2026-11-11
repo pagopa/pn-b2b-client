@@ -587,8 +587,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
-      | digitalDomicile         | NULL                                                                                                                                                  |
+      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012[NOAUTODATETIME].5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
+      | digitalDomicile         | NULL                                                                                                                                                                            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
@@ -601,8 +601,8 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | REGISTERED_LETTER_890       |
     And destinatario Mario Cucumber e:
-      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012.5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
-      | digitalDomicile         | NULL                                                                                                                                                  |
+      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012[NOAUTODATETIME].5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
+      | digitalDomicile         | NULL                                                                                                                                                                            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
