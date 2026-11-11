@@ -1,5 +1,4 @@
-@producer-keychain
-@producer-keychain-link
+@producer-keychain-m2m
 @producer-keychain-link-m2m
 Feature: Associazione del producer-keychain agli e-services
 

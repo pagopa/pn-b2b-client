@@ -39,12 +39,14 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "manual-archiving-eservice", "notification-manual-archiving-eservice", "certifiedDiscreteAttributeFlagOff",
         "nuovi-operatori","crudNotification", "document-url-description", "document-type-check", "bff-notification",
         "archiviazione-documentale", "delegation-manual-archiving-eservice", "notification-manual-archiving-delegation",
+        "producer-keychain",
 
         // M2M
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",
         "m2m-parte2-agosto-rilascio1", "m2m-parte2-agosto-rilascio2", "m2m-parte2-settembre",
         "m2m-parte2-ottobre", "m2mEservices", "e-service-template-receive-m2m", "m2m-client", "m2m-purpose-client",
-        "m2m-incaricato", "m2m-events", "e-service-template-m2m-version-get", "eservice_published_delegation"
+        "m2m-incaricato", "m2m-events", "e-service-template-m2m-version-get", "eservice_published_delegation",
+        "producer-keychain-m2m"
 
 })
 public class NrtTest {
