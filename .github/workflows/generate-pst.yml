@@ -15,8 +15,6 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      PST_OUTPUT_DIR: ${{ runner.temp }}/pst-output
     defaults:
       run:
         working-directory: tools/generators/pst
@@ -51,6 +49,8 @@ jobs:
 
       - name: Prepare persistent PST branch
         run: |
+          PST_OUTPUT_DIR="$RUNNER_TEMP/pst-output"
+          echo "PST_OUTPUT_DIR=$PST_OUTPUT_DIR" >> "$GITHUB_ENV"
           if git -C "$GITHUB_WORKSPACE" show-ref --verify --quiet refs/remotes/origin/pst-output; then
             git -C "$GITHUB_WORKSPACE" worktree add -B pst-output "$PST_OUTPUT_DIR" origin/pst-output
           else
