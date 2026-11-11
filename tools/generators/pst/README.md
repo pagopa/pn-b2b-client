@@ -58,7 +58,9 @@ merge e conflitti. Non modificano i branch o i PST del repository di lavoro.
 ## Automazione su `pn-b2b-client`
 
 Il workflow [`Generate PST`](../../../.github/workflows/generate-pst.yml) esegue
-il generatore su richiesta (`workflow_dispatch`), esclusivamente su `develop`.
+il generatore su richiesta (`workflow_dispatch`) da `develop` e quando una PR
+interna verso `develop` viene aperta, riaperta o aggiornata con un push.
+Sono incluse le PR Draft; le PR da fork non avviano il job di scrittura.
 Le Action usate dal workflow sono fissate a commit specifici.
 Il workflow e il codice devono prima essere integrati in quel branch.
 
