@@ -62,6 +62,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 564   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 564   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 601   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 564   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -117,6 +120,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 626   | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 626   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 626   | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 663   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 626   | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -177,6 +183,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 643   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 643   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 680   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 643   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -232,6 +241,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 684   | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 684   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 684   | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 722   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 684   | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -290,6 +302,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 714   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 714   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 752   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 714   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -346,6 +361,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 760   | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 760   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 760   | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 799   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 760   | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -404,6 +422,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 858   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 858   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 897   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 858   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -460,6 +481,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 894   | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 894   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 894   | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 934   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 894   | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -518,6 +542,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 959   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 959   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 999   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 959   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -571,6 +598,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 1036  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1036  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1036  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1079  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1036  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -628,6 +658,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 1475  | USSANA                    | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1475  | SEULO                     | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1518  | COLLARMELE                | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1475  | SEUI                      | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-1001GR_12] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -681,6 +714,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09007 | 1567  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1567  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1567  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1613  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1567  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -736,6 +772,9 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | 09008 | 2243  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 2243  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 2290  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 2243  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_AR-20GR_14] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -758,9 +797,10 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | COSTO | STATE      |
       | 1026  | MESSICO    |
       | 1026  | SUD AFRICA |
+      | 1026  | OMAN       |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-21GR_15] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario Outline: [CALCOLO-COSTO_AR-21GR_15] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -769,16 +809,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_5_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1241" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-50GR_16] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario Outline: [CALCOLO-COSTO_AR-50GR_16] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -787,16 +831,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;              |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1258" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-51GR_17] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario Outline: [CALCOLO-COSTO_AR-51GR_17] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -805,16 +853,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1361" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-100GR_18] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario Outline: [CALCOLO-COSTO_AR-100GR_18] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -823,16 +875,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1391" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-101GR_19] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario Outline: [CALCOLO-COSTO_AR-101GR_19] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber              |
       | senderDenomination    | Comune di palermo                            |
@@ -841,16 +897,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1782" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-250GR_20] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario Outline: [CALCOLO-COSTO_AR-250GR_20] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -859,16 +919,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1881" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-251GR_21] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario Outline: [CALCOLO-COSTO_AR-251GR_21] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -877,16 +941,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2070" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-350GR_22] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario Outline: [CALCOLO-COSTO_AR-350GR_22] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -895,16 +963,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2135" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-351GR_23] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario Outline: [CALCOLO-COSTO_AR-351GR_23] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -913,16 +985,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2849" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-1000GR_24] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1000GR_24] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -931,16 +1007,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3288" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-1001GR_25] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1001GR_25] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -949,16 +1029,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4447" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-2000GR_26] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-2000GR_26] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -967,16 +1051,20 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_2     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5124" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-20GR_27] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_AR-20GR_27] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -985,16 +1073,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_4_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "914" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-21GR_28] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario Outline: [CALCOLO-COSTO_AR-21GR_28] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -1003,16 +1096,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_5_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1123" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-50GR_29] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario Outline: [CALCOLO-COSTO_AR-50GR_29] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -1021,16 +1119,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;              |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1140" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-51GR_30] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario Outline: [CALCOLO-COSTO_AR-51GR_30] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -1039,16 +1142,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_1_PG      |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1234" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-100GR_31] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario Outline: [CALCOLO-COSTO_AR-100GR_31] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -1057,16 +1165,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG; |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1265" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-101GR_32] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario Outline: [CALCOLO-COSTO_AR-101GR_32] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber              |
       | senderDenomination    | Comune di palermo                            |
@@ -1075,16 +1188,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1454" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-250GR_33] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario Outline: [CALCOLO-COSTO_AR-250GR_33] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -1093,16 +1211,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1552" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-251GR_34] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario Outline: [CALCOLO-COSTO_AR-251GR_34] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -1111,16 +1234,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1689" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-350GR_35] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario Outline: [CALCOLO-COSTO_AR-350GR_35] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -1129,16 +1257,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_4_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1754" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-351GR_36] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario Outline: [CALCOLO-COSTO_AR-351GR_36] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -1147,16 +1280,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_50_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_5_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2197" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-1000GR_37] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1000GR_37] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -1165,16 +1303,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "2636" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-1001GR_38] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1001GR_38] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -1183,16 +1326,21 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_100_PG;DOC_100_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_7_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "3423" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_AR-2000GR_39] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-2000GR_39] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -1201,13 +1349,18 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | document              | DOC_300_PG;DOC_300_PG;DOC_100_PG;DOC_50_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_8_PG;DOC_6_PG |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
-      | physicalAddress_State   | ALBANIA    |
+      | physicalAddress_State   | <state>    |
       | physicalAddress_zip     | ZONE_1     |
       | physicalAddress_address | Via@ok_RIR |
       | payment_pagoPaForm      | NOALLEGATO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "4099" della notifica
+    Examples:
+      | state             |
+      | ALBANIA           |
+      | KOSOVO            |
+      | BOSNIA-ERZEGOVINA |
 
   @costoAnalogicoSettembre26
   Scenario: [CALCOLO-COSTO_AR-20GR_40] (Settembre) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -1508,3 +1661,27 @@ Feature: calcolo costo notifica in base ai grammi con notfiche AR
       | MIDWAY      |
       | PHOENIX     |
       | SANTA CROCE |
+
+  @costoAnalogicoSettembre26
+  Scenario Outline: [CALCOLO-COSTO_AR-CAP_DISMESSO_1] (Settembre) Invio notifica verso CAP dismesso su raccomandata AR e verifica rifiuto della notifica
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | feePolicy             | DELIVERY_MODE                   |
+      | document              | DOC_4_PG;                       |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_AR      |
+      | physicalAddress_zip          | <CAP>          |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | payment_pagoPaForm           | NOALLEGATO     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+    Examples:
+      | CAP   | MUNICIPALITY | PROVINCE |
+      | 09064 | SEUI         | OG       |

@@ -7,14 +7,12 @@
       "description": "Notifiche digitali e recapito",
       "rules": [
         {
-          "tags": [
-            "@informalNotificationsValidation"
-          ],
-          "area": "Notifiche bonarie"
-        },
-        {
           "path": "/messaggiCortesiaBanche/",
           "area": "Messaggi di cortesia alle banche"
+        },
+        {
+        "path": "/consolidatore/v2/",
+          "area": "Consolidatore"
         },
         {
           "path": "/nationalRegistries/",
@@ -59,6 +57,10 @@
         {
           "path": "/LimitAttach20gr/",
           "area": "Allegati e peso della notifica"
+        },
+        {
+          "path": "/ioMock/",
+          "area": "IO connector"
         },
         {
           "path": "/mandateb2bmassivi/",
@@ -110,7 +112,7 @@
         },
         {
           "path": "/notificheBonarie/",
-          "area": "Notifiche bonarie"
+          "area": "Comunicazioni bonarie"
         },
         {
           "path": "/paperTracker/",
@@ -127,6 +129,12 @@
         {
           "path": "/(AbilitazioneDomicilioDigitale|AdeguamentoIndirizzoANPR|RicercaIndirizzoSpezioneVas)\\.feature$",
           "area": "Indirizzi e domicili digitali"
+        },
+        {
+          "tags": [
+            "@segregazione_delivery_push"
+          ],
+          "area": "funzionalità Delivery push"
         },
         {
           "path": "/(ApikeyManager|ApiB2bDestinatariStrutturati)\\.feature$",
@@ -191,6 +199,10 @@
           "area": "Tracciamento"
         },
         {
+          "path": "/(_experiments)\\.feature$",
+          "area": "File di utility tecnica"
+        },
+        {
           "path": "/dpop/",
           "area": "Sicurezza delle richieste"
         },
@@ -204,6 +216,12 @@
         },
         {
           "path": "/catalog/",
+          "area": "Catalogo degli e-service"
+        },
+        {
+          "tags": [
+            "@data-pagination"
+          ],
           "area": "Catalogo degli e-service"
         },
         {

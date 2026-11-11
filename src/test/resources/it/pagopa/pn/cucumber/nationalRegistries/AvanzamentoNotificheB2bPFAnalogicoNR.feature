@@ -460,3 +460,26 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+
+  @validazioneDeduplicaUAT @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_14] Validazione VAS multidestinatario con un indirizzo estero incompleto manda notifica in REFUSED
+  se almeno un indirizzo non è valido
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_AR        |
+    And destinatario
+      | denomination    | PF estero campi mancanti |
+      | taxId           | KRSJSM88S03H501A         |
+      | digitalDomicile | NULL                     |
+      | physicalAddress | NULL                     |
+    And destinatario
+      | denomination    | PF indirizzo valido |
+      | taxId           | FRMTTR76M06B715E    |
+      | digitalDomicile | NULL                |
+      | physicalAddress | NULL                |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |

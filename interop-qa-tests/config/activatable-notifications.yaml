@@ -11,6 +11,7 @@ notifications:
   # Finalità (Fruizione)
   - purposeActivatedRejectedToConsumer
   - purposeSuspendedUnsuspendedToConsumer
+  - purposeRiskAnalysisAssignmentStatusToAdmin
 
   # Soglie di carico (Fruizione)
   - purposeOverQuotaStateToConsumer
