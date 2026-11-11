@@ -1,0 +1,62 @@
+{
+  "version": "3.2",
+  "answers": {
+    "purpose": [
+      "INSTITUTIONAL"
+    ],
+    "institutionalPurpose": [
+      "prova hyiprova hyiprova hyiprova hyiprova hyi"
+    ],
+    "usesPersonalData": [
+      "YES"
+    ],
+    "personalDataTypes": [
+      "WITH_NON_IDENTIFYING_DATA"
+    ],
+    "legalBasis": [
+      "CONSENT"
+    ],
+    "knowsDataQuantity": [
+      "YES"
+    ],
+    "dataQuantity": [
+      "QUANTITY_0_TO_100"
+    ],
+    "deliveryMethod": [
+      "CLEARTEXT"
+    ],
+    "policyProvided": [
+      "YES"
+    ],
+    "policyProvidedMedium": [
+      "ONLINE"
+    ],
+    "policyProvidedOnlineLink": [
+      "www.url.com"
+    ],
+    "confirmPricipleIntegrityAndDiscretion": [
+      "true"
+    ],
+    "doneDpia": [
+      "NO"
+    ],
+    "dataDownload": [
+      "NO"
+    ],
+    "purposePursuit": [
+      "MERE_CORRECTNESS"
+    ],
+    "checkedExistenceMereCorrectnessInteropCatalogue": [
+      "true"
+    ],
+    "isRequestOnBehalfOfThirdParties": [
+      "YES"
+    ],
+    "thirdPartiesRequestDataUsage": [
+      "PA_ONLY"
+    ],
+    "declarationConfirmGDPR": [
+      "true"
+    ]
+  }
+}

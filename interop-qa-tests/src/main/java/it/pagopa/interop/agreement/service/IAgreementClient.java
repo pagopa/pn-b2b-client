@@ -58,7 +58,7 @@ public interface IAgreementClient extends SettableBearerToken {
 
     ResponseEntity<CompactEServicesLight> getAgreementEServiceConsumers(Integer offset, Integer limit, String q);
 
-    ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q);
+    ResponseEntity<CompactEServicesLight> getAgreementEServiceProducers(Integer offset, Integer limit, String q, List<AgreementState> agreementStates);
 
     ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreements> getConsumerAgreements(Integer offset, Integer limit, List<UUID> eservicesIds, List<UUID> producersIds, List<AgreementState> states, Boolean showOnlyUpgradeable);
 

@@ -4,7 +4,17 @@ import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.interfaces.SenderLimi
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
-import it.pagopa.pn.cucumber.steps.delayer.model.*;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersPrintItem;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerDeclaredCapacity;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPayload;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimitItem;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerStatusExecution;
+import it.pagopa.pn.cucumber.steps.delayer.model.DelayerUsedCapacity;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +23,16 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -25,7 +44,8 @@ import static java.lang.Thread.sleep;
 public class DelayerSevice {
     public static final int POLLING_MAX_MINUTES = 90;
     public static final String[] CSV_FILES = new String[]{"tcRankingMerged.csv", "tcSenderUnknow.csv", "tcSplitSender.csv", "tcZeroDriver.csv", "tcProvCapNonCensite.csv",
-            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv"};
+            "spedizioni_3000.csv", "tcWeeklyPrintCapacity.csv", "tcSenderUnknow_5010.csv", "notificationCancelled.csv", "tcSenderPriority.csv", "tcSenderPriorityFrozenW1.csv", "tcSenderPriorityFrozenW2.csv",
+            "tcResiduoBuonoRitardo.csv", "tcSenderPriorityDelayedNuova.csv", "tcSenderPriorityDelayedElaborata.csv", "tcSpedizioniRitardate.csv"};
 
     private final DelayerLambdaClient lambdaClient;
     private final PortfatLambdaClient portfatLambdaClient;

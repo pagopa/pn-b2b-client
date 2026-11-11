@@ -242,5 +242,5 @@ Feature: Configurazione e gestione di E-Service per scambi asincroni e massivi
       | asyncExchangeProperties.maxResultSet          | 100       |
     And si ottiene response status code 200
     And "PA1" ha già caricato un'interfaccia per quel descrittore
-    And l'utente pubblica l'e-service
+    When l'utente tenta di pubblicare quel descrittore
     And si ottiene response status code 400

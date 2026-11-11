@@ -53,7 +53,7 @@ public class TenantRevokeVerifiedAttributeSteps {
             () -> clientTokenConfigurator.getTenantsApi().revokeVerifiedAttribute(
                 identityService.getOrganizationId(consumerTenant),
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                sharedStepsContext.getAgreementId())
+                sharedStepsContext.getAgreementCommonContext().getAgreementId())
         );
     }
 

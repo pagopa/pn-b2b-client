@@ -3,7 +3,7 @@ Feature: eliminazione stream
 
     #--------------CANCELLAZIONE DI UNO STREAM------------
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_73] Cancellazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -21,7 +21,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_74] Cancellazione di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -34,7 +34,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_75] Cancellazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -52,7 +52,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_78] Cancellazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo diverso.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -70,7 +70,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_79] Cancellazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -83,7 +83,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_80] Cancellazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -96,7 +96,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_82] Cancellazione di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -114,7 +114,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_83] Cancellazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey master.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -127,7 +127,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_85] Cancellazione di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -145,7 +145,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_152] Cancellazione di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
@@ -158,7 +158,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_153] Cancellazione di uno stream notifica con gruppi non appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con due gruppi
@@ -175,7 +175,7 @@ Feature: eliminazione stream
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @webhookStream @precondition @cleanWebhook @webhook2
+  @webhookStream @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_119] Cancellazione per una PA di uno stream che non esiste per la stessa PA
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo

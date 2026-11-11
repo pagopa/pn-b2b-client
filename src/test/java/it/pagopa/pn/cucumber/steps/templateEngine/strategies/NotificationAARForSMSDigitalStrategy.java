@@ -45,12 +45,12 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
             return null;
 
         return new NotificationAarForSmsDigital()
-                .recipient(createRecipient(context)) // todo t mc
+                .recipient(createRecipient(context))
                 .notification(createNotification(context));
     }
     private AarForSmsRecipientDigital createRecipient(TemplateRequestContext context) {
         return new AarForSmsRecipientDigital()
-                .recipientType(context.getRecipientType());   // todo t mc
+                .recipientType(context.getRecipientType());
     }
 
     private AarForSmsNotificationDigital createNotification(TemplateRequestContext context) {

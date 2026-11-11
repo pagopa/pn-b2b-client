@@ -25,7 +25,7 @@ class StreamVersionResolverTest {
     @Test
     void mostRecentIsResolvedToLatestVersion() {
         assertEquals(StreamVersionResolver.MOST_RECENT_VERSION, StreamVersionResolver.parse(MOST_RECENT));
-        assertEquals(StreamVersion.V29, StreamVersionResolver.MOST_RECENT_VERSION);
+        assertEquals(StreamVersion.V30, StreamVersionResolver.MOST_RECENT_VERSION);
     }
 
     @Test

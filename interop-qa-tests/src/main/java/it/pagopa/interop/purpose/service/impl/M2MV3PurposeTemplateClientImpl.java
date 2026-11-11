@@ -4,10 +4,7 @@ import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplate;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeTemplateDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplates;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.PurposeTemplateLinkEServiceTemplate;
@@ -102,5 +99,10 @@ public class M2MV3PurposeTemplateClientImpl extends AbstractDPoPClient implement
     @Override
     public FileDownloadMultipart getRiskAnalysisTemplateAnswerAnnotationDocument(UUID purposeTemplateId, UUID documentId) {
         return vMapper.mapToV2(this.purposesTemplateApi.getRiskAnalysisTemplateAnswerAnnotationDocument(purposeTemplateId, documentId));
+    }
+
+    @Override
+    public RiskAnalysisFormTemplate replacePurposeTemplateRiskAnalysis(UUID templateId, RiskAnalysisFormTemplateSeed updateSeed) {
+        return vMapper.mapToV2(this.purposesTemplateApi.replacePurposeTemplateRiskAnalysis(templateId, vMapper.mapToV3(updateSeed)));
     }
 }

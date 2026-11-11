@@ -17,7 +17,7 @@ public class AgreementArchiveSteps {
     public void userRequireAgreementArchive() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().archiveAgreement(sharedStepsContext.getAgreementId())
+                () -> clientTokenConfigurator.getAgreementClient().archiveAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId())
         );
     }
 }

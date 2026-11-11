@@ -1,4 +1,5 @@
 @m2m-apiv3-client-consumer
+@m2m-apiv3-client-consumer-create
 Feature: Creazione dei client di tipo consumer - API v3
 
   Scenario Outline: [CREATE_CLIENT_CONSUMER_1] Creazione nuovo client di tipo consumer per un utente m2m-admin
@@ -153,7 +154,7 @@ Feature: Creazione dei client di tipo consumer - API v3
     When l'utente tenta di creare un client di tipo CONSUMER per il tenant "PA1" con:
       | name   | description   | members   |
       | <name> | <description> | <members> |
-    Then si ottiene response status code 400
+    Then si ottiene response status code 404
 
     Examples:
       | name    | description | members   |

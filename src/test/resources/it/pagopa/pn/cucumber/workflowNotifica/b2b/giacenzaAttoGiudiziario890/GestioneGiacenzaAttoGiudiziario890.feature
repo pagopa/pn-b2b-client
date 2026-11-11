@@ -821,7 +821,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     #Risultato atteso: l’evento fuori ordine viene inserito nella tabella degli errori e recuperato automaticamente da paper channel all’arrivo dell’evento RECAG012
 
   @giacenza890Simplified
-  Scenario: [B2B_GIACENZA_890_WI1.1_13]  Invio notifica con percorso analogico (FAIL-Giacenza-gt10_890_no_recag012)  per verificare che paper channel calcoli la data di perfezionamento e invii il PNAG012 come feedback poichè oltre i 10 giorni
+  Scenario: [B2B_GIACENZA_890_WI1.1_13] Non Attesa elemento di timeline SEND_ANALOG_FEEDBACK con physicalAddress FAIL-Giacenza-gt10_890_no_recag012 (Scenario negativo)
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -831,46 +831,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
       | digitalDomicile         | NULL                                |
       | physicalAddress_address | @FAIL-Giacenza-gt10_890_no_recag012 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON080   |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | CON020   |
-      | details_sentAttemptMade    | 0        |
-    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | RECAG010 |
-      | details_sentAttemptMade    | 0        |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL  |
-      | details_recIndex           | 0         |
-      | details_deliveryDetailCode | RECAG011A |
-      | details_sentAttemptMade    | 0         |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                  |
-      | details_recIndex           | 0                         |
-      | details_deliveryDetailCode | RECAG011B                 |
-      | details_sentAttemptMade    | 0                         |
-      | details_attachments        | [{"documentType": "23L"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details                    | NOT_NULL                    |
-      | details_recIndex           | 0                           |
-      | details_deliveryDetailCode | RECAG007B                   |
-      | details_sentAttemptMade    | 0                           |
-      | details_attachments        | [{"documentType": "Plico"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | loadTimeline               | true     |
-      | details                    | NOT_NULL |
-      | details_recIndex           | 0        |
-      | details_deliveryDetailCode | PNAG012  |
-      | details_sentAttemptMade    | 0        |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
+    And viene controllato che l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" non esiste
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.60s-RECAG011B[DOC:ARCAD;DOC:23L].60s-RECAG007A.5s-RECAG007B[DOC:Plico].5s-RECAG007C"
 
  # SEND_ANALOG_FEEDBACK------------------

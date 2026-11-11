@@ -12,10 +12,11 @@ import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 import it.pagopa.pn.interop.cucumber.steps.producer_keychains.model.ProducerKeychainsContext;
 import it.pagopa.pn.interop.cucumber.utility.StepParser;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static it.pagopa.interop.authorization.service.DPoPTokenService.generateKeyPair;
 
@@ -71,7 +72,7 @@ public class ProducerKeychainsResolver extends AbstractResolver {
                             .toList();
 
                     return roles.stream()
-                            .map(r -> identityService.getUserId(tenant, r))
+                            .map(r -> r.equalsIgnoreCase("%random") ? UUID.randomUUID() : identityService.getUserId(tenant, r))
                             .toList();
                 },
                 context::getActualMembers,

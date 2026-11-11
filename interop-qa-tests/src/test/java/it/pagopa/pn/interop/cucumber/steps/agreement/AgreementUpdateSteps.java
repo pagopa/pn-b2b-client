@@ -18,7 +18,7 @@ public class AgreementUpdateSteps {
     public void requireUpdateAgreement() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().updateAgreement(sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().updateAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         new AgreementUpdatePayload().consumerNotes("consumer note updated - QA"))
         );
     }

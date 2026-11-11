@@ -1,6 +1,6 @@
 Feature: avanzamento notifiche webhook b2b V27
 
-  @webhookV27 @webhookHeader @precondition @cleanWebhook @webhook2
+  @webhookV27 @webhookHeader @precondition @cleanWebhook @webhook3
   Scenario Outline: [B2B-STREAM_RETRY_AFTER_V27] Creazione di stream con apiKey e controllo che il retry after dell'header venga modificato quando la consume restituisce elementi.
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

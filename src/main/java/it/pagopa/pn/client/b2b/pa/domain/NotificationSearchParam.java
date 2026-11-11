@@ -25,6 +25,7 @@ public class NotificationSearchParam {
     public OffsetDateTime endDate;
     public String mandateId;
     public String senderId;
+    public List<String> listStatus;
     public String status;
     public String subjectRegExp;
     public String iunMatch;
@@ -36,5 +37,5 @@ public class NotificationSearchParam {
     public String communicationType;
     public String campaignId;
     public boolean viewed;
-    public boolean delivered;
+    public Boolean delivered;
 }

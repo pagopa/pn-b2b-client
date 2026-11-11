@@ -29,6 +29,7 @@ import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -51,6 +52,7 @@ import java.util.function.BiFunction;
 
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED;
 import static it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.RECEIVE;
+import static it.pagopa.pn.interop.cucumber.utility.ResourceUtils.extractUploadPath;
 import static java.util.Objects.isNull;
 import static java.util.Objects.requireNonNullElse;
 import static org.apache.commons.collections4.IterableUtils.size;
@@ -60,6 +62,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BFFDataPreparationService {
+
     @Data
     @Builder
     public static class MutateDescriptorResult {
@@ -165,9 +168,11 @@ public class BFFDataPreparationService {
         this.mainDataPrepService.setHttpCallExecutor(httpCallExecutor);
 
         this.template = new DataPreparationServiceTemplate(
+                clientTokenConfigurator,
                 this.httpCallExecutor,
                 this.pollingService,
-                this.commonUtils
+                this.commonUtils,
+                sharedStepsContext
         );
 
         this.delayService = delayService;
@@ -385,6 +390,7 @@ public class BFFDataPreparationService {
             default -> throw new IllegalArgumentException("Invalid attributeKind: " + attributeKind);
         }
         assertValidResponse();
+        sharedStepsContext.getAttributeCommonContext().setAttributeName(actualName);
 
         pollingService.makePolling(
                 () -> attributeApiClient.getAttributes(1, 0, List.of(attributeKind), actualName, null),
@@ -463,8 +469,12 @@ public class BFFDataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
+        return createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed, "e-service");
+    }
+
+    public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, String eServicePrefix) {
         EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+.name(String.format("%s %d", eServicePrefix, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
@@ -472,6 +482,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(false)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -502,6 +513,7 @@ public class BFFDataPreparationService {
                 .isClientAccessDelegable(isClientAccessDelegable)
                 .personalData(false);
         EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
 
         httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
         assertValidResponse();
@@ -535,6 +547,33 @@ public class BFFDataPreparationService {
         return new EServiceDescriptor(eserviceId, descriptorId);
     }
 
+    public EServiceDescriptor createEServiceAndDraftDescriptorWithCustomPersonalData(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, Boolean personalData) {
+        EServiceSeed defaultEserviceSeed = new EServiceSeed()
+                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+                .description("Descrizione e-service")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isConsumerDelegable(false)
+                .isClientAccessDelegable(false);
+        EServiceSeed eServiceSeed = merge(defaultEserviceSeed, partialEserviceSeed);
+        eServiceSeed.setPersonalData(personalData);
+        sharedStepsContext.getEServicesCommonContext().setEServiceSeed(eServiceSeed);
+
+        httpCallExecutor.performCall(() -> eServiceClient.createEService(eServiceSeed));
+        assertValidResponse();
+        UUID eserviceId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getId();
+        UUID descriptorId = ((CreatedEServiceDescriptor) httpCallExecutor.getResponse()).getDescriptorId();
+
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+                res -> res != HttpStatus.NOT_FOUND,
+                ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
+        );
+
+        updateDraftDescriptor(eserviceId, descriptorId, partialDescriptorSeed);
+        return new EServiceDescriptor(eserviceId, descriptorId);
+    }
+
     public void updateDraftDescriptor(UUID eServiceId, UUID descriptorId, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
         ProducerEServiceDescriptor descriptor = producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId);
 
@@ -557,13 +596,17 @@ public class BFFDataPreparationService {
                 .dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer())
                 .dailyCallsTotal(descriptor.getDailyCallsTotal())
                 .audience(descriptor.getAudience())
-                .voucherLifespan(descriptor.getVoucherLifespan());
+                .voucherLifespan(descriptor.getVoucherLifespan())
+                .asyncExchangeProperties(descriptor.getAsyncExchangeProperties());
 
         UpdateEServiceDescriptorSeed descriptorSeed = mergeDescriptorSeed(currentDescriptorSeed, partialDescriptorSeed)
             .audience(List.of("pagopa.it"));
 
+        sharedStepsContext.getEServicesCommonContext().setAsyncExchangeProperties(descriptorSeed.getAsyncExchangeProperties());
+
         httpCallExecutor.performCall(() -> eServiceClient.updateDraftDescriptor(eServiceId, descriptorId, descriptorSeed));
         assertValidResponse();
+        sharedStepsContext.getEServicesCommonContext().setDescriptorSeed(descriptorId, descriptorSeed);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -638,7 +681,7 @@ public class BFFDataPreparationService {
 
                 return docId;
             }
-        ).stream().map(Document::getMetadata).toList();
+        ).stream().map(Document::getMetadata).collect(java.util.stream.Collectors.toCollection(ArrayList::new));
 
         resultBuilder.descriptorId(descriptorId);
         resultBuilder.documentsMetadata(documentsMetadata);
@@ -718,6 +761,7 @@ public class BFFDataPreparationService {
                 .id(documentId)
                 .name(tempFileResource.getFilename())
                 .prettyName(prettyName)
+                .uploadPath(extractUploadPath(tempFileResource))
                 .createdAt(OffsetDateTime.now())
                 .build();
             documents.add(Document.of(metadata, tempFileResource));
@@ -801,7 +845,8 @@ public class BFFDataPreparationService {
     }
 
     public UUID addInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        String interfaceUploadPath = "src/main/resources/origin-interface.yaml";
+        Resource resource = blobFileCreator.createBlobFile(interfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "INTERFACE", "Interfaccia", resource));
         assertValidResponse();
 
@@ -811,19 +856,25 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
 
+        sharedStepsContext.getEServicesCommonContext().setInterfaceUploadPath(extractUploadPath(resource));
+
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
 
     public UUID addCallbackInterfaceToDescriptor(UUID eServiceId, UUID descriptorId) {
-        Resource resource = blobFileCreator.createBlobFile("src/main/resources/origin-interface.yaml", "interface.yaml");
+        // volutamente diverso dal file usato per l'interfaccia principale
+        String callbackInterfaceUploadPath = "src/main/resources/interface1.yaml";
+        Resource resource = blobFileCreator.createBlobFile(callbackInterfaceUploadPath, "interface.yaml");
         httpCallExecutor.performCall(() -> eServiceClient.createEServiceDocument(eServiceId, descriptorId, "ASYNC_EXCHANGE_CALLBACK_INTERFACE", "Interfaccia Callback", resource));
         assertValidResponse();
 
         pollingService.makePolling(
                 () -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId),
-                res -> res.getInterface() != null,
+                res -> res.getAsyncExchangeCallbackInterface() != null,
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
+
+        sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceUploadPath(extractUploadPath(resource));
 
         return ((CreatedResource) httpCallExecutor.getResponse()).getId();
     }
@@ -925,6 +976,14 @@ public class BFFDataPreparationService {
         assertValidResponse();
         String version = ((RiskAnalysisFormConfig) httpCallExecutor.getResponse()).getVersion();
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
+    }
+
+    public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String tenantKind, @NonNull DataPreparationServiceTemplate.RiskAnalysisExample example) {
+        return template.getRiskAnalysisByExample(tenantKind, example);
+    }
+
+    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull DataPreparationServiceTemplate.RiskAnalysisExample example) {
+        return template.getRiskAnalysisTemplateByExample(suffix, example);
     }
 
     public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
@@ -1161,6 +1220,13 @@ public class BFFDataPreparationService {
         );
     }
 
+    public void approveAgreementFailing(UUID agreementId, DelegationRef delegationRef, int failureCode) {
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(agreementId, delegationRef));
+        Assertions.assertEquals(failureCode, httpCallExecutor.getResponseStatus().value(),
+                "Response status code"
+        );
+    }
+
     public void unsuspendAgreement(UUID agreementId, ClientType reactivatedBy, DelegationRef delegationRef) {
         httpCallExecutor.performCall(() -> agreementClient.unsuspendAgreement(agreementId, delegationRef));
         assertValidResponse();
@@ -1224,7 +1290,7 @@ public class BFFDataPreparationService {
             ERROR_RETRIEVING_AGREEMENT
         );
 
-        sharedStepsContext.setAgreementId(newAgreementId);
+        sharedStepsContext.getAgreementCommonContext().setAgreementId(newAgreementId);
     }
 
     public void deleteClientKeyById(UUID clientId, String keyId) {

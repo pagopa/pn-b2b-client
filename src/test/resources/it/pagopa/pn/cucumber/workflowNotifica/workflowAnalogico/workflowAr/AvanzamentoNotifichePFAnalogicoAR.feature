@@ -596,7 +596,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Then l'invio della notifica ha sollevato un errore "400"
 
 
-  @workflowAnalogico @webhookV29 @precondition @cleanWebhook @webhook2
+  @workflowAnalogico @webhookV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B_ANALOG_AR_SENDER_PRIORITY_3] Invio notifica con sender priority e verifica che la lettura dello stream vada a buon fine
     Given viene generata una nuova notifica
       | subject                       | invio notifica con cucumber |

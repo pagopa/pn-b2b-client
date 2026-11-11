@@ -30,6 +30,7 @@ public class M2MEventsSteps {
     private final M2MAuthSteps m2mAuthSteps;
     private final EventContext eventContext;
     private final IM2MEventClient m2mEventClient;
+    private Instant eventBaseline;
 
     public M2MEventsSteps(M2MAuthSteps m2mAuthSteps, EventContext eventContext, ClientTokenConfigurator clientTokenConfigurator, SharedStepsContext sharedStepsContext) {
         this.m2mAuthSteps = m2mAuthSteps;
@@ -41,7 +42,16 @@ public class M2MEventsSteps {
 
     @Before("@m2m-events or @m2m-purpose-template-events")
     public void initEventClient() {
+        eventBaseline = null;
         m2mEventClient.setReferenceTime(Instant.now());
+    }
+
+    /**
+     * Limita le verifiche successive agli eventi con timestamp successivo al setup.
+     */
+    @When("si memorizza il riferimento temporale degli eventi prima della modifica")
+    public void captureEventBaseline() {
+        eventBaseline = Instant.now();
     }
 
     @When("{string} {visibilitaEvento} l'evento {interopEvent} con:")
@@ -93,11 +103,16 @@ public class M2MEventsSteps {
     }
 
     @Nonnull
-    private static EventPredicate getPredicate(InteropEvent event, List<EventPredicate> predicates) {
+    private EventPredicate getPredicate(InteropEvent event, List<EventPredicate> predicates) {
         List<EventPredicate> safePredicates = new ArrayList<>(predicates != null ? predicates : Collections.emptyList());
 
         EventPredicate eventTypePredicate = e -> e.getEventType().equals(event.name());
         safePredicates.add(eventTypePredicate);
+        if (eventBaseline != null) {
+            Instant baseline = eventBaseline;
+            safePredicates.add(e -> e.getEventTimestamp() != null
+                    && !e.getEventTimestamp().isBefore(baseline));
+        }
 
         return EventPredicate.andAll(safePredicates);
     }

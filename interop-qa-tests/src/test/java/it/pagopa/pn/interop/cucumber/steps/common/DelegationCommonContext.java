@@ -1,12 +1,13 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
 import it.pagopa.pn.interop.cucumber.steps.delegate.DelegationRole;
-import java.time.OffsetDateTime;
-import java.util.UUID;
 import lombok.Data;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Data
 @Component
@@ -18,7 +19,6 @@ public class DelegationCommonContext {
 
     private String delegatorTenant;
     private String delegateTenant;
-    private String delegateTenantType;
 
     private OffsetDateTime createdAt;
     private OffsetDateTime activatedAt;

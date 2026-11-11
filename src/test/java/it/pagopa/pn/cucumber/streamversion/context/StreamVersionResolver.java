@@ -9,7 +9,7 @@ import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MOST_RECENT;
 public final class StreamVersionResolver {
 
     //TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
-    public static final StreamVersion MOST_RECENT_VERSION = StreamVersion.V29;
+    public static final StreamVersion MOST_RECENT_VERSION = StreamVersion.V30;
 
     private StreamVersionResolver() {
     }

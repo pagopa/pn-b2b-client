@@ -43,12 +43,12 @@ public class AgreementSuspensionSteps {
     private void suspendAgreement(boolean isDelegate) {
         DelegationRef delegationRef = (isDelegate) ? new DelegationRef().delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId()) : null;
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getAgreementId(), delegationRef)
+                () -> clientTokenConfigurator.getAgreementClient().suspendAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(), delegationRef)
         );
 
         if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             sharedStepsContext.getPollingService().makePolling(
-                    () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementId()),
+                    () -> clientTokenConfigurator.getAgreementClient().getAgreementById(sharedStepsContext.getAgreementCommonContext().getAgreementId()),
                     res -> res.getState() == AgreementState.SUSPENDED,
                     "The agreement was not suspended!"
             );

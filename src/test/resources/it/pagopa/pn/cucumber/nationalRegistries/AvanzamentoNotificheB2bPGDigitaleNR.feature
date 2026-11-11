@@ -299,3 +299,140 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | details_recIndex             | 0        |
       | details_sentAttemptMade      | 0        |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+
+
+  @workflowDigitale @fallbackINAD @mockNR
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_1] Invio verso PG con ricerca indirizzo IPA - INIPEC e INAD nessun indirizzo valido su INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale fallback INAD |
+      | recipientType   | PG                          |
+      | taxId           | 00534280912                 |
+      | digitalDomicile | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                          |
+      | error | Invoking external service IPA |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                        |
+      | log   | INIPEC - nextSource: [INAD] |
+      | error | digital Address not found   |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
+
+
+  @workflowDigitale @fallbackINAD @mockNR
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_2] Invio verso PG con ricerca indirizzo IPA - INIPEC e INAD nessun indirizzo valido su INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale fallback INAD |
+      | recipientType   | PG                          |
+      | taxId           | 71935270349                 |
+      | digitalDomicile | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                          |
+      | error | Invoking external service IPA |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                        |
+      | log   | INIPEC - nextSource: [INAD] |
+      | error | digital Address not found   |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
+
+
+  @workflowDigitale @fallbackINAD @mockNR
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_3] Invio multidestinatario verso PG con ricerca indirizzo IPA - INIPEC e INAD cf non censito in INIPEC
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale fallback INAD |
+      | recipientType   | PG                          |
+      | taxId           | 71935270349                 |
+      | digitalDomicile | NULL                        |
+    And destinatario
+      | taxId           | 00845483379 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | false    |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                          |
+      | error | Invoking external service IPA |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                        |
+      | log   | INIPEC - nextSource: [INAD] |
+      | error | digital Address not found   |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                  |
+      | error | INAD - CF non trovato |
+
+
+  @workflowDigitale @fallbackINAD @mockNR
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_23] Invio verso PG con ricerca indirizzo IPA - INIPEC e INAD indirizzo trovato su INAD
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale fallback INAD |
+      | recipientType   | PG                          |
+      | taxId           | 28223913097                 |
+      | digitalDomicile | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | loadTimeline                 | true     |
+      | details                      | NOT_NULL |
+      | details_recIndex             | 0        |
+      | pollingTime                  | 40000    |
+      | details_digitalAddressSource | GENERAL  |
+      | details_sentAttemptMade      | 0        |
+      | details_isAvailable          | true     |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                          |
+      | error | Invoking external service IPA |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                        |
+      | log   | INIPEC - nextSource: [INAD] |
+      | error | digital Address not found   |
+    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
+      | iun   | auto                                |
+      | error | retrieved digital address from INAD |

@@ -576,7 +576,7 @@ Feature: Abilitazione domicilio digitale
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @sercq @addressBook1 @webhookV23 @precondition @cleanWebhook @webhook2 @ignoreHotfixTemp #temp
+  @sercq @addressBook1 @webhookV23 @precondition @cleanWebhook @webhook3 @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V23] Creazione di un nuovo stream con versione V23 e controllo che SERCQ è presente
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
@@ -744,10 +744,10 @@ Feature: Abilitazione domicilio digitale
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                                |
-      | details                | NOT_NULL                                            |
+      | loadTimeline           | true                                               |
+      | details                | NOT_NULL                                           |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                   |
+      | details_recIndex       | 0                                                  |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi

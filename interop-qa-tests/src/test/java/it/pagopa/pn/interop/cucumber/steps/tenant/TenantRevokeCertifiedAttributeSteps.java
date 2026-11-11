@@ -29,12 +29,12 @@ public class TenantRevokeCertifiedAttributeSteps {
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
     }
 
-    @When("l'utente revoca l'attributo precedentemente creato e assegnato")
-    public void revokeAttributePreviouslyCreated() {
+    @When("l'utente revoca l'attributo precedentemente creato e assegnato a {tenantType}")
+    public void revokeAttributePreviouslyCreated(TenantType tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(
                 () -> clientTokenConfigurator.getTenantsApi().revokeCertifiedAttribute(
-                        identityService.getOrganizationId(sharedStepsContext.getTenantType()),
+                        identityService.getOrganizationId(tenantType.name()),
                         sharedStepsContext.getAttributeCommonContext().getAttributeId())
         );
     }

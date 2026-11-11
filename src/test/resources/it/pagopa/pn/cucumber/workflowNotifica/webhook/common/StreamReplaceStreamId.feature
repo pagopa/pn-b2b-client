@@ -3,7 +3,7 @@
 Feature: replace streamID webhook
 
   #--------------CREAZIONE CON REPLACED_STREAM_ID DI UNO STREAM--------------------
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_101] Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -17,7 +17,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_103]  Creazione con replaceID di uno stream notifica con gruppo  non appartenente alla PA, con eventType "STATUS" utilizzando un apikey master.(replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -30,7 +30,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_104]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -43,7 +43,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_105]  Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -56,7 +56,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_106] Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -69,7 +69,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_108] Creazione con replaceID di uno stream notifica con gruppo  non appartenente alla PA, con eventType "TIMELINE" utilizzando un apikey master.(replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -82,7 +82,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_109]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -95,7 +95,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_110]  Creazione con replaceID di uno stream notifica con gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
@@ -108,7 +108,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_111]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -121,7 +121,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_113]  Creazione con replaceID di uno stream notifica senza gruppo con uno stream con gruppo con eventType "STATUS" utilizzando un apikey con gruppo. (replacedStreamId settato)..
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -140,7 +140,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_114]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -153,7 +153,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_115]  Creazione con replaceID di uno stream notifica con gruppo diverso al precedente stream con eventType "STATUS" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -166,7 +166,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_116]  Creazione con replaceID di uno stream notifica senza gruppo con uno stream con gruppo con eventType "TIMELINE" utilizzando un apikey con gruppo. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -186,7 +186,7 @@ Feature: replace streamID webhook
     And l'apiKey viene cancellata
 
 #CONTROLLARE IL CORRETTO COMPORTAMENTO
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_117]  Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo, disabilitazione di uno stream e creazione di un nuovo stream.
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi"
     And si predispongono 10 nuovi stream denominati "stream-test" con eventType "TIMELINE"
@@ -203,7 +203,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV23 @streamV24 @streamV25 @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.1_102]  Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream disabilitato con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -218,7 +218,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.5_142] Creazione di uno stream notifica con gruppo, con eventType "TIMELINE" con V10 su cui poi viene fatto il replaceId alla versione successiva passando di versione in versione (replacedStreamId di uno stream creato con la versione V10 settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
@@ -250,7 +250,7 @@ Feature: replace streamID webhook
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook2
+  @streamV27 @streamV28 @streamV29 @precondition @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.5_142status] Creazione di uno stream notifica con gruppo, con eventType "STATUS" con V10 su cui poi viene fatto il replaceId alla versione successiva passando di versione in versione (replacedStreamId di uno stream creato con la versione V10 settato).
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
