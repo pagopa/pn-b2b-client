@@ -5,6 +5,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -40,6 +41,8 @@ public interface IPurposeApiClient extends SettableBearerToken {
     void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException;
     void signRiskAnalysis(UUID purposeId) throws RestClientException;
     void signRiskAnalysis(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException;
+    ResponseEntity<Void> signRiskAnalysisWithHttpInfo(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException;
     Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states);
     Integer getPurposeMetadataVersion(UUID purposeId) throws RestClientException;
+    @Nonnull Integer extractPurposeMetadataVersion(ResponseEntity<Purpose> purposeWithHttpInfo);
 }
