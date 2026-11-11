@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class InformalSendResult {
     private String notificationRequestId;
-    private String status;
+    // risposta originale della versione API, solo a scopo di log
     private Object rawResponse;
 }

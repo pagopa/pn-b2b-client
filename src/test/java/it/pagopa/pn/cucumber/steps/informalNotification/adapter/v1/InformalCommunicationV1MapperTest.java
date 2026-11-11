@@ -2,7 +2,6 @@ package it.pagopa.pn.cucumber.steps.informalNotification.adapter.v1;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
-import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationV1Mapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.*;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -35,6 +34,8 @@ public class InformalCommunicationV1MapperTest {
                 .dueDate(OffsetDateTime.now())
                 .attachmentKey("classpath:/payment.pdf")
                 .attachmentContentType("application/pdf")
+                .attachmentSha256("payment-sha256")
+                .attachmentVersionToken("v1")
                 .build();
 
         InformalRecipient recipient = InformalRecipient.builder()
@@ -91,9 +92,38 @@ public class InformalCommunicationV1MapperTest {
         assertEquals(1, recV1.getPayments().size());
         assertNotNull(recV1.getPayments().get(0).getPagoPa());
         assertEquals(100, recV1.getPayments().get(0).getPagoPa().getAmount());
+        var paymentAttachment = recV1.getPayments().get(0).getPagoPa().getAttachment();
+        assertNotNull(paymentAttachment);
+        assertEquals("classpath:/payment.pdf", paymentAttachment.getRef().getKey());
+        assertEquals("v1", paymentAttachment.getRef().getVersionToken());
+        assertEquals("payment-sha256", paymentAttachment.getDigests().getSha256());
 
         assertEquals(1, v1.getDocuments().size());
         assertEquals("classpath:/doc.pdf", v1.getDocuments().get(0).getRef().getKey());
         assertEquals("dummy-sha256", v1.getDocuments().get(0).getDigests().getSha256());
+    }
+
+    @Test
+    public void testMapNullOptionalFieldsToV1() {
+        InformalRecipient recipient = InformalRecipient.builder()
+                .recipientType(RecipientType.PG)
+                .digitalDomicile("NULL")
+                .physicalAddress(null)
+                .payments(List.of(InformalPayment.builder().noticeCode("123456789012345678").build()))
+                .build();
+
+        InformalCommunication domain = InformalCommunication.builder()
+                .recipients(List.of(recipient))
+                .documents(null)
+                .build();
+
+        InformalNotificationRequestV1 v1 = mapper.toV1(domain);
+
+        assertNull(v1.getDocuments());
+        InformalNotificationRecipientV1 recV1 = v1.getRecipients().get(0);
+        assertEquals(InformalNotificationRecipientV1.RecipientTypeEnum.PG, recV1.getRecipientType());
+        assertNull(recV1.getDigitalDomicile());
+        assertNull(recV1.getPhysicalAddress());
+        assertNull(recV1.getPayments().get(0).getPagoPa().getAttachment());
     }
 }

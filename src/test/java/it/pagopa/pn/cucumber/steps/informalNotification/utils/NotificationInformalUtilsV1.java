@@ -2,12 +2,15 @@ package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalPreLoadResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalDocument;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPayment;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +20,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -57,7 +59,7 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     // =========================================================
     // ENTRY POINT
     // =========================================================
-    public InformalNotificationRequestV1 preloadAndPrepare(InformalNotificationRequestV1 request, String paName) throws IOException {
+    public InformalCommunication preloadAndPrepare(InformalCommunication request, String paName) throws IOException {
 
         preloadDocuments(request, paName);
         preloadPayments(request, paName);
@@ -68,26 +70,23 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     // =========================================================
     // DOCUMENTS
     // =========================================================
-    private void preloadDocuments(InformalNotificationRequestV1 request, String paName) throws IOException {
+    private void preloadDocuments(InformalCommunication request, String paName) throws IOException {
 
         if (request.getDocuments() == null) {
             return;
         }
-        List<NotificationDocument> newDocs = new ArrayList<>();
-
-        for (NotificationDocument doc : request.getDocuments()) {
-            newDocs.add(preloadDocument(doc, paName));
+        for (InformalDocument doc : request.getDocuments()) {
+            preloadDocument(doc, paName);
         }
-        request.setDocuments(newDocs);
     }
 
-    public NotificationDocument preloadDocument(NotificationDocument doc, String paName) throws IOException {
+    public InformalDocument preloadDocument(InformalDocument doc, String paName) throws IOException {
 
-        Pair<String, String> preload = preloadInformal(doc.getRef().getKey(), "application/pdf", paName);
+        Pair<String, String> preload = preloadInformal(doc.getKey(), "application/pdf", paName);
 
-        doc.getRef().setKey(preload.getValue1());
-        doc.getRef().setVersionToken("v1");
-        doc.setDigests(new NotificationAttachmentDigests().sha256(preload.getValue2()));
+        doc.setKey(preload.getValue1());
+        doc.setVersionToken("v1");
+        doc.setSha256(preload.getValue2());
 
         return doc;
     }
@@ -95,31 +94,28 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
     // =========================================================
     // PAYMENTS
     // =========================================================
-    private void preloadPayments(InformalNotificationRequestV1 request, String PaName) throws IOException {
+    private void preloadPayments(InformalCommunication request, String paName) throws IOException {
 
-        for (InformalNotificationRecipientV1 recipient : request.getRecipients()) {
+        for (InformalRecipient recipient : request.getRecipients()) {
             if (recipient.getPayments() == null) continue;
 
-            for (InformalNotificationPaymentItem payment : recipient.getPayments()) {
-                if (payment.getPagoPa() != null) {
-                    payment.getPagoPa().setAttachment(preloadAttachment(payment.getPagoPa().getAttachment(), PaName));
-                }
+            for (InformalPayment payment : recipient.getPayments()) {
+                preloadAttachment(payment, paName);
             }
         }
     }
 
+    public InformalPayment preloadAttachment(InformalPayment payment, String paName) throws IOException {
 
-    public NotificationPaymentAttachment preloadAttachment(NotificationPaymentAttachment attachment, String paName) throws IOException {
+        if (payment.getAttachmentKey() == null && payment.getAttachmentContentType() == null) return payment;
 
-        if (attachment == null) return null;
+        Pair<String, String> preload = preloadInformal(payment.getAttachmentKey(), "application/pdf", paName);
 
-        Pair<String, String> preload = preloadInformal(attachment.getRef().getKey(), "application/pdf", paName);
+        payment.setAttachmentKey(preload.getValue1());
+        payment.setAttachmentVersionToken("v1");
+        payment.setAttachmentSha256(preload.getValue2());
 
-        attachment.getRef().setKey(preload.getValue1());
-        attachment.getRef().setVersionToken("v1");
-        attachment.setDigests(new NotificationAttachmentDigests().sha256(preload.getValue2()));
-
-        return attachment;
+        return payment;
     }
 }
 

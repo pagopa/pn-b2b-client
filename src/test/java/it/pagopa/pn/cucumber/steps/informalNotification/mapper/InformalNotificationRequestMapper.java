@@ -108,19 +108,4 @@ public class InformalNotificationRequestMapper {
     private InformalDocument buildDefaultDocument(Map<String, String> data) {
         return InformalDocument.builder().contentType("application/pdf").key("classpath:/sample_1pg.pdf").build();
     }
-
-    // =========================
-    // ATTACHMENT PAGAMENTO
-    // =========================
-
-    public NotificationPaymentAttachment buildPaymentAttachment(Map<String, String> data) {
-
-        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef();
-        ref.setKey(getValue(data, ATTACHMENT_KEY.key));
-
-        NotificationPaymentAttachment attachment = new NotificationPaymentAttachment();
-        attachment.setContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key));
-        attachment.setRef(ref);
-        return attachment;
-    }
 }

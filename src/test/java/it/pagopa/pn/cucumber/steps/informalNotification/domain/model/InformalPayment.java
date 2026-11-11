@@ -18,4 +18,6 @@ public class InformalPayment {
     private OffsetDateTime dueDate;
     private String attachmentKey;
     private String attachmentContentType;
+    private String attachmentSha256;
+    private String attachmentVersionToken;
 }

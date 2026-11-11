@@ -6,21 +6,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationAdapter;
-import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendResult;
-import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
-import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationStatusV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDigests;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationRequestRefusedProblemError;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
@@ -28,9 +13,13 @@ import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationAdapterResolver;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendResult;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusPollingConfig;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsWorkFlowV1;
@@ -80,7 +69,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private TerminationRequestStatus terminationStatus;
     private String paName;
 
-    private NewInformalNotificationResponse newInformalNotificationResponse;
+    private InformalSendResult lastSendResult;
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
     private NewInformalNotificationRequestStatusResponseV1 statusResponse;
     private final InformalNotificationRequestMapper informalNotificationRequestMapper;
@@ -88,7 +77,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;
-    private final InformalCommunicationAdapter informalCommunicationAdapter;
+    private final InformalCommunicationAdapterResolver informalCommunicationAdapterResolver;
 
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
@@ -98,7 +87,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper,
                                            InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
                                            SharedSteps sharedSteps, SendSharedContext sendSharedContext, DestinatarioRegistry destinatarioRegistry,
-                                           InformalCommunicationAdapter informalCommunicationAdapter) {
+                                           InformalCommunicationAdapterResolver informalCommunicationAdapterResolver) {
         this.sharedSteps = sharedSteps;
         this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
@@ -106,7 +95,12 @@ public class PresaInCaricoNoticaBonariaSteps {
         this.recipientBuilder = recipientBuilder;
         this.sendSharedContext = sendSharedContext;
         this.destinatarioRegistry = destinatarioRegistry;
-        this.informalCommunicationAdapter = informalCommunicationAdapter;
+        this.informalCommunicationAdapterResolver = informalCommunicationAdapterResolver;
+    }
+
+    // Converte il domain model nella versione API configurata e invia la comunicazione
+    private InformalSendResult sendInformalCommunication(InformalCommunication communication) {
+        return informalCommunicationAdapterResolver.current().send(currentCxId, communication);
     }
 
     // STEP CREAZIONE E INVIO NOTIFICA
@@ -175,13 +169,13 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId));
 
-        String notificationRequestId;
         try {
-            InformalSendResult sendResult = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, request);
-            notificationRequestId = sendResult.getNotificationRequestId();
+            request = notificationInformalUtilsV1.preloadAndPrepare(request, paName);
         } catch (IOException e) {
             throw new UncheckedIOException("Errore durante la preparazione della notifica bonaria con campagna " + campaignId, e);
         }
+
+        String notificationRequestId = sendInformalCommunication(request).getNotificationRequestId();
 
         NewInformalNotificationRequestStatusResponseV1 acceptedStatus =
                 pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());
@@ -201,15 +195,15 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
     public void sendInformalInvalidContentType() {
         try {
+            informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
             informalCommunication.getDocuments().forEach(doc -> doc.setContentType("application/txt"));
-            InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-            newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-            savedNotificationRequestId = result.getNotificationRequestId();
+            lastSendResult = sendInformalCommunication(informalCommunication);
+            savedNotificationRequestId = lastSendResult.getNotificationRequestId();
             lastException = null;
 
         } catch (Exception e) {
             lastException = e;
-            newInformalNotificationResponse = null;
+            lastSendResult = null;
             log.info("Eccezione: ", e);
         }
     }
@@ -217,9 +211,9 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("l'invio della notifica bonaria fallisce")
     public void sendInformalError() {
         try {
-            InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-            newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-            fail("Atteso errore ma la richiesta è andata a buon fine " + newInformalNotificationResponse + "***" + informalCommunication + "***" + paName);
+            informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
+            lastSendResult = sendInformalCommunication(informalCommunication);
+            fail("Atteso errore ma la richiesta è andata a buon fine " + lastSendResult + "***" + informalCommunication + "***" + paName);
 
         } catch (Exception e) {
             lastException = e;
@@ -230,15 +224,15 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con sha non valido")
     public void sendInformalShaNotValid() {
         try {
+            informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
             informalCommunication.getDocuments().forEach(doc -> doc.setSha256("INVALID_SHA"));
-            InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-            newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-            savedNotificationRequestId = result.getNotificationRequestId();
+            lastSendResult = sendInformalCommunication(informalCommunication);
+            savedNotificationRequestId = lastSendResult.getNotificationRequestId();
             lastException = null;
 
         } catch (Exception e) {
             lastException = e;
-            newInformalNotificationResponse = null;
+            lastSendResult = null;
             log.info("Eccezione: ", e);
         }
 
@@ -247,18 +241,18 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("viene inviata una nuova notifica bonaria con fileKey duplicata")
     public void sendInformalDuplicateKey() {
         try {
+            informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
             var docs = informalCommunication.getDocuments();
             if (docs.size() >= 2) {
                 docs.get(1).setKey(docs.get(0).getKey());
             }
-            InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-            newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-            savedNotificationRequestId = result.getNotificationRequestId();
+            lastSendResult = sendInformalCommunication(informalCommunication);
+            savedNotificationRequestId = lastSendResult.getNotificationRequestId();
             lastException = null;
 
         } catch (Exception e) {
             lastException = e;
-            newInformalNotificationResponse = null;
+            lastSendResult = null;
             log.info("Eccezione: ", e);
         }
     }
@@ -267,17 +261,15 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria con nome attachment non valido")
     public void sendInformalInvalidAttachmentName() {
         try {
-            informalCommunication.getDocuments().forEach(doc -> {
-                doc.setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
-            });
-            InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-            newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-            savedNotificationRequestId = result.getNotificationRequestId();
+            informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
+            informalCommunication.getDocuments().forEach(doc -> doc.setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf"));
+            lastSendResult = sendInformalCommunication(informalCommunication);
+            savedNotificationRequestId = lastSendResult.getNotificationRequestId();
             lastException = null;
 
         } catch (Exception e) {
             lastException = e;
-            newInformalNotificationResponse = null;
+            lastSendResult = null;
             log.info("Eccezione: ", e);
         }
     }
@@ -285,7 +277,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @And("la sottomissione della notifica bonaria è andata a buon fine")
     public void verifyNotificationSent() {
         assertNull(lastException, "Errore non atteso");
-        assertNotNull(newInformalNotificationResponse, "Response notifica nulla");
+        assertNotNull(lastSendResult, "Response notifica nulla");
         assertNotNull(savedIun, "IUN non valorizzato");
         assertNotNull(savedNotificationRequestId, "notificationRequestId non valorizzato");
     }
@@ -824,9 +816,9 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("viene inviata una nuova notifica bonaria e si attende che vada in stato {string}")
     public void sendInformalAndWaitStatus(String expectedStatus) throws IOException {
 
-        InformalSendResult result = informalCommunicationAdapter.sendInformalNotification(currentCxId, paName, informalCommunication);
-        newInformalNotificationResponse = (NewInformalNotificationResponse) result.getRawResponse();
-        savedNotificationRequestId = result.getNotificationRequestId();
+        informalCommunication = notificationInformalUtilsV1.preloadAndPrepare(informalCommunication, paName);
+        lastSendResult = sendInformalCommunication(informalCommunication);
+        savedNotificationRequestId = lastSendResult.getNotificationRequestId();
         log.info("Notifica inviata. notificationRequestId={}", savedNotificationRequestId);
 
         AtomicReference<String> lastStatus = new AtomicReference<>(null);

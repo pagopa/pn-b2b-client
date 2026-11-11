@@ -197,7 +197,8 @@ import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
-import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationV1Adapter;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationAdapterResolver;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.v1.InformalCommunicationV1Adapter;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
@@ -447,6 +448,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaB2bExternalInformalClientImpl.class,
         DelayerSkipSenderLimitService.class,
         InformalCommunicationV1Adapter.class,
+        InformalCommunicationAdapterResolver.class,
         IoMockScenarioContext.class
 })
 @EnableScheduling

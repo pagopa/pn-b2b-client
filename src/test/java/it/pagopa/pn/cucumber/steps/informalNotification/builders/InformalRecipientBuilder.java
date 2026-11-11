@@ -4,7 +4,6 @@ import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPay
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPhysicalAddress;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.RecipientType;
-import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,6 @@ import static it.pagopa.pn.cucumber.steps.informalNotification.model.Notificatio
 @RequiredArgsConstructor
 public class InformalRecipientBuilder {
 
-    private final InformalNotificationRequestMapper mapper;
     private final InformalMessageProvider messageProvider;
 
     public InformalRecipient build(Map<String, String> data, String currentCxId) {
