@@ -39,6 +39,9 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
         output_config.get("technical_details", "none"),
         qa_epic=qa_epic,
         work_item_ids=work_item_ids_for_qa_epic(repo, qa_epic),
+        excluded_fields=output_config.get("exclude_fields", []),
+        field_value_phrases=config.get("field_value_phrases", {}),
+        step_phrases=config.get("step_phrases", []),
     )
     source_count = sum(len(case.sources) for case in cases)
     document += f"\n<details>\n<summary>Fonti ({source_count})</summary>\n\n"
@@ -308,6 +311,9 @@ def main() -> int:
             include_technical_codes,
             layout,
             technical_details,
+            excluded_fields=output_config.get("exclude_fields", []),
+            field_value_phrases=config.get("field_value_phrases", {}),
+            step_phrases=config.get("step_phrases", []),
         ),
         encoding="utf-8",
     )

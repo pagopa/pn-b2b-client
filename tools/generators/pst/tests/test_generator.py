@@ -47,7 +47,7 @@ class GeneratorTest(unittest.TestCase):
         status_terms = {"403": "operazione non consentita"}
         markdown = render_document(cases, business_terms=business_terms,
                                    value_terms=value_terms, status_terms=status_terms)
-        self.assertIn('• il "Mittente" ha una notifica', markdown)
+        self.assertIn('• il <small><code>Mittente</code></small> ha una notifica', markdown)
         self.assertIn('**Variante:** A', markdown)
         self.assertIn('• operazione non consentita', markdown)
         self.assertIn('"Comune_Multi"', cases[0].steps[0].text)
@@ -184,7 +184,7 @@ class GeneratorTest(unittest.TestCase):
             {"[EMPTY]": "vuoto"},
         )
 
-        self.assertIn("ID della richiesta è vuoto", output)
+        self.assertIn("<small><strong>ID della richiesta:</strong> vuoto</small>", output)
 
     def test_status_code_gets_business_description(self):
         source = """Feature: Example
@@ -240,8 +240,8 @@ class GeneratorTest(unittest.TestCase):
             business_terms={"senderDenomination": "denominazione del mittente"},
         )
 
-        self.assertIn('subject = "example notification"', output)
-        self.assertIn('denominazione del mittente = "Example municipality"', output)
+        self.assertIn('<small><strong>subject:</strong> <code>example notification</code></small>', output)
+        self.assertIn('<small><strong>denominazione del mittente:</strong> <code>Example municipality</code></small>', output)
 
     def test_assertion_tables_are_hidden_by_default(self):
         source = """Feature: Example
@@ -256,6 +256,90 @@ class GeneratorTest(unittest.TestCase):
         case = parse_test_case(source, r"\[([^\]]+)\]")
         output = render_document([case])
 
-        self.assertIn('sender denomination = "Example municipality"', output)
+        self.assertIn('<small><strong>sender denomination:</strong> <code>Example municipality</code></small>', output)
         self.assertIn("the timeline event exists", output)
         self.assertNotIn("CON080", output)
+
+    def test_step_tables_keep_recipient_context_and_duplicate_checks(self):
+        source = """Feature: Example
+  Scenario: [CASE_8] Two recipients
+    Given recipient Mario:
+      | digitalDomicile         | NULL  |
+      | physicalAddress_address | Via 1 |
+    And recipient Anna:
+      | digitalDomicile         | NULL  |
+      | physicalAddress_address | Via 2 |
+    Then event "AAR_GENERATION" exists
+    And event "AAR_GENERATION" exists
+"""
+        case = parse_test_case(source, r"\[([^\]]+)\]")
+        output = render_document([case], business_terms={
+            "digitalDomicile": "Domicilio digitale",
+            "physicalAddress_address": "Indirizzo fisico",
+        })
+        self.assertIn("recipient Mario:<br>&nbsp;&nbsp;<small><strong>Domicilio digitale:</strong> <code>NULL</code></small><br>&nbsp;&nbsp;<small><strong>Indirizzo fisico:</strong> <code>Via 1</code></small>", output)
+        self.assertIn("recipient Anna:<br>&nbsp;&nbsp;<small><strong>Domicilio digitale:</strong> <code>NULL</code></small><br>&nbsp;&nbsp;<small><strong>Indirizzo fisico:</strong> <code>Via 2</code></small>", output)
+        self.assertIn("event <small><code>AAR_GENERATION</code></small> exists <small>(verifica 1/2)</small>", output)
+        self.assertIn("event <small><code>AAR_GENERATION</code></small> exists <small>(verifica 2/2)</small>", output)
+
+    def test_excluded_field_matches_exact_key_only(self):
+        source = """Feature: Example
+  Scenario: [CASE_9] Timeline details
+    Given a timeline event exists
+      | details                    | NOT_NULL |
+      | details_deliveryDetailCode | CON020   |
+    Then delivery succeeds
+"""
+        case = parse_test_case(source, r"\[([^\]]+)\]")
+        output = render_document([case], excluded_fields=["details"])
+        self.assertNotIn("NOT_NULL", output)
+        self.assertIn("CON020", output)
+        self.assertIn("details delivery detail code", output)
+
+    def test_excluded_fields_requires_a_list(self):
+        with self.assertRaisesRegex(ValueError, "output.exclude_fields"):
+            render_document([], excluded_fields="details")
+
+    def test_field_value_phrase_prefers_exact_field_over_global_value(self):
+        source = """Feature: Example
+  Scenario: [CASE_10] Missing values
+    Given a recipient is prepared
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+      | subject         | Test |
+    Then the request is ready
+"""
+        case = parse_test_case(source, r"\[([^\]]+)\]")
+        output = render_document(
+            [case],
+            business_terms={"digitalDomicile": "Domicilio digitale",
+                            "physicalAddress": "Indirizzo fisico", "subject": "Oggetto"},
+            field_value_phrases={"*": {"NULL": "{field}: non configurato"},
+                                 "digitalDomicile": {"NULL": "Senza domicilio digitale configurato"}},
+        )
+        self.assertIn("<small>Senza domicilio digitale configurato</small>", output)
+        self.assertIn("<small>Indirizzo fisico: non configurato</small>", output)
+        self.assertIn("<small><strong>Oggetto:</strong> <code>Test</code></small>", output)
+        self.assertNotIn("<code>NULL</code>", output)
+
+    def test_timeline_wait_phrase_keeps_optional_detail_code(self):
+        source = """Feature: Example
+  Scenario: [CASE_11] Timeline polling
+    Given a notification exists
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" per l'utente 0
+    Then done
+"""
+        case = parse_test_case(source, r"\[([^\]]+)\]")
+        output = render_document(
+            [case],
+            business_terms={"deliveryDetailCode": "codice di dettaglio"},
+            step_phrases=[{
+                "source": 'vengono letti gli eventi fino all\'elemento di timeline della notifica "{element}"',
+                "target": 'Si attende e si verifica la presenza dell’evento di timeline "{element}"',
+            }],
+        )
+        self.assertIn("Si attende e si verifica la presenza dell’evento di timeline <small><code>AAR_GENERATION</code></small>", output)
+        self.assertIn("Si attende e si verifica la presenza dell’evento di timeline <small><code>SEND_ANALOG_PROGRESS</code></small> con codice di dettaglio <small><code>CON020</code></small>", output)
+        self.assertIn("vengono letti gli eventi fino all'elemento di timeline della notifica <small><code>AAR_GENERATION</code></small> per l'utente 0", output)
