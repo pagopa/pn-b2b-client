@@ -210,6 +210,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PagoPaPaymentEventService;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PaymentErrorQueueService;
@@ -453,7 +454,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         SqsService.class,
         IngestionPagamentiScenarioContext.class,
         PagoPaPaymentEventService.class,
-        PaymentErrorQueueService.class
+        PaymentErrorQueueService.class,
+        PaymentEventsSettings.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -15,21 +15,17 @@ Feature: Recupero degli eventi di pagamento pagoPA
   # - Un pagamento su una notifica in stato terminale non ne modifica lo stato. Il pagamento di una notifica legale
   #   annullata viene scartato: con lo stato CANCELLED lo IUN viene rimosso da pn-PaymentInfo.
   #
-  # Campagne di test: le campagne con stopOnPaid verranno create dal team SEND al rilascio del flag (i test non possono
-  # crearle: il client delle campagne è in sola lettura). Gli scenari che le usano sono template con nomi provvisori:
-  #   StopOnPaid-QA       stopOnPaid = true,  stessa escalation di BonarieAllChannels (EMAIL PT4M -> PEC -> SMS, nessun feedback)
-  #   NoStopOnPaid-QA     stopOnPaid = false, stessa escalation di BonarieAllChannels
-  #   StopOnPaid-IO-QA    stopOnPaid = true,  primo canale IO senza feedback desiderati, poi EMAIL
-  # Alla creazione vanno aggiornati i nomi e, per StopOnPaid-IO-QA, la finestra di escalation degli step di workflow
-  # (oggi tarata sui 4 minuti dell'EMAIL).
-  # 01_2_C usa BonarieAllChannels perché in TEST e UAT non ha l'attributo stopOnPaid. Al rilascio va verificato che
-  # la migrazione delle campagne non lo valorizzi: in DEV tutte le campagne lo hanno ricevuto (false), e in quel caso
-  # serve una campagna creata senza l'attributo.
-  #
-  # Campagna FattOrd: in TEST e UAT ha desiredFeedback [READ, PAID] sul canale IO. Con US-4 PAID non è più un valore
-  # ammesso (SRS 13.14) e la campagna verrà migrata (in DEV lo è già: [READ] e stopOnPaid = true); finché non lo è, la
-  # lettura della campagna può fallire e gli scenari che la usano (01_5_B, 02_1, 04_2_A) non sono eseguibili. Nessuno
-  # di questi dipende da PAID o da stopOnPaid: dopo la migrazione vanno solo rieseguiti.
+  # Campagne di test: i test non possono crearle né modificarle (il client delle campagne è in sola lettura), quindi gli
+  # scenari le nominano e verificano che abbiano la configurazione attesa. I nomi negli scenari sono quelli di default:
+  # in ogni ambiente si può indicare la campagna effettiva con -Dpn.payment-events.campaign.<nome>=<campagna>, ad
+  # esempio se la configurazione di una campagna cambia con il rilascio. La finestra di escalation degli step di
+  # workflow si ricava dalla durata del primo canale della campagna usata. Caratteristiche richieste:
+  #   StopOnPaid-QA       stopOnPaid = true,  primo canale EMAIL senza feedback desiderati, poi PEC (template da creare)
+  #   NoStopOnPaid-QA     stopOnPaid = false, primo canale EMAIL senza feedback desiderati, poi PEC (template da creare)
+  #   BonarieAllChannels  attributo stopOnPaid assente, primo canale EMAIL senza feedback desiderati, poi PEC
+  #   StopOnPaid-IO-QA    stopOnPaid = true,  primo canale IO senza feedback desiderati, poi EMAIL (template da creare)
+  #   FattOrd             nessun requisito su stopOnPaid: gli scenari che la usano (01_5_B, 02_1, 04_2_A) verificano
+  #                       solo la registrazione del pagamento
   #
   # Gli scenari non ancora eseguibili sono marcati @ignore (esclusi dai runner) e con i tag delle dipendenze mancanti:
   #   @attesaKafkaMock          mock del Nodo pagoPA di pn-external-channels non ancora disponibile in tutti gli ambienti

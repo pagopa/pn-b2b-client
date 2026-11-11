@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
 import java.time.Instant;
 
 @Component
@@ -40,6 +41,11 @@ public class IngestionPagamentiScenarioContext {
      * Stato della notifica legale al termine del workflow, prima del pagamento.
      */
     private String legalStatusBeforePayment;
+
+    /**
+     * Durata del primo canale della campagna della comunicazione bonaria: allo scadere il workflow passa al canale successivo.
+     */
+    private Duration firstChannelTimeout;
 
     /**
      * Data di pagamento dell'ultimo pagamento pagoPA pubblicato: il flusso pagoPA la copia nell'eventTimestamp del
