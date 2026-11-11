@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Attachment;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.OcrRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperEvent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.PaperTrackerOutputsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Tracking;
@@ -14,6 +15,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.Trac
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingErrorsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.TrackingsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.papertracker.model.ValidationFlow;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusV26;
@@ -37,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -70,7 +74,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 public class PaperTrackerSteps {
     private static final String TRACKINGS_ELEMENT_NOT_FOUND = "La risposta di /trackings non contiene tutti gli elementi presenti in timeline!";
-    private static final String OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND = "La risposta di /outputs non contiene tutti gli elementi previsti che sono presenti in timeline!";
+    private static final String RECAG012 = "RECAG012";
+    private static final String OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND ="La risposta di /outputs non contiene tutti gli elementi previsti che sono presenti in timeline!";
     private static final Map<String, AdditionalDetailsValidator> VALIDATORS = Map.of(
             "ocrDataResultPayload", new OcrDataResultPayloadValidator(),
             "affectedEvents", new AffectedEventsValidator(),
@@ -776,6 +781,107 @@ public class PaperTrackerSteps {
         assertThat(lastTracking.getState())
                 .as("L'ultimo tracking al raggiungimento del max retry deve terminare in stato KO (attualmente risulta %s)", lastTracking.getState())
                 .isEqualTo(Tracking.StateEnum.KO);
+    }
+
+    /**
+     * Verifica che il FEEDBACK RECAG012 inoltrato da pn-paper-tracker usi l'ultimo RECAG012 ricevuto (PN-22290).
+     *
+     * <p>Sul tracking del primo tentativo ({@code ATTEMPT_0.PCRETRY_0}) di {@code /trackings} si prende, tra gli eventi
+     * RECAG012, quello con {@code requestTimestamp} più recente. Il suo {@code statusTimestamp} deve coincidere con il
+     * {@code notificationDate} dell'elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012, che
+     * pn-delivery-push-workflow valorizza con lo {@code statusDateTime} del FEEDBACK.</p>
+     */
+    @Then("si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista")
+    public void verifyRecag012FeedbackUsesLatestRecag012() {
+        PaperEvent latestRecag012 = awaitLatestRecag012(tracking -> true);
+        Instant expectedDate = toInstant(latestRecag012.getStatusTimestamp());
+
+        OffsetDateTime feedbackDate = sharedSteps.getSentNotificationLastVersion().getTimeline().stream()
+                .filter(te -> SEND_ANALOG_FEEDBACK.equals(te.getCategory().getValue()))
+                .filter(te -> te.getDetails() != null && RECAG012.equals(te.getDetails().getDeliveryDetailCode()))
+                .map(te -> te.getDetails().getNotificationDate())
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECAG012 non trovato"));
+
+        assertThat(feedbackDate).as("notificationDate del FEEDBACK RECAG012").isNotNull();
+        assertThat(feedbackDate.toInstant())
+                .as("Il FEEDBACK RECAG012 deve riportare lo statusTimestamp dell'ultimo RECAG012 ricevuto (id %s)", latestRecag012.getId())
+                .isEqualTo(expectedDate);
+    }
+
+    /**
+     * Verifica che la richiesta OCR del documento indicato sia associata all'ultimo RECAG012 ricevuto (PN-22290).
+     *
+     * <p>Su {@code validationFlow.ocrRequests} del tracking del primo tentativo, la richiesta con quel
+     * {@code documentType} deve avere come {@code finalEventId} l'{@code id} del RECAG012 con {@code requestTimestamp}
+     * più recente.</p>
+     */
+    @Then("si verifica che la richiesta OCR del documento {string} sia associata all'ultimo RECAG012 inviato dal recapitista")
+    public void verifyOcrRequestUsesLatestRecag012(String documentType) {
+        Predicate<Tracking> hasOcrRequest = tracking -> findOcrRequest(tracking, documentType).isPresent();
+        PaperEvent latestRecag012 = awaitLatestRecag012(hasOcrRequest);
+
+        OcrRequest ocrRequest = findOcrRequest(initialTracking(), documentType).orElseThrow();
+        assertThat(ocrRequest.getFinalEventId())
+                .as("La richiesta OCR del documento %s deve essere associata all'ultimo RECAG012 ricevuto", documentType)
+                .isEqualTo(latestRecag012.getId());
+    }
+
+    /**
+     * Attende che il tracking del primo tentativo contenga almeno due RECAG012 con statusTimestamp diversi e soddisfi la
+     * condizione indicata, poi restituisce il RECAG012 con requestTimestamp più recente.
+     */
+    private PaperEvent awaitLatestRecag012(Predicate<Tracking> condition) {
+        ensureTrackingKeys();
+        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
+        AtomicReference<PaperEvent> latest = new AtomicReference<>();
+
+        await().atMost(Duration.ofMinutes(5))
+                .pollInterval(Duration.ofSeconds(15))
+                .untilAsserted(() -> {
+                    responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
+                    Tracking tracking = initialTracking();
+                    List<PaperEvent> recag012Events = Optional.ofNullable(tracking.getEvents()).orElse(List.of()).stream()
+                            .filter(e -> RECAG012.equals(e.getStatusCode()))
+                            .toList();
+
+                    assertThat(recag012Events).as("Il tracking %s deve contenere almeno due RECAG012", tracking.getTrackingId())
+                            .hasSizeGreaterThanOrEqualTo(2);
+                    assertThat(recag012Events.stream().map(e -> toInstant(e.getStatusTimestamp())).distinct().count())
+                            .as("I RECAG012 devono avere statusTimestamp diversi, altrimenti il test non distingue il primo dall'ultimo")
+                            .isGreaterThan(1);
+                    assertThat(condition.test(tracking)).as("Condizione sul tracking %s non ancora soddisfatta", tracking.getTrackingId())
+                            .isTrue();
+
+                    latest.set(recag012Events.stream()
+                            .max(Comparator.comparing(e -> toInstant(e.getRequestTimestamp())))
+                            .orElseThrow());
+                });
+
+        log.info("Ultimo RECAG012 ricevuto: id {}, statusTimestamp {}, requestTimestamp {}",
+                latest.get().getId(), latest.get().getStatusTimestamp(), latest.get().getRequestTimestamp());
+        return latest.get();
+    }
+
+    private Tracking initialTracking() {
+        assertThat(responseTracking).as("La risposta di /trackings non deve essere nulla").isNotNull();
+        return Optional.ofNullable(responseTracking.getTrackings()).orElse(List.of()).stream()
+                .filter(this::isInitialAttempt)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Tentativo 0 non trovato nella risposta di /trackings"));
+    }
+
+    private Optional<OcrRequest> findOcrRequest(Tracking tracking, String documentType) {
+        return Optional.ofNullable(tracking.getValidationFlow())
+                .map(ValidationFlow::getOcrRequests)
+                .orElse(List.of())
+                .stream()
+                .filter(ocr -> documentType.equals(ocr.getDocumentType()))
+                .findFirst();
+    }
+
+    private static Instant toInstant(String timestamp) {
+        return ZonedDateTime.parse(timestamp).toInstant();
     }
 
     @io.cucumber.java.en.Given("viene riutilizzata la notifica con iun {string} per il prodotto: {string}")
