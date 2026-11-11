@@ -5,6 +5,11 @@ on:
     types: [opened, reopened, synchronize]
     branches: [develop]
   workflow_dispatch:
+    inputs:
+      include_html:
+        description: Generate HTML reports as well as Markdown
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -69,13 +74,13 @@ jobs:
       - name: Generate PSTs for active releases
         id: generate
         continue-on-error: true
-        run: >-
-          python -m pst_generator.cli generate-all
-          --repo "$GITHUB_WORKSPACE"
-          --config config.yaml
-          --output-dir "$PST_OUTPUT_DIR"
-          --use-state
-          --html
+        run: |
+          args=(generate-all --repo "$GITHUB_WORKSPACE" --config config.yaml
+                --output-dir "$PST_OUTPUT_DIR" --use-state)
+          if [[ "${{ inputs.include_html }}" == 'true' ]]; then
+            args+=(--html)
+          fi
+          python -m pst_generator.cli "${args[@]}"
 
       - name: Commit and push changed PSTs
         if: ${{ steps.generate.outcome == 'success' || steps.generate.outcome == 'failure' }}
