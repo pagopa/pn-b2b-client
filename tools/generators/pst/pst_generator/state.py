@@ -53,13 +53,15 @@ def is_current(output: Path, epic: str, fingerprint: str, include_html: bool) ->
         state = json.loads(path.read_text(encoding='utf-8'))
         expected = state['outputs']
         files = [f'pst_{epic}.md'] + ([f'pst_{epic}.html'] if include_html else [])
-        return state.get('input') == fingerprint and all(
+        return (include_html or not (output / f'pst_{epic}.html').exists()) and state.get('input') == fingerprint and all(
             digest((output / file).read_bytes()) == expected[file] for file in files)
     except (OSError, KeyError, TypeError, ValueError):
         return False
 
 
 def save_state(output: Path, epic: str, fingerprint: str, include_html: bool) -> None:
+    if not include_html:
+        (output / f'pst_{epic}.html').unlink(missing_ok=True)
     files = [f'pst_{epic}.md'] + ([f'pst_{epic}.html'] if include_html else [])
     state = {'schema': 1, 'input': fingerprint,
              'outputs': {file: digest((output / file).read_bytes()) for file in files}}
