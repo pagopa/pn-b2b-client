@@ -1,6 +1,9 @@
 name: Generate PST
 
 on:
+  pull_request_target:
+    types: [opened, reopened, synchronize]
+    branches: [develop]
   workflow_dispatch:
 
 permissions:
@@ -12,7 +15,9 @@ concurrency:
 
 jobs:
   generate:
-    if: github.ref == 'refs/heads/develop'
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/develop') ||
+      (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     timeout-minutes: 30
     defaults:
@@ -22,7 +27,7 @@ jobs:
       - name: Checkout develop snapshot and all branch histories
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
-          ref: ${{ github.sha }}
+          ref: develop
           fetch-depth: 0
           persist-credentials: true
 
@@ -56,7 +61,7 @@ jobs:
           if git -C "$GITHUB_WORKSPACE" show-ref --verify --quiet refs/remotes/origin/pst-output; then
             git -C "$GITHUB_WORKSPACE" worktree add -B pst-output "$PST_OUTPUT_DIR" origin/pst-output
           else
-            git -C "$GITHUB_WORKSPACE" worktree add --detach "$PST_OUTPUT_DIR" "$GITHUB_SHA"
+            git -C "$GITHUB_WORKSPACE" worktree add --detach "$PST_OUTPUT_DIR" HEAD
             git -C "$PST_OUTPUT_DIR" checkout --orphan pst-output
             git -C "$PST_OUTPUT_DIR" rm -rf --quiet .
           fi
