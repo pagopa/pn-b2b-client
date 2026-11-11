@@ -66,17 +66,17 @@ Da GitHub: **Actions → Generate PST → Run workflow → develop**.
 L'esecuzione recupera la storia completa di tutti i branch, installa le dipendenze,
 esegue i test e genera Markdown e HTML delle QA Epic attive.
 
-I documenti prodotti sono scaricabili come artifact `pst-<run_id>-<run_attempt>`,
-con conservazione di 30 giorni. Il riepilogo dell'esecuzione mostra i risultati
-e gli eventuali conflitti. Anche quando una QA Epic fallisce, i PST delle altre
-sono disponibili nell'artifact; il workflow conserva l'esito negativo.
+I documenti sono versionati nel branch permanente `pst-output`, con un commit
+solo quando PST o stato cambiano. I Markdown sono consultabili direttamente su
+GitHub, per esempio `https://github.com/pagopa/pn-b2b-client/blob/pst-output/pst_QA-123.md`.
+Sono anche scaricabili come artifact `pst-<run_id>-<run_attempt>`, conservato per
+30 giorni. Il riepilogo distingue Epic generate, invariate ed errori.
 
-La Action genera in una directory temporanea pulita tramite `--output-dir`, così
-l'artifact contiene solo documenti prodotti in quella esecuzione. Per questa fase
-il risultato concordato resta l'artifact scaricabile: la Action non crea branch,
-commit, PR o file di stato persistenti. Ogni esecuzione genera nuovamente i documenti.
-La strategia per versionare i PST ed evitare rigenerazioni è fissata nella sezione
-[Strategia futura — da implementare](#strategia-futura--da-implementare).
+La Action legge il branch `pst-output` in una directory temporanea, confronta gli
+input con `.state/QA-123.json` e riusa i file integri delle Epic invariate. Se il
+branch non esiste, lo crea al primo aggiornamento. Non crea PR e non pubblica su
+GitHub Pages. In caso di conflitto conserva il PST precedente dell'Epic interessata,
+aggiorna le altre Epic e segnala il fallimento del run.
 
 ### Regole di individuazione
 
@@ -240,75 +240,22 @@ pst/pst_QA-<numero>.html  # con --html
 ```
 
 La cartella `pst/` viene creata se non esiste, salvo uso di `--output-dir`.
-In locale i documenti vengono scritti solo se il contenuto cambia, ma vengono comunque
-ricostruiti; l'HTML riporta la data dell'esecuzione. Nella Action,
-la directory temporanea è nuova a ogni esecuzione. Al momento non si recuperano
-artifact precedenti e non si rimuovono automaticamente documenti obsoleti dal repository.
+In locale i documenti vengono scritti solo se il contenuto cambia, ma senza
+`--use-state` vengono comunque ricostruiti. La Action usa `--use-state` e legge
+lo stato persistente nel branch `pst-output`.
 
-## Strategia futura — da implementare
+## Stato persistente
 
-Questa sezione registra la strategia concordata. La sua implementazione è rinviata;
-il workflow attuale continua a produrre esclusivamente artifact scaricabili.
+Il branch `pst-output` contiene `pst_QA-123.md`, `pst_QA-123.html` e
+`.state/QA-123.json` nella propria radice. Per ogni Epic il manifest registra
+l'impronta degli input e le impronte dei file prodotti. Sono considerati gli
+commit e snapshot dei file `.feature` sui branch sorgente, i work-item associati,
+configurazione, formati, codice del generatore e dipendenze. Anche un commit su
+file estranei agli scenari invalida il confronto: la storia Git può influenzare
+autori e risoluzione dei conflitti.
 
-### Esecuzione su develop e PR dei risultati
-
-1. La Action sarà eseguita sul branch di default `develop`, da cui leggerà codice,
-   configurazione e release in corso.
-2. I branch di lavoro indicati dalle release saranno consultati come fonti degli
-   scenari, senza modificarli.
-3. Per ogni QA Epic la Action creerà o aggiornerà un branch dedicato ai risultati,
-   basato su `develop`, con nome `feature/pst_<qa_epic>`.
-4. Su quel branch saranno salvati i PST e il relativo stato, nello stesso commit.
-5. Sarà creata o aggiornata una sola PR Draft per QA Epic, con branch di destinazione
-   `develop`. I documenti entreranno in `develop` dopo approvazione e merge secondo
-   le regole del repository. La Action non approverà né eseguirà il merge.
-
-Esempio di direzione della PR: `feature/pst_QA-123` → `develop`.
-Il branch dei risultati è distinto dai branch di lavoro che contengono gli scenari.
-
-### Stato persistente e documenti invariati
-
-Il riferimento persistente sarà Git. Documenti e impronta saranno versionati insieme:
-
-```text
-pst/
-├── pst_QA-123.md
-├── pst_QA-123.html
-└── .state/
-    └── QA-123.json
-```
-
-Il file di stato conserverà l'impronta degli input rilevanti, le informazioni
-dell'ultima generazione valida e le impronte dei documenti per verificarne l'integrità.
-L'impronta degli input comprenderà gli scenari selezionati, le fonti rilevanti
-(branch e percorsi), i work-item associati, la configurazione, i formati richiesti
-e la versione del generatore e delle sue dipendenze.
-
-La Action continuerà a cercare gli scenari e risolvere i conflitti prima di decidere
-se riutilizzare un PST. Il confronto avverrà con lo stato sul branch della PR già
-aperta, se presente; altrimenti con lo stato in `develop`. Questo eviterà di
-riproporre documenti già aggiornati ma ancora in attesa di merge.
-
-- Impronta uguale e documenti presenti e integri: riuso del PST, esito `invariato`,
-  nessun nuovo commit o nuova PR.
-- Input cambiati, stato assente o documenti mancanti/non integri: rigenerazione
-  e aggiornamento di documenti e stato nello stesso commit.
-- Conflitto: conservazione dell'ultima versione valida, nessun aggiornamento della
-  PR interessata e segnalazione nel riepilogo; le altre QA Epic continueranno.
-
-La data nel documento rappresenterà l'ultimo aggiornamento effettivo del PST.
-Un commit su file estranei agli scenari non dovrà invalidare il documento:
-l'impronta non userà semplicemente l'ultimo commit del branch. Nel PST riutilizzato
-resteranno i commit di provenienza della sua generazione; l'esito della nuova
-verifica comparirà nel riepilogo dell'esecuzione.
-
-Gli artifact resteranno un download comodo dei risultati, mentre Git conserverà
-lo stato necessario al confronto tra esecuzioni.
-
-### Documenti obsoleti
-
-Quando una QA Epic non sarà più attiva o non avrà più scenari associati, la rimozione
-dei PST e dello stato già versionati dovrà passare da una PR verso `develop`.
-L'eventuale chiusura di una precedente PR sarà limitata alle PR aperte, Draft e
-create dal bot. L'eliminazione del relativo branch sarà consentita solo se contiene
-esclusivamente modifiche generate automaticamente. Anche questa gestione è rinviata.
+Se impronta e file coincidono, l'Epic è `invariata` e il PST conserva la data
+dell'ultima generazione. Se cambiano o manca un file, l'Epic viene rigenerata.
+Il branch viene aggiornato con un solo commit per esecuzione, se necessario.
+I conflitti lasciano intatti i PST validi precedenti e non bloccano le altre Epic.
+Le Epic non più attive non vengono ancora eliminate automaticamente dal branch.

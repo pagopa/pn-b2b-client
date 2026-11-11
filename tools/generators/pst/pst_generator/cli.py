@@ -12,6 +12,7 @@ import yaml
 from .core import parse_test_cases
 from .collection import ScenarioCollector, CollectionError, active_source_specs, collect_from_sources, validate_qa_epic
 from .markdown import _group_steps, render_document, replace_quoted_values
+from .state import input_fingerprint, is_current, save_state
 
 
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
@@ -193,16 +194,25 @@ def discover_active_releases(repo: Path, ref: str | None) -> int:
 
 def generate_active(repo: Path, config: Path, include_html: bool = False,
                     output_dir: Path | None = None,
-                    repo_paths: dict[str, Path] | None = None) -> int:
+                    repo_paths: dict[str, Path] | None = None,
+                    use_state: bool = False) -> int:
     """Generate independent PSTs, preserving the existing output on conflicts."""
     settings = yaml.safe_load(config.read_text(encoding="utf-8")) or {}
     collector = ScenarioCollector(repo, settings.get("input", {}).get("id_pattern", r"\[([^\]]+)\]"))
     results = []
     failed = False
+    destination = output_dir if output_dir is not None else repo / 'pst'
     for epic, specs in active_source_specs(repo).items():
         try:
+            fingerprint = (input_fingerprint(repo, config, epic, specs, repo_paths, include_html)
+                           if use_state else None)
+            if fingerprint and is_current(destination, epic, fingerprint, include_html):
+                results.append(f"- {epic}: invariato")
+                continue
             cases = collect_from_sources(repo, epic, specs, collector.pattern, repo_paths)
             count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases)
+            if fingerprint:
+                save_state(destination, epic, fingerprint, include_html)
             results.append(f"- {epic}: generato ({count} scenari)")
         except CollectionError as exc:
             failed = True
@@ -224,6 +234,7 @@ def main() -> int:
         parser.add_argument("--output-dir", type=Path, help="Output directory (default: <repo>/pst)")
         parser.add_argument("--config", type=Path, default=Path("config.yaml"))
         parser.add_argument("--html", action="store_true", help="Also generate standalone HTML files")
+        parser.add_argument("--use-state", action="store_true", help="Reuse intact PSTs with matching inputs")
         parser.add_argument("--source-repo", action="append", default=[], metavar="NAME=PATH",
                             help="Override the local path of a named source repository")
         args = parser.parse_args()
@@ -233,7 +244,7 @@ def main() -> int:
             if not separator or not name or not path:
                 parser.error("--source-repo requires NAME=PATH")
             paths[name] = Path(path)
-        return generate_active(args.repo, args.config, args.html, args.output_dir, paths)
+        return generate_active(args.repo, args.config, args.html, args.output_dir, paths, args.use_state)
 
     if len(sys.argv) > 1 and sys.argv[1] == "discover":
         parser = argparse.ArgumentParser(description="Inspect active releases and QA Epics")

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: generate-pst-develop
@@ -15,6 +15,8 @@ jobs:
     if: github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      PST_OUTPUT_DIR: ${{ runner.temp }}/pst-output
     defaults:
       run:
         working-directory: tools/generators/pst
@@ -24,7 +26,7 @@ jobs:
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
-          persist-credentials: false
+          persist-credentials: true
 
       - name: Checkout qe_suit scenario histories
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -47,22 +49,49 @@ jobs:
       - name: Verify generator
         run: python -m unittest discover -s tests -v
 
+      - name: Prepare persistent PST branch
+        run: |
+          if git -C "$GITHUB_WORKSPACE" show-ref --verify --quiet refs/remotes/origin/pst-output; then
+            git -C "$GITHUB_WORKSPACE" worktree add -B pst-output "$PST_OUTPUT_DIR" origin/pst-output
+          else
+            git -C "$GITHUB_WORKSPACE" worktree add --detach "$PST_OUTPUT_DIR" "$GITHUB_SHA"
+            git -C "$PST_OUTPUT_DIR" checkout --orphan pst-output
+            git -C "$PST_OUTPUT_DIR" rm -rf --quiet .
+          fi
+
       - name: Generate PSTs for active releases
         id: generate
-        env:
-          PST_OUTPUT_DIR: ${{ runner.temp }}/pst-generated
+        continue-on-error: true
         run: >-
           python -m pst_generator.cli generate-all
           --repo "$GITHUB_WORKSPACE"
           --config config.yaml
           --output-dir "$PST_OUTPUT_DIR"
+          --use-state
           --html
+
+      - name: Commit and push changed PSTs
+        if: ${{ steps.generate.outcome == 'success' || steps.generate.outcome == 'failure' }}
+        run: |
+          git -C "$PST_OUTPUT_DIR" config user.name 'github-actions[bot]'
+          git -C "$PST_OUTPUT_DIR" config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git -C "$PST_OUTPUT_DIR" add -A
+          if ! git -C "$PST_OUTPUT_DIR" diff --cached --quiet; then
+            git -C "$PST_OUTPUT_DIR" commit -m 'chore: update generated PSTs'
+            git -C "$PST_OUTPUT_DIR" push origin HEAD:refs/heads/pst-output
+          fi
 
       - name: Upload generated PSTs, including partial successes
         if: ${{ !cancelled() && (steps.generate.outcome == 'success' || steps.generate.outcome == 'failure') }}
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: pst-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/pst-generated/
+          path: |
+            ${{ runner.temp }}/pst-output/pst_*.md
+            ${{ runner.temp }}/pst-output/pst_*.html
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Report generation failure
+        if: ${{ steps.generate.outcome == 'failure' }}
+        run: exit 1

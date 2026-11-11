@@ -17,6 +17,30 @@ from pst_generator.markdown import render_document
 
 
 class CollectionTest(unittest.TestCase):
+    def test_persistent_state_skips_unchanged_sources_and_repairs_output(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: base\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertTrue((output / '.state/QA-123.json').exists())
+        with patch('pst_generator.cli.collect_from_sources', side_effect=AssertionError('recollected')):
+            self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        (self.repo / 'unrelated.txt').write_text('unrelated change')
+        self.commit('unrelated change')
+        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        (output / 'pst_QA-123.md').write_text('damaged')
+        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertNotEqual((output / 'pst_QA-123.md').read_text(), 'damaged')
+        self.assertIn('CASE_1', (output / 'pst_QA-123.md').read_text())
+        self.write_scenario('case.feature', 'CASE_1', 'changed')
+        self.commit('changed scenario')
+        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertIn('changed', (output / 'pst_QA-123.md').read_text())
+
     def test_no_tagged_scenarios_do_not_create_empty_pst(self):
         config = self.repo / 'config.yaml'
         config.write_text('{}', encoding='utf-8')
