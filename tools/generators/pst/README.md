@@ -43,6 +43,15 @@ I tre dizionari di `config.yaml` sono: `business_terms` per i nomi dei campi e l
 intestazioni di `Examples`, `value_terms` per i valori delle tabelle e i valori
 esatti tra virgolette nel testo, `status_terms` per i codici HTTP. Le sostituzioni
 dei valori tra virgolette modificano solo il PST generato, non il feature sorgente.
+`output.exclude_fields` elenca le chiavi esatte delle tabelle da omettere nel
+Markdown (per esempio `details`); i passi Gherkin restano visibili e chiavi diverse
+come `details_deliveryDetailCode` non vengono escluse.
+`field_value_phrases` può sostituire una coppia campo-valore con una frase: la
+regola per il campo ha precedenza su `"*"`, che vale per ogni campo. `{field}`
+inserisce l'etichetta definita in `business_terms`; il confronto dei valori è esatto.
+`step_phrases` riscrive il testo di un passo nel Markdown usando i segnaposto
+tra graffe. Una regola può lasciare il suffisso `con <campo> <valore>`: il nome
+del campo viene tradotto tramite `business_terms` quando è configurato.
 
 ## Test
 
