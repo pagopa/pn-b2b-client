@@ -455,7 +455,6 @@ public class BFFDataPreparationService {
     }
 
     public EServiceDescriptor createEServiceInState(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, @Nonnull EServiceState eServiceState) {
-        EServiceDescriptor eServiceDescriptor = this.createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed);
         if(EServiceState.ARCHIVED.equals(eServiceState)) {
             /* NOTE 11/11/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
              * in stato ARCHIVED non è al momento fattibile programmaticamente; per avere un e-service in stato
@@ -463,7 +462,9 @@ public class BFFDataPreparationService {
             throw new UnsupportedOperationException("Al momento non è possibile portare un e-service in stato " +
                     "ARCHIVED programmaticamente; per avere un e-service in stato ARCHIVED bisogna considerare " +
                     "esclusivamente quelli creati durante il workflow di data-preparation.");
-        } else if(EServiceState.ARCHIVING.equals(eServiceState)) {
+        }
+        EServiceDescriptor eServiceDescriptor = this.createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed);
+        if(EServiceState.ARCHIVING.equals(eServiceState)) {
             this.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                     eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                             EServiceState.PUBLISHED.toString()), false);
