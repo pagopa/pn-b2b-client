@@ -63,7 +63,7 @@ Feature: Fatturazione delle comunicazioni bonarie (ComBo)
 
   # Scenario 3 - Riservatezza dei costi delle comunicazioni bonarie
 
-  @work-item:QA-18903
+  @work-item:QA-18903 @webhook3
   Scenario: [INFORMAL_INVOICING_PRIVACY_03_1_A] Il costo di una comunicazione bonaria conclusa non è esposto all'ente
     Given il "Comune_Multi" riceve gli aggiornamenti di stato delle comunicazioni bonarie
     And il "Comune_Multi" ha inviato una comunicazione bonaria a un destinatario raggiungibile via email
@@ -72,7 +72,7 @@ Feature: Fatturazione delle comunicazioni bonarie (ComBo)
     Then gli eventi esposti all'ente non riportano alcun costo
     And il formato degli eventi esposti all'ente non cambia
 
-  @work-item:QA-18903
+  @work-item:QA-18903 @webhook3
   Scenario: [INFORMAL_INVOICING_PRIVACY_03_1_B] Il costo di una comunicazione bonaria rifiutata non è esposto all'ente
     Given il "Comune_Multi" riceve gli aggiornamenti di stato delle comunicazioni bonarie
     And il "Comune_Multi" ha inviato una comunicazione bonaria non conforme a 1 destinatario

@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.RestClientException;
 
 import java.time.Duration;
 import java.util.List;
@@ -161,7 +162,7 @@ public class FatturazioneComBoRiservatezzaSteps {
         }
         try {
             webhookClient.deleteEventStreamV30(context.getStreamId());
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             log.warn("Cancellazione dello stream {} non riuscita: {}", context.getStreamId(), e.getMessage());
         }
     }
