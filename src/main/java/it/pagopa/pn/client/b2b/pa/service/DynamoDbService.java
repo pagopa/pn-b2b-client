@@ -8,10 +8,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,6 +24,25 @@ public class DynamoDbService {
 
     public QueryResponse call(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         return dynamoDbClient.query(buildRequest(tableName, attributeValues));
+    }
+
+    /**
+     * Restituisce il primo item della tabella privo dell'attributo indicato che soddisfa il criterio.
+     * In uno Scan il Limit si applica prima del FilterExpression, quindi le pagine vengono scorse
+     * con il paginator, in modo lazy, fino al primo item che soddisfa filtro e criterio.
+     */
+    public Optional<Map<String, AttributeValue>> findFirstItemWithoutAttribute(DynamoTableName tableName, String attributeName,
+                                                                               Predicate<Map<String, AttributeValue>> criteria) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName.getValue())
+                .filterExpression("attribute_not_exists(#attr)")
+                .expressionAttributeNames(Map.of("#attr", attributeName))
+                .build();
+        return dynamoDbClient.scanPaginator(request)
+                .items()
+                .stream()
+                .filter(criteria)
+                .findFirst();
     }
 
     private static QueryRequest buildRequest(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
@@ -39,6 +61,7 @@ public class DynamoDbService {
             case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
+            case CAMPAIGNS -> queryWithoutFilters(tableName, List.of("senderId", "campaignId"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->

@@ -125,6 +125,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceWebhookV30;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.AooUoIdsClientImpl;
@@ -158,6 +159,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnIOConnectorClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnNodoPagoPaMockClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
@@ -209,6 +211,10 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PagoPaPaymentEventService;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PaymentErrorQueueService;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -445,7 +451,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
         DelayerSkipSenderLimitService.class,
-        IoMockScenarioContext.class
+        IoMockScenarioContext.class,
+        PnNodoPagoPaMockClientImpl.class,
+        SqsService.class,
+        IngestionPagamentiScenarioContext.class,
+        PagoPaPaymentEventService.class,
+        PaymentErrorQueueService.class,
+        PaymentEventsSettings.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
