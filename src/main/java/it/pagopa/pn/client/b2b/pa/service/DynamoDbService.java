@@ -27,7 +27,7 @@ public class DynamoDbService {
         return switch (tableName) {
             //query WITH filters
             case TIMELINE -> queryWithFilters(tableName, List.of("iun", "category"), attributeValues);
-            case REWORKED_TIMELINES_FOR_INVOICING ->
+            case REWORKED_TIMELINES_FOR_INVOICING, TIMELINES_FOR_INVOICING, INFORMAL_TIMELINES_FOR_INVOICING ->
                     queryWithFilters(tableName, List.of("paId_invoicingDay", "iun"), attributeValues);
             //query WITHOUT filters
             case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->

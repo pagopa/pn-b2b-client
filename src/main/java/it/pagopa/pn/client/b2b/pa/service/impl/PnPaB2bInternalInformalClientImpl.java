@@ -14,13 +14,19 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.mod
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -119,6 +125,57 @@ public class PnPaB2bInternalInformalClientImpl {
 
     public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage);
+    }
+
+    /**
+     * Stessa chiamata di {@link #getSentInformalNotificationSender}, ma restituisce il body JSON così come ricevuto:
+     * serve a verificare che la risposta non contenga campi che il modello generato scarterebbe in deserializzazione.
+     */
+    public String getSentInformalNotificationSenderAsJson(String cxId, String iun) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-pagopa-pn-uid", operatorId);
+        headers.add("x-pagopa-pn-cx-type", CxTypeAuthFleet.PA.getValue());
+        headers.add("x-pagopa-pn-cx-id", cxId);
+        return senderReadInformalNotificationB2BApi.getApiClient().invokeAPI(
+                "/delivery/v1/notifications/sent/{iun}",
+                HttpMethod.GET,
+                Map.of("iun", iun),
+                new LinkedMultiValueMap<>(),
+                null,
+                headers,
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{},
+                new ParameterizedTypeReference<String>() {
+                }).getBody();
+    }
+
+    /**
+     * Stessa chiamata di {@link #getNotificationStatusByRequestId}, ma restituisce il body JSON così come ricevuto.
+     */
+    public String getNotificationStatusByRequestIdAsJson(String cxId, String notificationRequestId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-pagopa-pn-uid", operatorId);
+        headers.add("x-pagopa-pn-cx-type", CxTypeAuthFleet.PA.getValue());
+        headers.add("x-pagopa-pn-cx-id", cxId);
+        LinkedMultiValueMap<String, String> query = new LinkedMultiValueMap<>();
+        query.add("notificationRequestId", notificationRequestId);
+        return senderReadInformalNotificationB2BApi.getApiClient().invokeAPI(
+                "/delivery/v1/requests",
+                HttpMethod.GET,
+                Map.of(),
+                query,
+                null,
+                headers,
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{},
+                new ParameterizedTypeReference<String>() {
+                }).getBody();
     }
 
     public FullReceivedInformalNotificationV1 getReceivedInformalNotification(String cxId, String iun, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet recipientType) {

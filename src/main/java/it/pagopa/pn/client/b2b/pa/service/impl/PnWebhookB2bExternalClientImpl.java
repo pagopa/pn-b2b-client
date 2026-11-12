@@ -10,12 +10,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
@@ -506,6 +512,29 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     public ResponseEntity<List<ProgressResponseElementV30>> consumeEventStreamHttpV30(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return eventsApi.consumeEventStreamV30WithHttpInfo(streamId, lastEventId);
+    }
+
+    /**
+     * Stessa chiamata di {@link #consumeEventStreamV30}, ma restituisce il body JSON così come ricevuto:
+     * serve a verificare che gli eventi non contengano campi che il modello generato scarterebbe in deserializzazione.
+     */
+    public String consumeEventStreamV30AsJson(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        ApiClient apiClient = eventsApi.getApiClient();
+        return apiClient.invokeAPI(
+                "/delivery-progresses/v3.0/streams/{streamId}/events",
+                HttpMethod.GET,
+                Map.of("streamId", streamId),
+                apiClient.parameterToMultiValueMap(null, "lastEventId", lastEventId),
+                null,
+                new HttpHeaders(),
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{"ApiKeyAuth"},
+                new ParameterizedTypeReference<String>() {
+                }).getBody();
     }
 
 
