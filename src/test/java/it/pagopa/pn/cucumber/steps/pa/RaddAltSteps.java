@@ -6,6 +6,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -13,12 +14,11 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
-import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -324,6 +324,19 @@ public class RaddAltSteps {
         Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
         Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
         Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+    }
+
+    @And("l'operazione di download degli atti restituisce i soli documenti di tipo COVER_FILE e ATTESTAZIONE_OPPONIBILE_A_TERZI e si conclude con errore {string} e codice {int} su radd alternative")
+    public void lOperazioneDiDownloadDegliAttiSiConcludeCorrettamenteConISoliDocumentiDiTipoAO3eCOVERFILE(String errorDescription, int erroCode) {
+        StartTransactionResponseStatus.CodeEnum error = getErrorCodeStartTransaction(erroCode);
+        Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList());
+        Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty());
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus());
+        Assertions.assertEquals(error, this.startTransactionResponse.getStatus().getCode());
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
+        Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
+        Assertions.assertTrue(this.startTransactionResponse.getDownloadUrlList().stream()
+                .allMatch(url -> url.getDocumentType().equals("COVER_FILE") || url.getDocumentType().equals("ATTESTAZIONE_OPPONIBILE_A_TERZI")));
     }
 
     @And("l'operazione di download non restituisce atti, generando un errore {string} con codice {int} su radd alternative")
