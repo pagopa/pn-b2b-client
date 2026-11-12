@@ -1,26 +1,12 @@
-
 package it.pagopa.pn.cucumber;
 
-import static io.cucumber.junit.platform.engine.Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.GLUE_PROPERTY_NAME;
-import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
-
-import org.junit.platform.suite.api.ConfigurationParameter;
-import org.junit.platform.suite.api.ExcludeTags;
-import org.junit.platform.suite.api.IncludeEngines;
-import org.junit.platform.suite.api.IncludeTags;
-import org.junit.platform.suite.api.SelectClasspathResource;
+import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 
+/**
+ * Nonostante il nome, questo runner ha sempre selezionato solo la V27: la selezione è mantenuta.
+ */
 @Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("it/pagopa/pn/cucumber/workflowNotifica/webhook")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty")
-@ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
-        "html:target/cucumber-report.html")
-@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
-@ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent")
-@ExcludeTags({"ignore"})
-@IncludeTags({"webhookV27"})
+@SelectClasses({WebhookV27Test.class})
 public class WebhookAllVersionTest {
 }
