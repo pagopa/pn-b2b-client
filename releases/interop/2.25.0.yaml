@@ -1,0 +1,33 @@
+release:
+    version: 2.25.0
+    date: 2024-06-19
+    description: >
+        This release includes several bug fixes and improvements to the interop suite.
+    status: in-progress
+    work-items:
+        - id: PIN-10841
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-18290
+          branch: feature/QA-18260-enable-delegator-eservice-duplication
+        - id: PIN-10875
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-18290
+          branch: feature/QA-18260-enable-delegator-eservice-duplication
+        - id: PIN-9388
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-17458
+          repo: qe_suit
+          branch: feature/QA-17458-link-eservice-receive
+        - id: PIN-10936
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-18430
+          repo: qe_suit
+          branch: feature/QA-18434-error-messages

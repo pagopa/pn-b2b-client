@@ -327,6 +327,7 @@ public class PurposeCommonStep {
     public void moveDescriptorToState(String tenantTpye, String desiredPurposeState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantTpye, null));
         switch (desiredPurposeState) {
+            case "DRAFT", "ACTIVE" -> prepareCurrentPurposeVersionState(PurposeVersionState.valueOf(desiredPurposeState));
             case "ARCHIVED" -> dataPreparationService.archivePurpose(
                     UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                     UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId())
@@ -338,6 +339,30 @@ public class PurposeCommonStep {
             );
             default -> throw new IllegalArgumentException("Passed wrong desired purpose state!");
         }
+    }
+
+    /** Solo per i nuovi stati: non cambia le transizioni legacy ARCHIVED/SUSPENDED. */
+    private void prepareCurrentPurposeVersionState(PurposeVersionState expected) {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        UUID versionId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId());
+        if (expected == PurposeVersionState.ACTIVE
+                && !hasVersionState(purposeApiClient.getPurpose(purposeId), versionId, expected)) {
+            DelegationRef delegationRef = new DelegationRef()
+                    .delegationId(sharedStepsContext.getDelegationCommonContext().getDelegationId());
+            httpCallExecutor.performCall(() -> purposeApiClient.activatePurposeVersion(purposeId, versionId, delegationRef));
+            org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus()).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                    .as("L'attivazione della finalità deve riuscire").isTrue();
+        }
+        // DRAFT è una precondizione da verificare: non si tenta di riportare in bozza una versione attiva.
+        pollingService.makePolling(() -> purposeApiClient.getPurpose(purposeId),
+                purpose -> hasVersionState(purpose, versionId, expected),
+                "La versione della finalità non risulta in stato " + expected);
+    }
+
+    private boolean hasVersionState(Purpose purpose, UUID versionId, PurposeVersionState state) {
+        return purpose.getVersions() != null && purpose.getVersions().stream()
+                .anyMatch(version -> versionId.equals(version.getId()) && version.getState() == state);
     }
 
     @And("il {delegationRole} controlla che la finalità sia stata archiviata")
