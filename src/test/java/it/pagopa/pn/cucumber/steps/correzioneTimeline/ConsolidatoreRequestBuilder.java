@@ -48,11 +48,7 @@ final class ConsolidatoreRequestBuilder {
     }
 
     /**
-     * Indirizzo individuato dal postino (indagine in loco). La colonna {@code discoveredAddress} contiene la riga
-     * dell'indirizzo e può includere una sequence del mock (es. {@code Via@OK_AR}), che verrà usata per il secondo invio.
-     * Gli altri campi hanno gli stessi valori di default dell'indirizzo fisico delle notifiche di test
-     * e si possono sovrascrivere con le colonne {@code discoveredAddress_<campo>}.
-     * Senza la colonna (o con valore vuoto / {@code <null>}) l'evento non riporta l'indirizzo.
+     * La colonna {@code discoveredAddress} può contenere una sequence del mock (es. {@code Via@OK_AR}) per il secondo invio.
      */
     private static Map<String, String> buildDiscoveredAddress(Map<String, String> inputData) {
         String address = inputData.get("discoveredAddress");
@@ -69,17 +65,13 @@ final class ConsolidatoreRequestBuilder {
         return discoveredAddress;
     }
 
-    /**
-     * Le celle vuote della DataTable arrivano come null: in quel caso si usa il valore di default.
-     */
     private static String valueOrDefault(Map<String, String> inputData, String key, String defaultValue) {
         String value = inputData.get(key);
         return value == null || value.isBlank() ? defaultValue : value;
     }
 
     /**
-     * Le comunicazioni bonarie hanno lo IUN che termina con una lettera (le legali con una cifra) e usano un requestId
-     * proprio, es. PREPARE_ANALOG_MESSAGE.IUN_XXXX-XXXX-XXXX-202611-H-A.RECINDEX_0.ATTEMPT_0.DELIVERYTYPE_RS.PCRETRY_0.
+     * Lo IUN delle bonarie termina con una lettera, quello delle legali con una cifra.
      */
     private static String buildRequestId(String iun, String productType, String recindex, String attempt, String pcRetry) {
         if (isInformal(iun))

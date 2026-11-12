@@ -4,25 +4,19 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   #
   # Dati di test e ambienti:
   # - PA abilitata al VAS -> Comune_Multi (il VAS si attiva solo con indirizzo fisico non valorizzato).
-  # - PF con indirizzo su ANPR -> Utenza con Indirizzo Valido da ANPR (config/taxids-{env}.properties): in DEV e TEST
-  #   ANPR è il mock, in UAT è ANPR reale (ambiente di validazione) e il codice fiscale configurato cambia di conseguenza.
-  #   Nelle bonarie lo stesso codice fiscale si ottiene con taxId = ${Utenza con Indirizzo Valido da ANPR}.
-  # - PG censita sul Registro Imprese, senza PEC sui registri -> PG censita sul Registro Imprese (legali e bonarie).
-  #   Default 34565000469 (Registro Imprese mock di DEV e TEST); in UAT il Registro Imprese è reale e serve una PG censita lì:
-  #   -Dpn.recipient.pg-registro-imprese.tax-id=<PIVA> oppure PN_RECIPIENT_PGREGISTROIMPRESE_TAXID=<PIVA>.
-  # - PF senza indirizzo sui registri -> Utenza senza indirizzo sui registri nazionali, default FNTLCU80T25F205R
-  #   (assente su ANPR mock e reale); si cambia con -Dpn.recipient.user-senza-indirizzo-registri.tax-id=<CF>.
+  # - Utenze in config/taxids-{env}.properties, sovrascrivibili senza modificare il file con -Dpn.recipient.<utenza>.tax-id
+  #   o con la variabile d'ambiente corrispondente (es. PN_RECIPIENT_PGREGISTROIMPRESE_TAXID):
+  #   - PF con indirizzo su ANPR -> Utenza con Indirizzo Valido da ANPR (ANPR mock in DEV e TEST, ANPR reale in UAT).
+  #   - PF senza indirizzo sui registri -> Utenza senza indirizzo sui registri nazionali.
+  #   - PG censita sul Registro Imprese, senza PEC sui registri -> PG censita sul Registro Imprese (legali e bonarie).
+  #   Nelle bonarie il codice fiscale di un'utenza si ottiene con taxId = ${<nome utenza>}, es. ${Mario Cucumber}.
   # - Campagna delle bonarie (canale cartaceo): default MessaMora, presente in DEV, TEST e UAT;
   #   si cambia con -Dpn.paper-source.campaign-id=<id> oppure PN_PAPER_SOURCE_CAMPAIGN_ID=<id>.
   #
   # Tag:
   # - @tracciaturaIndagineInLoco: tutta la suite; @work-item:QA-17058: tracciamento.
   # - @rilascioAsincronoPre: fase 1 del rilascio asincrono, eseguita solo da TracciaturaIndagineInLocoPreRilascioTest
-  #   prima del rilascio; la fase 2 gira con TracciaturaIndagineInLocoTest e senza IUN annotati viene saltata.
-  # - @registroImprese: dipende da una PG censita sul Registro Imprese senza PEC (in UAT anche da INI-PEC di Infocamere).
-  # - @vasBonarie: dipende dall'abilitazione della PA mittente al VAS delle bonarie (SSM InformalPaActiveForPhysicalAddressLookup).
-  # Dove il runner non accetta filtri sui tag (es. CodeBuild) gli scenari si escludono con la variabile d'ambiente
-  # PN_PAPER_SOURCE_SKIP_TAGS=@registroImprese,@vasBonarie (o -Dpn.paper-source.skip-tags=...); per default non si esclude nulla.
+  #   prima del deploy della funzionalità nell'ambiente; la fase 2 gira con TracciaturaIndagineInLocoTest e senza IUN annotati viene saltata.
   # Un singolo scenario si lancia per nome, es. -Dcucumber.filter.name=".*PAPER_SOURCE_LEGAL_01_1_D.*".
   #
 
@@ -50,7 +44,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
 
   # PST 1.1.B è coperta da due scenari perché manca una PG censita sul Registro Imprese (mock)
   # il cui indirizzo restituito dal VAS produca una sequenza con indirizzo individuato dal postino (es. FAIL-Discovery_AR).
-  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_B_1] Indirizzo verificato sui registri nazionali e destinatario persona giuridica
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
@@ -64,7 +58,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then il primo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "REGISTRO_IMPRESE"
 
-  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_B_2] Destinatario persona giuridica, tentativo fallito e nuovo indirizzo individuato dal postino utilizzato
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -95,7 +89,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And il secondo invio cartaceo del destinatario 0 riporta come fonte dell'indirizzo "ANPR"
     And il secondo invio cartaceo del destinatario 0 riporta che l'indagine in loco è stata effettuata
 
-  @tracciaturaIndagineInLoco @registroImprese @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_LEGAL_01_1_D] Destinatario persona giuridica, primo tentativo fallito senza indagine in loco e secondo invio verso il Registro Imprese
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -184,7 +178,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
       | messageId                | ${NEW-IT}                                |
       | subject                  | Test tracciatura fonte indirizzo         |
       | recipientType            | PF                                       |
-      | taxId                    | FRMTTR76M06B715E                         |
+      | taxId                    | ${Mario Cucumber}                        |
       | denomination             | Ettore Fieramosca                        |
       | email                    | suppressionlist@simulator.amazonses.com  |
       | digitalDomicile          | NULL                                     |
@@ -193,7 +187,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     Then l'invio cartaceo della comunicazione bonaria del destinatario 0 riporta come fonte dell'indirizzo "MITTENTE"
 
-  @tracciaturaIndagineInLoco @vasBonarie @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_INFORMAL_02_1_B] Comunicazione bonaria con indirizzo verificato sui registri nazionali per una persona fisica
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | ${pn.paper-source.campaign-id:MessaMora} |
@@ -209,7 +203,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
     And si attende che venga prodotto l'elemento "SEND_ANALOG_MESSAGE" della notifica bonaria
     Then l'invio cartaceo della comunicazione bonaria del destinatario 0 riporta come fonte dell'indirizzo "ANPR"
 
-  @tracciaturaIndagineInLoco @registroImprese @vasBonarie @work-item:QA-17058
+  @tracciaturaIndagineInLoco @work-item:QA-17058
   Scenario: [PAPER_SOURCE_INFORMAL_02_1_C] Comunicazione bonaria con indirizzo verificato sui registri nazionali per una persona giuridica
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | ${pn.paper-source.campaign-id:MessaMora} |
@@ -229,8 +223,8 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
   # CASO DI TEST 3.1: Verificare che le notifiche con recapito cartaceo in corso al momento del rilascio si concludano
   # correttamente.
   #
-  # Non è una casistica ricorrente: le notifiche vanno preparate a mano prima di un rilascio richiesto apposta.
-  # - Preparazione (@rilascioAsincronoPre): si lancia a mano TracciaturaIndagineInLocoPreRilascioTest prima del rilascio.
+  # Si esegue in occasione del deploy della funzionalità in un ambiente, durante la normale promozione tra ambienti.
+  # - Preparazione (@rilascioAsincronoPre): si lancia a mano TracciaturaIndagineInLocoPreRilascioTest poco prima del deploy.
   #   Le spedizioni vengono fermate con una sequence senza esito finale e gli IUN annotati nel log
   #   (pn.ripresa.iun.<chiave>=<IUN>). Questi scenari non fanno parte dell'esecuzione ordinaria.
   # - Ripresa (scenari _POST): fa parte dell'esecuzione ordinaria. Se viene passato lo IUN di una notifica
@@ -276,7 +270,7 @@ Feature: SEND - Tracciatura dell'indagine in loco e della fonte dell'indirizzo p
       | messageId                | ${NEW-IT}                                |
       | subject                  | Test tracciatura fonte indirizzo         |
       | recipientType            | PF                                       |
-      | taxId                    | FRMTTR76M06B715E                         |
+      | taxId                    | ${Mario Cucumber}                        |
       | denomination             | Ettore Fieramosca                        |
       | email                    | suppressionlist@simulator.amazonses.com  |
       | digitalDomicile          | NULL                                     |

@@ -2,29 +2,24 @@ package it.pagopa.pn.cucumber.steps.tracciaturaIndagine;
 
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsReader;
 import lombok.extern.slf4j.Slf4j;
-import org.awaitility.core.ConditionTimeoutException;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
-/**
- * Step per la verifica della tracciatura dell'indagine in loco del postino e della fonte dell'indirizzo
- * utilizzato per gli invii cartacei (SRS: Tracciatura Indagine in loco e fonte secondo invio).
- */
 @Slf4j
 public class TracciaturaIndagineInLocoSteps {
     private static final String RECEIVER_ADDRESS_SOURCE_TYPE = "receiverAddressSourceType";
     private static final String HAS_ON_SITE_INVESTIGATION = "hasOnSiteInvestigation";
-    private static final Duration POLLING_TIMEOUT = Duration.ofMinutes(5);
-    private static final Duration POLLING_INTERVAL = Duration.ofSeconds(15);
+    private static final PollingConfig POLLING = PollingConfig.of(Duration.ofMinutes(5), Duration.ofSeconds(15));
 
     private final SharedSteps sharedSteps;
     private final TimelineDetailsReader timelineDetailsReader;
@@ -45,9 +40,7 @@ public class TracciaturaIndagineInLocoSteps {
     }
 
     /**
-     * hasOnSiteInvestigation è valorizzato (true se il postino ha individuato un nuovo indirizzo, false altrimenti)
-     * sull'esito del primo tentativo e sul secondo invio; sul primo invio e sull'esito del secondo tentativo è assente
-     * (pn-delivery-push-workflow, TimelineUtils.hasDiscoveredAddress e PaperChannelServiceImpl.sendAnalogNotification).
+     * hasOnSiteInvestigation c'è solo sull'esito del primo tentativo e sul secondo invio.
      */
     @Then("{elementoCartaceo} del destinatario {int} riporta che l'indagine in loco {is} stata effettuata")
     public void checkOnSiteInvestigation(ElementoCartaceo elemento, int recIndex, boolean performed) {
@@ -60,21 +53,18 @@ public class TracciaturaIndagineInLocoSteps {
     }
 
     /**
-     * Per gli elementi prodotti prima del rilascio della feature, che non hanno ancora la fonte dell'indirizzo.
+     * Per gli elementi prodotti prima del rilascio della feature.
      */
     @Then("{elementoCartaceo} del destinatario {int} non riporta la fonte dell'indirizzo")
     public void checkAddressSourceMissing(ElementoCartaceo elemento, int recIndex) {
         checkField(elemento, recIndex, RECEIVER_ADDRESS_SOURCE_TYPE, null);
     }
 
-    /**
-     * Attende che l'elemento sia prodotto, es. l'esito di un recapito ripreso dopo il rilascio.
-     */
     @Then("{elementoCartaceo} del destinatario {int} è presente")
     public void checkPresent(ElementoCartaceo elemento, int recIndex) {
         try {
             awaitDetails(elemento, recIndex);
-        } catch (ConditionTimeoutException timeoutException) {
+        } catch (PollingTimeoutException timeoutException) {
             sharedSteps.throwAssertionErrorWithIUN(new AssertionError(timeoutException.getMessage(), timeoutException));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -82,7 +72,7 @@ public class TracciaturaIndagineInLocoSteps {
     }
 
     /**
-     * Da usare dopo aver atteso la conclusione del workflow: la verifica è immediata, senza polling.
+     * Senza polling: da usare dopo la conclusione del workflow.
      */
     @Then("{elementoCartaceo} del destinatario {int} non è presente")
     public void checkNotPresent(ElementoCartaceo elemento, int recIndex) {
@@ -102,7 +92,7 @@ public class TracciaturaIndagineInLocoSteps {
             assertThat(details.get(field))
                     .as("Campo details.%s di %s del destinatario %d (%s)", field, elemento.getDescrizione(), recIndex, elemento.getCategory())
                     .isEqualTo(expectedValue);
-        } catch (ConditionTimeoutException timeoutException) {
+        } catch (PollingTimeoutException timeoutException) {
             sharedSteps.throwAssertionErrorWithIUN(new AssertionError(timeoutException.getMessage(), timeoutException));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
@@ -110,23 +100,19 @@ public class TracciaturaIndagineInLocoSteps {
     }
 
     /**
-     * Attende che l'elemento sia presente e lo restituisce. L'elemento deve essere unico: per gli elementi senza
-     * tentativo questo evita di verificarne uno qualsiasi tra più invii dello stesso destinatario.
+     * L'elemento deve essere unico, per non verificarne uno qualsiasi tra più invii dello stesso destinatario.
      */
     private Map<String, String> awaitDetails(ElementoCartaceo elemento, int recIndex) {
-        AtomicReference<List<Map<String, String>>> found = new AtomicReference<>(List.of());
-        await().atMost(POLLING_TIMEOUT)
-                .pollInterval(POLLING_INTERVAL)
-                .untilAsserted(() -> {
-                    found.set(readDetails(elemento, recIndex));
-                    assertThat(found.get())
-                            .as("%s del destinatario %d non trovato (%s)", elemento.getDescrizione(), recIndex, elemento.getCategory())
-                            .isNotEmpty();
-                });
-        assertThat(found.get())
+        List<Map<String, String>> found = Poller.pollUntil(
+                () -> readDetails(elemento, recIndex),
+                details -> !details.isEmpty(),
+                POLLING,
+                details -> String.format("%s del destinatario %d non trovato (%s)",
+                        elemento.getDescrizione(), recIndex, elemento.getCategory()));
+        assertThat(found)
                 .as("Atteso un solo elemento %s per il destinatario %d", elemento.getCategory(), recIndex)
                 .hasSize(1);
-        return found.get().get(0);
+        return found.get(0);
     }
 
     private List<Map<String, String>> readDetails(ElementoCartaceo elemento, int recIndex) {

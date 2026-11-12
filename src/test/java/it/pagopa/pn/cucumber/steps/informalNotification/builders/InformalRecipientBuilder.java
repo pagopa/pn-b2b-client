@@ -176,8 +176,7 @@ public class InformalRecipientBuilder {
     // =========================================================
 
     /**
-     * Un valore nella forma ${nome destinatario} viene risolto con il codice fiscale configurato per l'ambiente
-     * (config/taxids-{env}.properties), es. ${Utenza con Indirizzo Valido da ANPR}. Gli altri valori restano invariati.
+     * ${nome destinatario} diventa il codice fiscale configurato per l'ambiente, es. ${Mario Cucumber}.
      */
     private String resolveTaxId(String value) {
         if (value == null || !value.startsWith("${") || !value.endsWith("}")) {

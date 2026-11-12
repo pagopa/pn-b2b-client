@@ -5,9 +5,7 @@ import org.junit.platform.suite.api.*;
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 /**
- * Rilascio asincrono, preparazione: da lanciare a mano prima di un rilascio, non fa parte dell'esecuzione ordinaria.
- * Crea le notifiche e le ferma con le sequence bloccate, annotando nel log gli IUN (pn.ripresa.iun.&lt;chiave&gt;=&lt;IUN&gt;)
- * da passare dopo il rilascio a TracciaturaIndagineInLocoTest, che altrimenti salta gli scenari di ripresa.
+ * Da lanciare a mano poco prima del deploy della funzionalità in un ambiente: prepara le notifiche da riprendere con TracciaturaIndagineInLocoTest.
  */
 @Suite
 @IncludeEngines("cucumber")

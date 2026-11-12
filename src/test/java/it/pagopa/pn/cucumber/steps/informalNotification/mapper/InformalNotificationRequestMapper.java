@@ -40,10 +40,7 @@ public class InformalNotificationRequestMapper {
     }
 
     /**
-     * Un valore nella forma ${chiave:default} viene letto dalla system property {@code chiave} (-Dchiave=...),
-     * poi dalla variabile d'ambiente corrispondente (maiuscolo, '.' e '-' sostituiti da '_'), altrimenti vale il default.
-     * Es. ${pn.paper-source.campaign-id:MessaMora} -> -Dpn.paper-source.campaign-id=CampAnalogic
-     * oppure PN_PAPER_SOURCE_CAMPAIGN_ID=CampAnalogic. Gli altri valori restano invariati.
+     * ${chiave:default} si legge da -Dchiave o dalla variabile d'ambiente CHIAVE ('.' e '-' diventano '_').
      */
     static String resolveExternalValue(String value) {
         if (value == null || !value.startsWith("${") || !value.endsWith("}")) {

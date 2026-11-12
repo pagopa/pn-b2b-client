@@ -32,16 +32,8 @@ public class RecipientConfig {
     private RecipientData dinoSauro = new RecipientData();
     private RecipientData userIndirizzoNonValidoD01 = new RecipientData();
     private RecipientData userIndirizzoValidoAnpr = new RecipientData();
-
-    /*
-     * Utenze con un valore di default nel codice, non presenti in config/taxids-{env}.properties.
-     * Si sovrascrivono all'avvio senza modifiche ai file, es. -Dpn.recipient.pg-registro-imprese.tax-id=<PIVA>
-     * oppure con la variabile d'ambiente PN_RECIPIENT_PGREGISTROIMPRESE_TAXID.
-     */
-    /** PG censita sul Registro Imprese senza PEC sui registri (mock Infocamere in DEV e TEST). */
-    private RecipientData pgRegistroImprese = RecipientData.withTaxId("34565000469");
-    /** PF senza indirizzo fisico sui registri nazionali (ANPR mock in DEV e TEST, ANPR reale in UAT). */
-    private RecipientData userSenzaIndirizzoRegistri = RecipientData.withTaxId("FNTLCU80T25F205R");
+    private RecipientData userSenzaIndirizzoRegistri = new RecipientData();
+    private RecipientData pgRegistroImprese = new RecipientData();
 
     // mittenti (PA) — solo taxId, uid non applicabile
     private RecipientData comune1    = new RecipientData();
@@ -55,11 +47,5 @@ public class RecipientConfig {
     public static class RecipientData {
         private String taxId;
         private String uid;
-
-        static RecipientData withTaxId(String taxId) {
-            RecipientData data = new RecipientData();
-            data.setTaxId(taxId);
-            return data;
-        }
     }
 }

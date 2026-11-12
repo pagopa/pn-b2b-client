@@ -11,12 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Legge i details degli elementi di timeline direttamente da pn-Timelines (legali e bonarie).
- * <p>
- * I campi receiverAddressSourceType e hasOnSiteInvestigation sono persistiti con questi nomi di attributo
- * (pn-timeline-service, TimelineElementDetailsEntity) ed esposti solo dalle API private di pn-timeline-service,
- * non dalle API B2B di pn-delivery-push (GET della notifica inviata) né dallo stream: se lo saranno, basta sostituire
- * questa classe con una lettura via API, senza toccare step e feature.
+ * Legge da pn-Timelines perché receiverAddressSourceType e hasOnSiteInvestigation non sono esposti da B2B né dallo stream.
  */
 @Component
 @RequiredArgsConstructor
@@ -28,8 +23,7 @@ public class TimelineDetailsReader {
     private final DynamoDbService dynamoDbService;
 
     /**
-     * Restituisce i details degli elementi della categoria indicata per il destinatario, con i valori convertiti in stringa.
-     * Se sentAttemptMade è null non viene applicato alcun filtro sul tentativo.
+     * Con sentAttemptMade null non filtra sul tentativo.
      */
     public List<Map<String, String>> readDetails(String iun, String category, int recIndex, Integer sentAttemptMade) {
         List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.TIMELINE, Map.of(
