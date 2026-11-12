@@ -137,6 +137,9 @@ public class B2bStepsV26 implements B2bStepsInterface {
             assertThat(timelineElement)
                     .as("Il controllo sulla fullSentNotification V28 dovrebbe restituire almeno un elemento")
                     .isNotNull();
+            String correlationId = timelineElement.getElementId();
+            sharedSteps.setCorrelationId(correlationId);
+            log.info("Saved National Registry correlationId={}", correlationId);
         } else {
             assertThat(timelineElement)
                     .as("Il controllo sulla fullSentNotification V28 non dovrebbe restituire elementi")

@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.time.Duration;
 import java.util.List;
@@ -39,6 +40,11 @@ public class INIPECGestionePuntualeEsitiSteps {
         return Eservice.valueOf(value);
     }
 
+    @ParameterType("NOT_WORKED|WORKING|WORKED|ERROR")
+    public RequestStatus requestStatus(String value) {
+        return RequestStatus.valueOf(value);
+    }
+
     /**
      * Valori del campo {@code sendStatus} sull'indice usato dalla query su pn-batchRequests.
      */
@@ -51,10 +57,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     }
 
     private enum RequestStatus {
-        NOT_WORKED,
-        WORKING,
-        WORKED,
-        ERROR
+        NOT_WORKED, WORKING, WORKED, ERROR
     }
 
     private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
@@ -82,254 +85,148 @@ public class INIPECGestionePuntualeEsitiSteps {
         this.sharedSteps = sharedSteps;
     }
 
-    @Then("l'assenza di recapiti su {eservice} per il cf {string} risulta correttamente registrata")
-    public void verifyMissingAddressCorrectlyRecorded(Eservice eservice, String cf) {
+    private Map<String, AttributeValue> retrieveNationalRegistryBatchByBatchId(String batchId) {
 
-        String iun = sharedSteps.getNotificationIun();
-
-        await()
-                .atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-
-                    List<Map<String, AttributeValue>> items = retrieveWorkedRequests(cf, eservice, iun);
-
-                    assertThat(items)
-                            .as("Nessuna request %s completata trovata per cf=%s", eservice, cf)
-                            .isNotEmpty();
-
-                    assertThat(items)
-                            .allSatisfy(item -> {
-
-                                assertThat(item.get("status").s()).isEqualTo("WORKED");
-                                assertThat(item.containsKey("resultPayload")).isTrue();
-                            });
-                });
+        Map<String, AttributeValue> attributes = Map.of(":v_batchId", AttributeValue.builder().s(batchId).build());
+        QueryResponse response = dynamoDbService.call(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
+        assertThat(response.items()).as("Nessun batch trovato per batchId=%s", batchId).hasSize(1);
+        return response.items().get(0);
     }
 
-    private List<Map<String, AttributeValue>> retrieveWorkedRequests(String cf, Eservice eservice, String iun) {
-        return retrieveNationalRegistryRequests(cf, eservice, iun, RequestStatus.WORKED);
+    @Then("la risposta sul registro {eservice} per il cf {string} non contiene recapiti")
+    public void verifyResponseWithoutAddresses(Eservice eservice, String cf) {
+
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).isEqualTo(cf);
+            assertThat(request.get("registry").s()).isEqualTo(eservice.name());
+            assertThat(request.get("status").s()).isEqualTo("WORKED");
+            assertThat(request.get("resultPayload").s()).isNotBlank();
+            String resultPayload = request.get("resultPayload").s();
+            assertThat(resultPayload).contains("\"digitalAddress\":[]");
+        });
     }
 
-    @Then("la risposta sul registro {eservice} per il cf {string} risulta registrata con esito {string}")
-    public void verifyMissingAddressRecorded(Eservice eservice, String cf, String expectedOutcome) {
+    private Map<String, AttributeValue> retrieveNationalRegistryRequest(Eservice eservice) {
 
-        String iun = sharedSteps.getNotificationIun();
-
-        await()
-                .atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-
-                    List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequests(cf, eservice, iun);
-
-                    assertThat(items)
-                            .as("Nessuna request %s trovata per cf=%s", eservice, cf)
-                            .isNotEmpty();
-
-                    assertThat(items)
-                            .anySatisfy(item -> {
-
-                                assertThat(item.get("status").s())
-                                        .as("La request deve risultare completata")
-                                        .isEqualTo("WORKED");
-
-                                assertThat(item)
-                                        .containsKey("resultPayload");
-
-                                String resultPayload =
-                                        item.get("resultPayload").s();
-
-                                assertThat(resultPayload)
-                                        .as("Esito atteso %s nel payload", expectedOutcome)
-                                        .contains(expectedOutcome);
-                            });
-                });
+        String correlationId = sharedSteps.getCorrelationId();
+        List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequestsByCorrelationId(correlationId);
+        List<Map<String, AttributeValue>> matchingItems = items.stream().filter(item -> item.containsKey("registry"))
+                .filter(item -> eservice.name().equals(item.get("registry").s()))
+                .filter(item -> item.containsKey("registry")).toList();
+        assertThat(matchingItems).as("Attesa una sola request %s per correlationId=%s", eservice, correlationId).hasSize(1);
+        return matchingItems.get(0);
     }
 
-    private List<Map<String, AttributeValue>> retrieveWorkedInadRequests(String cf, String iun) {
+    private List<Map<String, AttributeValue>> retrieveNationalRegistryRequestsByCorrelationId(String correlationId) {
 
-        Map<String, AttributeValue> attributeValues = Map.of(
-                ":v_correlationId",
-                AttributeValue.builder()
-                        .s("NATIONAL_REGISTRY_CALL." + iun)
-                        .build()
-        );
-
-        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS, attributeValues);
-
-        return items.stream()
-                .filter(item -> item.containsKey("taxId"))
-                .filter(item -> cf.equals(item.get("taxId").s()))
-                .filter(item -> item.containsKey("registry"))
-                .filter(item -> "INAD".equals(item.get("registry").s()))
-                .filter(item -> item.containsKey("status"))
-                .filter(item -> "WORKED".equals(item.get("status").s()))
-                .toList();
-    }
-
-    @Then("la richiesta verso il servizio {eservice} per il cf {string} viene tracciata correttamente")
-    public void verifyNationalRegistryRequestExists(Eservice eservice, String cf) {
-
-        String iun = sharedSteps.getNotificationIun();
-
-        await()
-                .atMost(Duration.ofSeconds(30))
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-
-                    List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequests(cf, eservice, iun);
-
-                    assertThat(items)
-                            .as("Nessuna request %s trovata per cf=%s e iun=%s", eservice, cf, iun)
-                            .isNotEmpty();
-                });
-    }
-
-
-    @Then("il ritentativo della chiamata verso {eservice} per il cf {string} risulta correttamente registrato")
-    public void verifyBatchInRetry(Eservice eservice, String cf) {
-
-        String iun = sharedSteps.getNotificationIun();
-
-        await()
-                .atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-
-                    Map<String, AttributeValue> batch = retrieveBatchInRetry(cf, eservice, iun);
-
-                    assertThat(batch)
-                            .as("Nessun batch %s in retry trovato per cf=%s", eservice, cf)
-                            .isNotNull();
-                });
-    }
-
-    private Map<String, AttributeValue> retrieveBatchInRetry(String cf, Eservice eservice, String iun) {
-
-        List<Map<String, AttributeValue>> requests = retrieveNationalRegistryRequests(cf, eservice, iun);
-
-        assertThat(requests).isNotEmpty();
-
-        String batchId = requests.get(0).get("batchId").s();
-
-        Map<String, AttributeValue> attributes = Map.of(
-                ":v_batchId",
-                AttributeValue.builder()
-                        .s(batchId)
-                        .build()
-        );
-        List<Map<String, AttributeValue>> batches = dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
-
-        return batches.stream()
-                .filter(item -> getNumber(item, "errorRetryCount") > 0 || getNumber(item, "inProgressRetryCount") > 0)
-                .findFirst()
-                .orElse(null);
-    }
-
-    private static int getNumber(Map<String, AttributeValue> item, String field) {
-
-        AttributeValue value = item.get(field);
-
-        if (value == null || value.n() == null) {
-            return 0;
-        }
-        return Integer.parseInt(value.n());
-    }
-
-    private List<Map<String, AttributeValue>> retrieveNationalRegistryRequests(
-            String cf,
-            Eservice eservice,
-            String iun,
-            RequestStatus status) {
-
-        Map<String, AttributeValue> attributeValues = Map.of(
-                ":v_registryStatus",
-                AttributeValue.builder()
-                        .s(eservice.name() + "~" + status.name())
-                        .build(),
-                ":v_attemptAfter",
-                AttributeValue.builder()
-                        .s(MIN_ATTEMPT_AFTER)
-                        .build()
-        );
-
-        List<Map<String, AttributeValue>> items =
-                dynamoDbService.callAllPages(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS, attributeValues);
-
-        return items.stream()
-                .filter(item -> cf.equals(item.get("taxId").s()))
-                .filter(item -> item.get("correlationId").s().contains(iun))
-                .toList();
-    }
-
-    private List<Map<String, AttributeValue>> retrieveNationalRegistryRequests(
-            String cf,
-            Eservice eservice,
-            String iun) {
-
-        return Stream.of(RequestStatus.values())
-                .flatMap(status -> retrieveNationalRegistryRequests(cf, eservice, iun, status)
-                        .stream())
-                .toList();
+        Map<String, AttributeValue> attributes = Map.of(":v_correlationId", AttributeValue.builder().s(correlationId).build());
+        QueryResponse response = dynamoDbService.call(DynamoTableName.NATIONAL_REGISTRIES_REQUESTS, attributes);
+        return response.items();
     }
 
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in errore")
     public void verifyRequestInError(Eservice eservice, String cf) {
 
-        String iun = sharedSteps.getNotificationIun();
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
+            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+            assertThat(request.get("status").s()).as("La request deve risultare in errore").isEqualTo(RequestStatus.ERROR.name());
+        });
+    }
 
-        await()
-                .atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
+    @Then("il batch associato alla richiesta verso {eservice} per il cf {string} risulta in errore")
+    public void verifyBatchInError(Eservice eservice, String cf) {
 
-                    List<Map<String, AttributeValue>> items =
-                            retrieveNationalRegistryRequests(cf, eservice, iun, RequestStatus.ERROR);
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
+            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+            assertThat(request).containsKey("batchId");
+            String batchId = request.get("batchId").s();
+            assertThat(batchId).isNotBlank();
+            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
+            assertThat(batch.get("status").s()).as("Il batch deve risultare in errore").isEqualTo("ERROR");
+        });
+    }
 
-                    assertThat(items)
-                            .as("Nessuna request %s in errore trovata per cf=%s", eservice, cf)
-                            .isNotEmpty();
-                });
+    @Then("il ritentativo della chiamata verso {eservice} per il cf {string} risulta correttamente registrato")
+    public void verifyBatchInRetry(Eservice eservice, String cf) {
+
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
+            String batchId = request.get("batchId").s();
+            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
+            assertThat(batch.get("status").s()).as("Il batch deve risultare nuovamente pianificato").isEqualTo("REQUEST_SENT");
+            assertThat(batch.get("registry").s()).isEqualTo(eservice.name());
+            int errorRetryCount = getNumber(batch, "errorRetryCount");
+            int inProgressRetryCount = getNumber(batch, "inProgressRetryCount");
+            assertThat(errorRetryCount > 0 || inProgressRetryCount > 0).as("Atteso almeno un retry registrato sul batch").isTrue();
+        });
+    }
+
+    private static int getNumber(Map<String, AttributeValue> item, String field) {
+        AttributeValue value = item.get(field);
+        if (value == null) {
+            return 0;
+        }
+        String number = value.n();
+        if (number == null || number.isBlank()) {
+            return 0;
+        }
+        return Integer.parseInt(number);
+    }
+
+    @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in stato {requestStatus}")
+    public void verifyRequestStatus(Eservice eservice, String cf, RequestStatus expectedStatus) {
+
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
+            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+            assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(expectedStatus.name());
+        });
+    }
+
+    @Then("il batch associato alla richiesta verso {eservice} per il cf {string} risulta in stato {requestStatus}")
+    public void verifyBatchStatus(Eservice eservice, String cf, RequestStatus expectedStatus) {
+
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+            assertThat(request.get("taxId").s()).isEqualTo(cf);
+            String batchId = request.get("batchId").s();
+            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
+            assertThat(batch.get("registry").s()).isEqualTo(eservice.name());
+            assertThat(batch.get("status").s()).isEqualTo(expectedStatus.name());
+        });
     }
 
 
+    //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     @Then("la richiesta INIPEC per il cf {string} risulta INVIATA al primo tentativo")
     public void requestSentWithoutRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come SENT con retry = 0, oppure scade il timeout.
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT);
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT);
 
-                    assertThat(items)
-                            .as("Nessuna richiesta SENT trovata per cf=%s nella finestra temporale", cf)
-                            .isNotEmpty();
+            assertThat(items).as("Nessuna richiesta SENT trovata per cf=%s nella finestra temporale", cf).isNotEmpty();
 
-                    assertThat(items).allSatisfy(item ->
-                            assertThat(retryOf(item))
-                                    .as("cf=%s: atteso retry=0 (inviata al primo tentativo)", cf)
-                                    .isZero());
-                });
+            assertThat(items).allSatisfy(item -> assertThat(retryOf(item)).as("cf=%s: atteso retry=0 (inviata al primo tentativo)", cf).isZero());
+        });
     }
 
     @Then("la richiesta INIPEC per il cf {string} risulta RIMESSA in retry")
     public void requestRequeuedForRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come NOT_SENT con retry > 0, oppure scade il timeout.
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT);
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
+            List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT);
 
-                    assertThat(items)
-                            .as("Nessuna richiesta NOT_SENT trovata per cf=%s nella finestra temporale", cf)
-                            .isNotEmpty();
+            assertThat(items).as("Nessuna richiesta NOT_SENT trovata per cf=%s nella finestra temporale", cf).isNotEmpty();
 
-                    assertThat(items).allSatisfy(item ->
-                            assertThat(retryOf(item))
-                                    .as("cf=%s: atteso retry>0 (richiesta rimessa in coda)", cf)
-                                    .isNotZero());
-                });
+            assertThat(items).allSatisfy(item -> assertThat(retryOf(item)).as("cf=%s: atteso retry>0 (richiesta rimessa in coda)", cf).isNotZero());
+        });
     }
 
     @Then("per i cf {string} e {string} non risulta alcuna richiesta INIPEC")
@@ -337,18 +234,11 @@ public class INIPECGestionePuntualeEsitiSteps {
         // È un'asserzione di "assenza": richiediamo che la condizione resti stabile per una finestra
         // (during) entro il timeout, così da non passare per un controllo troppo anticipato
         // (cioè prima che l'eventuale scrittura su DB avvenga).
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .during(DB_ABSENCE_STABILITY)
-                .untilAsserted(() -> {
-                    assertThat(countAnySendStatus(cf1))
-                            .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf1)
-                            .isZero();
+        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).during(DB_ABSENCE_STABILITY).untilAsserted(() -> {
+            assertThat(countAnySendStatus(cf1)).as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf1).isZero();
 
-                    assertThat(countAnySendStatus(cf2))
-                            .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf2)
-                            .isZero();
-                });
+            assertThat(countAnySendStatus(cf2)).as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf2).isZero();
+        });
     }
 
     @And("salvo il timestamp corrente")
@@ -364,8 +254,7 @@ public class INIPECGestionePuntualeEsitiSteps {
      * Numero totale di richieste per il CF, sia SENT sia NOT_SENT, nella finestra temporale.
      */
     private int countAnySendStatus(String cf) {
-        return retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT).size()
-                + retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT).size();
+        return retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT).size() + retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT).size();
     }
 
     /**
@@ -379,21 +268,12 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         // Parametri della query sull'indice sendStatus-lastReserved-index:
         // sendStatus = :v_sendStatus AND lastReserved > :v_lastReserved
-        Map<String, AttributeValue> attributeValues = Map.of(
-                ":v_sendStatus", AttributeValue.builder().s(sendStatus.name()).build(),
-                ":v_lastReserved", AttributeValue.builder().s(notificationSentTimestamp).build()
-        );
+        Map<String, AttributeValue> attributeValues = Map.of(":v_sendStatus", AttributeValue.builder().s(sendStatus.name()).build(), ":v_lastReserved", AttributeValue.builder().s(notificationSentTimestamp).build());
 
-        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(
-                DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS,
-                attributeValues
-        );
+        List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS, attributeValues);
 
         // La query indicizza su sendStatus/lastReserved: filtriamo qui per CF.
-        return items.stream()
-                .filter(item -> item.containsKey("cf")
-                        && cf.equals(item.get("cf").s()))
-                .toList();
+        return items.stream().filter(item -> item.containsKey("cf") && cf.equals(item.get("cf").s())).toList();
     }
 
     @Then("risulta una richiesta {eservice} per il cf {string}")
@@ -410,17 +290,10 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     private List<Map<String, AttributeValue>> retrieveRegistryRequests(String cf, Eservice eservice, String iun) {
 
-        Map<String, AttributeValue> attributeValues = Map.of(
-                ":v_sendStatus", AttributeValue.builder().s(SendStatus.SENT.name()).build(),
-                ":v_lastReserved", AttributeValue.builder().s(MIN_LAST_RESERVED).build()
-        );
+        Map<String, AttributeValue> attributeValues = Map.of(":v_sendStatus", AttributeValue.builder().s(SendStatus.SENT.name()).build(), ":v_lastReserved", AttributeValue.builder().s(MIN_LAST_RESERVED).build());
         List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS, attributeValues);
 
-        return items.stream()
-                .filter(item -> cf.equals(item.get("cf").s()))
-                .filter(item -> eservice.name().equals(item.get("eservice").s()))
-                .filter(item -> item.get("correlationId").s().contains(iun))
-                .toList();
+        return items.stream().filter(item -> cf.equals(item.get("cf").s())).filter(item -> eservice.name().equals(item.get("eservice").s())).filter(item -> item.get("correlationId").s().contains(iun)).toList();
     }
 }
 

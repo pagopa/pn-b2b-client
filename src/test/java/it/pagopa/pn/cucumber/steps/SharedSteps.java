@@ -268,6 +268,10 @@ public class SharedSteps {
     @Setter
     private String informalSenderId;
 
+    @Getter
+    @Setter
+    private String correlationId;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
