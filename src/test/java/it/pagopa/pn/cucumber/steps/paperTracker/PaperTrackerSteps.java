@@ -75,7 +75,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PaperTrackerSteps {
     private static final String TRACKINGS_ELEMENT_NOT_FOUND = "La risposta di /trackings non contiene tutti gli elementi presenti in timeline!";
     private static final String RECAG012 = "RECAG012";
-    private static final String OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND ="La risposta di /outputs non contiene tutti gli elementi previsti che sono presenti in timeline!";
+    private static final String OUTPUTS_RESPONSE_ELEMENT_NOT_FOUND = "La risposta di /outputs non contiene tutti gli elementi previsti che sono presenti in timeline!";
     private static final Map<String, AdditionalDetailsValidator> VALIDATORS = Map.of(
             "ocrDataResultPayload", new OcrDataResultPayloadValidator(),
             "affectedEvents", new AffectedEventsValidator(),
@@ -793,7 +793,7 @@ public class PaperTrackerSteps {
      */
     @Then("si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista")
     public void verifyRecag012FeedbackUsesLatestRecag012() {
-        PaperEvent latestRecag012 = awaitLatestRecag012(tracking -> true);
+        PaperEvent latestRecag012 = findLatestRecag012(retrieveInitialTracking());
         Instant expectedDate = toInstant(latestRecag012.getStatusTimestamp());
 
         OffsetDateTime feedbackDate = sharedSteps.getSentNotificationLastVersion().getTimeline().stream()
@@ -818,49 +818,51 @@ public class PaperTrackerSteps {
      */
     @Then("si verifica che la richiesta OCR del documento {string} sia associata all'ultimo RECAG012 inviato dal recapitista")
     public void verifyOcrRequestUsesLatestRecag012(String documentType) {
-        Predicate<Tracking> hasOcrRequest = tracking -> findOcrRequest(tracking, documentType).isPresent();
-        PaperEvent latestRecag012 = awaitLatestRecag012(hasOcrRequest);
+        Tracking tracking = retrieveInitialTracking();
+        PaperEvent latestRecag012 = findLatestRecag012(tracking);
 
-        OcrRequest ocrRequest = findOcrRequest(initialTracking(), documentType).orElseThrow();
+        OcrRequest ocrRequest = findOcrRequest(tracking, documentType)
+                .orElseThrow(() -> new AssertionError("Richiesta OCR del documento " + documentType
+                        + " non trovata sul tracking " + tracking.getTrackingId()));
         assertThat(ocrRequest.getFinalEventId())
                 .as("La richiesta OCR del documento %s deve essere associata all'ultimo RECAG012 ricevuto", documentType)
                 .isEqualTo(latestRecag012.getId());
     }
 
     /**
-     * Attende che il tracking del primo tentativo contenga almeno due RECAG012 con statusTimestamp diversi e soddisfi la
-     * condizione indicata, poi restituisce il RECAG012 con requestTimestamp più recente.
+     * Legge una sola volta {@code /trackings} e restituisce il tracking del primo tentativo.
+     *
+     * <p>Non serve polling: gli step precedenti attendono in timeline il SEND_ANALOG_FEEDBACK RECAG012, che
+     * pn-paper-tracker invia alla validazione sull'evento finale della sequence, quando tutti i RECAG012 (e l'eventuale
+     * richiesta OCR) sono già registrati sul tracking.</p>
      */
-    private PaperEvent awaitLatestRecag012(Predicate<Tracking> condition) {
+    private Tracking retrieveInitialTracking() {
         ensureTrackingKeys();
-        TrackingsRequest request = new TrackingsRequest().trackingIds(trackingKeys);
-        AtomicReference<PaperEvent> latest = new AtomicReference<>();
+        responseTracking = paperTrackerClient.retrieveTrackerEvents(new TrackingsRequest().trackingIds(trackingKeys));
+        return initialTracking();
+    }
 
-        await().atMost(Duration.ofMinutes(5))
-                .pollInterval(Duration.ofSeconds(15))
-                .untilAsserted(() -> {
-                    responseTracking = paperTrackerClient.retrieveTrackerEvents(request);
-                    Tracking tracking = initialTracking();
-                    List<PaperEvent> recag012Events = Optional.ofNullable(tracking.getEvents()).orElse(List.of()).stream()
-                            .filter(e -> RECAG012.equals(e.getStatusCode()))
-                            .toList();
+    /**
+     * Restituisce, tra i RECAG012 del tracking, quello con requestTimestamp più recente, dopo aver verificato che ce ne
+     * siano almeno due con statusTimestamp diversi.
+     */
+    private PaperEvent findLatestRecag012(Tracking tracking) {
+        List<PaperEvent> recag012Events = Optional.ofNullable(tracking.getEvents()).orElse(List.of()).stream()
+                .filter(e -> RECAG012.equals(e.getStatusCode()))
+                .toList();
 
-                    assertThat(recag012Events).as("Il tracking %s deve contenere almeno due RECAG012", tracking.getTrackingId())
-                            .hasSizeGreaterThanOrEqualTo(2);
-                    assertThat(recag012Events.stream().map(e -> toInstant(e.getStatusTimestamp())).distinct().count())
-                            .as("I RECAG012 devono avere statusTimestamp diversi, altrimenti il test non distingue il primo dall'ultimo")
-                            .isGreaterThan(1);
-                    assertThat(condition.test(tracking)).as("Condizione sul tracking %s non ancora soddisfatta", tracking.getTrackingId())
-                            .isTrue();
+        assertThat(recag012Events).as("Il tracking %s deve contenere almeno due RECAG012", tracking.getTrackingId())
+                .hasSizeGreaterThanOrEqualTo(2);
+        assertThat(recag012Events.stream().map(e -> toInstant(e.getStatusTimestamp())).distinct().count())
+                .as("I RECAG012 devono avere statusTimestamp diversi, altrimenti il test non distingue il primo dall'ultimo")
+                .isGreaterThan(1);
 
-                    latest.set(recag012Events.stream()
-                            .max(Comparator.comparing(e -> toInstant(e.getRequestTimestamp())))
-                            .orElseThrow());
-                });
-
+        PaperEvent latest = recag012Events.stream()
+                .max(Comparator.comparing(e -> toInstant(e.getRequestTimestamp())))
+                .orElseThrow();
         log.info("Ultimo RECAG012 ricevuto: id {}, statusTimestamp {}, requestTimestamp {}",
-                latest.get().getId(), latest.get().getStatusTimestamp(), latest.get().getRequestTimestamp());
-        return latest.get();
+                latest.getId(), latest.getStatusTimestamp(), latest.getRequestTimestamp());
+        return latest;
     }
 
     private Tracking initialTracking() {
