@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.NoticePaymentRequest;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.NoticePaymentResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.KafkaProducerResponse;
 import org.springframework.web.client.RestClientException;
 
 /**
@@ -11,8 +11,8 @@ import org.springframework.web.client.RestClientException;
 public interface IPnNodoPagoPaMockClient {
 
     /**
-     * Pubblica un evento di pagamento tramite POST /external-channels/nodo-pagopa/v1/payment. I campi non valorizzati
+     * Pubblica un evento di pagamento tramite POST /external-channels/v1/kafka/payment. I campi non valorizzati
      * vengono omessi dalla richiesta: il mock li pubblica assenti (tranne amount, che valorizza a "1000").
      */
-    NoticePaymentResponse publishPaymentEvent(NoticePaymentRequest request) throws RestClientException;
+    KafkaProducerResponse publishPaymentEvent(NoticePaymentRequest request) throws RestClientException;
 }

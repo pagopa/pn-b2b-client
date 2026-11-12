@@ -61,8 +61,8 @@
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
         <open.api.version.radd.alt>v2.15.0-RC.3</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
-        <!-- TODO PN-20853: api-mock-nodo-pagopa-v1.yaml è solo su feature/kafka-tests; dopo il merge usare ${open.api.version.external.channels} -->
-        <open.api.version.external.channels.nodo.pagopa>361a590edc9b9ba71d14ec758b1e46962fca02e9</open.api.version.external.channels.nodo.pagopa>
+        <!-- TODO PN-20853: api-mock-kafka-v1.yaml è solo su feature/kafka-tests; dopo il merge usare ${open.api.version.external.channels} -->
+        <open.api.version.external.channels.nodo.pagopa>7506b3cd0bc82cfb6954188be218c97beb5b07ad</open.api.version.external.channels.nodo.pagopa>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
         <open.api.version.external.bff>v1.19.0</open.api.version.external.bff>
@@ -3078,7 +3078,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-channels/${open.api.version.external.channels.nodo.pagopa}/docs/openapi/api-mock-nodo-pagopa-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-channels/${open.api.version.external.channels.nodo.pagopa}/docs/openapi/api-mock-kafka-v1.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
