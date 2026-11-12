@@ -1,8 +1,10 @@
 package it.pagopa.pn.cucumber.steps.utilitySteps;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.pn.cucumber.steps.pa.domain.DocumentTransformation;
 
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 
@@ -115,5 +117,10 @@ public class ParameterTypes {
     @ParameterType("baseCost|firstAnalogCost|secondAnalogCost|simpleRegisteredLetterCost")
     public static String deliveryNotificationCost(String value) {
         return value;
+    }
+
+    @ParameterType("rasterizzazione|normalizzazione")
+    public static DocumentTransformation documentTransformation(String value) {
+        return DocumentTransformation.valueOf(value.toUpperCase(Locale.ROOT));
     }
 }

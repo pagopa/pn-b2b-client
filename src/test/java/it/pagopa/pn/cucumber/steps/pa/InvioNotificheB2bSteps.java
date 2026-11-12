@@ -45,9 +45,11 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.AdditionalFileTagsUpdateRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.domain.DocumentTransformation;
+import it.pagopa.pn.cucumber.steps.pa.service.DocumentTagsService;
+import it.pagopa.pn.cucumber.steps.pa.service.TransformedDocumentService;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -107,9 +109,6 @@ public class InvioNotificheB2bSteps {
     // Tag di prova, lo stesso usato in IndicizzazioneFile.feature
     private static final String TEST_TAG = "global_singlevalue";
     private static final String TEST_TAG_VALUE = "test1";
-    private static final Map<String, String> TRANSFORMED_DOCUMENT_PREFIXES = Map.of(
-            "rasterizzazione", "PN_PAPER_ATTACHMENT-",
-            "normalizzazione", "PN_CLEAN_PAPER_ATTACHMENT-");
 
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
@@ -127,6 +126,8 @@ public class InvioNotificheB2bSteps {
     @Getter
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl;
+    private final TransformedDocumentService transformedDocumentService;
+    private final DocumentTagsService documentTagsService;
 
     private BffPaymentResponse paymentResponse;
     @Getter
@@ -152,7 +153,9 @@ public class InvioNotificheB2bSteps {
                                   IPnSafeStoragePrivateClient safeStoragePrivateClient,
                                   SharedSteps sharedSteps,
                                   PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
-                                  JavaMailSender emailSender) {
+                                  JavaMailSender emailSender,
+                                  TransformedDocumentService transformedDocumentService,
+                                  DocumentTagsService documentTagsService) {
         this.safeStorageClient = safeStorageClient;
         this.safeStoragePrivateClient = safeStoragePrivateClient;
         this.sharedSteps = sharedSteps;
@@ -163,6 +166,8 @@ public class InvioNotificheB2bSteps {
         this.pnExternalChannelsServiceClientImpl = pnExternalChannelsServiceClientImpl;
 
         this.emailSender = emailSender;
+        this.transformedDocumentService = transformedDocumentService;
+        this.documentTagsService = documentTagsService;
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
@@ -1357,22 +1362,10 @@ public class InvioNotificheB2bSteps {
         log.info(firstDocumentReceived.toString());
     }
 
-    @And("il recapitista ha ricevuto per il destinatario {int} il documento della notifica trasformato tramite {string}")
-    public void checkTransformedDocumentReceived(Integer destinatario, String trasformazione) {
+    @And("il recapitista ha ricevuto per il destinatario {int} il documento della notifica trasformato tramite {documentTransformation}")
+    public void checkTransformedDocumentReceived(Integer destinatario, DocumentTransformation trasformazione) {
         try {
-            String transformedPrefix = TRANSFORMED_DOCUMENT_PREFIXES.get(trasformazione);
-            Assertions.assertNotNull(transformedPrefix, "Trasformazione non gestita: " + trasformazione);
-            List<ReceivedMessage> messages = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getNotificationIun(), destinatario);
-            List<String> transformedKeys = Optional.ofNullable(messages).orElse(List.of()).stream()
-                    .map(ReceivedMessage::getPaperEngageRequest)
-                    .filter(Objects::nonNull)
-                    .map(PaperEngageRequest::getAttachments)
-                    .filter(Objects::nonNull)
-                    .flatMap(List::stream)
-                    .map(attachment -> toSafeStorageFileKey(attachment.getUri()))
-                    .filter(fileKey -> fileKey != null && fileKey.startsWith(transformedPrefix))
-                    .distinct()
-                    .toList();
+            List<String> transformedKeys = transformedDocumentService.getTransformedDocumentKeys(sharedSteps.getNotificationIun(), destinatario, trasformazione);
             // Un solo documento nella notifica, quindi un solo trasformato
             assertThat(transformedKeys)
                     .as("Documenti trasformati tramite %s ricevuti dal recapitista per il destinatario %d", trasformazione, destinatario)
@@ -1407,15 +1400,13 @@ public class InvioNotificheB2bSteps {
     @And("al documento della notifica viene associata un'informazione di prova")
     public void addTestTagToOriginalDocument() {
         String fileKey = getOriginalDocumentKey();
-        AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
-        request.putSETItem(TEST_TAG, List.of(TEST_TAG_VALUE));
         testTagAdded = true;
-        safeStoragePrivateClient.additionalFileTagsUpdate(fileKey, request);
+        documentTagsService.addTagValue(fileKey, TEST_TAG, TEST_TAG_VALUE);
     }
 
     @And("si registrano le informazioni associate al documento della notifica, ancora privo del riferimento al documento trasformato")
     public void registerOriginalDocumentTags() {
-        Map<String, List<String>> tags = getDocumentTags(getOriginalDocumentKey());
+        Map<String, List<String>> tags = documentTagsService.getTags(getOriginalDocumentKey());
         // Collegamento già presente: la trasformazione è avvenuta prima del tag di prova
         Assumptions.assumeFalse(tags.containsKey(TRANSFORMED_DOCUMENT_KEY_TAG),
                 "Esecuzione non valida, da ripetere: il documento della notifica è stato trasformato prima della registrazione delle informazioni - IUN: "
@@ -1434,7 +1425,7 @@ public class InvioNotificheB2bSteps {
     public void checkOriginalDocumentTagsPreserved() {
         try {
             Assertions.assertNotNull(originalDocumentTags, "Le informazioni del documento della notifica non sono state registrate");
-            Map<String, List<String>> tags = getDocumentTags(getOriginalDocumentKey());
+            Map<String, List<String>> tags = documentTagsService.getTags(getOriginalDocumentKey());
             assertSoftly(softly -> originalDocumentTags.forEach((tag, values) ->
                     softly.assertThat(tags.get(tag))
                             .as("Valori del tag %s sul documento della notifica", tag)
@@ -1449,10 +1440,8 @@ public class InvioNotificheB2bSteps {
         if (!testTagAdded) {
             return;
         }
-        AdditionalFileTagsUpdateRequest request = new AdditionalFileTagsUpdateRequest();
-        request.putDELETEItem(TEST_TAG, List.of(TEST_TAG_VALUE));
         try {
-            safeStoragePrivateClient.additionalFileTagsUpdate(originalDocumentKey, request);
+            documentTagsService.removeTagValue(originalDocumentKey, TEST_TAG, TEST_TAG_VALUE);
         } catch (RestClientException e) {
             log.warn("Rimozione dell'informazione di prova dal documento {} non riuscita: {}", originalDocumentKey, e.getMessage());
         }
@@ -1460,23 +1449,19 @@ public class InvioNotificheB2bSteps {
 
     private String getOriginalDocumentKey() {
         if (originalDocumentKey == null) {
-            List<NotificationDocument> documents = sharedSteps.getSentNotificationLastVersion().getDocuments();
-            assertThat(documents)
+            List<String> documentKeys = transformedDocumentService.getDocumentKeys(sharedSteps.getSentNotificationLastVersion().getDocuments());
+            assertThat(documentKeys)
                     .as("Documenti della notifica %s", sharedSteps.getNotificationIun())
                     .hasSize(1);
-            originalDocumentKey = toSafeStorageFileKey(documents.get(0).getRef().getKey());
+            originalDocumentKey = documentKeys.get(0);
         }
         return originalDocumentKey;
-    }
-
-    private Map<String, List<String>> getDocumentTags(String fileKey) {
-        return Optional.ofNullable(safeStoragePrivateClient.additionalFileTagsGet(fileKey).getTags()).orElse(Map.of());
     }
 
     private void checkTagValues(String fileKey, String tag, Consumer<ListAssert<String>> valuesCheck) {
         try {
             Assertions.assertNotNull(transformedDocumentKey, "Documento trasformato non individuato tra quelli ricevuti dal recapitista");
-            valuesCheck.accept(assertThat(getDocumentTags(fileKey).get(tag))
+            valuesCheck.accept(assertThat(documentTagsService.getTags(fileKey).get(tag))
                     .as("Valori del tag %s sul documento %s", tag, fileKey));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);

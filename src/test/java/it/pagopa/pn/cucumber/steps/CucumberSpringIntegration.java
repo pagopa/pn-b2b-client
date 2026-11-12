@@ -201,6 +201,8 @@ import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipie
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.steps.pa.service.DocumentTagsService;
+import it.pagopa.pn.cucumber.steps.pa.service.TransformedDocumentService;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
@@ -445,7 +447,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationInformalUtilsV1.class,
         PnPaB2bExternalInformalClientImpl.class,
         DelayerSkipSenderLimitService.class,
-        IoMockScenarioContext.class
+        IoMockScenarioContext.class,
+        TransformedDocumentService.class,
+        DocumentTagsService.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -24,15 +24,15 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | physicalAddress_province     | RM                     |
       | physicalAddress_zip          | 00010                  |
       | payment                      | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "<trasformazione>"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite <trasformazione>
     Then il documento della notifica riporta il riferimento al documento trasformato
 
     Examples:
-      | trasformazione  | mittente     | indirizzo                |
-      | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
-      | normalizzazione | Comune_Multi | Via@ok_AR                |
+      | trasformazione  | indirizzo                |
+      | rasterizzazione | Via@OK_PCRETRY_CON996_AR |
+      | normalizzazione | Via@ok_AR                |
 
   @e2e @bidirectionalTags @work-item:QA-18590
   Scenario Outline: [SS-BIDIRECTIONAL-TAGS-1.2] Il documento trasformato riporta il riferimento al documento originale
@@ -49,15 +49,15 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | physicalAddress_province     | RM                     |
       | physicalAddress_zip          | 00010                  |
       | payment                      | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "<trasformazione>"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite <trasformazione>
     Then il documento trasformato riporta il riferimento al documento della notifica
 
     Examples:
-      | trasformazione  | mittente     | indirizzo                |
-      | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
-      | normalizzazione | Comune_Multi | Via@ok_AR                |
+      | trasformazione  | indirizzo                |
+      | rasterizzazione | Via@OK_PCRETRY_CON996_AR |
+      | normalizzazione | Via@ok_AR                |
 
   # Il documento viene normalizzato al primo invio e rasterizzato dopo il CON996.
   @e2e @bidirectionalTags @work-item:QA-18590
@@ -77,8 +77,8 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | payment                      | NULL                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "normalizzazione"
-    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "rasterizzazione"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite normalizzazione
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite rasterizzazione
     Then il documento della notifica riporta il riferimento a ogni documento trasformato
 
   # Il tag di prova va associato prima della trasformazione: se all'accettazione il collegamento
@@ -98,15 +98,15 @@ Feature: Collegamento tra documento originale e documento trasformato SafeStorag
       | physicalAddress_province     | RM                     |
       | physicalAddress_zip          | 00010                  |
       | payment                      | NULL                   |
-    When la notifica viene inviata tramite api b2b dal "<mittente>" e si attende che lo stato diventi "ACCEPTED"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And al documento della notifica viene associata un'informazione di prova
     And si registrano le informazioni associate al documento della notifica, ancora privo del riferimento al documento trasformato
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
-    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite "<trasformazione>"
+    And il recapitista ha ricevuto per il destinatario 0 il documento della notifica trasformato tramite <trasformazione>
     Then il documento della notifica conserva le informazioni registrate
     And il documento della notifica riporta il riferimento al documento trasformato
 
     Examples:
-      | trasformazione  | mittente     | indirizzo                |
-      | rasterizzazione | Comune_Multi | Via@OK_PCRETRY_CON996_AR |
-      | normalizzazione | Comune_Multi | Via@ok_AR                |
+      | trasformazione  | indirizzo                |
+      | rasterizzazione | Via@OK_PCRETRY_CON996_AR |
+      | normalizzazione | Via@ok_AR                |
