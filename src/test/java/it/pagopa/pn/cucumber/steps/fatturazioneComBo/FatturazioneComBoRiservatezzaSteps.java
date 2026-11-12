@@ -100,7 +100,8 @@ public class FatturazioneComBoRiservatezzaSteps {
         webhookClient.setApiKeys(apiKeyOf(sender));
         String closureCategory = closureCategory();
         String[] lastEventId = {null};
-        await().pollInterval(POLL_INTERVAL).atMost(STREAM_TIMEOUT).untilAsserted(() -> {
+        // Nel thread dello scenario: il contesto è un bean con scope di scenario, non accessibile dal thread di polling.
+        await().pollInSameThread().pollInterval(POLL_INTERVAL).atMost(STREAM_TIMEOUT).untilAsserted(() -> {
             readNewEvents(lastEventId, context.getExposedStreamEvents());
             assertThat(context.getExposedStreamEvents().stream().map(e -> e.path("informalElement").path("category").asText()))
                     .as("Lo stream %s deve ricevere la chiusura %s della comunicazione %s", context.getStreamId(), closureCategory, context.getIun())
@@ -173,14 +174,18 @@ public class FatturazioneComBoRiservatezzaSteps {
         return REQUEST_REFUSED.equals(closureCategory());
     }
 
-    /** Consuma lo stream fino all'ultimo evento disponibile e tiene quelli della comunicazione dello scenario. */
+    /**
+     * Consuma lo stream fino all'ultimo evento disponibile e tiene quelli della comunicazione dello scenario. L'evento
+     * di rifiuto non riporta lo IUN, solo l'id della richiesta.
+     */
     private void readNewEvents(String[] lastEventId, List<JsonNode> events) throws JsonProcessingException {
         JsonNode page;
         do {
             page = objectMapper.readTree(webhookClient.consumeEventStreamV30AsJson(context.getStreamId(), lastEventId[0]));
             for (JsonNode event : page) {
                 lastEventId[0] = event.path("eventId").asText();
-                if (context.getIun().equals(event.path("iun").asText())) {
+                if (context.getIun().equals(event.path("iun").asText())
+                        || context.getNotificationRequestId().equals(event.path("notificationRequestId").asText())) {
                     events.add(event);
                 }
             }
