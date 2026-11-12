@@ -22,7 +22,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo di 873 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 875 e il peso di 10 nei details dell'elemento di timeline letto
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_2] invio notifica AR coperto da RADD e controllo diminuzione costi filtro base (eseguire controllo manuale costi del F24)
@@ -43,7 +43,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo di 364 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 365 e il peso di 10 nei details dell'elemento di timeline letto
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_3] invio notifica RS coperto da RADD e controllo diminuzione costi filtro base (eseguire controllo manuale costi del F24)
@@ -63,7 +63,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo di 224 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 225 e il peso di 10 nei details dell'elemento di timeline letto
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_5] invio notifica RS coperto da RADD e controllo diminuzione costi filtro con rule typeWithNextResult DOCUMENT e AAR
@@ -83,7 +83,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo di 224 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 225 e il peso di 10 nei details dell'elemento di timeline letto
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_8] invio notifica 890 coperto da RADD con cap con 2 configurazione
@@ -104,7 +104,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo di 873 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 875 e il peso di 10 nei details dell'elemento di timeline letto
 
 
   @raddAttoIntero @uatEnvCondition
@@ -128,9 +128,9 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    And viene verificato il costo di 873 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 875 e il peso di 10 nei details dell'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
-    And viene verificato il costo di 853 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 855 e il peso di 10 nei details dell'elemento di timeline letto
 
 
   @raddAttoIntero @mockEnvCondition
@@ -180,9 +180,9 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    And viene verificato il costo di 364 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 365 e il peso di 10 nei details dell'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
-    And viene verificato il costo di 364 e il peso di 10 nei details dell'elemento di timeline letto
+    And viene verificato il costo di 365 e il peso di 10 nei details dell'elemento di timeline letto
 
 
   @raddAttoIntero @mockEnvCondition
