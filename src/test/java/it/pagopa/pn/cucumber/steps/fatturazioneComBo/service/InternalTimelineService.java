@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
 
 import static org.awaitility.Awaitility.await;
 
@@ -43,28 +42,9 @@ public class InternalTimelineService {
     }
 
     /**
-     * Eventi di chiusura del percorso, in ordine cronologico.
-     *
-     * @param recIndex destinatario; null per considerare tutti i destinatari
-     */
-    public List<InternalTimelineElement> closures(String iun, CommunicationDomain domain, Integer recIndex) {
-        return timeline(iun).stream()
-                .filter(domain::isClosure)
-                .filter(element -> recIndex == null || recIndex.equals(element.recIndex()))
-                .toList();
-    }
-
-    /**
-     * Prima chiusura del percorso del destinatario: è quella che rende fatturabile la comunicazione.
+     * Attende la prima chiusura del percorso del destinatario: è quella che rende fatturabile la comunicazione.
      * Il rifiuto, riferito all'intera comunicazione, vale per ogni destinatario.
      */
-    public Optional<InternalTimelineElement> firstClosure(String iun, CommunicationDomain domain, int recIndex) {
-        return timeline(iun).stream()
-                .filter(domain::isClosure)
-                .filter(element -> element.recIndex() == null || element.recIndex() == recIndex)
-                .findFirst();
-    }
-
     public InternalTimelineElement awaitFirstClosure(String iun, CommunicationDomain domain, int recIndex, Duration timeout) {
         return awaitElement(iun, timeout,
                 "la chiusura del percorso del destinatario " + recIndex,
@@ -90,10 +70,6 @@ public class InternalTimelineService {
     public InternalTimelineElement awaitCategory(String iun, String category, Duration timeout) {
         return awaitElement(iun, timeout, "l'elemento " + category,
                 timeline -> timeline.stream().filter(element -> category.equals(element.category())).findFirst());
-    }
-
-    public void awaitTimeline(String iun, Predicate<List<InternalTimelineElement>> condition, String description, Duration timeout) {
-        awaitElement(iun, timeout, description, timeline -> condition.test(timeline) ? timeline.stream().findFirst() : Optional.empty());
     }
 
     private InternalTimelineElement awaitElement(String iun, Duration timeout, String description,

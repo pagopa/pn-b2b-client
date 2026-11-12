@@ -10,10 +10,10 @@ import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoSc
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InternalTimelineElement;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
-import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.PresaInCaricoNoticaBonariaSteps;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
@@ -47,16 +47,12 @@ public class FatturazioneComBoSetupSteps {
     private static final String CAMPAIGN_DIGITAL = "FattOrd";
     /** Prevede la raccomandata semplice dopo i canali digitali. */
     private static final String CAMPAIGN_ANALOG = "MessaMora";
-    /** EMAIL con attesa di 4 minuti, poi PEC e SMS, nessun feedback desiderato: il percorso resta aperto a lungo. */
-    private static final String CAMPAIGN_MULTI_ATTEMPT = "BonarieAllChannels";
 
     // Recapiti con esito noto dei mock di external-channels e del simulatore SES
     private static final String EMAIL_DELIVERED = "tullio.test@virgilio.it";
     private static final String EMAIL_BOUNCED = "bounce@simulator.amazonses.com";
     private static final String EMAIL_SUPPRESSED = "suppressionlist@simulator.amazonses.com";
-    private static final String PEC_DELIVERED = "example@OK-pecSuccess.it";
     private static final String INFORMAL_PAPER_DELIVERED = "Via@OK_RS";
-    private static final String LEGAL_PAPER_DELIVERED = "Via@ok_AR";
 
     // Valori speciali interpretati dai builder delle richieste
     private static final String NULL = "NULL";
@@ -73,25 +69,35 @@ public class FatturazioneComBoSetupSteps {
      * dell'indirizzo sui registri restituisce un errore. NOT_VALID_ADDRESS e ADDRESS_NOT_FOUND sono rifiuti ordinari.
      */
     private static final String ADDRESS_SEARCH_FAILED = "ADDRESS_SEARCH_FAILED";
-    /**
-     * Destinatario del mock dei registri la cui ricerca dell'indirizzo risponde con errore 500, come nella suite
-     * RicercaIndirizzoSpezioneVas (RICERCA_INDIRIZZO_MULTI_COSTI_3).
-     */
-    private static final Destinatario ADDRESS_SEARCH_ERROR = new Destinatario("PF Errore 500", "SRFBRD80A01E256Z", null, "PF", "PEC");
-    private static final String SEND_DIGITAL_MESSAGE = "SEND_DIGITAL_MESSAGE";
 
     private static final Duration INFORMAL_CLOSURE_TIMEOUT = Duration.ofMinutes(20);
     private static final Duration LEGAL_CLOSURE_TIMEOUT = Duration.ofMinutes(30);
     private static final Duration REFUSAL_TIMEOUT = Duration.ofMinutes(5);
-    private static final Duration FIRST_ATTEMPT_TIMEOUT = Duration.ofMinutes(5);
 
     private final FatturazioneComBoScenarioContext context;
     private final SharedSteps sharedSteps;
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;
     private final PresaInCaricoNoticaBonariaSteps informalNotificationSteps;
-    private final AvanzamentoNotificheB2bSteps legalNotificationSteps;
     private final InternalTimelineService timelineService;
+
+    /*
+     * Destinatario la cui ricerca dell'indirizzo sui registri va in errore (rifiuto tecnico). Il default è il destinatario
+     * del mock dei registri per cui ANPR risponde con errore 500, come nella suite RicercaIndirizzoSpezioneVas
+     * (RICERCA_INDIRIZZO_MULTI_COSTI_3): vale dove SEND usa il mock dei registri. Altri destinatari del mock che vanno
+     * in errore 500 (pagina "Mock - National Registries"): PF RCCRCC80A01H501B, CIACIA80A01H501X; PG 01634580029
+     * (Registro Imprese). Si cambiano con -D o con le variabili d'ambiente PN_COMBO_INVOICING_ADDRESS_SEARCH_ERROR_*.
+     * Per una PG senza PEC serve una campagna il cui flusso non preveda la PEC per le PG, altrimenti la richiesta è
+     * rifiutata con DIGITAL_ADDRESS_MISSING prima della ricerca dell'indirizzo.
+     */
+    @Value("${pn.combo-invoicing.address-search-error.denomination:PF Errore 500}")
+    private String addressSearchErrorDenomination;
+    @Value("${pn.combo-invoicing.address-search-error.tax-id:SRFBRD80A01E256Z}")
+    private String addressSearchErrorTaxId;
+    @Value("${pn.combo-invoicing.address-search-error.recipient-type:PF}")
+    private String addressSearchErrorRecipientType;
+    @Value("${pn.combo-invoicing.address-search-error.campaign-id:" + CAMPAIGN_ANALOG + "}")
+    private String addressSearchErrorCampaignId;
 
     // =========================================================================
     // COMUNICAZIONI BONARIE ACCETTATE
@@ -121,21 +127,10 @@ public class FatturazioneComBoSetupSteps {
                 Map.of("email", EMAIL_SUPPRESSED, "physical_address_address", INFORMAL_PAPER_DELIVERED)));
     }
 
-    @Given("il {string} ha inviato una comunicazione bonaria il cui percorso prevede più tentativi di recapito")
-    public void informalWithSeveralAttempts(String paName) throws IOException {
-        sendInformal(paName, ACCEPTED, informalRecipient(CAMPAIGN_MULTI_ATTEMPT, destinatarioRegistry.DESTINATARIO_ETTORE_FIERAMOSCA,
-                Map.of("email", EMAIL_DELIVERED, "digitalDomicile", PEC_DELIVERED)));
-    }
-
     @When("il percorso della comunicazione bonaria si conclude")
     @Given("il percorso della comunicazione bonaria si è concluso")
     public void informalPathCompleted() {
         awaitFirstClosures(INFORMAL_CLOSURE_TIMEOUT);
-    }
-
-    @When("il destinatario riceve la comunicazione bonaria sul primo canale previsto dalla campagna")
-    public void informalFirstAttempt() {
-        timelineService.awaitCategory(context.getIun(), SEND_DIGITAL_MESSAGE, FIRST_ATTEMPT_TIMEOUT);
     }
 
     /**
@@ -173,7 +168,7 @@ public class FatturazioneComBoSetupSteps {
      */
     @When("il {string} invia una comunicazione bonaria senza indirizzo fisico a un destinatario per cui la ricerca dell'indirizzo da parte di SEND non va a buon fine")
     public void informalWithAddressSearchFailed(String paName) throws IOException {
-        sendInformal(paName, REFUSED, informalRecipient(CAMPAIGN_ANALOG, ADDRESS_SEARCH_ERROR,
+        sendInformal(paName, REFUSED, informalRecipient(addressSearchErrorCampaignId, addressSearchErrorRecipient(),
                 Map.of("physical_address", NO_PHYSICAL_ADDRESS)));
         informalNotificationSteps.verifyNotificationStatusError(ADDRESS_SEARCH_FAILED);
         awaitTechnicalRefusal();
@@ -188,29 +183,6 @@ public class FatturazioneComBoSetupSteps {
         prepareLegal(Map.of(), destinatarioRegistry.DESTINATARIO_MARIO_GHERKIN, Map.of());
         sharedSteps.sendNotification(paName, ACCEPTED);
         rememberLegal();
-    }
-
-    @Given("il {string} ha inviato una notifica legale a un destinatario raggiungibile solo con raccomandata")
-    public void legalReachableByPaper(String paName) {
-        prepareLegal(Map.of("physicalCommunication", "AR_REGISTERED_LETTER"), destinatarioRegistry.DESTINATARIO_CUCUMBER_ANALOGIC,
-                Map.of("digitalDomicile", NULL, "physicalAddress_address", LEGAL_PAPER_DELIVERED));
-        sharedSteps.sendNotification(paName, ACCEPTED);
-        rememberLegal();
-    }
-
-    @When("il destinatario visualizza la notifica legale")
-    public void legalViewed() {
-        legalNotificationSteps.userReadReceivedNotification(destinatarioRegistry.DESTINATARIO_MARIO_GHERKIN.getDenomination());
-        awaitFirstClosures(LEGAL_CLOSURE_TIMEOUT);
-    }
-
-    /**
-     * Il destinatario non ha domicilio digitale: SEND invia la raccomandata, che il mock consegna, e la notifica
-     * si perfeziona per decorrenza termini.
-     */
-    @When("la notifica legale si perfeziona per decorrenza termini dopo l'invio cartaceo")
-    public void legalRefined() {
-        awaitFirstClosures(LEGAL_CLOSURE_TIMEOUT);
     }
 
     @When("il {string} annulla la notifica legale")
@@ -236,7 +208,7 @@ public class FatturazioneComBoSetupSteps {
      */
     @When("il {string} invia una notifica legale senza indirizzo fisico a un destinatario per cui la ricerca dell'indirizzo da parte di SEND non va a buon fine")
     public void legalWithAddressSearchFailed(String paName) throws IOException {
-        prepareLegal(Map.of(), ADDRESS_SEARCH_ERROR, Map.of("digitalDomicile", NULL, "physicalAddress", NULL));
+        prepareLegal(Map.of(), addressSearchErrorRecipient(), Map.of("digitalDomicile", NULL, "physicalAddress", NULL));
         // Il polling sullo stato REFUSED degli step legali restituisce il controllo dopo molti minuti: il rifiuto
         // si attende direttamente sulla timeline interna, dove compare in circa un minuto.
         sharedSteps.sendNotificationWithoutWaitingForAccepted(paName);
@@ -247,6 +219,10 @@ public class FatturazioneComBoSetupSteps {
     // =========================================================================
     // SUPPORTO
     // =========================================================================
+
+    private Destinatario addressSearchErrorRecipient() {
+        return new Destinatario(addressSearchErrorDenomination, addressSearchErrorTaxId, null, addressSearchErrorRecipientType, "PEC");
+    }
 
     private Map<String, String> informalRecipient(String campaignId, Destinatario recipient, Map<String, String> overrides) {
         Map<String, String> data = new HashMap<>();

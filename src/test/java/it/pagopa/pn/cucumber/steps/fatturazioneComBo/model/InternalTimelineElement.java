@@ -44,10 +44,6 @@ public record InternalTimelineElement(String timelineElementId,
                 refusalCodes(details));
     }
 
-    public boolean hasCost() {
-        return notificationCost != null;
-    }
-
     private static Integer recIndexFromId(String timelineElementId) {
         Matcher matcher = REC_INDEX_IN_ID.matcher(timelineElementId);
         return matcher.find() ? Integer.valueOf(matcher.group(1)) : null;

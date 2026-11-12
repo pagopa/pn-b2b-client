@@ -15,9 +15,11 @@ import java.util.OptionalInt;
  * i test verificano solo che il costo sia valorizzato, positivo e coerente fra timeline e fatturazione. Se viene passato,
  * verificano anche l'importo. In questo modo la suite gira in autonomia su ogni ambiente senza valori fissi.
  * <ul>
- *     <li>{@code pn.combo-invoicing.informal-base-cost}: costo della comunicazione bonaria. È configurato due volte e i
- *     due valori devono coincidere: PN_WORKFLOWMANAGER_PAGOPAINFORMALNOTIFICATIONBASECOST (pn-workflow-manager, costo
- *     sulle chiusure) e PN_DELIVERYPUSHVALIDATOR_PAGOPAINFORMALNOTIFICATIONBASECOST (pn-delivery-push-validator, rifiuti)</li>
+ *     <li>{@code pn.combo-invoicing.informal-base-cost}: costo della comunicazione bonaria sulla chiusura del percorso,
+ *     PN_WORKFLOWMANAGER_PAGOPAINFORMALNOTIFICATIONBASECOST (pn-workflow-manager)</li>
+ *     <li>{@code pn.combo-invoicing.informal-refusal-base-cost}: costo della comunicazione bonaria nel rifiuto ordinario,
+ *     per destinatario, PN_DELIVERYPUSHVALIDATOR_PAGOPAINFORMALNOTIFICATIONBASECOST (pn-delivery-push-validator). È una
+ *     chiave distinta da quella delle chiusure e i due valori possono differire (in DEV, a novembre 2026, 20 e 100)</li>
  *     <li>{@code pn.combo-invoicing.informal-technical-refusal-cost}: costo di un rifiuto tecnico bonario con un
  *     destinatario, cioè il valore dopo il ";" di PN_DELIVERYPUSHVALIDATOR_INFORMALTECHNICALREFUSALCOSTMODE
  *     (es. {@code RECIPIENT_BASED;50} → 50)</li>
@@ -35,6 +37,7 @@ import java.util.OptionalInt;
 public class NotificationCostExpectations {
 
     private final OptionalInt informalBaseCost;
+    private final OptionalInt informalRefusalBaseCost;
     private final OptionalInt informalTechnicalRefusalCost;
     private final OptionalInt legalBaseCost;
     private final OptionalInt legalTechnicalRefusalCost;
@@ -42,21 +45,28 @@ public class NotificationCostExpectations {
 
     public NotificationCostExpectations(
             @Value("${pn.combo-invoicing.informal-base-cost:}") String informalBaseCost,
+            @Value("${pn.combo-invoicing.informal-refusal-base-cost:}") String informalRefusalBaseCost,
             @Value("${pn.combo-invoicing.informal-technical-refusal-cost:}") String informalTechnicalRefusalCost,
             @Value("${pn.combo-invoicing.legal-base-cost:}") String legalBaseCost,
             @Value("${pn.combo-invoicing.legal-technical-refusal-cost:}") String legalTechnicalRefusalCost,
             @Value("${pn.combo-invoicing.invoicing-ttl-days:}") String invoicingTtlDays) {
         this.informalBaseCost = parse(informalBaseCost);
+        this.informalRefusalBaseCost = parse(informalRefusalBaseCost);
         this.informalTechnicalRefusalCost = parse(informalTechnicalRefusalCost);
         this.legalBaseCost = parse(legalBaseCost);
         this.legalTechnicalRefusalCost = parse(legalTechnicalRefusalCost);
         this.invoicingTtlDays = parse(invoicingTtlDays);
-        log.info("Costi attesi configurati: bonaria={}, rifiuto tecnico bonaria={}, legale={}, rifiuto tecnico legale={}, ttl={}",
-                this.informalBaseCost, this.informalTechnicalRefusalCost, this.legalBaseCost, this.legalTechnicalRefusalCost, this.invoicingTtlDays);
+        log.info("Costi attesi configurati: chiusura bonaria={}, rifiuto bonaria={}, rifiuto tecnico bonaria={}, legale={}, rifiuto tecnico legale={}, ttl={}",
+                this.informalBaseCost, this.informalRefusalBaseCost, this.informalTechnicalRefusalCost, this.legalBaseCost,
+                this.legalTechnicalRefusalCost, this.invoicingTtlDays);
     }
 
     public OptionalInt informalBaseCost() {
         return informalBaseCost;
+    }
+
+    public OptionalInt informalRefusalBaseCost() {
+        return informalRefusalBaseCost;
     }
 
     public OptionalInt informalTechnicalRefusalCost() {

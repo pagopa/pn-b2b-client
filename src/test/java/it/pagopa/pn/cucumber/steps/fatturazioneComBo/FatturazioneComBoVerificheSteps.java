@@ -5,30 +5,25 @@ import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoSc
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InternalTimelineElement;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InvoicingRecord;
-import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain.INFORMAL;
 import static it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain.LEGAL;
 import static it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain.REQUEST_REFUSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Verifiche sui costi registrati nella timeline interna e sui record delle tabelle di fatturazione.
@@ -36,7 +31,6 @@ import static org.awaitility.Awaitility.await;
  * Gli importi attesi sono opzionali ({@link NotificationCostExpectations}): senza configurazione si verifica che il
  * costo sia valorizzato, positivo e identico fra timeline e fatturazione.
  */
-@Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
 public class FatturazioneComBoVerificheSteps {
@@ -45,10 +39,8 @@ public class FatturazioneComBoVerificheSteps {
     private static final String INFORMAL_PAPER_PREFIX = "SEND_ANALOG_MESSAGE.IUN_%s.RECINDEX_%d.ATTEMPT_0.DELIVERYTYPE_RS";
     private static final Set<String> INFORMAL_PAPER_CATEGORIES = Set.of("SEND_ANALOG_MESSAGE");
     private static final Set<String> LEGAL_PAPER_CATEGORIES = Set.of("SEND_ANALOG_DOMICILE", "SEND_SIMPLE_REGISTERED_LETTER");
-    private static final Duration POLL_INTERVAL = Duration.ofSeconds(30);
 
     private final FatturazioneComBoScenarioContext context;
-    private final InternalTimelineService timelineService;
     private final InvoicingRecordService invoicingService;
     private final NotificationCostExpectations expectations;
 
@@ -65,7 +57,7 @@ public class FatturazioneComBoVerificheSteps {
     @Then("il rifiuto è registrato in timeline con un costo pari al costo della comunicazione bonaria per il numero di destinatari")
     public void informalRefusalCost() {
         InternalTimelineElement refusal = refusal();
-        assertCost(refusal, multiply(expectations.informalBaseCost(), context.getRecipientsCount()), "il rifiuto");
+        assertCost(refusal, multiply(expectations.informalRefusalBaseCost(), context.getRecipientsCount()), "il rifiuto");
         assertThat(refusal.notificationCost() % context.getRecipientsCount())
                 .as("Il costo del rifiuto (%s) deve essere proporzionale ai %s destinatari", refusal.notificationCost(), context.getRecipientsCount())
                 .isZero();
@@ -82,17 +74,6 @@ public class FatturazioneComBoVerificheSteps {
         assertThat(laterClosure.notificationCost())
                 .as("La nuova chiusura %s non deve avere un costo: il costo appartiene solo alla prima chiusura del destinatario", laterClosure.timelineElementId())
                 .isNull();
-    }
-
-    @Then("gli eventi del percorso non riportano alcun costo")
-    public void pathEventsWithoutCost() {
-        List<InternalTimelineElement> pathWithCost = timelineService.timeline(context.getIun()).stream()
-                .filter(element -> !context.getDomain().isClosure(element))
-                .filter(InternalTimelineElement::hasCost)
-                .toList();
-        assertThat(pathWithCost)
-                .as("Solo gli eventi di chiusura possono avere un costo. Comunicazione %s", context.getIun())
-                .isEmpty();
     }
 
     // =========================================================================
@@ -146,11 +127,6 @@ public class FatturazioneComBoVerificheSteps {
         });
     }
 
-    @Then("l'invio cartaceo risulta fra le notifiche legali da fatturare insieme alla notifica")
-    public void legalPaperInvoiced() {
-        assertPaperInvoicedWithClosure(LEGAL, LEGAL_PAPER_CATEGORIES);
-    }
-
     /**
      * L'invio cartaceo viene scritto insieme alla chiusura che lo rende fatturabile: una volta presente la chiusura,
      * un eventuale invio cartaceo sarebbe già presente.
@@ -164,29 +140,6 @@ public class FatturazioneComBoVerificheSteps {
         assertThat(invoicingService.records(domain, closure.paId(), day(closure), context.getIun()))
                 .as("Per la notifica %s non deve risultare da fatturare alcun invio cartaceo", context.getIun())
                 .noneMatch(invoicingRecord -> paperCategories.contains(invoicingRecord.category()));
-    }
-
-    /**
-     * Finché il percorso è aperto la comunicazione non deve comparire fra quelle da fatturare. Se nel frattempo il
-     * percorso si conclude, la verifica si ferma: da quel momento la fatturazione è attesa.
-     */
-    @Then("la comunicazione bonaria non risulta fra quelle da fatturare finché il percorso non si conclude")
-    public void informalNotInvoicedWhileOpen() {
-        List<InternalTimelineElement> timeline = timelineService.timeline(context.getIun());
-        assertThat(timeline.stream().filter(INFORMAL::isClosure).toList())
-                .as("Precondizione: il percorso della comunicazione %s non deve essere ancora concluso", context.getIun())
-                .isEmpty();
-        String paId = timeline.stream().map(InternalTimelineElement::paId).filter(id -> id != null).findFirst()
-                .orElseThrow(() -> new AssertionError("Nessun elemento della timeline di " + context.getIun() + " riporta l'ente"));
-        AtomicReference<List<InvoicingRecord>> lastRead = new AtomicReference<>(List.of());
-        await().during(Duration.ofMinutes(3)).atMost(Duration.ofMinutes(4)).pollInterval(POLL_INTERVAL).until(() -> {
-            if (!timelineService.closures(context.getIun(), INFORMAL, null).isEmpty()) {
-                return true;
-            }
-            lastRead.set(invoicingService.records(INFORMAL, paId, LocalDate.now(ZoneId.of("Europe/Rome")), context.getIun()));
-            return lastRead.get().isEmpty();
-        });
-        log.info("Comunicazione {} non fatturata durante il percorso. Ultima lettura: {}", context.getIun(), lastRead.get());
     }
 
     @Then("la notifica legale risulta fra le notifiche legali da fatturare con il costo previsto per le notifiche legali")
