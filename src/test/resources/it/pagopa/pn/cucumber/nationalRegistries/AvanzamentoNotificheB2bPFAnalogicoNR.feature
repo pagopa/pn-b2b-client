@@ -314,6 +314,32 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
 
+  #PN-21776 - indirizzi esteri con via e/o città senza lettere (come il caso di produzione):
+  #  1. DA_DEFINIRE_PR4_VIA      -> via "?", città "ESTERO";
+  #  2. DA_DEFINIRE_PR4_CITTA    -> via "Via estera 1", città "?";
+  #  3. DA_DEFINIRE_PR4_ENTRAMBE -> via "?", città "?".
+  @workflowAnalogico @mockNR @validazioneDeduplica @work-item:QA-18853
+  Scenario Outline: [B2B_TIMELINE_ANALOG_VALIDAZIONE_DEDUPLICA_15] AR-Validazione sulla deduplica al secondo tentativo con <campi> senza lettere-estero
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario
+      | denomination            | Matteo Rossi             |
+      | taxId                   | <taxId>                  |
+      | recipientType           | PF                       |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE_CREATION_REQUEST"
+    Examples:
+      | campi       | taxId                    |
+      | VIA         | DA_DEFINIRE_PR4_VIA      |
+      | citta       | DA_DEFINIRE_PR4_CITTA    |
+      | citta e via | DA_DEFINIRE_PR4_ENTRAMBE |
+
 
   # seguono test sulla validazione normalizzatore batch -> NECESSARIO VAS ATTIVO
 
