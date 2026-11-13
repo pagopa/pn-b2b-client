@@ -17,6 +17,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         "Async", "f24", "version", "AOO_UO", "Annullamento",
         "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
         "legalFact", "letturaDestinatario", "timestampTecnici", "attestatoAnnullamentoNotifica",
-        "appIo", "delegheTemporanee", "TracciamentoEventiPEO", "bidirectionalTags"})
+        "appIo", "delegheTemporanee", "TracciamentoEventiPEO", "bidirectionalTags", "rasterJpeg2000"})
 public class NrtTest_uat {
 }
