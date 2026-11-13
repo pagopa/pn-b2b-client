@@ -90,7 +90,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_9] Filtra gli e-service nel catalogo compatto per delegabilità in fruizione (isConsumerDelegable)
     Given l'utente è un "admin" di "PA1"
-    Given "PA3" ha già creato e pubblicato 2 e-services delegabili in fruizione
+    Given "PA3" ha già creato e pubblicato 2 e-service delegabile in fruizione
     Given "PA3" ha già creato e pubblicato 1 e-service
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per isConsumerDelegable "<isConsumerDelegable>"
     Then si ottiene status code 200 e la lista di <risultati> e-services dal catalogo compatto
@@ -139,7 +139,7 @@ Feature: Listing catalogo compatto e-services
   @happy-path
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_11] Filtra gli e-service nel catalogo compatto per stato del descrittore (prospettiva ente erogatore ed ente terzo)
-    Given "PA1" ha già creato 2 e-service in stato <statoCreato>
+    Given "PA1" ha già creato 2 e-services in stato <statoCreato>
     And l'utente è un "admin" di "<enteChiamante>"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati "<statoFiltro>"
     Then si ottiene status code 200
@@ -169,7 +169,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   @deleghe2
   Scenario Outline: [COMPACT_CATALOG_LISTING_12] Filtra gli e-service nel catalogo compatto per stato WAITING_FOR_APPROVAL (visibile a delegante e delegato, non visibile a ente terzo)
-    Given "PA1" ha già creato 2 e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
+    Given "PA1" ha già creato 2 e-services con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente è un "admin" di "<enteChiamante>"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati "<statoFiltro>"
     Then si ottiene status code 200
@@ -200,7 +200,7 @@ Feature: Listing catalogo compatto e-services
   @happy-path
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_14] Filtra gli e-service nel catalogo compatto per più stati contemporaneamente verificando più id nel risultato
-    Given "PA1" ha già creato 2 e-service in stato PUBLISHED
+    Given "PA1" ha già creato 2 e-services in stato PUBLISHED
     And l'utente è un "admin" di "PA3"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati "PUBLISHED,ARCHIVED"
     Then si ottiene status code 200

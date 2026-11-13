@@ -71,12 +71,23 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(tenantType, descriptorState, nullableBoolean(isConsumerDelegable), nullableBoolean(isClientAccessDelegable));
     }
 
+    @Given("{string} ha già creato {int} e-services in stato {eServiceState}")
+    public void createEservice(String tenantType, int count, EServiceState eServiceState) {
+        for (int i = 0; i < count; i++) {
+            createEService(tenantType, eServiceState);
+        }
+    }
+
+
     @Given("{string} ha già creato un e-service in stato {eServiceState}")
     public void createEservice(String tenantType, EServiceState eServiceState) {
+        createEService(tenantType, eServiceState);
+    }
+
+    private void createEService(String tenantType, EServiceState eServiceState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
         EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), eServiceState);
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+        sharedStepsContext.getEServicesCommonContext().registerCreatedEService(eServiceDescriptor, eServiceState.getValue());
     }
 
     private void createEServiceWithDescriptorInState(String tenantType, String descriptorState, EServiceSeed eServiceSeed, UpdateEServiceDescriptorSeed descriptorSeed) {

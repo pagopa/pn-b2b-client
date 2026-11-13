@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.delegate;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
@@ -89,6 +90,13 @@ public class DelegationCommonStep {
         }
     }
 
+    @Given("{string} ha già creato {int} e-services con un descrittore in stato WAITING_FOR_APPROVAL usando {string} come delegato")
+    public void createWFAEService(String producer, int count, String delegate) {
+        for (int i = 0; i < count; i++) {
+            buildWFAEService(producer, delegate, true);
+        }
+    }
+
     /* Questo step è un condensato di molti degli step del test [TC_CAPOFILA_PUB_1] */
     @Given("{string} ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando {string} come delegato")
     public void createWFAEService(String producer, String delegate) {
@@ -167,6 +175,11 @@ public class DelegationCommonStep {
             () -> clientTokenConfigurator.getEServiceClient().getEServiceDescriptor(eserviceId, descriptorId),
             res -> res.getState().equals(EServiceDescriptorState.WAITING_FOR_APPROVAL),
             "Non è avvenuta la transizione di stato in " + EServiceDescriptorState.WAITING_FOR_APPROVAL);
+
+        sharedStepsContext.getEServicesCommonContext().registerCreatedEService(
+                new EServiceDescriptor(eserviceId, descriptorId),
+                EServiceDescriptorState.WAITING_FOR_APPROVAL.getValue()
+        );
     }
 
     @Then("si ottiene lo status code {int}")
