@@ -21,11 +21,11 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | taxId                   | CLMCST42R12D969Z     |
       | digitalDomicile_address | -indirizzo@gmail.com |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
   @realExtrnalChannel @detailsErrorExChannel @addressBook2
@@ -44,11 +44,11 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
     #***********************
@@ -66,16 +66,16 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | subject            | notifica digitale con cucumber |
       | senderDenomination | Comune di palermo              |
     And destinatario
-      | denomination            | Mario Gherkin        |
-      | taxId                   | CLMCST42R12D969Z     |
-      | digitalDomicile_address | -indirizzo@gmail.com |
+      | denomination | Mario Gherkin    |
+      | taxId        | CLMCST42R12D969Z |
+      #| digitalDomicile_address | -indirizzo@gmail.com |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
   @realExtrnalChannel @detailsErrorExChannel @addressBook2
@@ -93,11 +93,11 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
   @realExtrnalChannel @detailsErrorExChannel @addressBook1
@@ -115,11 +115,11 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | taxId           | CLMCST42R12D969Z |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    #Then vengono letti gli eventi fino all'elemento di timeline della notifica "" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
 
@@ -143,10 +143,10 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "" con responseStatus "KO"
-    #And vengono rimossi eventuali recapiti presenti per l'utente
+    And vengono rimossi eventuali recapiti presenti per l'utente
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
     #***************************
@@ -170,7 +170,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | details_responseStatus | KO  |
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
     #***************************
@@ -188,7 +188,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-      | phone_number    | todo                        |
+      | phone_number    | todo                           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | KO    |
@@ -198,7 +198,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | details_channel        | SMS |
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
       #****************************
@@ -222,7 +222,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | details_deliveryDetailCode | M003  |
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
 
 
   @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel
@@ -242,4 +242,4 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | details_deliveryDetailCode | M005  |
 #    And verifico la presenza di un audit log su "/aws/ecs/pn-external-channel" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
 #      | iun    | auto |
-#      | param1 | todo |
+#      | param1 | Error|
