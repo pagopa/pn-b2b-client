@@ -24,7 +24,7 @@ Feature: Workflow di una notifica bonaria.
 # **** FattOrd
 # ***********************************************
 
-  @informalNotificationsWorkFlow
+  @informalNotificationsWorkFlow @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_1] Come ente mittente invio una notifica bonaria...
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd                 |

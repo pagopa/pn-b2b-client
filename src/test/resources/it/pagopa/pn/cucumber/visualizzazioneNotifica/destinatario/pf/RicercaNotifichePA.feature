@@ -401,7 +401,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 3.2 - paginazione con più risultati
-  @ricercaNotifiche
+  @ricercaNotifiche @informalComboRefactor
   Scenario: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.C] Come mittente recupero le notifiche bonarie inviate sfogliando tutte le pagine dei risultati
     Given vengono create 5 notifiche bonarie per la pa "Comune_Multi" con campagna "MessaMora"
       | recipientType | PF               |
