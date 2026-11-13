@@ -26,6 +26,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -775,6 +776,25 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalDataTestV1 expected = InformalDataTestV1.convertMap(dataMap);
         timelineElement = NotificationInformalUtilsWorkFlowV1.waitForTimelineElement(this::getFullInformalNotification, category, expected != null ? expected.getTimelineElement() : null);
         assertNotNull(timelineElement);
+    }
+
+    @Then("viene restituito uno status code {int} in accesso al dettaglio notifica tramite API per le notifiche bonarie")
+    public void verifyStatusCode(int expectedStatus) {
+        assertNotNull(savedIun, "IUN non valorizzato");
+
+        try {
+            getFullInformalNotification();
+            fail("Atteso errore ma la richiesta è andata a buon fine");
+        } catch (HttpStatusCodeException e) {
+            assertEquals(expectedStatus, e.getStatusCode().value());
+        } catch (RuntimeException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof HttpStatusCodeException httpEx) {
+                assertEquals(expectedStatus, httpEx.getStatusCode().value());
+                return;
+            }
+            throw e;
+        }
     }
 
     private FullSentInformalNotificationV1 getFullInformalNotification() {

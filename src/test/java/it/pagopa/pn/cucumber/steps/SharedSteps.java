@@ -77,8 +77,7 @@ import java.util.stream.Collectors;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static java.time.OffsetDateTime.now;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assumptions.assumeThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -1555,4 +1554,27 @@ public class SharedSteps {
     public void setApplyCostFalse(int recIndex, int paymentIndex) {
         getNotificationStepInterface().setApplyCostFalse(recIndex, paymentIndex);
     }
+
+    @Then("viene restituito uno status code {int} in accesso al dettaglio notifica tramite API per le notifiche legali")
+    public void verifyLegalNotificationDetailStatusCode(int expectedStatusCode) {
+        assertLegalNotificationDetailStatusCode(expectedStatusCode);
+    }
+
+    private void assertLegalNotificationDetailStatusCode(int expectedStatusCode) {
+        assertThat(notificationIun)
+                .as("Lo IUN della notifica inviata non dev'essere null")
+                .isNotNull();
+
+        HttpStatusCodeException exception = catchThrowableOfType(
+                () -> b2bClient.getSentNotificationV29(notificationIun),
+                HttpStatusCodeException.class);
+
+        assertThat(exception)
+                .as("L'API di dettaglio notifica legale avrebbe dovuto sollevare una HttpStatusCodeException")
+                .isNotNull();
+
+        assertThat(exception.getStatusCode().value()).as("Lo status code restituito dall'API di dettaglio notifica legale non coincide con lo status code %s", expectedStatusCode)
+                .isEqualTo(expectedStatusCode);
+    }
+
 }
