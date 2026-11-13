@@ -38,6 +38,7 @@ import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatControlLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
@@ -294,6 +295,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         DelayerSkipSenderLimitService.class,
+        PortfatControlLambdaClient.class,
         IoMockScenarioContext.class
 })
 @EnableScheduling

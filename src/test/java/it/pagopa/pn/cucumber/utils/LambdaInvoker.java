@@ -80,20 +80,25 @@ public class LambdaInvoker {
             String rawResponse = invokeMyLambda(functionName, payloadJson);
 
             JsonNode root = objectMapper.readTree(rawResponse);
-            int statusCode = root.path("statusCode").asInt(-1);
 
-            JsonNode body = root.path("body");
+            if (root.has("statusCode")) {
 
-            if (statusCode != 200) {
-                String bodyText = body.isTextual() ? body.asText() : body.toString();
-                throw new RuntimeException("Lambda failed: " + bodyText);
+                int statusCode = root.path("statusCode").asInt(-1);
+                JsonNode body = root.path("body");
+
+                if (statusCode != 200) {
+                    throw new RuntimeException("Lambda failed: " + body);
+                }
+
+                if (body.isTextual()) {
+                    return objectMapper.readValue(body.asText(), bodyClass);
+                }
+
+                return objectMapper.treeToValue(body, bodyClass);
             }
 
-            if (body.isTextual()) {
-                return objectMapper.readValue(body.asText(), bodyClass);
-            }
-
-            return objectMapper.treeToValue(body, bodyClass);
+            // Lambda che restituisce direttamente il DTO
+            return objectMapper.treeToValue(root, bodyClass);
 
         } catch (Exception e) {
             throw new RuntimeException(
