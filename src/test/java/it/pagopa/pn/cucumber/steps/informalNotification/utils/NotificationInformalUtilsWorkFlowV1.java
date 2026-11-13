@@ -1,9 +1,9 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementDetailsV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalTimelineElementDetailsV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusPollingConfig;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalTimelinePollingConfig;
 import lombok.extern.slf4j.Slf4j;
