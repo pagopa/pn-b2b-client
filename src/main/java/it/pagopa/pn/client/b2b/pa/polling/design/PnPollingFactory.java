@@ -10,6 +10,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -23,9 +25,30 @@ public class PnPollingFactory implements SettableApiKey {
         this.context = context;
     }
 
+    public IPnPollingService<?> getPollingService(PnPollingType pollingType) {
+        Objects.requireNonNull(pollingType, "pollingType is required");
+        return resolve(pollingType.getBeanName());
+    }
+
+    /** @deprecated usare {@link #getPollingService(PnPollingType)} */
+    @Deprecated
     public IPnPollingService<?> getPollingService(String pollingType) {
+        return resolve(pollingType);
+    }
+
+    public void execute(PnPollingType pollingType, String iun, PnPollingParameter pnPollingParameter) {
+        getPollingService(pollingType).waitForEvent(iun, pnPollingParameter);
+    }
+
+    /** @deprecated usare {@link #execute(PnPollingType, String, PnPollingParameter)} */
+    @Deprecated
+    public void execute(String pollingType, String iun, PnPollingParameter pnPollingParameter) {
+        resolve(pollingType).waitForEvent(iun, pnPollingParameter);
+    }
+
+    private IPnPollingService<?> resolve(String beanName) {
         try{
-            IPnPollingService<?> iPnPollingService = context.getBean(pollingType, IPnPollingService.class);
+            IPnPollingService<?> iPnPollingService = context.getBean(beanName, IPnPollingService.class);
             if(apiKeyType != null){
                 iPnPollingService.setApiKeys(apiKeyType);
             }else if(apiKey != null){
@@ -34,19 +57,8 @@ public class PnPollingFactory implements SettableApiKey {
 
             return iPnPollingService;
         }catch (NoSuchBeanDefinitionException noSuchBeanDefinitionException){
-            throw new PnPollingException("Unsupported IPnPollingService type");
+            throw new PnPollingException("Unsupported IPnPollingService type: " + beanName);
         }
-    }
-
-    public void execute(String pollingType, String iun, PnPollingParameter pnPollingParameter) {
-        IPnPollingService<?> iPnPollingService = getPollingService(pollingType);
-        if(apiKeyType != null){
-            iPnPollingService.setApiKeys(apiKeyType);
-        }else if(apiKey != null){
-            iPnPollingService.setApiKey(apiKey);
-        }
-
-        iPnPollingService.waitForEvent(iun, pnPollingParameter);
     }
 
 
