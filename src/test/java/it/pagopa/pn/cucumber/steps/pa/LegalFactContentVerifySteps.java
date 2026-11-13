@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffLegalFactId;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -19,7 +20,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
-import it.pagopa.common.util.PDFUtility;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.Setter;
@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 
@@ -58,6 +59,7 @@ public class LegalFactContentVerifySteps {
 
     @Value("${pn.legalFact-mario.gherkin.older-10-years}")
     private String legalFactId10years;
+
 
     @Autowired
     public LegalFactContentVerifySteps(PnParserService pnParserService, SharedSteps sharedSteps) {
@@ -465,6 +467,36 @@ public class LegalFactContentVerifySteps {
         return legalFactDownloadMetadataResponse.get();
     }
 
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse
+    getLegalFactIdAAR(String aarType, Integer recIndex) {
+
+        TimelineElementV28 timelineElement = sharedSteps.getSentNotificationLastVersion().getTimeline()
+                .stream()
+                .filter(elem -> Objects.equals(elem.getCategory().getValue(), SEND_ANALOG_PROGRESS))
+                .filter(elem -> elem.getDetails() != null)
+                .filter(elem -> Objects.equals(elem.getDetails().getRecIndex(), recIndex))
+                .filter(elem -> elem.getDetails().getAttachments() != null && !elem.getDetails().getAttachments().isEmpty())
+                .filter(elem -> Objects.equals(elem.getDetails().getDeliveryDetailCode(), "CON020"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Nessun SEND_ANALOG_PROGRESS per recIndex=" + recIndex));
+
+        assert timelineElement.getDetails() != null;
+        String generatedAarUrl = timelineElement.getDetails().getAttachments().get(0).getUrl();
+        Assertions.assertNotNull(generatedAarUrl);
+        Assertions.assertFalse(generatedAarUrl.isBlank());
+
+        String keySearch = generatedAarUrl.contains(aarType)
+                ? generatedAarUrl.substring(generatedAarUrl.indexOf(aarType))
+                : generatedAarUrl.contains("PN_PRINTED")
+                ? generatedAarUrl.substring(generatedAarUrl.indexOf("PN_PRINTED"))
+                : null;
+
+        Assertions.assertNotNull(keySearch);
+
+        return Assertions.assertDoesNotThrow(() ->
+                sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getNotificationIun(), keySearch));
+    }
+
     private boolean checkTypeAAR(byte[] source, String aarType) {
         Pattern pattern = Pattern.compile("\\((CAF)\\s");
         try {
@@ -741,4 +773,32 @@ public class LegalFactContentVerifySteps {
             assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
         }
     }
+
+    /**
+     * il nome del metotodo è volutamente specifico per la firma perhcè è la prossima implementazione che sarà richiesta una volta che il consolidatore invierà pdf singoli firmati. Per ora si verifica solo che sia un pdf valido.
+     * recuperiamo l'AAR salvato in safe storage con categoria SEND_ANALOG_PROGRESS e deliveryDetailCode CON020, che avrà prefisso PN_EXTERNAL_LEGAL_FACTS. Per retrocompatibilità, all'interno del metodo getLegalFactIdAAR ammettiamo che il prefisso sia anche PN_PRINTED, perchè ad oggi la logica deve rimanere questa in attesa che il consolidatore invierà il file pdf già firmato postel
+     *
+     * @param recindex il destinatario per cui scaricare l'AAR della notifica analogica
+     * @throws AssertionError se il file scaricato non è un pdf valido
+     */
+    @Then("scarico l'AAR della notifica analogica per il destinatario {int} e verifico che sia un PDF valido")
+    public void scaricoAarDellaNotificaAnalogicaEVerificoFirma(int recindex) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse
+                legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_EXTERNAL_LEGAL_FACTS", recindex);
+
+        byte[] source = B2bUtils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+        Assertions.assertNotNull(source);
+        // B2bUtils.stampaPdfTramiteByte(source, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
+        //controllo che il file scaricato sia un pdf valido.
+        if (!PDFUtility.isValidPdf(source)) {
+            throw new AssertionError("Il file scaricato non è un PDF valido.");
+        }
+        //da controllare una volta che in consolidatore sia stato implementato per inviare pdf singoli firmati (probabile in GA27)
+        //Assertions.assertTrue(PdfSignatureVerifier.hasSignature(source));
+        //Assertions.assertTrue(PdfSignatureVerifier.verifyPdfSignature(source));
+
+
+    }
+
+
 }

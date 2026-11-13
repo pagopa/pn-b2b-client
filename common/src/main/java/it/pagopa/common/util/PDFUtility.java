@@ -10,7 +10,7 @@ import org.apache.pdfbox.text.TextPosition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,9 @@ public final class PDFUtility {
 
     private static final Logger log = LoggerFactory.getLogger(PDFUtility.class);
 
-    /** Altezza footer esclusa dall'estrazione by-area (allineata a PnContentExtractor storico). */
+    /**
+     * Altezza footer esclusa dall'estrazione by-area (allineata a PnContentExtractor storico).
+     */
     public static final float DEFAULT_FOOTER_HEIGHT = 100f;
 
     private PDFUtility() {
@@ -146,6 +148,23 @@ public final class PDFUtility {
         pdfStripper.setSortByPosition(true);
         return pdfStripper.getText(document);
     }
+
+/**
+     * Verifica se il contenuto è un PDF leggibile.
+     *
+     * @param bytes contenuto PDF
+     * @return {@code true} se il contenuto è un PDF valido, altrimenti {@code false}
+     */
+    public static boolean isValidPdf(byte[] bytes) {
+        if (bytes == null) return false;
+        // controllo struttura valida del pdf
+        try (PDDocument document = Loader.loadPDF(bytes)) {
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     private static String extractTextExcludingFooter(PDDocument document, float footerHeight) throws IOException {
         PDFTextStripperByArea pdfTextStripperByArea = new PDFTextStripperByArea();
