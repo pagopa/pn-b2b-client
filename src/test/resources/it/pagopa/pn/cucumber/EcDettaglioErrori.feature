@@ -6,7 +6,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
     #******** PEC *********
     #**********************
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook1
+  @realExtrnalChannel @detailsErrorExChannel @addressBook1 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_PEC_01_1_A] Come ente mittente invio una notifica che riceverà errore sulla pec, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -28,7 +28,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
 #      | param1 | Error|
 
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook2
+  @realExtrnalChannel @detailsErrorExChannel @addressBook2 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_PEC_01_1_B] Come ente mittente invio una notifica che riceverà errore sulla pec di piattaforma, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -55,7 +55,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
     #******** EMAIL ********
     #***********************
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook1
+  @realExtrnalChannel @detailsErrorExChannel @addressBook1 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_EMAIL_02_1_A] Come ente mittente invio una notifica che riceverà errore sulla email, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -78,7 +78,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
 #      | param1 | Error|
 
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook2
+  @realExtrnalChannel @detailsErrorExChannel @addressBook2 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_EMAIL_02_1_B] Come ente mittente invio una notifica che riceverà errore sulla email, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -100,7 +100,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
 #      | param1 | Error|
 
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook1
+  @realExtrnalChannel @detailsErrorExChannel @addressBook1 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_EMAIL_02_1_C] Come ente mittente invio una notifica che riceverà errore sulla email, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -127,7 +127,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
     #******** ANALOGICO ********
     #***************************
 
-  @realExtrnalChannel @detailsErrorExChannel @addressBook2
+  @realExtrnalChannel @detailsErrorExChannel @addressBook2 @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_ANALOGICO_03_1] Come ente mittente invio una notifica che riceverà errore sull invio analogico, i dettagli saranno riportati nei log di externalchannel
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -153,7 +153,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
     #******** COMBO PEC ********
     #***************************
 
-  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel
+  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_ANALOGICO_01_1_INFORMAL] Come ente mittente invio una notifica che riceverà errore sull invio pec, i dettagli saranno riportati nei log di externalchannel
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd              |
@@ -177,7 +177,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
     #******** COMBO SMS ********
     #***************************
 
-  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel
+  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_ANALOGICO_02_1_INFORMAL_A] Come ente mittente invio una notifica che riceverà errore sull invio sms, i dettagli saranno riportati nei log di externalchannel
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | Reminder                       |
@@ -205,7 +205,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       #******** COMBO EMAIL ********
       #*****************************
 
-  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel
+  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_ANALOGICO_02_1_INFORMAL_B] Come ente mittente invio una notifica che riceverà errore sull invio email, i dettagli saranno riportati nei log di externalchannel
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd                                 |
@@ -225,7 +225,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
 #      | param1 | Error|
 
 
-  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel
+  @realExtrnalChannel @detailsErrorExChannel @informaldetailsErrorExChannel @work-item:QA-18593
   Scenario: [PN_EC_DETTAGLIO_ERRORI_ANALOGICO__02_1_INFORMAL_C] Come ente mittente invio una notifica che riceverà errore sull invio email, i dettagli saranno riportati nei log di externalchannel
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId      | FattOrd                        |
