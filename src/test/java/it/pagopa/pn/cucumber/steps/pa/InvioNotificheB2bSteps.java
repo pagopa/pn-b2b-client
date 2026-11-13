@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -46,6 +47,9 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.domain.DocumentTransformation;
+import it.pagopa.pn.cucumber.steps.pa.service.DocumentTagsService;
+import it.pagopa.pn.cucumber.steps.pa.service.TransformedDocumentService;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -53,8 +57,10 @@ import it.pagopa.pn.cucumber.utils.PdfDarkPixelUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.ListAssert;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +68,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -84,6 +91,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
@@ -97,6 +105,12 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class InvioNotificheB2bSteps {
 
+    // Tag di collegamento tra documento originale e trasformato (QA-18586)
+    private static final String TRANSFORMED_DOCUMENT_KEY_TAG = "transformedDocumentKey";
+    private static final String ORIGINAL_DOCUMENT_KEY_TAG = "originalDocumentKey";
+    // Tag di prova, lo stesso usato in IndicizzazioneFile.feature
+    private static final String TEST_TAG = "global_singlevalue";
+    private static final String TEST_TAG_VALUE = "test1";
     // Tipo SafeStorage dei documenti che pn-ec fa rasterizzare a pn-pdfraster prima dell'invio cartaceo
     private static final String RASTERIZED_PAPER_DOCUMENT_TYPE = "PN_PAPER_ATTACHMENT";
 
@@ -116,6 +130,8 @@ public class InvioNotificheB2bSteps {
     @Getter
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
     private final PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl;
+    private final TransformedDocumentService transformedDocumentService;
+    private final DocumentTagsService documentTagsService;
 
     private BffPaymentResponse paymentResponse;
     @Getter
@@ -130,13 +146,20 @@ public class InvioNotificheB2bSteps {
     private final JavaMailSender emailSender;
     private List<String> blackListTaxIds;
     private RequestStatus cancellationResponse;
+    private String originalDocumentKey;
+    private String transformedDocumentKey;
+    private final List<String> transformedDocumentKeys = new ArrayList<>();
+    private Map<String, List<String>> originalDocumentTags;
+    private boolean testTagAdded;
 
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient,
                                   IPnSafeStoragePrivateClient safeStoragePrivateClient,
                                   SharedSteps sharedSteps,
                                   PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl,
-                                  JavaMailSender emailSender) {
+                                  JavaMailSender emailSender,
+                                  TransformedDocumentService transformedDocumentService,
+                                  DocumentTagsService documentTagsService) {
         this.safeStorageClient = safeStorageClient;
         this.safeStoragePrivateClient = safeStoragePrivateClient;
         this.sharedSteps = sharedSteps;
@@ -147,6 +170,8 @@ public class InvioNotificheB2bSteps {
         this.pnExternalChannelsServiceClientImpl = pnExternalChannelsServiceClientImpl;
 
         this.emailSender = emailSender;
+        this.transformedDocumentService = transformedDocumentService;
+        this.documentTagsService = documentTagsService;
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
@@ -1399,6 +1424,112 @@ public class InvioNotificheB2bSteps {
                 .isEqualTo(tipologia);
 
         log.info(firstDocumentReceived.toString());
+    }
+
+    @And("il recapitista ha ricevuto per il destinatario {int} il documento della notifica trasformato tramite {documentTransformation}")
+    public void checkTransformedDocumentReceived(Integer destinatario, DocumentTransformation trasformazione) {
+        try {
+            List<String> transformedKeys = transformedDocumentService.getTransformedDocumentKeys(sharedSteps.getNotificationIun(), destinatario, trasformazione);
+            // Un solo documento nella notifica, quindi un solo trasformato
+            assertThat(transformedKeys)
+                    .as("Documenti trasformati tramite %s ricevuti dal recapitista per il destinatario %d", trasformazione, destinatario)
+                    .hasSize(1);
+            transformedDocumentKey = transformedKeys.get(0);
+            transformedDocumentKeys.add(transformedDocumentKey);
+            log.info("Documento trasformato ricevuto dal recapitista: {}", transformedDocumentKey);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @Then("il documento della notifica riporta il riferimento al documento trasformato")
+    public void checkTransformedDocumentReference() {
+        // Multivalore: ogni trasformazione aggiunge un riferimento
+        checkTagValues(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG,
+                values -> values.contains(transformedDocumentKey));
+    }
+
+    @Then("il documento della notifica riporta il riferimento a ogni documento trasformato")
+    public void checkAllTransformedDocumentReferences() {
+        checkTagValues(getOriginalDocumentKey(), TRANSFORMED_DOCUMENT_KEY_TAG,
+                values -> values.containsAll(transformedDocumentKeys));
+    }
+
+    @Then("il documento trasformato riporta il riferimento al documento della notifica")
+    public void checkOriginalDocumentReference() {
+        checkTagValues(transformedDocumentKey, ORIGINAL_DOCUMENT_KEY_TAG,
+                values -> values.containsExactly(getOriginalDocumentKey()));
+    }
+
+    @And("al documento della notifica viene associata un'informazione di prova")
+    public void addTestTagToOriginalDocument() {
+        String fileKey = getOriginalDocumentKey();
+        testTagAdded = true;
+        documentTagsService.addTagValue(fileKey, TEST_TAG, TEST_TAG_VALUE);
+    }
+
+    @And("si registrano le informazioni associate al documento della notifica, ancora privo del riferimento al documento trasformato")
+    public void registerOriginalDocumentTags() {
+        Map<String, List<String>> tags = documentTagsService.getTags(getOriginalDocumentKey());
+        // Collegamento già presente: la trasformazione è avvenuta prima del tag di prova
+        Assumptions.assumeFalse(tags.containsKey(TRANSFORMED_DOCUMENT_KEY_TAG),
+                "Esecuzione non valida, da ripetere: il documento della notifica è stato trasformato prima della registrazione delle informazioni - IUN: "
+                        + sharedSteps.getNotificationIun());
+        try {
+            assertThat(tags.get(TEST_TAG))
+                    .as("Informazione di prova %s sul documento della notifica", TEST_TAG)
+                    .containsExactly(TEST_TAG_VALUE);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+        originalDocumentTags = tags;
+    }
+
+    @Then("il documento della notifica conserva le informazioni registrate")
+    public void checkOriginalDocumentTagsPreserved() {
+        try {
+            Assertions.assertNotNull(originalDocumentTags, "Le informazioni del documento della notifica non sono state registrate");
+            Map<String, List<String>> tags = documentTagsService.getTags(getOriginalDocumentKey());
+            assertSoftly(softly -> originalDocumentTags.forEach((tag, values) ->
+                    softly.assertThat(tags.get(tag))
+                            .as("Valori del tag %s sul documento della notifica", tag)
+                            .containsExactlyInAnyOrderElementsOf(values)));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    @After("@bidirectionalTags")
+    public void removeTestTagFromOriginalDocument() {
+        if (!testTagAdded) {
+            return;
+        }
+        try {
+            documentTagsService.removeTagValue(originalDocumentKey, TEST_TAG, TEST_TAG_VALUE);
+        } catch (RestClientException e) {
+            log.warn("Rimozione dell'informazione di prova dal documento {} non riuscita: {}", originalDocumentKey, e.getMessage());
+        }
+    }
+
+    private String getOriginalDocumentKey() {
+        if (originalDocumentKey == null) {
+            List<String> documentKeys = transformedDocumentService.getDocumentKeys(sharedSteps.getSentNotificationLastVersion().getDocuments());
+            assertThat(documentKeys)
+                    .as("Documenti della notifica %s", sharedSteps.getNotificationIun())
+                    .hasSize(1);
+            originalDocumentKey = documentKeys.get(0);
+        }
+        return originalDocumentKey;
+    }
+
+    private void checkTagValues(String fileKey, String tag, Consumer<ListAssert<String>> valuesCheck) {
+        try {
+            Assertions.assertNotNull(transformedDocumentKey, "Documento trasformato non individuato tra quelli ricevuti dal recapitista");
+            valuesCheck.accept(assertThat(documentTagsService.getTags(fileKey).get(tag))
+                    .as("Valori del tag %s sul documento %s", tag, fileKey));
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
 
     @Value("${b2b.sender.mail}")
