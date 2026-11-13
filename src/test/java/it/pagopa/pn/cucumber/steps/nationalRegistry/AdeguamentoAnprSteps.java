@@ -31,6 +31,8 @@ public class AdeguamentoAnprSteps {
     private String address;
     private String addressDetail;
     private static final String ASSERT_MSG_FORMAT = "Il campo %s calcolato con algoritmo %s per il taxId %s non coincide con quanto atteso";
+    private static final String ASSERT_LENGTH_MSG_FORMAT = "Il campo %s calcolato con algoritmo %s per il taxId %s supera i %d caratteri";
+    private static final int MAX_ADDRESS_LENGTH = 44;
 
     enum AnprAlgorithm {
         OLD, MINIMAL, FULL
@@ -63,15 +65,15 @@ public class AdeguamentoAnprSteps {
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("", ""))),
             entry("PRZPLA89E02L781K", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A KM 50", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A C KM 50", ""),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico KM 50", ""))),
             entry("BRNBNN92S02L781R", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput(" Elena da Persico A", "5"),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Elena da Persico A C SNC", "BLU Scala 5"),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"))),
             entry("LNNLNZ02L27L781Z", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A CAD", ""),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico 12/A CAD", ""))),
             entry("QDRQMD99C20L781Y", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
@@ -158,6 +160,10 @@ public class AdeguamentoAnprSteps {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(address).as(String.format(ASSERT_MSG_FORMAT, "address", algorithm, taxId)).isEqualTo(expectedOutput.address);
             softly.assertThat(addressDetail).as(String.format(ASSERT_MSG_FORMAT, "addressDetail", algorithm, taxId)).isEqualTo(expectedOutput.addressDetails);
+            if (algorithm == AnprAlgorithm.MINIMAL) {
+                softly.assertThat(address).as(String.format(ASSERT_LENGTH_MSG_FORMAT, "address", algorithm, taxId, MAX_ADDRESS_LENGTH)).hasSizeLessThanOrEqualTo(MAX_ADDRESS_LENGTH);
+                softly.assertThat(addressDetail).as(String.format(ASSERT_LENGTH_MSG_FORMAT, "addressDetail", algorithm, taxId, MAX_ADDRESS_LENGTH)).hasSizeLessThanOrEqualTo(MAX_ADDRESS_LENGTH);
+            }
         });
     }
 }
