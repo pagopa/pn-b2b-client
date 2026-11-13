@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.delayer.model.enums;
 public enum DelayerOperation {
     IMPORT_DATA,
     DELETE_DATA,
+    DELETE_MOCK_TABLES,
     GET_USED_CAPACITY,
     GET_BY_REQUEST_ID,
     RUN_ALGORITHM,
