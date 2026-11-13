@@ -30,6 +30,7 @@ public class EServicesCommonContext {
     private List<EServiceDescriptor> draftEServicesIds = new ArrayList<>();
     private List<EServiceDescriptor> retrievedEservicesIds = new ArrayList<>();
     private List<EServiceDescriptor> totalPublishedEServicesIds = new ArrayList<>();
+    private List<EServiceDescriptor> createdEServicesIds = new ArrayList<>();
     private UUID eserviceId;
     private UUID descriptorId;
     private int groupId; // id dell'ultimo gruppo di attributi creato
@@ -93,6 +94,35 @@ public class EServicesCommonContext {
 
     public void addVerifiedAttributes(List<UUID> attributesIds) {
         this.verifiedAttributesIds.addAll(attributesIds);
+    }
+
+    public void registerCreatedEService(EServiceDescriptor eServiceDescriptor, String state) {
+        if (eServiceDescriptor == null) {
+            return;
+        }
+        this.eserviceId = eServiceDescriptor.getEServiceId();
+        this.descriptorId = eServiceDescriptor.getDescriptorId();
+        this.createdEServicesIds.add(eServiceDescriptor);
+        if (state != null) {
+            switch (state.toUpperCase()) {
+                case "PUBLISHED" -> {
+                    this.publishedEservicesIds.add(eServiceDescriptor);
+                    this.totalPublishedEServicesIds.add(eServiceDescriptor);
+                }
+                case "SUSPENDED" -> {
+                    this.suspendedEservicesIds.add(eServiceDescriptor);
+                    this.totalPublishedEServicesIds.add(eServiceDescriptor);
+                }
+                case "DRAFT" -> this.draftEServicesIds.add(eServiceDescriptor);
+                case "WAITING_FOR_APPROVAL" -> {
+                    // Non ancora pubblicato, resta tracciato in createdEServicesIds
+                }
+                default -> {
+                    // Stati raggiunti dopo la pubblicazione (DEPRECATED, ARCHIVED, ARCHIVING, ARCHIVING_SUSPENDED)
+                    this.totalPublishedEServicesIds.add(eServiceDescriptor);
+                }
+            }
+        }
     }
 
     public void setEServiceSeed(EServiceSeed eServiceSeed) {
