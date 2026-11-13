@@ -1,21 +1,20 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.client.IClient;
 import it.pagopa.interop.common.enums.AssertCheckType;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Getter
 @Setter
@@ -29,7 +28,7 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
 
     private final String parameterTypeName;
     protected final IClient<T, K> client;
-    private final SharedStepsContext context;
+    protected final SharedStepsContext context;
 
     protected AbstractCommonSteps(String parameterTypeName, IClient<T, K> client, SharedStepsContext context) {
         this.parameterTypeName = parameterTypeName;
