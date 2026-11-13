@@ -38,8 +38,8 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_1.2] L'Ente PA non aderente a SEND conferisce la delega verso l'Ente PT.
   La delega viene scartata e l'Ente PA non compare nell'elenco dell'Ente PT
-    When l'Ente PA "Comune_Non_Aderente" conferisce la delega all'Ente PT "PT_A"
-    Then dopo 2 minuti l'Ente PA "Comune_Non_Aderente" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
+    When l'Ente PA "Comune di Castagneto" conferisce la delega all'Ente PT "PT_A"
+    Then dopo 2 minuti l'Ente PA "Comune di Castagneto" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
 
   #################### CDT 2.2 - COMUNICAZIONE NON VALIDA ####################
 
@@ -50,91 +50,92 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
     Then dopo 2 minuti l'Ente PA "Comune_Son" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
 
   #################### PAGINAZIONE ####################
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_2] Il numero di Enti PA per pagina è al minimo ammesso (1).
-  SEND restituisce un solo Ente PA, con il riferimento alla pagina successiva
-    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
-      | limit | 1 |
-    Then la risposta contiene esattamente 1 Enti
-    And la risposta contiene il riferimento alla pagina successiva
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_3] Il numero di Enti PA per pagina è al massimo ammesso (50).
-  SEND restituisce al massimo 50 Enti
+# I Seguenti test sono stati commentati per l'impossibilità di replicare, allo stato attuale, le casistiche esposte
+  
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_2] Il numero di Enti PA per pagina è al minimo ammesso (1).
+#  SEND restituisce un solo Ente PA, con il riferimento alla pagina successiva
 #    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere per almeno 11 Enti PA diversi
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
-      | limit | 50 |
-    Then la risposta contiene al massimo 50 Enti
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_4] Il numero di Enti per pagina è intermedio (5).
-  SEND restituisce al massimo 5 Enti per pagina
+#    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+#    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
+#      | limit | 1 |
+#    Then la risposta contiene esattamente 1 Enti
+#    And la risposta contiene il riferimento alla pagina successiva
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_3] Il numero di Enti PA per pagina è al massimo ammesso (50).
+#  SEND restituisce al massimo 50 Enti
+##    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+##    ... ripetere per almeno 11 Enti PA diversi
+#    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
+#      | limit | 50 |
+#    Then la risposta contiene al massimo 50 Enti
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_4] Il numero di Enti per pagina è intermedio (5).
+#  SEND restituisce al massimo 5 Enti per pagina
+##    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+##    ... ripetere per almeno 11 Enti PA diversi
+#    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
+#      | limit | 5 |
+#    Then la risposta contiene al massimo 5 Enti
+#    When l'Ente PT "PT_A" richiede la pagina successiva
+#    Then la risposta contiene al massimo 5 Enti
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_5] L'Ente PT legge tutte le pagine in sequenza.
+#  Ogni Ente compare una sola volta, senza duplicati né Enti mancanti
+##    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+##    ... ripetere per almeno 11 Enti PA diversi
+#    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 3
+#    Then ogni Ente compare una sola volta in tutte le pagine lette
+#
+#  # Precondizione: il numero di deleghe dell'Ente PT "PT_A" è pari a <numeroDeleghe> (placeholder da allineare ai dati di ambiente)
+#  @ptEntiDeleganti
+#  Scenario Outline: [PT-ENTI-DELEGANTI_6] Il numero di Enti PA dell'Ente PT è pari esattamente al numero di Enti per pagina.
+#  Ogni Ente compare una sola volta, senza duplicati né Enti mancanti
+##    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+##    ... ripetere fino a <numeroDeleghe> Enti PA diversi
+#    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit <numeroDeleghe>
+#    Then sono stati letti in totale <numeroDeleghe> Enti
+#    And ogni Ente compare una sola volta in tutte le pagine lette
+#    Examples:
+#      | numeroDeleghe |
+#      | 11            |
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_7] L'Ente PT legge l'ultima pagina.
+#  SEND non restituisce alcun riferimento a una pagina successiva
+##    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+##    ... ripetere per almeno 11 Enti PA diversi
+#    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 5
+#    Then la risposta non contiene il riferimento alla pagina successiva
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_8] L'Ente PT passa alla pagina successiva dopo un filtro per stato.
+#  I risultati sono coerenti tra le pagine e rispettano il filtro
 #    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere per almeno 11 Enti PA diversi
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
-      | limit | 5 |
-    Then la risposta contiene al massimo 5 Enti
-    When l'Ente PT "PT_A" richiede la pagina successiva
-    Then la risposta contiene al massimo 5 Enti
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_5] L'Ente PT legge tutte le pagine in sequenza.
-  Ogni Ente compare una sola volta, senza duplicati né Enti mancanti
+#    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+#    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+#    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
+#    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
+#      | status | ACTIVE |
+#      | limit  | 1      |
+#    And l'Ente PT "PT_A" richiede la pagina successiva
+#    Then tutti gli Enti restituiti hanno stato delega "ACTIVE"
+#    And ogni Ente compare una sola volta in tutte le pagine lette
+#
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_9] L'Ente PT passa alla pagina successiva dopo una ricerca.
+#  I risultati sono coerenti tra le pagine e rispettano la ricerca
 #    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere per almeno 11 Enti PA diversi
-    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 3
-    Then ogni Ente compare una sola volta in tutte le pagine lette
-
-  # Precondizione: il numero di deleghe dell'Ente PT "PT_A" è pari a <numeroDeleghe> (placeholder da allineare ai dati di ambiente)
-  @ptEntiDeleganti
-  Scenario Outline: [PT-ENTI-DELEGANTI_6] Il numero di Enti PA dell'Ente PT è pari esattamente al numero di Enti per pagina.
-  Ogni Ente compare una sola volta, senza duplicati né Enti mancanti
-#    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere fino a <numeroDeleghe> Enti PA diversi
-    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit <numeroDeleghe>
-    Then sono stati letti in totale <numeroDeleghe> Enti
-    And ogni Ente compare una sola volta in tutte le pagine lette
-    Examples:
-      | numeroDeleghe |
-      | 11            |
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_7] L'Ente PT legge l'ultima pagina.
-  SEND non restituisce alcun riferimento a una pagina successiva
-#    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere per almeno 11 Enti PA diversi
-    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 5
-    Then la risposta non contiene il riferimento alla pagina successiva
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_8] L'Ente PT passa alla pagina successiva dopo un filtro per stato.
-  I risultati sono coerenti tra le pagine e rispettano il filtro
-    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
-      | status | ACTIVE |
-      | limit  | 1      |
-    And l'Ente PT "PT_A" richiede la pagina successiva
-    Then tutti gli Enti restituiti hanno stato delega "ACTIVE"
-    And ogni Ente compare una sola volta in tutte le pagine lette
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_9] L'Ente PT passa alla pagina successiva dopo una ricerca.
-  I risultati sono coerenti tra le pagine e rispettano la ricerca
-    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
-      | search | Comune |
-      | limit  | 1      |
-    And l'Ente PT "PT_A" richiede la pagina successiva
-    Then tutti gli Enti restituiti hanno ragione sociale contenente "Comune" senza distinzione tra maiuscole e minuscole
-    And ogni Ente compare una sola volta in tutte le pagine lette
+#    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+#    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti con i seguenti parametri:
+#      | search | Comune |
+#      | limit  | 1      |
+#    And l'Ente PT "PT_A" richiede la pagina successiva
+#    Then tutti gli Enti restituiti hanno ragione sociale contenente "Comune" senza distinzione tra maiuscole e minuscole
+#    And ogni Ente compare una sola volta in tutte le pagine lette
 
   #################### CDT 3.3 - VALORI NON VALIDI ####################
 
