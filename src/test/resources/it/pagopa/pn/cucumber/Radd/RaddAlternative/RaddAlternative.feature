@@ -386,16 +386,27 @@ Feature: Radd Alternative
 
 # FLUSSO ACT su PG con QrCode - error cases
 
-#  cucumber spa è pn.iun.120gg.lucio.pagopa presente in test ma non in dev ne UAT
-  @raddAlt @work-item:QA-19302 @fixBugRADDDocumentiNonDisponibili
+#  cucumber spa è pn.iun.120gg.lucio.pagopa
+  @raddAlt
   Scenario: [RADD-ALT_ACT-13] PG - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni.
     When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+
+  @raddAlt @work-item:QA-19302 @fixBugRADDDocumentiNonDisponibili
+  Scenario: [RADD-DOC-SCADUTI2] PG - La scansione di un QR code di una notifica perfezionata da più di 120 giorni restituisce solamente i documenti di AO3 validi 10 anni
+    When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti restituisce i soli documenti di tipo COVER_FILE e ATTESTAZIONE_OPPONIBILE_A_TERZI e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
-#    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+#
+
+
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-14] PG - Scansione QR code inesistente
@@ -1412,8 +1423,17 @@ Feature: Radd Alternative
     And l'operazione di download non restituisce atti, generando un errore "documenti non disponibili" con codice 4 su radd alternative
 
 #    mario cucumber è pn.iun.120gg.fieramosca.pagopa (presente in dev e in test, no UAT)
-  @raddAlt @QA-19302 @fixBugRADDDocumentiNonDisponibili
+  @raddAlt
   Scenario: [RADD-ALT_ACT-20B] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
+    When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
+    Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+
+  @raddAlt @QA-19302 @fixBugRADDDocumentiNonDisponibili
+  Scenario: [RADD-DOC-SCADUTI] PF - La scansione di un QR code di una notifica perfezionata da più di 120 giorni restituisce solamente i documenti di AO3 validi 10 anni
     When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
@@ -1425,7 +1445,7 @@ Feature: Radd Alternative
 
 
   @QA-19302 @fixBugRADDDocumentiNonDisponibili
-  Scenario: [nonregressionePG] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+  Scenario: [RADD-DOC-SCADUTI-NRT] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -1452,7 +1472,7 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
   @QA-19302 @fixBugRADDDocumentiNonDisponibili
-  Scenario: [nonregressionePF] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
+  Scenario: [RADD-DOC-SCADUTI-NRT2] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
