@@ -15,8 +15,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_1_A] Come PA invio una notifica verso una PG per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_1_A] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
+  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  la richiesta verso i registri è tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -30,9 +31,11 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta verso il servizio INIPEC per il cf "19854070638" risulta in stato WORKED
     Then il batch associato alla richiesta verso INIPEC per il cf "19854070638" risulta in stato WORKED
 
+
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_2_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_2_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale,
+  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  la richiesta verso i registri è tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -47,8 +50,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
+  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  non viene trovato nessun recapito per il destinatario,
+  la richiesta e l'esito verso i registri sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -63,8 +68,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "MRGVPC67R10H501Y" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_2_A2] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_2_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
+  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  non viene trovato nessun recapito per il destinatario,
+  la richiesta e l'esito verso i registri sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -78,8 +85,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la risposta sul registro INIPEC per il cf "39274018561" non contiene recapiti
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B2] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B2] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
+  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  non viene trovato nessun recapito per il destinatario,
+  la richiesta e l'esito verso i registri sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -94,8 +103,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "83016259471" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_3_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_3_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  in risposta dal mock si avrà un errore tecnico, la richiesta viene predisposta per un ulteriore tentativo,
+  la richiesta e l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -110,8 +120,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_3_A2] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INIPEC_GESTIONE_ESITO_01_3_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  in risposta dal mock si avrà un errore tecnico, la richiesta viene predisposta per un ulteriore tentativo,
+  la richiesta e l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -144,8 +155,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
+  la richiesta e l'esito della chiamata verso i registri sono tracciati nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -160,8 +171,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INAD per il cf "PPPPLT80A01H501V" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_B] Come PA invio una notifica verso una PG per il quale si ha una chiamata al registro INAD,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_B] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  non è presente recapito su INIPEC quindi si ha la chiamata verso INAD.
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -172,18 +184,17 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la richiesta verso il servizio INIPEC per il cf "28223913097" risulta in stato WORKED
     Then il batch associato alla richiesta verso INIPEC per il cf "28223913097" risulta in stato WORKED
-
     Then la richiesta verso il servizio INAD per il cf "28223913097" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "28223913097" risulta in stato WORKED
 
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF per il quale si ha un errore 500 sulla chiamata al registro INAD,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
+  in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo verso INAD,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -197,8 +208,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il ritentativo della chiamata verso INAD per il cf "CIACIA80A01H501X" risulta correttamente registrato
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG per il quale si ha un errore 500 sulla chiamata al registro INAD,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INIPEC con esito negativo e poi verso INAD per recuperarlo,
+  in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -209,11 +222,14 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
+    Then la richiesta verso il servizio INIPEC per il cf "62583510995" risulta in stato WORKED
     Then il ritentativo della chiamata verso INAD per il cf "62583510995" risulta correttamente registrato
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF per il quale si ha un errore lista non trovata sulla chiamata al registro INAD,
-  quindi la richiesta è tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INAD per recuperarlo,
+  in risposta il mock restituisce un errore lista non trovata, viene predisposto un ulteriore tentativo,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -227,8 +243,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il ritentativo della chiamata verso INAD per il cf "VDADGI80A01F839E" risulta correttamente registrato
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A3] Come PA invio una notifica verso una PF per il quale si ha un errore 400 sulla chiamata al registro INAD,
-  quindi la richiesta termina in errore senza retry.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A3] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INAD per recuperarlo,
+  in risposta il mock restituisce un errore 400, la richiesta risulterà con stato: in errore.,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -244,8 +262,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD senza recuperare indirizzi,
-  la richiesta viene completata e tracciata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INAD senza recuperare indirizzi,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -260,8 +279,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INAD per il cf "CLMCST42R12D969Z" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD senza recuperare indirizzi,
-  la richiesta è riprogrammata e tracciata nella tabella dedicata.
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_B] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
+  non viene recuperato nessun recapito,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -283,8 +304,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_05_1] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INAD.
-    Given viene generata una nuova notifica
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_05_1] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INAD e successivamente verso INIPEC per recuperarlo,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
@@ -304,8 +326,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG per il quale si ha una chiamata al registro INAD.
-    Given viene generata una nuova notifica
+  Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
+  viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
+  le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
