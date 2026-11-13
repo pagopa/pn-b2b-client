@@ -310,7 +310,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
 
 
       # Test al momento manuale, da introdurre tra i TA appena abiliteranno la possibilità di consultare confinfo da core di QA
-  #@workflowAnalogico @veraPa  #Feature flag: true
+  #@workflowAnalogico @veraPa @work-item:QA-18523  #Feature flag: true
   Scenario: [B2B_TIMELINE_ANALOG_AR_SHOW_PA_SENDER_1] Come PA invio una notifica analogica, controllo che nei log al posto del CF mittente ci sia l'id di salfe-care.
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -327,7 +327,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza AR
       | param2 | 5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce  |
 
   # Test al momento manuale, da introdurre tra i TA appena abiliteranno la possibilità di consultare confinfo da core di QA
-  #@workflowAnalogico @veraPa #Feature flag: false
+  #@workflowAnalogico @veraPa @work-item:QA-18523 #Feature flag: false
   Scenario: [B2B_TIMELINE_ANALOG_AR_SHOW_PA_SENDER_2] Come PA invio una notifica analogica, controllo che sia loggato il CF del mittente.
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
