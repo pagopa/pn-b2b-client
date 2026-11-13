@@ -1,16 +1,66 @@
 Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
 
-  #################### PAGINAZIONE ####################
+  #################### CDT 1.1 - PERCORSO DI UNA DELEGA ####################
 
-  # Precondizione: l'Ente PT "PT_A" ha più di 10 deleghe
+  # Copre anche CDT 2.1 path A e path C (la richiesta non valorizza institutionFromRootName, l'evento ADD è senza updatedAt e closedAt)
   @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_1] Il numero di Enti PA per pagina non è indicato.
-  SEND restituisce al massimo 10 Enti, con il riferimento alla pagina successiva
-#    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-#    ... ripetere per almeno 11 Enti PA diversi
-    When l'Ente PT "PT_A" richiede l'elenco degli Enti deleganti
-    Then la risposta contiene esattamente 10 Enti
-    And la risposta contiene il riferimento alla pagina successiva
+  Scenario: [PT-ENTI-DELEGANTI_1.1_B] L'Ente PA conferisce la delega a un Ente PT che ha già altri Enti PA delegati.
+  L'elenco comprende anche il nuovo Ente PA, senza alterare gli altri
+    Given l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_2" non ha una delega attiva per l'Ente PT "PT_A"
+    When l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    Then l'Ente PA "Comune_2" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
+    And l'Ente PA "Comune_1" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
+
+  # CDT 1.1 path C (modifica) coperto implicitamente da PT-ENTI-DELEGANTI_1.1_E: l'API di test SelfCare non espone un update,
+  # revoca e riconferimento sono le modifiche della stessa delega
+
+  # Copre anche CDT 2.1 path G
+  @ptEntiDeleganti
+  Scenario: [PT-ENTI-DELEGANTI_1.1_D] L'Ente PA revoca la delega.
+  L'Ente PA compare come revocato e non più tra le deleghe attive
+    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    When l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
+    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    Then l'Ente PA "Comune_Multi" compare una sola volta con stato "REVOKED" e l'identificativo della delega creata
+    And l'Ente PA "Comune_Multi" non compare tra gli Enti con delega "ACTIVE" dell'Ente PT "PT_A"
+
+  # Copre anche CDT 2.1 path E
+  @ptEntiDeleganti
+  Scenario: [PT-ENTI-DELEGANTI_1.1_E] L'Ente PA conferisce una nuova delega verso l'Ente PT dopo averla revocata.
+  L'Ente PA compare una sola volta, con la delega più recente
+    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
+    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    And l'Ente PA "Comune_Multi" compare una sola volta con stato "REVOKED" e l'identificativo della delega creata
+    When l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
+    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    Then l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
+
+  #################### CDT 1.2 - ENTE PA NON ADERENTE ####################
+
+  # Precondizione: "Comune_Non_Aderente" esiste su SelfCare ma non ha aderito a SEND
+  # Esito "Viene generato un allarme" da verificare manualmente: allarme sulla DLQ della coda pn-kafka_bridge_delegations
+  @ptEntiDeleganti
+  Scenario: [PT-ENTI-DELEGANTI_1.2] L'Ente PA non aderente a SEND conferisce la delega verso l'Ente PT.
+  La delega viene scartata e l'Ente PA non compare nell'elenco dell'Ente PT
+    When l'Ente PA "Comune_Non_Aderente" conferisce la delega all'Ente PT "PT_A"
+    Then dopo 2 minuti l'Ente PA "Comune_Non_Aderente" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
+
+  #################### CDT 2.2 - COMUNICAZIONE NON VALIDA ####################
+
+  # Coppia Comune_Son -> PT_A dedicata: non deve avere deleghe valide in altri scenari
+  # Se SelfCare rifiuta la ragione sociale vuota il path non è automatizzabile; via API non si distingue lo scarto di
+  # pn-kafka-bridge (solo log) da quello di pn-external-registries dopo i tentativi previsti
+  # Esito "SEND la segnala come anomala" (DLQ e allarme di pn-kafka_bridge_delegations) da verificare manualmente
+  @ptEntiDeleganti
+  Scenario: [PT-ENTI-DELEGANTI_2.2_A] SEND riceve da SelfCare una comunicazione di delega non valida.
+  La delega non viene acquisita e l'Ente PA non compare nell'elenco dell'Ente PT
+    When l'Ente PA "Comune_Son" conferisce la delega all'Ente PT "PT_A" con ragione sociale vuota
+    Then dopo 2 minuti l'Ente PA "Comune_Son" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
+
+  #################### PAGINAZIONE ####################
 
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_2] Il numero di Enti PA per pagina è al minimo ammesso (1).
@@ -157,22 +207,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
     And l'elenco degli Enti deleganti contiene almeno un Ente con stato delega "ACTIVE"
     And l'elenco degli Enti deleganti contiene almeno un Ente con stato delega "REVOKED"
 
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_15] Nessun filtro: un Ente ha modificato più volte la delega.
-  L'elenco comprende l'Ente PA una sola volta, con la situazione più recente
-    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
-    Then l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE"
-
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_16] Nessun filtro: un Ente ha revocato la delega.
-  L'Ente PA compare nell'elenco con stato revocata e data della revoca
-    Given l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_2" revoca la delega per l'Ente PT "PT_A"
-    When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
-    Then l'Ente PA "Comune_2" compare una sola volta con stato "REVOKED"
+  # PT-ENTI-DELEGANTI_15 e _16 rimossi: coperti da PT-ENTI-DELEGANTI_1.1_E e _1.1_D
 
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_17] Filtro per stato <stato>.

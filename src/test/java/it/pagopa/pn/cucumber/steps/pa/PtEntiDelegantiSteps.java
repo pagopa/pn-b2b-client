@@ -18,11 +18,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class PtEntiDelegantiSteps {
@@ -63,6 +65,25 @@ public class PtEntiDelegantiSteps {
     public void revokePtDelegation(String paName, String ptName) {
         assertThat(ptEntiDelegantiService.revokeDelegation(paName, ptName))
                 .as("Nessuna delega attiva dell'Ente PA %s per l'Ente PT %s da revocare", paName, ptName)
+                .isNotBlank();
+    }
+
+    @Given("l'Ente PA {string} non ha una delega attiva per l'Ente PT {string}")
+    public void ensureNoActivePtDelegation(String paName, String ptName) {
+        ptEntiDelegantiService.ensureNoActiveDelegation(paName, ptName);
+    }
+
+    @When("l'Ente PA {string} conferisce la delega all'Ente PT {string}")
+    public void conferPtDelegation(String paName, String ptName) {
+        assertThat(ptEntiDelegantiService.conferDelegation(paName, ptName))
+                .as("Delega dell'Ente PA %s per l'Ente PT %s non conferita", paName, ptName)
+                .isNotBlank();
+    }
+
+    @When("l'Ente PA {string} conferisce la delega all'Ente PT {string} con ragione sociale vuota")
+    public void conferPtDelegationWithEmptyName(String paName, String ptName) {
+        assertThat(ptEntiDelegantiService.conferDelegation(paName, ptName, ""))
+                .as("Delega dell'Ente PA %s per l'Ente PT %s non conferita", paName, ptName)
                 .isNotBlank();
     }
 
@@ -232,17 +253,33 @@ public class PtEntiDelegantiSteps {
                 .allMatch(institution -> expected.equalsIgnoreCase(institution.getInstitutionTaxCode()));
     }
 
-    @Then("l'Ente con codice fiscale {string} compare una sola volta con stato {string}")
-    public void institutionAppearsOnceWithStatus(String taxCode, String status) {
-        String expected = resolveValue(taxCode);
-        assertAppearsOnceWithStatus("con codice fiscale " + expected, status,
-                institution -> expected.equalsIgnoreCase(institution.getInstitutionTaxCode()));
+    @Then("l'Ente PA {string} compare una sola volta con stato {string} e l'identificativo della delega creata")
+    public void paAppearsOnceWithStatusAndDelegationId(String paName, String status) {
+        String paId = ptEntiDelegantiService.getPaInstitutionId(paName);
+        PtInstitution found = assertAppearsOnceWithStatus(paName, status, institution -> paId.equals(institution.getInstitutionId()));
+        assertThat(found.getDelegationId())
+                .as("L'identificativo della delega dell'Ente PA %s non corrisponde a quello creato", paName)
+                .isEqualTo(ptEntiDelegantiService.getDelegationId(paName, lastPt));
     }
 
-    @Then("l'Ente PA {string} compare una sola volta con stato {string}")
-    public void paAppearsOnceWithStatus(String paName, String status) {
+    @Then("l'Ente PA {string} non compare tra gli Enti con delega {string} dell'Ente PT {string}")
+    public void paNotInStatusList(String paName, String status, String ptName) {
         String paId = ptEntiDelegantiService.getPaInstitutionId(paName);
-        assertAppearsOnceWithStatus(paName, status, institution -> paId.equals(institution.getInstitutionId()));
+        assertThat(ptEntiDelegantiService.readAllPages(ptName, null, PtDelegationStatus.fromValue(status), MAX_LIMIT).institutions())
+                .as("L'Ente PA %s compare tra gli Enti con delega %s", paName, status)
+                .noneMatch(institution -> paId.equals(institution.getInstitutionId()));
+    }
+
+    @Then("dopo 2 minuti l'Ente PA {string} non compare nell'elenco degli Enti deleganti dell'Ente PT {string}")
+    public void paNeverInPtList(String paName, String ptName) {
+        String paId = ptEntiDelegantiService.getPaInstitutionId(paName);
+        await()
+                .during(2, TimeUnit.MINUTES)
+                .atMost(3, TimeUnit.MINUTES)
+                .pollInterval(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(ptEntiDelegantiService.readAllPages(ptName, null, null, MAX_LIMIT).institutions())
+                        .as("L'Ente PA %s compare nell'elenco degli Enti deleganti dell'Ente PT %s", paName, ptName)
+                        .noneMatch(institution -> paId.equals(institution.getInstitutionId())));
     }
 
     @Then("nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT {string}")
@@ -257,7 +294,7 @@ public class PtEntiDelegantiSteps {
                 .noneMatch(institution -> otherPtInstitutionIds.contains(institution.getInstitutionId()));
     }
 
-    private void assertAppearsOnceWithStatus(String description, String status, Predicate<PtInstitution> matcher) {
+    private PtInstitution assertAppearsOnceWithStatus(String description, String status, Predicate<PtInstitution> matcher) {
         List<PtInstitution> found = allReadInstitutions.stream()
                 .filter(matcher)
                 .toList();
@@ -270,6 +307,7 @@ public class PtEntiDelegantiSteps {
         assertThat(found.get(0).getStatusChangedAt())
                 .as("La data dello stato della delega non è valorizzata")
                 .isNotBlank();
+        return found.get(0);
     }
 
     private void requestPtInstitutions(String ptName, String search, PtDelegationStatus status, Integer limit, String lastKey) {
