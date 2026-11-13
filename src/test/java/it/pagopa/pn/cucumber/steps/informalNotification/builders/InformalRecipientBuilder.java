@@ -1,50 +1,23 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationPaymentItem;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationDigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPaymentAttachment;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationPhysicalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.PagoPaPaymentBase;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.DIGITAL_DOMICILE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.EMAIL;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.MESSAGE_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_AMOUNT;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_CREDITOR_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_DUE_DATE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_MULTY_NUMBER;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PAYMENT_NOTICE_CODE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHONE_NUMBER;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_ADDRESS;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_AT;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_DETAILS;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_MUNICIPALITY;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_PROVINCE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_STATE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.PHYSICAL_ADDRESS_ZIP;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_ADDITIONAL_LANGUAGES;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_DENOMINATION;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_TAX_ID;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.RECIPIENT_TYPE;
-import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.getValue;
-
+import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InformalRecipientBuilder {
@@ -52,7 +25,7 @@ public class InformalRecipientBuilder {
     private final InformalNotificationRequestMapper mapper;
     private final InformalMessageProvider messageProvider;
 
-    public InformalNotificationRecipientV1 build(Map<String, String> data, String currentCxId) {
+    public InformalNotificationRecipientV1 build(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType ) {
 
         InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
 
@@ -63,7 +36,7 @@ public class InformalRecipientBuilder {
         if (recipientType != null) {
             recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
         }
-        recipient.setMessageId(resolveMessageId(data, currentCxId));
+        recipient.setMessageId(resolveMessageId(data, currentCxId, apiKeyType));
         recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
@@ -171,7 +144,7 @@ public class InformalRecipientBuilder {
     // =========================================================
     // MESSAGE ID
     // =========================================================
-    private UUID resolveMessageId(Map<String, String> data, String currentCxId) {
+    private UUID resolveMessageId(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType) {
 
         String value = getValue(data, MESSAGE_ID.key);
 
@@ -180,15 +153,14 @@ public class InformalRecipientBuilder {
         }
         return switch (value) {
 
-            case "${IT}" -> UUID.fromString(messageProvider.getOrCreateMessageIT(currentCxId));
-            case "${IT-FR}" -> UUID.fromString(messageProvider.getOrCreateMessageITFR(currentCxId));
-            case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
-            case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
-            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createAndSaveMessageITDE(currentCxId));
-            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createAndSaveMessageITSL(currentCxId));
-            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createAndSaveMessageITEN(currentCxId));
-            case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
-            case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
+            case "${IT}" -> UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
+            case "${IT-FR}" -> UUID.fromString(messageProvider.createMessageITFR(currentCxId, apiKeyType));
+            case "${NEW-IT}" ->    UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
+            case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createMessageITFR(currentCxId, apiKeyType));
+            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createMessageITDE(currentCxId, apiKeyType));
+            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createMessageITSL(currentCxId, apiKeyType));
+            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createMessageITEN(currentCxId, apiKeyType));
+            case "${SAVED-IT}" -> UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
 
             default -> UUID.fromString(value);
         };
