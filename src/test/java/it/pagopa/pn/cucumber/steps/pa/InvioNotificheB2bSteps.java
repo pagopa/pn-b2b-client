@@ -49,6 +49,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import it.pagopa.pn.cucumber.utils.PdfDarkPixelUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -94,6 +96,9 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class InvioNotificheB2bSteps {
+
+    // Tipo SafeStorage dei documenti che pn-ec fa rasterizzare a pn-pdfraster prima dell'invio cartaceo
+    private static final String RASTERIZED_PAPER_DOCUMENT_TYPE = "PN_PAPER_ATTACHMENT";
 
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
@@ -1174,6 +1179,66 @@ public class InvioNotificheB2bSteps {
             String message = assertionFailedError.getMessage() + " - Verifica Allegati Cartacei in errore.";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
+
+    /**
+     * Verifica i documenti rasterizzati arrivati al recapitista: stesso numero di pagine del documento della notifica
+     * e, per ogni pagina, una quota di pixel scuri almeno pari a {@link PdfDarkPixelUtils#MIN_DARK_PIXEL_RATIO}.
+     * Vale per documenti con pagine prevalentemente scure, come i PDF {@code JPEG2000_*}.
+     */
+    @Then("si verifica che il documento rasterizzato inviato in via cartacea al destinatario {int} non abbia pagine bianche")
+    public void checkRasterizedPaperDocumentHasNoBlankPages(Integer destinatario) {
+        String iun = sharedSteps.getNotificationIun();
+        List<String> rasterizedUris = Optional.ofNullable(pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(iun, destinatario))
+                .orElse(List.of())
+                .stream()
+                .map(ReceivedMessage::getPaperEngageRequest)
+                .filter(Objects::nonNull)
+                .map(PaperEngageRequest::getAttachments)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .map(PaperEngageRequestAttachmentsInner::getUri)
+                .filter(uri -> uri != null && toSafeStorageFileKey(uri).startsWith(RASTERIZED_PAPER_DOCUMENT_TYPE))
+                .distinct()
+                .toList();
+        Assertions.assertFalse(rasterizedUris.isEmpty(),
+                "Nessun documento " + RASTERIZED_PAPER_DOCUMENT_TYPE + " nelle richieste cartacee ricevute dal recapitista per la notifica "
+                        + iun + ", destinatario " + destinatario);
+
+        int expectedPages = PDFUtility.getNumberOfPages(downloadFirstNotificationDocument());
+        for (String uri : rasterizedUris) {
+            byte[] content = downloadFromSafeStorage(getSafeStorageFileInfo(uri), uri);
+            List<Double> darkPixelRatios;
+            try {
+                darkPixelRatios = PdfDarkPixelUtils.darkPixelRatioPerPage(content);
+            } catch (IOException exception) {
+                throw new IllegalStateException("Il documento rasterizzato " + uri + " non è un PDF leggibile", exception);
+            }
+            log.info("Documento rasterizzato {}: quota di pixel scuri per pagina {}", uri, darkPixelRatios);
+
+            Assertions.assertEquals(expectedPages, darkPixelRatios.size(),
+                    "Il documento rasterizzato " + uri + " ha " + darkPixelRatios.size()
+                            + " pagine, il documento della notifica " + expectedPages);
+            List<Integer> blankPages = new ArrayList<>();
+            for (int pageIndex = 0; pageIndex < darkPixelRatios.size(); pageIndex++) {
+                if (darkPixelRatios.get(pageIndex) < PdfDarkPixelUtils.MIN_DARK_PIXEL_RATIO) {
+                    blankPages.add(pageIndex + 1);
+                }
+            }
+            Assertions.assertTrue(blankPages.isEmpty(),
+                    "Il documento rasterizzato " + uri + " ha pagine bianche: " + blankPages
+                            + ". Quota di pixel scuri per pagina: " + darkPixelRatios
+                            + ", minima attesa: " + PdfDarkPixelUtils.MIN_DARK_PIXEL_RATIO);
+        }
+    }
+
+    private byte[] downloadFirstNotificationDocument() {
+        List<NotificationDocument> documents = sharedSteps.getSentNotificationLastVersion().getDocuments();
+        Assertions.assertFalse(documents == null || documents.isEmpty(), "La notifica " + sharedSteps.getNotificationIun() + " non ha documenti");
+        NotificationAttachmentDownloadMetadataResponse document = b2bClient
+                .getSentNotificationDocument(sharedSteps.getNotificationIun(), Integer.parseInt(documents.get(0).getDocIdx()));
+        Assertions.assertNotNull(document, "Download del documento della notifica non disponibile");
+        return B2bUtils.downloadFile(document.getUrl());
     }
 
     /**
