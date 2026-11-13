@@ -29,6 +29,7 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.core.ConditionFactory;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
@@ -80,7 +81,6 @@ public class TimelineReworkSteps {
     private RestartAttemptResponse restartAttemptResponse;
     private InvalidateTimelineElementsResponse removeElementsResponse;
     private InvalidateTimelineElementsRequest punctualCorrectionRequest;
-    private QueryResponse reworkedTimelinesForInvoicingResponse;
     private HttpStatus httpStatusCode;
     private String timestampString;
     private List<String> attempt1ElementIds = new ArrayList<>();
@@ -526,41 +526,49 @@ public class TimelineReworkSteps {
         }
     }
 
-    @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato {invoicingType}")
-    public void checkReworkedTimelinesForInvoicing(String invoicingType, Map<String, String> expectedElements) {
+    @Then("controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline {appear} in stato {invoicingType}")
+    public void checkReworkedTimelinesForInvoicing(boolean expectedPresent, String invoicingType, Map<String, String> timelineElements) {
         FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
         boolean isViewed = fsn.getNotificationStatus().getValue().equals(NOTIFICATION_STATUS_VIEWED);
         String paId = fsn.getSenderPaId();
         String sentAt = fsn.getSentAt().toLocalDate().toString();
         String iun = fsn.getIun();
         String pk = paId + "_" + sentAt;
+        // l'assenza deve reggere per tutta la finestra: una lettura singola può arrivare prima della scrittura
+        ConditionFactory polling = expectedPresent
+                ? await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS)
+                : await().during(1, TimeUnit.MINUTES).atMost(2, TimeUnit.MINUTES).pollInterval(15, TimeUnit.SECONDS);
 
         try {
-            await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                reworkedTimelinesForInvoicingResponse = dynamoDbService.call(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
+            polling.ignoreExceptions().untilAsserted(() -> {
+                List<Map<String, AttributeValue>> response = dynamoDbService.callAllPages(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
                         ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
-                        ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build()
+                        ":v_iun", AttributeValue.builder().s(iun).build()
                 ));
-                log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", reworkedTimelinesForInvoicingResponse);
-                assertThat(reworkedTimelinesForInvoicingResponse).as("Il risultato della query su pn-ReworkedTimelinesForInvoicing non dev'essere null. IUN = %s", iun).isNotNull();
-                List<Map<String, AttributeValue>> records = reworkedTimelinesForInvoicingResponse.items().stream().filter(
+                log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", response);
+                List<Map<String, AttributeValue>> records = response.stream().filter(
                         e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
                 log.info("Filtered records -> {}", records);
 
-                if (isViewed && invoicingType.equals("NEW")) {
+                if (expectedPresent && isViewed && invoicingType.equals("NEW")) {
                     assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW. IUN = %s", iun).isEqualTo(0);
-                } else {
-                    expectedElements.forEach((key, value) -> {
-                        String[] requirements = value.split(";");
-                        Map<String, AttributeValue> expectedFound = records.stream()
-                                .filter(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                                        && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains))
-                                .findFirst().orElse(null);
-                        assertThat(expectedFound)
-                                .as("Non è stato trovato nessun record che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s", Arrays.toString(requirements), iun)
-                                .isNotNull();
-                    });
+                    return;
                 }
+                assertThat(response.isEmpty())
+                        .as("Nessun record su pn-ReworkedTimelinesForInvoicing per il giorno %s. IUN = %s", sentAt, iun)
+                        .isFalse();
+                timelineElements.forEach((key, value) -> {
+                    String[] requirements = value.split(";");
+                    boolean found = records.stream()
+                            .anyMatch(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains));
+                    assertThat(found)
+                            .as(expectedPresent
+                                            ? "Non è stato trovato nessun record in stato %s che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s"
+                                            : "È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s",
+                                    invoicingType, Arrays.toString(requirements), iun)
+                            .isEqualTo(expectedPresent);
+                });
             });
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
