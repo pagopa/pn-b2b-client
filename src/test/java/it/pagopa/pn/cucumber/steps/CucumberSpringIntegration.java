@@ -29,6 +29,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v30.*;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -272,6 +273,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnExternalChannelsInternalClientImpl.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
+        SqsService.class,
         AwsConfig.class,
         SenderInfoProvider.class,
         DestinatarioRegistry.class,
