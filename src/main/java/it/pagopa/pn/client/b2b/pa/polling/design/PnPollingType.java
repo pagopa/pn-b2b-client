@@ -5,7 +5,7 @@ import lombok.Getter;
 
 /**
  * Tipi di polling risolti da {@link PnPollingFactory}.
- * Ogni valore porta il nome del bean Spring che implementa la strategia.
+ * Ogni valore porta il nome con cui è registrato il service di polling.
  */
 @Getter
 public enum PnPollingType {
@@ -138,9 +138,9 @@ public enum PnPollingType {
     VALIDATION_STATUS_NO_ACCEPTATION_V30("VALIDATION_STATUS_NO_ACCEPTATION_V30"),
     WEBHOOK_V30("WEBHOOK_V30");
 
-    private final String beanName;
+    private final String serviceName;
 
-    PnPollingType(String beanName) {
-        this.beanName = beanName;
+    PnPollingType(String serviceName) {
+        this.serviceName = serviceName;
     }
 }

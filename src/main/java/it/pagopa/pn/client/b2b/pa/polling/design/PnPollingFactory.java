@@ -27,7 +27,7 @@ public class PnPollingFactory implements SettableApiKey {
 
     public IPnPollingService<?> getPollingService(PnPollingType pollingType) {
         Objects.requireNonNull(pollingType, "pollingType is required");
-        return resolve(pollingType.getBeanName());
+        return resolve(pollingType.getServiceName());
     }
 
     /** @deprecated usare {@link #getPollingService(PnPollingType)} */
@@ -46,9 +46,9 @@ public class PnPollingFactory implements SettableApiKey {
         resolve(pollingType).waitForEvent(iun, pnPollingParameter);
     }
 
-    private IPnPollingService<?> resolve(String beanName) {
+    private IPnPollingService<?> resolve(String serviceName) {
         try{
-            IPnPollingService<?> iPnPollingService = context.getBean(beanName, IPnPollingService.class);
+            IPnPollingService<?> iPnPollingService = context.getBean(serviceName, IPnPollingService.class);
             if(apiKeyType != null){
                 iPnPollingService.setApiKeys(apiKeyType);
             }else if(apiKey != null){
@@ -57,7 +57,7 @@ public class PnPollingFactory implements SettableApiKey {
 
             return iPnPollingService;
         }catch (NoSuchBeanDefinitionException noSuchBeanDefinitionException){
-            throw new PnPollingException("Unsupported IPnPollingService type: " + beanName);
+            throw new PnPollingException("Unsupported IPnPollingService type: " + serviceName);
         }
     }
 
