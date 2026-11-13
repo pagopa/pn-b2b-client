@@ -47,6 +47,7 @@ import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
+import it.pagopa.pn.cucumber.steps.externalChannel.builders.PaperEngageRequestBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
@@ -270,6 +271,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerCsvLoader.class,
         DelayerPlanner.class,
         PnExternalChannelsInternalClientImpl.class,
+        PaperEngageRequestBuilder.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
         AwsConfig.class,
