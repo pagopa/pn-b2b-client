@@ -2,19 +2,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
 
-
-  Then il batch associato alla richiesta verso {eservice} per il cf {string} risulta in errore
-  Then la richiesta verso il servizio {eservice} per il cf {string} risulta in errore
-
-
-
-
-
-
-
-
-
-  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
+@inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_1_A] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
   quindi viene fatta una chiamata verso INIPEC per recuperarlo,
   la richiesta verso i registri è tracciata nelle tabelle dedicate al monitoraggio.
@@ -127,7 +115,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la risposta sul registro INIPEC per il cf "83016259471" non contiene recapiti
     Then il batch associato alla richiesta verso INIPEC per il cf "83016259471" risulta in stato WORKED
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_3_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
   in risposta dal mock si avrà un errore tecnico, la richiesta viene predisposta per un ulteriore tentativo,
   la richiesta e l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
@@ -147,7 +135,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il ritentativo della chiamata verso INIPEC per il cf "TSTGNN80A01F839X" risulta correttamente registrato
 
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_3_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
   in risposta dal mock si avrà un errore tecnico, la richiesta viene predisposta per un ulteriore tentativo,
   la richiesta e l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
@@ -201,7 +189,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
   in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo verso INAD,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
@@ -216,9 +204,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then il ritentativo della chiamata verso INAD per il cf "CIACIA80A01H501X" risulta correttamente registrato
-#todo verificare gli altri retry
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC con esito negativo e poi verso INAD per recuperarlo,
   in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo,
@@ -236,7 +223,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta verso il servizio INIPEC per il cf "62583510995" risulta in stato WORKED
     Then il ritentativo della chiamata verso INAD per il cf "62583510995" risulta correttamente registrato
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD per recuperarlo,
   in risposta il mock restituisce un errore lista non trovata, viene predisposto un ulteriore tentativo,
@@ -253,7 +240,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then il ritentativo della chiamata verso INAD per il cf "VDADGI80A01F839E" risulta correttamente registrato
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A3] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD per recuperarlo,
   in risposta il mock restituisce un errore 400, la richiesta risulterà con stato: in errore.,
@@ -336,7 +323,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
+  @inadMassive @mockNR @ignoreUAT @inadMassiveTrueInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
@@ -356,7 +343,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INAD per il cf "39274018561" risulta in stato WORKED
 
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:false;EnableOldInipecFlow:true
+  @inadMassive @mockNR @ignoreUAT @inadMassiveFalseInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:false;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.

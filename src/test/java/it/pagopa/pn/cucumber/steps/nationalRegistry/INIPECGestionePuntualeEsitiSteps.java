@@ -96,16 +96,27 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la risposta sul registro {eservice} per il cf {string} non contiene recapiti")
     public void verifyResponseWithoutAddresses(Eservice eservice, String cf) {
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).isEqualTo(cf);
-            assertThat(request.get("registry").s()).isEqualTo(eservice.name());
-            assertThat(request.get("status").s()).isEqualTo("WORKED");
-            assertThat(request.get("resultPayload").s()).isNotBlank();
-            String resultPayload = request.get("resultPayload").s();
-            assertThat(resultPayload).contains("\"digitalAddress\":[]");
-        });
-    }
+            await().atMost(DB_POLL_TIMEOUT)
+                    .pollInterval(DB_POLL_INTERVAL)
+                    .untilAsserted(() -> {
+
+                        Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+
+                        assertThat(request.get("taxId").s()).isEqualTo(cf);
+                        assertThat(request.get("registry").s()).isEqualTo(eservice.name());
+                        assertThat(request.get("status").s()).isEqualTo("WORKED");
+
+                        String resultPayload = request.get("resultPayload").s();
+
+                        if (eservice == Eservice.INAD) {
+                            assertThat(resultPayload).isNotBlank();
+                            assertThat(resultPayload).contains("\"digitalAddress\":[]");
+                        } else if (eservice == Eservice.INIPEC) {
+                            assertThat(resultPayload).isBlank();
+                        }
+                    });
+        }
+
 
     private Map<String, AttributeValue> retrieveNationalRegistryRequest(Eservice eservice) {
 
