@@ -3,6 +3,9 @@ package it.pagopa.pn.cucumber.steps.nationalRegistry;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.SqsService;
@@ -13,12 +16,13 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Verifica l'esito puntuale (per singolo CF) delle richieste batch verso INIPEC.
@@ -66,25 +70,26 @@ public class INIPECGestionePuntualeEsitiSteps {
     private String notificationSentTimestamp;
 
     /**
-     * Tempo massimo di attesa che il dato venga scritto/aggiornato sul DB.
+     * Attesa che il dato venga scritto/aggiornato sul DB: fino a 2 minuti, una lettura ogni 5 secondi.
      */
-    private static final Duration DB_POLL_TIMEOUT = Duration.ofMinutes(2);
+    private static final PollingConfig DB_POLLING = PollingConfig.of(Duration.ofMinutes(2), Duration.ofSeconds(5));
     /**
-     * Intervallo fra un tentativo di lettura e il successivo.
+     * Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto"):
+     * 30 secondi più un intervallo, così l'ultima lettura cade a fine finestra.
      */
-    private static final Duration DB_POLL_INTERVAL = Duration.ofSeconds(5);
+    private static final PollingConfig DB_ABSENCE_POLLING = PollingConfig.of(Duration.ofSeconds(35), Duration.ofSeconds(5));
     /**
-     * Finestra in cui la condizione di assenza deve restare stabile (per evitare check "troppo presto").
+     * Attesa del record SENT_TO_DLQ su DB: il servizio deve prima esaurire internamente tutti i retry.
      */
-    private static final Duration DB_ABSENCE_STABILITY = Duration.ofSeconds(30);
+    private static final PollingConfig DLQ_DB_POLLING = PollingConfig.of(Duration.ofMinutes(10), Duration.ofSeconds(5));
     /**
-     * Tempo massimo di attesa per l'invio in DLQ: il servizio deve prima esaurire internamente tutti i retry.
+     * Attesa del messaggio sulla coda DLQ: fino a 10 minuti, una lettura ogni 30 secondi.
      */
-    private static final Duration DLQ_POLL_TIMEOUT = Duration.ofMinutes(10);
+    private static final PollingConfig DLQ_QUEUE_POLLING = PollingConfig.of(Duration.ofMinutes(10), Duration.ofSeconds(30));
     /**
-     * Intervallo fra una lettura della DLQ e la successiva.
+     * Attesa della richiesta INIPEC/INAD su DB: fino a 30 secondi, una lettura ogni 5 secondi.
      */
-    private static final Duration DLQ_POLL_INTERVAL = Duration.ofSeconds(30);
+    private static final PollingConfig REGISTRY_REQUEST_POLLING = PollingConfig.of(Duration.ofSeconds(30), Duration.ofSeconds(5));
 
     public INIPECGestionePuntualeEsitiSteps(DynamoDbService dynamoDbService, SqsService sqsService, SharedSteps sharedSteps) {
         this.dynamoDbService = dynamoDbService;
@@ -96,11 +101,9 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la richiesta INIPEC per il cf {string} risulta INVIATA al primo tentativo")
     public void requestSentWithoutRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come SENT con retry = 0, oppure scade il timeout.
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT);
-
+        pollUntilVerified(
+                () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT),
+                items -> {
                     assertThat(items)
                             .as("Nessuna richiesta SENT trovata per cf=%s nella finestra temporale", cf)
                             .isNotEmpty();
@@ -109,17 +112,16 @@ public class INIPECGestionePuntualeEsitiSteps {
                             assertThat(retryOf(item))
                                     .as("cf=%s: atteso retry=0 (inviata al primo tentativo)", cf)
                                     .isZero());
-                });
+                },
+                DB_POLLING);
     }
 
     @Then("la richiesta INIPEC per il cf {string} risulta RIMESSA in retry")
     public void requestRequeuedForRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come NOT_SENT con retry > 0, oppure scade il timeout.
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT);
-
+        pollUntilVerified(
+                () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT),
+                items -> {
                     assertThat(items)
                             .as("Nessuna richiesta NOT_SENT trovata per cf=%s nella finestra temporale", cf)
                             .isNotEmpty();
@@ -128,7 +130,8 @@ public class INIPECGestionePuntualeEsitiSteps {
                             assertThat(retryOf(item))
                                     .as("cf=%s: atteso retry>0 (richiesta rimessa in coda)", cf)
                                     .isNotZero());
-                });
+                },
+                DB_POLLING);
     }
 
 
@@ -137,17 +140,14 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la richiesta INIPEC per il cf {string} risulta in ERROR e inviata in DLQ")
     public void requestInErrorAndSentToDlq(String cf) {
         String iun = sharedSteps.getNotificationIun();
-        List<Map<String, AttributeValue>> dlqItems = new ArrayList<>();
-        await().atMost(DLQ_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    // Si considerano solo i record della notifica corrente (correlationId contiene lo IUN):
-                    // la finestra temporale è ampia e potrebbe includere record SENT_TO_DLQ di run precedenti con lo stesso CF.
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ).stream()
-                            .filter(item -> item.containsKey("correlationId")
-                                    && item.get("correlationId").s().contains(iun))
-                            .toList();
-
+        // Si considerano solo i record della notifica corrente (correlationId contiene lo IUN):
+        // la finestra temporale è ampia e potrebbe includere record SENT_TO_DLQ di run precedenti con lo stesso CF.
+        List<Map<String, AttributeValue>> dlqItems = pollUntilVerified(
+                () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ).stream()
+                        .filter(item -> item.containsKey("correlationId")
+                                && item.get("correlationId").s().contains(iun))
+                        .toList(),
+                items -> {
                     assertThat(items)
                             .as("Nessuna richiesta SENT_TO_DLQ trovata per cf=%s e iun=%s nella finestra temporale", cf, iun)
                             .isNotEmpty();
@@ -157,10 +157,8 @@ public class INIPECGestionePuntualeEsitiSteps {
                             assertThat(item.containsKey("status") ? item.get("status").s() : null)
                                     .as("cf=%s: atteso status=ERROR (retry esauriti)", cf)
                                     .isEqualTo(STATUS_ERROR));
-
-                    dlqItems.clear();
-                    dlqItems.addAll(items);
-                });
+                },
+                DLQ_DB_POLLING);
 
         List<String> expectedCorrelationIds = dlqItems.stream()
                 .map(item -> item.get("correlationId").s())
@@ -169,35 +167,39 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record
         // (già filtrato per IUN): così si escludono messaggi residui di run precedenti con lo stesso CF.
-        await().atMost(DLQ_POLL_TIMEOUT)
-                .pollInterval(DLQ_POLL_INTERVAL)
-                .untilAsserted(() -> {
-                    List<Message> messages = sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ);
-
-                    assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
-                            assertThat(messages)
-                                    .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
-                                    .anyMatch(message -> SqsMessageUtils.isNationalRegistryDlqMessageFor(message, cf, correlationId)));
-                });
+        pollUntilVerified(
+                () -> sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ),
+                (List<Message> messages) ->
+                        assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
+                                assertThat(messages)
+                                        .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
+                                        .anyMatch(message -> SqsMessageUtils.isNationalRegistryDlqMessageFor(message, cf, correlationId))),
+                DLQ_QUEUE_POLLING);
     }
 
     @Then("per i cf {string} e {string} non risulta alcuna richiesta INIPEC")
     public void noRequestForEitherCf(String cf1, String cf2) {
-        // È un'asserzione di "assenza": richiediamo che la condizione resti stabile per una finestra
-        // (during) entro il timeout, così da non passare per un controllo troppo anticipato
-        // (cioè prima che l'eventuale scrittura su DB avvenga).
-        await().atMost(DB_POLL_TIMEOUT)
-                .pollInterval(DB_POLL_INTERVAL)
-                .during(DB_ABSENCE_STABILITY)
-                .untilAsserted(() -> {
-                    assertThat(countAnySendStatus(cf1))
-                            .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf1)
-                            .isZero();
+        // È un'asserzione di "assenza": la condizione deve restare stabile per tutta la finestra, così da non
+        // passare per un controllo troppo anticipato (cioè prima che l'eventuale scrittura su DB avvenga).
+        // Il polling si interrompe in anticipo solo se compare un record; lo scadere del timeout è l'esito atteso.
+        // List e non Map: Map.of fallirebbe se cf1 e cf2 coincidessero.
+        Supplier<List<Integer>> counts = () -> List.of(countAnySendStatus(cf1), countAnySendStatus(cf2));
+        List<Integer> lastCounts;
+        try {
+            lastCounts = Poller.pollUntil(counts, c -> c.stream().anyMatch(n -> n > 0), DB_ABSENCE_POLLING);
+        } catch (PollingTimeoutException e) {
+            @SuppressWarnings("unchecked")
+            List<Integer> lastValue = (List<Integer>) e.getLastValue();
+            lastCounts = lastValue;
+        }
 
-                    assertThat(countAnySendStatus(cf2))
-                            .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf2)
-                            .isZero();
-                });
+        assertThat(lastCounts.get(0))
+                .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf1)
+                .isZero();
+
+        assertThat(lastCounts.get(1))
+                .as("cf=%s: trovate richieste SENT o NOT_SENT, attese zero", cf2)
+                .isZero();
     }
 
     @And("salvo il timestamp corrente")
@@ -250,11 +252,10 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         String iun = sharedSteps.getNotificationIun();
 
-        await().atMost(Duration.ofSeconds(30)).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-
-            List<Map<String, AttributeValue>> items = retrieveRegistryRequests(cf, eservice, iun);
-            assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty();
-        });
+        pollUntilVerified(
+                () -> retrieveRegistryRequests(cf, eservice, iun),
+                items -> assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty(),
+                REGISTRY_REQUEST_POLLING);
     }
 
     private List<Map<String, AttributeValue>> retrieveRegistryRequests(String cf, Eservice eservice, String iun) {
@@ -270,6 +271,35 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .filter(item -> eservice.name().equals(item.get("eservice").s()))
                 .filter(item -> item.get("correlationId").s().contains(iun))
                 .toList();
+    }
+
+    /**
+     * Ripete {@code call} finché le asserzioni di {@code verify} non passano, oppure scade {@code config}.
+     * Allo scadere le asserzioni vengono rieseguite sull'ultimo valore letto, così il test fallisce
+     * con il messaggio AssertJ originale.
+     *
+     * @return l'ultimo valore letto (quello che ha soddisfatto le asserzioni)
+     */
+    private static <T> T pollUntilVerified(Supplier<T> call, Consumer<T> verify, PollingConfig config) {
+        Predicate<T> verified = value -> {
+            try {
+                verify.accept(value);
+                return true;
+            } catch (AssertionError e) {
+                return false;
+            }
+        };
+
+        T lastValue;
+        try {
+            lastValue = Poller.pollUntil(call, verified, config);
+        } catch (PollingTimeoutException e) {
+            @SuppressWarnings("unchecked")
+            T timedOutValue = (T) e.getLastValue();
+            lastValue = timedOutValue;
+        }
+        verify.accept(lastValue);
+        return lastValue;
     }
 }
 
