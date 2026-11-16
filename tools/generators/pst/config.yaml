@@ -1,0 +1,66 @@
+input:
+  id_pattern: "\\[([^\\]]+)\\]"
+
+business_terms:
+  subject: "Oggetto"
+  requestId: "ID della richiesta"
+  attachmentUrls: "URL degli allegati"
+  printType: "tipo di stampa"
+  receiverType: "tipo di destinatario"
+  proposalProductType: "tipo di prodotto proposto"
+  xClientId: "identificativo del client"
+  senderDenomination: "Mittente"
+  physicalCommunication: "Tipo di comunicazione fisica"
+  digitalDomicile: "Domicilio digitale"
+  physicalAddress_address: "Indirizzo fisico"
+  physicalAddress: "Indirizzo fisico"
+  details: "Dettagli"
+  details_recIndex: "Indice del destinatario"
+  details_sentAttemptMade: "Tentativi di invio effettuati"
+  details_deliveryDetailCode: "Codice di dettaglio della consegna"
+  deliveryDetailCode: "codice di dettaglio"
+  aarType: "Tipo di AAR"
+  digitalDomicile_address: "Domicilio digitale"
+  taxId: "Codice fiscale"
+  variante: "Variante"
+
+value_terms:
+  "[EMPTY]": "vuoto"
+  "[NULL]": "non valorizzato"
+  "[SOLO_SPAZI]": "composto solo da spazi"
+  Comune_Multi: Mittente
+
+field_value_phrases:
+  "*":
+    "NULL": "{field}: non configurato"
+  digitalDomicile:
+    "NULL": "Senza domicilio digitale configurato"
+  details_sentAttemptMade:
+    "0": "Primo tentativo di invio"
+    "1": "Secondo tentativo di invio"
+  details_recIndex:
+    "0": "Primo destinatario"
+    "1": "Secondo destinatario"
+
+step_phrases:
+  - source: 'vengono letti gli eventi fino all''elemento di timeline della notifica "{element}"'
+    target: 'Si attende e si verifica la presenza dell’evento di timeline "{element}"'
+
+status_terms:
+  "200": "richiesta elaborata correttamente"
+  "201": "richiesta accettata e risorsa creata"
+  "400": "richiesta rifiutata perché contiene dati non validi"
+  "403": "operazione non consentita"
+  "409": "richiesta non elaborata per conflitto con una richiesta esistente"
+  "QUESTO-E-INVENTATO": "valore inventato"
+  "questoclientidèdavverotroppolungoenonrispettalalunghezzamassimaconsentita": "identificativo che non rispetta la lunghezza massima consentita"
+
+
+output:
+  format: markdown
+  template: default
+  layout: cards
+  include_technical_codes: false
+  technical_details: none
+  exclude_fields:
+    - details

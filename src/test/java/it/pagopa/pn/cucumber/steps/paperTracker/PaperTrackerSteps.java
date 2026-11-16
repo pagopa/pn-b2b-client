@@ -330,6 +330,10 @@ public class PaperTrackerSteps {
                 .toList();
     }
 
+    /**
+     * Confronta gli output restituiti da /outputs con la timeline sia in RUN sia in DRY.
+     * PaperTrackerDryRunOutputs è il nome storico della tabella, ora usata in entrambe le modalità.
+     */
     @Then("si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: {string}")
     public void checkPaperTrackerEventsNew(String sequenceName) {
         TrackingsRequest request = new TrackingsRequest();
