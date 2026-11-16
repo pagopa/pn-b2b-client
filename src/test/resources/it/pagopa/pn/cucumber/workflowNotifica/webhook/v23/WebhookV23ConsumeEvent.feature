@@ -457,7 +457,7 @@ Feature: avanzamento notifiche webhook b2b V23
     And si crea il nuovo stream con versione "V23" per il "Comune_Multi" con un gruppo disponibile "FIRST"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V23"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOTIFICATION_CANCELLED" con la versione "V23"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
