@@ -33,7 +33,6 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
     public static final String PT_SENZA_DELEGHE = "PT_SENZA_DELEGHE";
 
     private static final String PT_INSTITUTIONS_PATH = "/ext-registry-private/pt/v1/institutions";
-    private static final String X_PAGOPA_PN_UID = "TestAutomation";
     private static final String SRC_CH_B2B = "B2B";
 
     private final RestTemplate restTemplate;
@@ -44,6 +43,7 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
     private final String ptACxId;
     private final String ptBCxId;
     private final String ptSenzaDelegheCxId;
+    private final String pnUid;
 
     private final CxTypeAuthFleet xPagopaPnCxType = CxTypeAuthFleet.PT;
     private String ptSetted;
@@ -51,13 +51,15 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
 
     public PnPtInstitutionsClientImpl(RestTemplate restTemplate,
                                       @Value("${pn.external.registry.base-url:${pn.delivery.base-url}}") String basePath,
-                                      @Value("${pn.external.pt.cx-id.pt-a:PLACEHOLDER_PT_A}") String ptACxId,
-                                      @Value("${pn.external.pt.cx-id.pt-b:PLACEHOLDER_PT_B}") String ptBCxId,
-                                      @Value("${pn.external.pt.cx-id.pt-senza-deleghe:PLACEHOLDER_PT_SENZA_DELEGHE}") String ptSenzaDelegheCxId) {
+                                      @Value("${pn.external.pt.cx-id.pt-a}") String ptACxId,
+                                      @Value("${pn.external.pt.cx-id.pt-b}") String ptBCxId,
+                                      @Value("${pn.external.pt.uid}") String pnUid,
+                                      @Value("${pn.external.pt.cx-id.pt-senza-deleghe}") String ptSenzaDelegheCxId) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.ptACxId = ptACxId;
         this.ptBCxId = ptBCxId;
+        this.pnUid = pnUid;
         this.ptSenzaDelegheCxId = ptSenzaDelegheCxId;
         this.infoPtApi = new InfoPtApi(newApiClient(restTemplate, basePath));
         setPt(PT_A);
@@ -93,7 +95,7 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
 
     @Override
     public PtInstitutionsResponse getPtInstitutions(String search, PtDelegationStatus status, Integer limit, String lastKey) throws RestClientException {
-        return infoPtApi.getPtInstitutions(xPagopaPnCxId, xPagopaPnCxType, X_PAGOPA_PN_UID, SRC_CH_B2B, search, status, limit, lastKey);
+        return infoPtApi.getPtInstitutions(xPagopaPnCxId, xPagopaPnCxType, pnUid, SRC_CH_B2B, search, status, limit, lastKey);
     }
 
     @Override
@@ -107,7 +109,7 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
             headers.add("x-pagopa-pn-cx-id", xPagopaPnCxId);
         }
         headers.add("x-pagopa-pn-cx-type", xPagopaPnCxType.getValue());
-        headers.add("x-pagopa-pn-uid", X_PAGOPA_PN_UID);
+        headers.add("x-pagopa-pn-uid", pnUid);
         headers.add("x-pagopa-pn-src-ch", SRC_CH_B2B);
 
         return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(headers), String.class);

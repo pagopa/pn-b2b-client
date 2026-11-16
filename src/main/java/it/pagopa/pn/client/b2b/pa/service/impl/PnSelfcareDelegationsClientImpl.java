@@ -9,11 +9,17 @@ import it.pagopa.pn.client.b2b.pa.service.IPnSelfcareDelegationsClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Client dell'openapi delegations-test di Selfcare: creazione, revoca e lettura delle deleghe PA→PT
@@ -23,6 +29,7 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnSelfcareDelegationsClientImpl implements IPnSelfcareDelegationsClient {
 
+    private final ApiClient apiClient;
     private final DelegationsTestApi delegationsTestApi;
     private final AllowedProductId productId;
 
@@ -32,7 +39,8 @@ public class PnSelfcareDelegationsClientImpl implements IPnSelfcareDelegationsCl
                                            @Value("${pn.selfcare.delegations.subscription-key:PLACEHOLDER_SELFCARE_SUBSCRIPTION_KEY}") String subscriptionKey,
                                            @Value("${pn.selfcare.delegations.product-id:prod-pn-dev}") String productId) {
         this.productId = AllowedProductId.fromValue(productId);
-        this.delegationsTestApi = new DelegationsTestApi(newApiClient(restTemplate, basePath, subscriptionKey));
+        this.apiClient = newApiClient(restTemplate, basePath, subscriptionKey);
+        this.delegationsTestApi = new DelegationsTestApi(apiClient);
     }
 
     // la subscription key viene inviata nell'header Ocp-Apim-Subscription-Key
@@ -50,7 +58,12 @@ public class PnSelfcareDelegationsClientImpl implements IPnSelfcareDelegationsCl
 
     @Override
     public void deleteDelegation(String delegationId) throws RestClientException {
-        delegationsTestApi.deleteDelegationUsingDELETE(delegationId);
+        // il metodo generato invia Accept: application/problem+json, che SelfCare rifiuta con 406
+        Map<String, Object> uriVariables = Map.of("delegationId", delegationId);
+        apiClient.invokeAPI("/delegations/{delegationId}", HttpMethod.DELETE, uriVariables,
+                new LinkedMultiValueMap<>(), null, new HttpHeaders(), new LinkedMultiValueMap<>(), new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON), null, new String[]{"subscriptionKey"},
+                new ParameterizedTypeReference<Void>() {});
     }
 
     @Override

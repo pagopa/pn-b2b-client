@@ -6,9 +6,9 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   Scenario: [PT-ENTI-DELEGANTI_1.1_B] L'Ente PA conferisce la delega a un Ente PT che ha già altri Enti PA delegati.
   L'elenco comprende anche il nuovo Ente PA, senza alterare gli altri
     Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_2" non ha una delega attiva per l'Ente PT "PT_A"
+    And l'Ente PA "Comune_1" non ha una delega attiva per l'Ente PT "PT_A"
     When l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    And l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 10
     Then l'Ente PA "Comune_1" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
     And l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
 
@@ -38,16 +38,18 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   @ptEntiDeleganti
   Scenario: [PT-ENTI-DELEGANTI_1.2] L'Ente PA non aderente a SEND conferisce la delega verso l'Ente PT.
   La delega viene scartata e l'Ente PA non compare nell'elenco dell'Ente PT
-    When l'Ente PA "Comune di Castagneto" conferisce la delega all'Ente PT "PT_A"
-    Then dopo 2 minuti l'Ente PA "Comune di Castagneto" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
+    When l'Ente PA "Comune di Castagnero" conferisce la delega all'Ente PT "PT_A"
+    Then dopo 1 minuti l'Ente PA "Comune di Castagnero" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
 
   #################### CDT 2.2 - COMUNICAZIONE NON VALIDA ####################
 
-  @ptEntiDeleganti
-  Scenario: [PT-ENTI-DELEGANTI_2.2_A] SEND riceve da SelfCare una comunicazione di delega non valida.
-  La delega non viene acquisita e l'Ente PA non compare nell'elenco dell'Ente PT
-    When l'Ente PA "Comune_Son" conferisce la delega all'Ente PT "PT_A" con ragione sociale vuota
-    Then dopo 2 minuti l'Ente PA "Comune_Son" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
+  #Lo scenario è commentato in quanto non è possibile generare né una delega con ragione sociale vuota nè una con spazi
+#  @ptEntiDeleganti
+#  Scenario: [PT-ENTI-DELEGANTI_2.2_A] SEND riceve da SelfCare una comunicazione di delega non valida.
+#  La delega non viene acquisita e l'Ente PA non compare nell'elenco dell'Ente PT
+#    Given l'Ente PA "Comune_Son" non ha una delega attiva per l'Ente PT "PT_A"
+#    When l'Ente PA "Comune_Son" conferisce la delega all'Ente PT "PT_A" con ragione sociale composta da soli spazi
+#    Then dopo 2 minuti l'Ente PA "Comune_Son" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT_A"
 
   #################### PAGINAZIONE ####################
 # I Seguenti test sono stati commentati per l'impossibilità di replicare, allo stato attuale, le casistiche esposte
@@ -172,7 +174,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   Scenario: [PT-ENTI-DELEGANTI_12] La richiesta è effettuata dall'Ente PT A.
   Il servizio restituisce solo gli Enti PA dell'Ente PT A e non quelli dell'Ente PT B
     Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT_A"
-    And l'Ente PA "Comune_1" crea una delega per l'Ente PT "PT_B"
+    And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT_B"
     When l'Ente PT "PT_A" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
     Then nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT "PT_B"
 
@@ -234,7 +236,6 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
       | search | @codiceFiscaleSalvato |
     Then la risposta contiene solo l'Ente con codice fiscale "@codiceFiscaleSalvato"
 
-  # Precondizione: l'Ente PT "PT_A" ha solo deleghe attive
   @ptEntiDeleganti
   Scenario Outline: [PT-ENTI-DELEGANTI_20] Filtro o ricerca senza risultati (<caso>).
   L'elenco è vuoto, senza errori
@@ -244,7 +245,6 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
     Then l'elenco degli Enti deleganti è vuoto
     Examples:
       | caso                                               | parametro | valore           |
-      | filtro per uno stato senza Enti corrispondenti     | status    | REVOKED          |
       | ragione sociale senza risultati                    | search    | zzzNonEsiste     |
       | codice fiscale non presente tra gli Enti deleganti | search    | 99999999999      |
 

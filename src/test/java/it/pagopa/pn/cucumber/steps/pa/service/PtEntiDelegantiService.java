@@ -12,10 +12,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnSelfcareDelegationsClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,6 +27,8 @@ import static org.awaitility.Awaitility.await;
 /**
  * Gestisce le deleghe PA→PT su Selfcare e la lettura dell'elenco degli Enti deleganti di un Partner Tecnologico.
  * Creazione e revoca attendono che la delega sia propagata fino a pn-external-registries.
+ * La verifica delle deleghe attive legge i dati di pn-external-registries, non quelli di SelfCare,
+ * tranne per la PA non aderente: SEND ne scarta la delega, che quindi si trova solo su SelfCare.
  */
 @Slf4j
 @Service
@@ -36,14 +36,13 @@ import static org.awaitility.Awaitility.await;
 @RequiredArgsConstructor
 public class PtEntiDelegantiService {
     private static final int MAX_LIMIT = 50;
-    private static final String PA_NON_ADERENTE = "Comune_Non_Aderente";
+    private static final String PA_NON_ADERENTE = "Comune di Castagnero";
 
     private final IPnPtInstitutionsClient ptInstitutionsClient;
     private final IPnSelfcareDelegationsClient selfcareDelegationsClient;
     private final SenderInfoProvider senderInfoProvider;
 
-    // TODO: placeholder, valorizzare con l'id SelfCare di un Ente PA non aderente a SEND
-    @Value("${pn.external.pt.pa-non-aderente.id:PLACEHOLDER_PA_NON_ADERENTE}")
+    @Value("${pn.external.pt.pa-non-aderente.id}")
     private String paNonAderenteId;
 
     private final Map<String, String> delegationIds = new HashMap<>();
@@ -52,30 +51,17 @@ public class PtEntiDelegantiService {
     }
 
     /**
-     * Se la delega è già attiva (409) riusa quella esistente.
+     * Crea sempre una nuova delega (revocando quella eventualmente attiva) e ne attende la propagazione.
      */
     public String createDelegation(String paName, String ptName) {
-        String paId = getPaInstitutionId(paName);
-        String ptId = ptInstitutionsClient.getPtCxId(ptName);
-        String delegationId;
-        try {
-            delegationId = selfcareDelegationsClient.createDelegation(buildDelegationRequest(paName, ptName, paId, ptId)).getId();
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().value() != HttpStatus.CONFLICT.value()) {
-                throw httpStatusCodeException;
-            }
-            delegationId = findActiveDelegationId(paId, ptId);
-        }
-        if (delegationId != null) {
-            delegationIds.put(delegationKey(paName, ptName), delegationId);
-            log.info("Delega {} creata: {} -> {}", delegationId, paName, ptName);
-            awaitDelegationStatus(paId, ptName, delegationId, PtDelegationStatus.ACTIVE);
-        }
+        String delegationId = conferDelegation(paName, ptName);
+        awaitDelegationStatus(getPaInstitutionId(paName), ptName, delegationId, PtDelegationStatus.ACTIVE);
         return delegationId;
     }
 
     /**
      * Conferisce una nuova delega senza attenderne la propagazione, revocando prima quella eventualmente attiva.
+     * Per la PA non aderente la delega attiva viene cercata su SelfCare, perché non arriva a pn-external-registries.
      */
     public String conferDelegation(String paName, String ptName) {
         return conferDelegation(paName, ptName, paName);
@@ -84,10 +70,11 @@ public class PtEntiDelegantiService {
     public String conferDelegation(String paName, String ptName, String institutionFromName) {
         String paId = getPaInstitutionId(paName);
         String ptId = ptInstitutionsClient.getPtCxId(ptName);
-        String activeDelegationId = findActiveDelegationId(paId, ptId);
-        if (activeDelegationId != null) {
+        String activeDelegationId = PA_NON_ADERENTE.equalsIgnoreCase(paName)
+                ? findActiveSelfcareDelegationId(paId, ptId)
+                : findActiveDelegationId(paId, ptName);
+        if (activeDelegationId != null)
             selfcareDelegationsClient.deleteDelegation(activeDelegationId);
-        }
         String delegationId = selfcareDelegationsClient.createDelegation(buildDelegationRequest(institutionFromName, ptName, paId, ptId)).getId();
         delegationIds.put(delegationKey(paName, ptName), delegationId);
         log.info("Delega {} conferita: {} -> {}", delegationId, paName, ptName);
@@ -99,7 +86,7 @@ public class PtEntiDelegantiService {
      */
     public String revokeDelegation(String paName, String ptName) {
         String paId = getPaInstitutionId(paName);
-        String delegationId = findActiveDelegationId(paId, ptInstitutionsClient.getPtCxId(ptName));
+        String delegationId = findActiveDelegationId(paId, ptName);
         if (delegationId != null) {
             selfcareDelegationsClient.deleteDelegation(delegationId);
             delegationIds.put(delegationKey(paName, ptName), delegationId);
@@ -110,7 +97,7 @@ public class PtEntiDelegantiService {
     }
 
     public void ensureNoActiveDelegation(String paName, String ptName) {
-        if (findActiveDelegationId(getPaInstitutionId(paName), ptInstitutionsClient.getPtCxId(ptName)) != null) {
+        if (findActiveDelegationId(getPaInstitutionId(paName), ptName) != null) {
             revokeDelegation(paName, ptName);
         }
     }
@@ -153,8 +140,8 @@ public class PtEntiDelegantiService {
 
     private void awaitDelegationStatus(String paId, String ptName, String delegationId, PtDelegationStatus status) {
         await()
-                .atMost(2, TimeUnit.MINUTES)
-                .pollInterval(10, TimeUnit.SECONDS)
+                .atMost(10, TimeUnit.SECONDS)
+                .pollInterval(5, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertThat(readAllPages(ptName, null, null, MAX_LIMIT).institutions())
                         .as("La delega %s non risulta %s nell'elenco dell'Ente PT %s", delegationId, status, ptName)
@@ -173,7 +160,15 @@ public class PtEntiDelegantiService {
                 .type(DelegationRequest.TypeEnum.PT);
     }
 
-    private String findActiveDelegationId(String paId, String ptId) {
+    private String findActiveDelegationId(String paId, String ptName) {
+        return readAllPages(ptName, null, PtDelegationStatus.ACTIVE, MAX_LIMIT).institutions().stream()
+                .filter(institution -> paId.equals(institution.getInstitutionId()))
+                .map(PtInstitution::getDelegationId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    private String findActiveSelfcareDelegationId(String paId, String ptId) {
         return selfcareDelegationsClient.getDelegations(paId, ptId).stream()
                 .filter(delegation -> DelegationResponse.StatusEnum.ACTIVE.equals(delegation.getStatus()))
                 .map(DelegationResponse::getId)

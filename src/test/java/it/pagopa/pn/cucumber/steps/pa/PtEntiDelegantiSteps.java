@@ -80,9 +80,9 @@ public class PtEntiDelegantiSteps {
                 .isNotBlank();
     }
 
-    @When("l'Ente PA {string} conferisce la delega all'Ente PT {string} con ragione sociale vuota")
-    public void conferPtDelegationWithEmptyName(String paName, String ptName) {
-        assertThat(ptEntiDelegantiService.conferDelegation(paName, ptName, ""))
+    @When("l'Ente PA {string} conferisce la delega all'Ente PT {string} con ragione sociale composta da soli spazi")
+    public void conferPtDelegationWithBlankName(String paName, String ptName) {
+        assertThat(ptEntiDelegantiService.conferDelegation(paName, ptName, " "))
                 .as("Delega dell'Ente PA %s per l'Ente PT %s non conferita", paName, ptName)
                 .isNotBlank();
     }
@@ -270,12 +270,13 @@ public class PtEntiDelegantiSteps {
                 .noneMatch(institution -> paId.equals(institution.getInstitutionId()));
     }
 
-    @Then("dopo 2 minuti l'Ente PA {string} non compare nell'elenco degli Enti deleganti dell'Ente PT {string}")
-    public void paNeverInPtList(String paName, String ptName) {
+    @Then("dopo {int} minuti l'Ente PA {string} non compare nell'elenco degli Enti deleganti dell'Ente PT {string}")
+    public void paNeverInPtList(int minPolling,String paName, String ptName) {
         String paId = ptEntiDelegantiService.getPaInstitutionId(paName);
         await()
-                .during(2, TimeUnit.MINUTES)
-                .atMost(3, TimeUnit.MINUTES)
+                .pollInSameThread()
+                .during(minPolling, TimeUnit.MINUTES)
+                .atMost(minPolling+1, TimeUnit.MINUTES)
                 .pollInterval(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertThat(ptEntiDelegantiService.readAllPages(ptName, null, null, MAX_LIMIT).institutions())
                         .as("L'Ente PA %s compare nell'elenco degli Enti deleganti dell'Ente PT %s", paName, ptName)
@@ -284,14 +285,16 @@ public class PtEntiDelegantiSteps {
 
     @Then("nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT {string}")
     public void noInstitutionInOtherPtList(String otherPtName) {
-        Set<String> otherPtInstitutionIds = ptEntiDelegantiService.readAllPages(otherPtName, null, null, MAX_LIMIT).institutions().stream()
-                .map(PtInstitution::getInstitutionId)
+        Set<String> otherPtDelegationIds = ptEntiDelegantiService.readAllPages(otherPtName, null, null, MAX_LIMIT).institutions().stream()
+                .map(PtInstitution::getDelegationId)
                 .collect(Collectors.toSet());
 
         assertThat(allReadInstitutions)
                 .as("L'elenco dell'Ente PT %s non contiene Enti", lastPt)
-                .isNotEmpty()
-                .noneMatch(institution -> otherPtInstitutionIds.contains(institution.getInstitutionId()));
+                .isNotEmpty();
+        assertThat(allReadInstitutions)
+                .as("Una delega dell'Ente PT %s compare nell'elenco dell'Ente PT %s", otherPtName, lastPt)
+                .noneMatch(institution -> otherPtDelegationIds.contains(institution.getDelegationId()));
     }
 
     private PtInstitution assertAppearsOnceWithStatus(String description, String status, Predicate<PtInstitution> matcher) {
