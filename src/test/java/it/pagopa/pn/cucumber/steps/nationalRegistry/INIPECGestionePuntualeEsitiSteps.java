@@ -1,8 +1,5 @@
 package it.pagopa.pn.cucumber.steps.nationalRegistry;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -10,6 +7,7 @@ import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.SqsMessageUtils;
 import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.sqs.model.Message;
@@ -61,7 +59,6 @@ public class INIPECGestionePuntualeEsitiSteps {
     private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
     private static final String STATUS_ERROR = "ERROR";
     private static final String NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ = "pn-national_registry_gateway_inputs-DLQ";
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final DynamoDbService dynamoDbService;
     private final SqsService sqsService;
@@ -180,27 +177,8 @@ public class INIPECGestionePuntualeEsitiSteps {
                     assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
                             assertThat(messages)
                                     .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
-                                    .anyMatch(message -> isDlqMessageFor(message, cf, correlationId)));
+                                    .anyMatch(message -> SqsMessageUtils.isNationalRegistryDlqMessageFor(message, cf, correlationId)));
                 });
-    }
-
-    /**
-     * Verifica che il body del messaggio (InternalCodeSqsDto) abbia {@code taxId = cf} e un {@code correlationId}
-     * pari al prefisso del correlationId su DB (il servizio pubblica {@code correlationId.split(batchRequestPkSeparator)[0]}).
-     */
-    private static boolean isDlqMessageFor(Message message, String cf, String dbCorrelationId) {
-        if (message.body() == null) {
-            return false;
-        }
-        try {
-            JsonNode body = OBJECT_MAPPER.readTree(message.body());
-            String messageCorrelationId = body.path("correlationId").asText();
-            return cf.equals(body.path("taxId").asText())
-                    && !messageCorrelationId.isEmpty()
-                    && dbCorrelationId.startsWith(messageCorrelationId);
-        } catch (JsonProcessingException e) {
-            return false;
-        }
     }
 
     @Then("per i cf {string} e {string} non risulta alcuna richiesta INIPEC")
