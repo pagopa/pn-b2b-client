@@ -188,7 +188,7 @@ Feature: Real External channell dettagli errori riportati in EcRichiesteMetadati
       | denomination    | Ettore Fieramosca              |
       | email           | bounce@simulator.amazonses.com |
       | digitalDomicile | NULL                           |
-      | phone_number    | todo                           |
+      | phone_number    |  +3900000                           |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_FEEDBACK" della notifica bonaria con dettagli
       | details_responseStatus | KO    |
