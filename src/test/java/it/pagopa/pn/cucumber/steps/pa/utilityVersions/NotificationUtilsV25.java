@@ -185,6 +185,9 @@ public class NotificationUtilsV25 extends B2bUtils {
             case "ALLEGATO_2_BN" -> document = "classpath:/Allegato2_BN.pdf";
             case "ALLEGATO_3_COLORI" -> document = "classpath:/Allegato3_COLORI.PDF";
             case "ALLEGATO_4_COLORI" -> document = "classpath:/Allegato4_COLORI.pdf";
+            case "DOC_JPEG2000_RGB" -> document = "classpath:/JPEG2000_RGB.pdf";
+            case "DOC_JPEG2000_GRIGI" -> document = "classpath:/JPEG2000_GRIGI.pdf";
+            case "DOC_JPEG2000_MISTO" -> document = "classpath:/JPEG2000_MISTO.pdf";
             default -> document = getDefaultValue(DOCUMENT.key);
         }
         return newDocument(document);
