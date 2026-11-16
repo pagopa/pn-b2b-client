@@ -403,7 +403,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti restituisce i soli documenti di tipo COVER_FILE e ATTESTAZIONE_OPPONIBILE_A_TERZI e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | codiceErrore | descrizioneErrore         | tipoDocumento                   | quantita |
+      | 4            | documenti non disponibili | COVER_FILE                      | 1        |
+      | 4            | documenti non disponibili | ATTESTAZIONE_OPPONIBILE_A_TERZI | 2        |
 #
 
 
@@ -1422,7 +1425,7 @@ Feature: Radd Alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download non restituisce atti, generando un errore "documenti non disponibili" con codice 4 su radd alternative
 
-#    mario cucumber è pn.iun.120gg.fieramosca.pagopa (presente in dev e in test, no UAT)
+
   @raddAlt
   Scenario: [RADD-ALT_ACT-20B] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
     When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
@@ -1439,9 +1442,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti restituisce i soli documenti di tipo COVER_FILE e ATTESTAZIONE_OPPONIBILE_A_TERZI e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
-#    And l'operazione di download degli atti restituisce 3 documenti e si conclude con errore "documenti non disponibili" e codice 4 su radd alternative
-
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | codiceErrore | descrizioneErrore         | tipoDocumento                   | quantita |
+      | 4            | documenti non disponibili | COVER_FILE                      | 1        |
+      | 4            | documenti non disponibili | ATTESTAZIONE_OPPONIBILE_A_TERZI | 3        |
 
 
   @QA-19302 @fixBugRADDDocumentiNonDisponibili

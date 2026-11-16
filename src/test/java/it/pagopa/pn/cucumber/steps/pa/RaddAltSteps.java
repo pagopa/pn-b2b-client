@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -38,8 +39,10 @@ import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
@@ -326,17 +329,51 @@ public class RaddAltSteps {
         Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
     }
 
-    @And("l'operazione di download degli atti restituisce i soli documenti di tipo COVER_FILE e ATTESTAZIONE_OPPONIBILE_A_TERZI e si conclude con errore {string} e codice {int} su radd alternative")
-    public void lOperazioneDiDownloadDegliAttiSiConcludeCorrettamenteConISoliDocumentiDiTipoAO3eCOVERFILE(String errorDescription, int erroCode) {
-        StartTransactionResponseStatus.CodeEnum error = getErrorCodeStartTransaction(erroCode);
-        Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList());
-        Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty());
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus());
-        Assertions.assertEquals(error, this.startTransactionResponse.getStatus().getCode());
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
-        Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
-        Assertions.assertTrue(this.startTransactionResponse.getDownloadUrlList().stream()
-                .allMatch(url -> url.getDocumentType().equals("COVER_FILE") || url.getDocumentType().equals("ATTESTAZIONE_OPPONIBILE_A_TERZI")));
+
+    @And("l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:")
+    public void verificaRisultatiDownloadAttiRadd(DataTable dataTable) {
+        List<Map<String, String>> rows = dataTable.asMaps(String.class, String.class);
+
+        Assertions.assertFalse(rows.isEmpty(), "La tabella dei risultati non deve essere vuota");
+
+        Map<String, String> expectedStatus = rows.get(0);
+        int expectedCode = Integer.parseInt(expectedStatus.get("codiceErrore"));
+        String expectedMessage = expectedStatus.get("descrizioneErrore");
+
+        StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
+        Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
+        Assertions.assertEquals(expectedStatusCode, this.startTransactionResponse.getStatus().getCode(),
+                "Codice errore non coerente");
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage(), "Messaggio di errore non presente");
+        Assertions.assertEquals(expectedMessage.trim().toLowerCase(),
+                this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
+                "Descrizione errore non coerente");
+
+        Map<String, Long> expectedDocumentsByType = rows.stream()
+                .filter(r -> r.get("tipoDocumento") != null && r.get("quantita") != null)
+                .collect(Collectors.groupingBy(
+                        r -> r.get("tipoDocumento"),
+                        Collectors.summingLong(r -> Long.parseLong(r.get("quantita")))
+                ));
+
+        Map<String, Long> actualDocumentsByType = this.startTransactionResponse.getDownloadUrlList().stream()
+                .filter(url -> url.getDocumentType() != null)
+                .collect(Collectors.groupingBy(
+                        url -> url.getDocumentType(),
+                        Collectors.counting()
+                ));
+
+        expectedDocumentsByType.forEach((type, expectedCount) -> {
+            Long actualCount = actualDocumentsByType.get(type);
+            Assertions.assertNotNull(actualCount, "Tipo documento " + type + " non presente nella risposta");
+            Assertions.assertEquals(expectedCount, actualCount, "Numero di documenti per tipo " + type + " non coerente");
+        });
+
+        Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList(),
+                "La lista degli atti non deve essere null");
+        Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty(),
+                "La lista degli atti non deve essere vuota");
     }
 
     @And("l'operazione di download non restituisce atti, generando un errore {string} con codice {int} su radd alternative")
