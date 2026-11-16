@@ -470,11 +470,10 @@ public class RicezioneNotificheWebSteps {
     @Then("{string} prova a recuperare senza successo un documento passando un index non valido")
     public void theRetrievalOfANonPresentDocumentCannotBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
-        try {
-            getReceivedNotificationDocument(1000);
-        } catch (HttpStatusCodeException e) {
-            Assertions.assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
-        }
+        HttpStatusCodeException e = Assertions.assertThrows(
+                HttpStatusCodeException.class,
+                () -> getReceivedNotificationDocument(1000));
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
