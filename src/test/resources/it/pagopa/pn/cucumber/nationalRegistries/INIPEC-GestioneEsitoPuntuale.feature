@@ -96,12 +96,12 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then risulta una richiesta INAD per il cf "28223913097"
 
 
-    # 10762910015 -> errore client sulla chiamata richiestaElencoPec
-  @inipecGestionePuntuale @mockNR
+  @inipecDlq
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_01] Notifica verso PG con errore client su richiestaElencoPec: retry esauriti e richiesta inviata in DLQ
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
+    # 10762910015 -> errore client sulla chiamata richiestaElencoPec
     And destinatario
       | taxId           | 10762910015 |
       | digitalDomicile | NULL        |
@@ -112,12 +112,12 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta INIPEC per il cf "10762910015" risulta in ERROR e inviata in DLQ
 
 
-    # 10433218194 -> errore client sulla chiamata richiestaElencoPec
-  @inipecGestionePuntuale @mockNR
+  @inipecDlq
   Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_02] Notifica verso PG con errore client su richiestaElencoPec: retry esauriti e richiesta inviata in DLQ
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
+    # 10433218194 -> errore client sulla chiamata richiestaElencoPec
     And destinatario
       | taxId           | 10433218194 |
       | digitalDomicile | NULL        |

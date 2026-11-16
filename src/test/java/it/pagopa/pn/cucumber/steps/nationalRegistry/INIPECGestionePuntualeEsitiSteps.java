@@ -139,14 +139,20 @@ public class INIPECGestionePuntualeEsitiSteps {
     // Ripete query + assert finché il dato non è presente su DB come SENT_TO_DLQ con status = ERROR, oppure scade il timeout.
     @Then("la richiesta INIPEC per il cf {string} risulta in ERROR e inviata in DLQ")
     public void requestInErrorAndSentToDlq(String cf) {
+        String iun = sharedSteps.getNotificationIun();
         List<Map<String, AttributeValue>> dlqItems = new ArrayList<>();
         await().atMost(DLQ_POLL_TIMEOUT)
                 .pollInterval(DB_POLL_INTERVAL)
                 .untilAsserted(() -> {
-                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ);
+                    // Si considerano solo i record della notifica corrente (correlationId contiene lo IUN):
+                    // la finestra temporale è ampia e potrebbe includere record SENT_TO_DLQ di run precedenti con lo stesso CF.
+                    List<Map<String, AttributeValue>> items = retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ).stream()
+                            .filter(item -> item.containsKey("correlationId")
+                                    && item.get("correlationId").s().contains(iun))
+                            .toList();
 
                     assertThat(items)
-                            .as("Nessuna richiesta SENT_TO_DLQ trovata per cf=%s nella finestra temporale", cf)
+                            .as("Nessuna richiesta SENT_TO_DLQ trovata per cf=%s e iun=%s nella finestra temporale", cf, iun)
                             .isNotEmpty();
 
                     // `status` è parola riservata su DynamoDB: si verifica lato client invece di interrogare lo status-index.
@@ -159,17 +165,13 @@ public class INIPECGestionePuntualeEsitiSteps {
                     dlqItems.addAll(items);
                 });
 
-        assertThat(dlqItems)
-                .as("cf=%s: record SENT_TO_DLQ privo di correlationId", cf)
-                .allSatisfy(item -> assertThat(item).containsKey("correlationId"));
-
         List<String> expectedCorrelationIds = dlqItems.stream()
                 .map(item -> item.get("correlationId").s())
                 .distinct()
                 .toList();
 
-        // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record:
-        // il correlationId contiene lo IUN, quindi esclude messaggi residui di run precedenti con lo stesso CF.
+        // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record
+        // (già filtrato per IUN): così si escludono messaggi residui di run precedenti con lo stesso CF.
         await().atMost(DLQ_POLL_TIMEOUT)
                 .pollInterval(DLQ_POLL_INTERVAL)
                 .untilAsserted(() -> {
