@@ -12,6 +12,10 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.mod
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,9 +32,13 @@ public class PnPaB2bInternalInformalClientImpl {
     private final CampaignStatisticsApi campaignStatisticsApi;
     private final SenderReadInformalNotificationB2BApi senderReadInformalNotificationB2BApi;
     private final List<String> groups;
+    private final RestTemplate restTemplate;
+    private final String deliveryBasePath;
 
     public PnPaB2bInternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.delivery.base-url}") String deliveryBasePathOrigin) {
 
+        this.restTemplate = restTemplate;
+        this.deliveryBasePath = deliveryBasePathOrigin;
         this.operatorId = "TestMv";
         this.recipientReadInformalNotificationApi = new RecipientReadInformalNotificationApi(newRecipientInformalApiClient(restTemplate, deliveryBasePathOrigin));
         this.internalOnlyApi = new InternalOnlyApi(newPrivateDeliveryApiClient(restTemplate, deliveryBasePathOrigin));
@@ -92,6 +100,18 @@ public class PnPaB2bInternalInformalClientImpl {
 
     public FullSentInformalNotificationV1 getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage) {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage);
+    }
+
+    /**
+     * Invoca l'API deprecata POST /delivery-private/notifications/update-status.
+     * Non esiste un client generato per questo path (rimosso dalle specifiche), per cui la chiamata è raw:
+     * ci si attende che venga rifiutata (405), l'eventuale HttpStatusCodeException è propagata al chiamante.
+     */
+    public void callDeprecatedUpdateStatus() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        restTemplate.exchange(deliveryBasePath + "/delivery-private/notifications/update-status",
+                HttpMethod.POST, new HttpEntity<>("{}", headers), Void.class);
     }
 
 }

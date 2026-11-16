@@ -83,15 +83,7 @@ public class AwsServiceSteps {
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
         if (!checkAuditLogDisabled) {
             try {
-                StringBuilder sb = new StringBuilder();
-                queryFiltersMap.forEach((key, value) -> {
-                    if (key.equalsIgnoreCase("IUN")) {
-                        sb.append("\"").append(value.equals("auto") ? sharedSteps.getNotificationIun() : value).append("\" ");
-                    } else {
-                        sb.append("\"").append(value).append("\" ");
-                    }
-                });
-                String search = sb.toString().trim();
+                String search = buildLogSearch(queryFiltersMap);
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
                     FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
@@ -102,6 +94,43 @@ public class AwsServiceSteps {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
         }
+    }
+
+    /**
+     * Speculare a {@link #checkAuditLogFromAws}: verifica che nel log group indicato NON siano presenti log che soddisfino
+     * tutti i filtri passati. Lo step va eseguito dopo che il flusso da verificare si è concluso (es. dopo l'attesa di uno stato),
+     * per cui la ricerca è puntuale e non in polling.
+     */
+    @And("verifico l'assenza di log su {string} negli ultimi {int} minuti riportanti i seguenti dati nel messaggio")
+    public void checkLogAbsenceFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
+        if (!checkAuditLogDisabled) {
+            try {
+                String search = buildLogSearch(queryFiltersMap);
+                FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
+                FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
+                assertThat(logResponse.events())
+                        .as("Alle %s sono stati trovati log su %s che soddisfano la search %s", DateTime.now(), microservice, search)
+                        .isEmpty();
+            } catch (AssertionError assertionError) {
+                sharedSteps.throwAssertionErrorWithIUN(assertionError);
+            }
+        }
+    }
+
+    /**
+     * Compone il filter pattern CloudWatch (termini in AND tra doppi apici) a partire dalla mappa del file feature.
+     * La chiave "iun" con valore "auto" viene sostituita dallo IUN della notifica corrente.
+     */
+    private String buildLogSearch(Map<String, String> queryFiltersMap) {
+        StringBuilder sb = new StringBuilder();
+        queryFiltersMap.forEach((key, value) -> {
+            if (key.equalsIgnoreCase("IUN")) {
+                sb.append("\"").append(value.equals("auto") ? sharedSteps.getNotificationIun() : value).append("\" ");
+            } else {
+                sb.append("\"").append(value).append("\" ");
+            }
+        });
+        return sb.toString().trim();
     }
 
     /**

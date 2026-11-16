@@ -40,6 +40,10 @@ public class DynamoDbService {
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
+            case NOTIFICATION_DELEGATION_METADATA ->
+                    queryWithoutFilters(tableName, "iun_recipientId_delegateId_groupId", attributeValues);
+            case NOTIFICATIONS_COST -> queryWithoutFilters(tableName, "creditorTaxId_noticeCode", attributeValues);
+            case SHEDLOCK_DELIVERY_PUSH -> queryByShedLockId(attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
@@ -111,6 +115,20 @@ public class DynamoDbService {
                 .items()
                 .stream()
                 .toList();
+    }
+
+    /**
+     * La pk delle tabelle ShedLock è "_id": essendo un nome che inizia con underscore,
+     * viene referenziato tramite expression attribute name (#id) anziché direttamente nella key condition.
+     */
+    private static QueryRequest queryByShedLockId(Map<String, AttributeValue> attributeValues) {
+        validateColumns(DynamoTableName.SHEDLOCK_DELIVERY_PUSH, attributeValues, List.of("_id"));
+        return QueryRequest.builder()
+                .tableName(DynamoTableName.SHEDLOCK_DELIVERY_PUSH.getValue())
+                .keyConditionExpression("#id = :v__id")
+                .expressionAttributeNames(Map.of("#id", "_id"))
+                .expressionAttributeValues(attributeValues)
+                .build();
     }
 
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {

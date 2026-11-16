@@ -1001,6 +1001,10 @@ public class SharedSteps {
         getNotificationStepInterface().resetNotificationRequest();
     }
 
+    public void setNotificationError(HttpStatusCodeException notificationError) {
+        this.notificationError = notificationError;
+    }
+
     public HttpStatusCodeException consumeNotificationError() {
         HttpStatusCodeException value = this.notificationError;
         this.notificationError = null;
