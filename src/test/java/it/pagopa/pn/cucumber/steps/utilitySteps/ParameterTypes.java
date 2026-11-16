@@ -145,4 +145,9 @@ public class ParameterTypes {
     public static String versioneEsplicitaOSuite(String version) {
         return version;
     }
+
+    @ParameterType("risultino|non risultino")
+    public static boolean appear(String value) {
+        return value.equals("risultino");
+    }
 }

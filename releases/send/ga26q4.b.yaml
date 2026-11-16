@@ -1,13 +1,19 @@
 release:
-    version: ga26q4.b
-    date: 2024-06-19
-    description: >
-        This release includes several bug fixes and improvements to the send suite.
-    status: in-progress
-    work-items:
-         - id: PN-20853
-           title:
-           status: todo
-           size: S
-           qa_epic: QA-18904
-           branch: feature/PN-20853-recupero-eventi-di-pagamento
+  version: ga26q4.b
+  date: 2024-06-19
+  description: >
+    This release includes several bug fixes and improvements to the send suite.
+  status: in-progress
+  work-items:
+    - id: PN-20853
+      title:
+      status: todo
+      size: S
+      qa_epic: QA-18904
+      branch: feature/PN-20853-recupero-eventi-di-pagamento
+    - id: PN-20789
+      title: CON020 - Supporto alla firma Postel sul singolo PDF
+      status: todo
+      size: M
+      qa_epic: QA-18635
+      branch: feature/QA-18635_CON020_supporto_alla_firma_postel_su_singolo_pdf

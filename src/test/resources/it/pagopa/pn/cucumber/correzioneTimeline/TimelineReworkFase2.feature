@@ -174,7 +174,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
-  @timelineReworkF2 #rif 3.4
+  @timelineReworkF2 @work-item:QA-18844 #rif 3.4
   Scenario: [TIMELINE_REWORK_6] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK e la seconda richiesta di rework modifichi l’ATTEMPT_0 in OK con destinatario deceduto
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -224,6 +224,14 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
+      | element2 | REFINEMENT;RECINDEX_0                     |
+    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
+      | element1 | REFINEMENT;RECINDEX_0                         |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
+    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline non risultino in stato NEW
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
 
   @timelineReworkF2 #rif 5.1
   Scenario: [TIMELINE_REWORK_7] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in OK da invalidare completamente

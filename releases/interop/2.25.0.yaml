@@ -24,3 +24,10 @@ release:
           qa_epic: QA-17458
           repo: qe_suit
           branch: feature/QA-17458-link-eservice-receive
+        - id: PIN-10936
+          title:
+          status: todo
+          size: S
+          qa_epic: QA-18430
+          repo: qe_suit
+          branch: feature/QA-18434-error-messages

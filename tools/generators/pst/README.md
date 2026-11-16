@@ -43,6 +43,15 @@ I tre dizionari di `config.yaml` sono: `business_terms` per i nomi dei campi e l
 intestazioni di `Examples`, `value_terms` per i valori delle tabelle e i valori
 esatti tra virgolette nel testo, `status_terms` per i codici HTTP. Le sostituzioni
 dei valori tra virgolette modificano solo il PST generato, non il feature sorgente.
+`output.exclude_fields` elenca le chiavi esatte delle tabelle da omettere nel
+Markdown (per esempio `details`); i passi Gherkin restano visibili e chiavi diverse
+come `details_deliveryDetailCode` non vengono escluse.
+`field_value_phrases` può sostituire una coppia campo-valore con una frase: la
+regola per il campo ha precedenza su `"*"`, che vale per ogni campo. `{field}`
+inserisce l'etichetta definita in `business_terms`; il confronto dei valori è esatto.
+`step_phrases` riscrive il testo di un passo nel Markdown usando i segnaposto
+tra graffe. Una regola può lasciare il suffisso `con <campo> <valore>`: il nome
+del campo viene tradotto tramite `business_terms` quando è configurato.
 
 ## Test
 
@@ -58,7 +67,9 @@ merge e conflitti. Non modificano i branch o i PST del repository di lavoro.
 ## Automazione su `pn-b2b-client`
 
 Il workflow [`Generate PST`](../../../.github/workflows/generate-pst.yml) esegue
-il generatore su richiesta (`workflow_dispatch`), esclusivamente su `develop`.
+il generatore su richiesta (`workflow_dispatch`) da `develop` e quando una PR
+interna verso `develop` viene aperta, riaperta o aggiornata con un push.
+Sono incluse le PR Draft; le PR da fork non avviano il job di scrittura.
 Le Action usate dal workflow sono fissate a commit specifici.
 Il workflow e il codice devono prima essere integrati in quel branch.
 
@@ -66,13 +77,15 @@ Da GitHub: **Actions → Generate PST → Run workflow → develop**.
 L'esecuzione recupera la storia completa di tutti i branch, installa le dipendenze,
 esegue i test e genera Markdown e HTML delle QA Epic attive.
 
-I documenti sono versionati nel branch permanente `pst-output`, con un commit
+I documenti Markdown sono versionati nel branch permanente `pst-output`, con un commit
 solo quando PST o stato cambiano. I Markdown sono consultabili direttamente su
 GitHub, per esempio `https://github.com/pagopa/pn-b2b-client/blob/pst-output/pst_QA-123.md`.
 Sono anche scaricabili come artifact `pst-<run_id>-<run_attempt>`, conservato per
 30 giorni. Il riepilogo distingue Epic generate, invariate ed errori.
 
-La Action legge il branch `pst-output` in una directory temporanea, confronta gli
+La Action produce solo Markdown per impostazione predefinita. Nell'avvio manuale,
+l'opzione `include_html` permette di generare anche HTML. Un'esecuzione successiva
+senza l'opzione rimuove gli HTML precedenti. La Action legge il branch `pst-output` in una directory temporanea, confronta gli
 input con `.state/QA-123.json` e riusa i file integri delle Epic invariate. Se il
 branch non esiste, lo crea al primo aggiornamento. Non crea PR e non pubblica su
 GitHub Pages. In caso di conflitto conserva il PST precedente dell'Epic interessata,
@@ -246,7 +259,7 @@ lo stato persistente nel branch `pst-output`.
 
 ## Stato persistente
 
-Il branch `pst-output` contiene `pst_QA-123.md`, `pst_QA-123.html` e
+Il branch `pst-output` contiene `pst_QA-123.md` e
 `.state/QA-123.json` nella propria radice. Per ogni Epic il manifest registra
 l'impronta degli input e le impronte dei file prodotti. Sono considerati gli
 commit e snapshot dei file `.feature` sui branch sorgente, i work-item associati,
