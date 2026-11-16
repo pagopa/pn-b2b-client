@@ -41,7 +41,7 @@ public class PortfatControlLambdaClient {
                     SenderOrderCheckResponse.class
             );
 
-        } catch (Exception e) {
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
             throw new RuntimeException("Errore durante invocazione lambda sender-order-check", e);
         }
     }
