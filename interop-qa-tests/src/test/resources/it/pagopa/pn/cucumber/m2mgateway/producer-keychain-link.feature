@@ -6,6 +6,7 @@ Feature: Associazione del producer-keychain agli e-services
   # CASO DI TEST 1.1
   @work-item:QA-17417
   Scenario Outline: [PRODUCER_KEYCHAIN_LINK_1] - Associazione del producer-keychain a un e-service in stato legittimo
+    Un e-service in stato legittimo può essere collegato al portachiavi erogatore.
     Given "PA1" ha già creato un e-service in stato <stato>
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -25,6 +26,7 @@ Feature: Associazione del producer-keychain agli e-services
   # CASO DI TEST 1.2
   @work-item:QA-17417 @deleghe2
   Scenario: [PRODUCER_KEYCHAIN_LINK_2] - Associazione del producer-keychain a un e-service in stato WAITING_FOR_APPROVAL
+    Un e-service con un descrittore in attesa di approvazione può essere collegato al portachiavi erogatore.
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
@@ -40,6 +42,7 @@ Feature: Associazione del producer-keychain agli e-services
   # ARCHIVED pre-creati attraverso lo step di data preparation.
   @work-item:QA-17417
   Scenario: [PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
+    Un e-service archiviato non può essere collegato al portachiavi e il tentativo viene respinto.
     Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And l'utente associa il portachiavi erogatore all'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
