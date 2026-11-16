@@ -13,18 +13,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v30.PnPollingServiceWebhookV30;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.InformalNotificationStatusV1;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.InformalTimelineElementCategoryV1;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatusV26;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV30;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequestV30;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponseV30;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamRequestV30;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV28;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementDetailsV28;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 import lombok.Data;
@@ -39,11 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMM_TYPE_INFORMAL;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMM_TYPE_LEGAL;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_NULL_P_R_E;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_DIGITAL_FEEDBACK;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.STREAM_EVENT_TYPE_STATUS;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -601,6 +586,14 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
         assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
                 .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
                 .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+        if (timelineElementInternalCategory == TimelineElementCategoryV28.NOTIFICATION_CANCELLED) {
+            assertThat(convertedProgressResponseElement.getElement().getDetails())
+                    .as("I details dell'elemento NOTIFICATION_CANCELLED non devono essere null")
+                    .isNotNull();
+            assertThat(convertedProgressResponseElement.getElement().getDetails().getNotRefinedRecipientIndexes())
+                    .as("notRefinedRecipientIndexes è un campo obbligatorio per NOTIFICATION_CANCELLED")
+                    .isNotNull();
+        }
         log.info("EventProgress: " + progressResponseElement);
     }
 
