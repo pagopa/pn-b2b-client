@@ -21,9 +21,7 @@ public enum DynamoTableName {
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
     PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
-    //todo t portfat valutare
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata");
-    //PORTFAT_DOWNLOAD("pn-PortFatDownload");
 
     private final String value;
 

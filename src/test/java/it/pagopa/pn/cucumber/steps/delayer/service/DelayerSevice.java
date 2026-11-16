@@ -35,7 +35,6 @@ public class DelayerSevice {
     private final DelayerCsvLoader csvLoader;
     private final PortfatControlLambdaClient portfatControlLambdaClient;
 
-//todo t portfat
     public SenderOrderCheckResponse executeSenderOrderCheck(String currentMonth) {
         return portfatControlLambdaClient.executeSenderOrderCheck(currentMonth);
     }

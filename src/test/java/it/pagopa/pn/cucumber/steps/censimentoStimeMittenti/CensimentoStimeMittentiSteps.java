@@ -42,7 +42,6 @@ public class CensimentoStimeMittentiSteps {
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
-    //private final DynamoDbService dynamoDbService;
 
     @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
     public String senderLimitTable(String tableName) {
