@@ -41,16 +41,17 @@ public final class SqsMessageUtils {
     }
 
     /**
-     * Verifica che il body del messaggio (InternalCodeSqsDto del national-registry) abbia {@code taxId} uguale a quello
-     * atteso e un {@code correlationId} pari al prefisso del correlationId su DB
-     * (il servizio pubblica {@code correlationId.split(batchRequestPkSeparator)[0]}).
+     * Verifica una condizione sul valore testuale di un campo top-level del body;
+     * {@code false} se il campo è assente/null o il body non è leggibile.
      */
-    public static boolean isNationalRegistryDlqMessageFor(Message message, String taxId, String dbCorrelationId) {
-        return bodyMatches(message, body -> {
-            String messageCorrelationId = body.path("correlationId").asText();
-            return taxId.equals(body.path("taxId").asText())
-                    && !messageCorrelationId.isEmpty()
-                    && dbCorrelationId.startsWith(messageCorrelationId);
-        });
+    public static boolean fieldMatches(Message message, String fieldName, Predicate<String> condition) {
+        return bodyMatches(message, body -> body.hasNonNull(fieldName) && condition.test(body.get(fieldName).asText()));
+    }
+
+    /**
+     * Verifica che il body del messaggio abbia {@code taxId} uguale a quello atteso.
+     */
+    public static boolean hasTaxId(Message message, String taxId) {
+        return fieldMatches(message, "taxId", taxId::equals);
     }
 }

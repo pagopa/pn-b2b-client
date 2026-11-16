@@ -167,13 +167,16 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record
         // (già filtrato per IUN): così si escludono messaggi residui di run precedenti con lo stesso CF.
+        // Il servizio pubblica correlationId.split(batchRequestPkSeparator)[0], quindi quello del messaggio è un prefisso di quello su DB.
         pollUntilVerified(
                 () -> sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ),
                 (List<Message> messages) ->
                         assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
                                 assertThat(messages)
                                         .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
-                                        .anyMatch(message -> SqsMessageUtils.isNationalRegistryDlqMessageFor(message, cf, correlationId))),
+                                        .anyMatch(message -> SqsMessageUtils.hasTaxId(message, cf)
+                                                && SqsMessageUtils.fieldMatches(message, "correlationId",
+                                                        id -> !id.isEmpty() && correlationId.startsWith(id)))),
                 DLQ_QUEUE_POLLING);
     }
 
