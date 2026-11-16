@@ -58,6 +58,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche RS
       | 09008 | 418   | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 418   | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 397   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 418   | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_RS-20GR_2] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -79,9 +82,11 @@ Feature: calcolo costo notifica in base ai grammi con notifiche RS
       | state              |
       | ALBANIA            |
       | MACEDONIA DEL NORD |
+      | KOSOVO             |
+      | BOSNIA-ERZEGOVINA  |
 
   @costoAnalogicoSettembre26
-  Scenario: [CALCOLO-COSTO_RS-20GR_3] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_RS-20GR_3] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -89,13 +94,17 @@ Feature: calcolo costo notifica in base ai grammi con notifiche RS
       | document           | DOC_4_PG;                       |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
-      | physicalAddress_State   | MESSICO      |
+      | physicalAddress_State   | <state>      |
       | physicalAddress_zip     | ZONE_2       |
       | physicalAddress_address | Via@ok_RIS   |
       | payment_pagoPaForm      | NOALLEGATO   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "837" della notifica
+    Examples:
+      | state   |
+      | MESSICO |
+      | OMAN    |
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_RS-20GR_4] (Settembre) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
@@ -119,3 +128,26 @@ Feature: calcolo costo notifica in base ai grammi con notifiche RS
       | MIDWAY      |
       | PHOENIX     |
       | SANTA CROCE |
+
+  @costoAnalogicoSettembre26
+  Scenario Outline: [CALCOLO-COSTO_RS-CAP_DISMESSO_1] (Settembre) Invio notifica verso CAP dismesso su raccomandata semplice RS e verifica rifiuto della notifica
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+      | feePolicy          | DELIVERY_MODE                   |
+      | document           | DOC_4_PG;                       |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address      | test@fail.it   |
+      | physicalAddress_address      | Via@ok_RS      |
+      | physicalAddress_zip          | <CAP>          |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | payment_pagoPaForm           | NOALLEGATO     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+    Examples:
+      | CAP   | MUNICIPALITY | PROVINCE |
+      | 09064 | SEUI         | OG       |
