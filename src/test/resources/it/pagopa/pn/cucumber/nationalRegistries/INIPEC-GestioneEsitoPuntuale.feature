@@ -97,11 +97,11 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inipecDlq
-  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_01] Notifica verso PG con errore client su richiestaElencoPec: retry esauriti e richiesta inviata in DLQ
+  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_01] Notifica verso PG con errore sulla creazione del batch INIPEC (richiestaElencoPec): le request vengono rimesse in retry fino a 3 tentativi, poi vanno in ERROR e in DLQ
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    # 10762910015 -> errore client sulla chiamata richiestaElencoPec
+    # 10762910015 -> fallimento sulla creazione del batch: retry delle request fino a 3, poi ERROR e invio in DLQ
     And destinatario
       | taxId           | 10762910015 |
       | digitalDomicile | NULL        |
@@ -113,11 +113,11 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
 
 
   @inipecDlq
-  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_02] Notifica verso PG con errore client su richiestaElencoPec: retry esauriti e richiesta inviata in DLQ
+  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_02] Notifica verso PG con errore sul polling dell'esito INIPEC: il polling viene ripetuto fino a 3 tentativi, poi tutte le request vanno in ERROR e in DLQ
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    # 10433218194 -> errore client sulla chiamata richiestaElencoPec
+    # 10433218194 -> fallimento sul polling: retry del polling fino a 3, allo scadere dei retry tutte le request vanno in ERROR e in DLQ
     And destinatario
       | taxId           | 10433218194 |
       | digitalDomicile | NULL        |
