@@ -18,7 +18,6 @@ import software.amazon.awssdk.services.sqs.model.Message;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -101,7 +100,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la richiesta INIPEC per il cf {string} risulta INVIATA al primo tentativo")
     public void requestSentWithoutRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come SENT con retry = 0, oppure scade il timeout.
-        pollUntilVerified(
+        Poller.pollUntil(
                 () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT),
                 items -> {
                     assertThat(items)
@@ -119,7 +118,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la richiesta INIPEC per il cf {string} risulta RIMESSA in retry")
     public void requestRequeuedForRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come NOT_SENT con retry > 0, oppure scade il timeout.
-        pollUntilVerified(
+        Poller.pollUntil(
                 () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT),
                 items -> {
                     assertThat(items)
@@ -142,7 +141,7 @@ public class INIPECGestionePuntualeEsitiSteps {
         String iun = sharedSteps.getNotificationIun();
         // Si considerano solo i record della notifica corrente (correlationId contiene lo IUN):
         // la finestra temporale è ampia e potrebbe includere record SENT_TO_DLQ di run precedenti con lo stesso CF.
-        List<Map<String, AttributeValue>> dlqItems = pollUntilVerified(
+        List<Map<String, AttributeValue>> dlqItems = Poller.pollUntil(
                 () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT_TO_DLQ).stream()
                         .filter(item -> item.containsKey("correlationId")
                                 && item.get("correlationId").s().contains(iun))
@@ -168,15 +167,16 @@ public class INIPECGestionePuntualeEsitiSteps {
         // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record
         // (già filtrato per IUN): così si escludono messaggi residui di run precedenti con lo stesso CF.
         // Il servizio pubblica correlationId.split(batchRequestPkSeparator)[0], quindi quello del messaggio è un prefisso di quello su DB.
-        pollUntilVerified(
+        Poller.pollUntil(
                 () -> sqsService.receiveMessages(NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ),
-                (List<Message> messages) ->
-                        assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
-                                assertThat(messages)
-                                        .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
-                                        .anyMatch(message -> SqsMessageUtils.hasTaxId(message, cf)
-                                                && SqsMessageUtils.fieldMatches(message, "correlationId",
-                                                        id -> !id.isEmpty() && correlationId.startsWith(id)))),
+                (List<Message> messages) -> {
+                    assertThat(expectedCorrelationIds).allSatisfy(correlationId ->
+                            assertThat(messages)
+                                    .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
+                                    .anyMatch(message -> SqsMessageUtils.hasTaxId(message, cf)
+                                            && SqsMessageUtils.fieldMatches(message, "correlationId",
+                                                    id -> !id.isEmpty() && correlationId.startsWith(id))));
+                },
                 DLQ_QUEUE_POLLING);
     }
 
@@ -187,9 +187,11 @@ public class INIPECGestionePuntualeEsitiSteps {
         // Il polling si interrompe in anticipo solo se compare un record; lo scadere del timeout è l'esito atteso.
         // List e non Map: Map.of fallirebbe se cf1 e cf2 coincidessero.
         Supplier<List<Integer>> counts = () -> List.of(countAnySendStatus(cf1), countAnySendStatus(cf2));
+        // Variabile tipizzata: una lambda inline sarebbe ambigua fra gli overload Predicate/Consumer di Poller.pollUntil.
+        Predicate<List<Integer>> anyRequestFound = c -> c.stream().anyMatch(n -> n > 0);
         List<Integer> lastCounts;
         try {
-            lastCounts = Poller.pollUntil(counts, c -> c.stream().anyMatch(n -> n > 0), DB_ABSENCE_POLLING);
+            lastCounts = Poller.pollUntil(counts, anyRequestFound, DB_ABSENCE_POLLING);
         } catch (PollingTimeoutException e) {
             @SuppressWarnings("unchecked")
             List<Integer> lastValue = (List<Integer>) e.getLastValue();
@@ -255,9 +257,11 @@ public class INIPECGestionePuntualeEsitiSteps {
 
         String iun = sharedSteps.getNotificationIun();
 
-        pollUntilVerified(
+        Poller.pollUntil(
                 () -> retrieveRegistryRequests(cf, eservice, iun),
-                items -> assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty(),
+                items -> {
+                    assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty();
+                },
                 REGISTRY_REQUEST_POLLING);
     }
 
@@ -274,35 +278,6 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .filter(item -> eservice.name().equals(item.get("eservice").s()))
                 .filter(item -> item.get("correlationId").s().contains(iun))
                 .toList();
-    }
-
-    /**
-     * Ripete {@code call} finché le asserzioni di {@code verify} non passano, oppure scade {@code config}.
-     * Allo scadere le asserzioni vengono rieseguite sull'ultimo valore letto, così il test fallisce
-     * con il messaggio AssertJ originale.
-     *
-     * @return l'ultimo valore letto (quello che ha soddisfatto le asserzioni)
-     */
-    private static <T> T pollUntilVerified(Supplier<T> call, Consumer<T> verify, PollingConfig config) {
-        Predicate<T> verified = value -> {
-            try {
-                verify.accept(value);
-                return true;
-            } catch (AssertionError e) {
-                return false;
-            }
-        };
-
-        T lastValue;
-        try {
-            lastValue = Poller.pollUntil(call, verified, config);
-        } catch (PollingTimeoutException e) {
-            @SuppressWarnings("unchecked")
-            T timedOutValue = (T) e.getLastValue();
-            lastValue = timedOutValue;
-        }
-        verify.accept(lastValue);
-        return lastValue;
     }
 }
 
