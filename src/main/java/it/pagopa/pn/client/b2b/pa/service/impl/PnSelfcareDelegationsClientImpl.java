@@ -35,9 +35,9 @@ public class PnSelfcareDelegationsClientImpl implements IPnSelfcareDelegationsCl
 
     // TODO: placeholder, valorizzare pn.selfcare.delegations.subscription-key nelle properties
     public PnSelfcareDelegationsClientImpl(RestTemplate restTemplate,
-                                           @Value("${pn.selfcare.delegations.base-url:https://api.dev.selfcare.pagopa.it/external/test/v1}") String basePath,
-                                           @Value("${pn.selfcare.delegations.subscription-key:PLACEHOLDER_SELFCARE_SUBSCRIPTION_KEY}") String subscriptionKey,
-                                           @Value("${pn.selfcare.delegations.product-id:prod-pn-dev}") String productId) {
+                                           @Value("${pn.selfcare.delegations.base-url}") String basePath,
+                                           @Value("${pn.selfcare.delegations.subscription-key}") String subscriptionKey,
+                                           @Value("${pn.selfcare.delegations.product-id}") String productId) {
         this.productId = AllowedProductId.fromValue(productId);
         this.apiClient = newApiClient(restTemplate, basePath, subscriptionKey);
         this.delegationsTestApi = new DelegationsTestApi(apiClient);

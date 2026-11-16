@@ -249,7 +249,7 @@ public class PtEntiDelegantiSteps {
         String expected = resolveValue(taxCode);
         assertThat(allReadInstitutions)
                 .as("La risposta non contiene solo l'Ente con codice fiscale %s", expected)
-                .isNotEmpty()
+                .hasSize(1)
                 .allMatch(institution -> expected.equalsIgnoreCase(institution.getInstitutionTaxCode()));
     }
 
