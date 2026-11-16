@@ -411,7 +411,15 @@ public class RaddAltSteps {
     public void downloadOperationReturnsTotDocuments(Integer documenti) {
         Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList());
         Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty());
-        Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+        //Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+        Assertions.assertEquals(
+                documenti,
+                this.startTransactionResponse.getDownloadUrlList().size(),
+                () -> "Documenti attesi: " + documenti
+                        + ", documenti trovati: " + this.startTransactionResponse.getDownloadUrlList().size()
+                        + "\nLista documenti:\n"
+                        + this.startTransactionResponse.getDownloadUrlList()
+        );
         Assertions.assertNotNull(this.startTransactionResponse.getStatus());
         Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0, this.startTransactionResponse.getStatus().getCode());
     }
