@@ -16,6 +16,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -207,9 +208,16 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
      */
     @Override
     public Integer getPurposeMetadataVersion(UUID purposeId) throws RestClientException {
-        String metadataVersion = getPurposeWithHttpInfo(purposeId).getHeaders().getFirst(METADATA_VERSION_HEADER);
+        ResponseEntity<Purpose> purposeWithHttpInfo = getPurposeWithHttpInfo(purposeId);
+        return extractPurposeMetadataVersion(purposeWithHttpInfo);
+    }
+
+    @Nonnull
+    @Override
+    public Integer extractPurposeMetadataVersion(ResponseEntity<Purpose> purposeWithHttpInfo) {
+        String metadataVersion = purposeWithHttpInfo.getHeaders().getFirst(METADATA_VERSION_HEADER);
         if (metadataVersion == null) {
-            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità " + purposeId);
+            throw new IllegalStateException("Header " + METADATA_VERSION_HEADER + " assente per la finalità ");
         }
         try {
             return Integer.valueOf(metadataVersion);
@@ -245,6 +253,12 @@ public class PurposeApiClientImpl implements IPurposeApiClient {
     @Override
     public void signRiskAnalysis(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException {
         purposesApi.signRiskAnalysis(purposeId, payload);
+    }
+
+    /** Firma con il payload fornito, preservando le informazioni HTTP del client generato. */
+    @Override
+    public ResponseEntity<Void> signRiskAnalysisWithHttpInfo(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException {
+        return purposesApi.signRiskAnalysisWithHttpInfo(purposeId, payload);
     }
 
     @Override
