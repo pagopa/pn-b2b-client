@@ -396,7 +396,7 @@ Feature: avanzamento notifiche webhook b2b V29
   quando la notifica viene accettata e successivamente annullata
   allora l'elemento di timeline "NOTIFICATION_CANCELLED" viene letto sia dalla timeline della notifica che dallo stream, con i details (notRefinedRecipientIndexes) correttamente popolati
 
-    Given viene generata una nuova notifica con la versione "V29"
+    Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
