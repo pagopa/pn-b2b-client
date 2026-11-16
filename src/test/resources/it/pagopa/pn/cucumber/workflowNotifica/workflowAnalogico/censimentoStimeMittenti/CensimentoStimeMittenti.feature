@@ -24,7 +24,7 @@ Feature: Censimento stime mittenti
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
 #     x= luglio (2.1B)
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_novembre_20.zip" anno 2020 mese 11
-#     x= gennaio_23 (2.1C) MonthSent=2023_01  -   OrderMonth=2020_07
+#     x= gennaio_23 (2.1C) MonthSent=2023_01
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
 #		MonthSent=2023_05
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
@@ -60,7 +60,7 @@ Feature: Censimento stime mittenti
     When eseguo la lambda sender order check per il mese "2020-03"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
-      | X+1 (2026-04) |
+      | X+1 (2020-04) |
 
 # Marzo s , giugno n
   @lambdaCheckPortFat
@@ -68,7 +68,7 @@ Feature: Censimento stime mittenti
     When eseguo la lambda sender order check per il mese "2020-02"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
-      | X+4 (2026-06) |
+      | X+4 (2020-06) |
 
 #giugno n , ottobre n
   @lambdaCheckPortFat
@@ -104,19 +104,19 @@ Feature: Censimento stime mittenti
 # maggio s , agosto x2
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_A] Controllo su commessa con mese successivo duplicato, esito positivo
-    When eseguo la lambda sender order check per il mese "2026-04"
+    When eseguo la lambda sender order check per il mese "2020-04"
     Then il risultato del controllo è "OK"
 
 # agosto x2  , novembre s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_B] Controllo su commessa con quarto mese successivo duplicato, esito positivo
-    When eseguo la lambda sender order check per il mese "2026-07"
+    When eseguo la lambda sender order check per il mese "2020-07"
     Then il risultato del controllo è "OK"
 
  # febbraio x2, maggio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_C] Controllo su commessa con mese successivo duplicato ma caricato in mese diverso, esito positivo
-    When eseguo la lambda sender order check per il mese "2026-01"
+    When eseguo la lambda sender order check per il mese "2023-01"
     Then il risultato del controllo è "OK"
 
 #**********************************************
