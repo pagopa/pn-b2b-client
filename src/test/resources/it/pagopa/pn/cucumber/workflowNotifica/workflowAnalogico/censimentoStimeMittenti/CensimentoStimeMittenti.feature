@@ -1,77 +1,57 @@
 Feature: Censimento stime mittenti
 
-
+  Scenario: [CHECK_PORTFAT_DATA_PREPARATION] Caricamento delle commesse necessarie per soddisfare i pre requisiti dei tst.
 #**************** SCENARIO 1 MESE SPECIFICATO *****************
-
 # 	  	 x= marzo_20 (1.1A) MonthSent=2020_03   OrderMonth=2020_07
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_20.zip" anno 2020 mese 7
-
+    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_20.zip" anno 2020 mese 7
 #		x= febbraio_20 (1.1B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_20.zip" anno 2020 mese 3
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_20.zip" anno 2020 mese 3
 # 		x= gennaio_20 (1.2A)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_20.zip" anno 2020 mese 2
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_20.zip" anno 2020 mese 2
 #		x= gennaio_20 (1.2A)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_20.zip" anno 2020 mese 5
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_20.zip" anno 2020 mese 5
 #        x= novembre_20 (1.2C)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_20.zip" anno 2020 mese 12
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_20.zip" anno 2020 mese 12
 #		x= novembre_20 (1.2C)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_21.zip" anno 2021 mese 3
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_21.zip" anno 2021 mese 3
 #        x= novembre_20 (1.2B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_gennaio_21.zip" anno 2021 mese 1
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_gennaio_21.zip" anno 2021 mese 1
 #		x= novembre_20 (1.2B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_21.zip" anno 2021 mese 4
-
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_21.zip" anno 2021 mese 4
 #**************** SCENARIO 2 DUPLICATI *****************
-
 #     x= aprile (2.1A) x= luglio (2.1B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
 #     x= luglio (2.1B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_novembre_20.zip" anno 2020 mese 11
-
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_novembre_20.zip" anno 2020 mese 11
 #     x= gennaio_23 (2.1C) MonthSent=2023_01  -   OrderMonth=2020_07
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
 #		MonthSent=2023_05
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_23.zip" anno 2023 mese 5
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_23.zip" anno 2023 mese 5
 #**************** SCENARIO 3 STATI DIVERSI DA COMPLETATO ********
-#
-#    	x = Febbraio 2022 (3.1A)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_22.zip" anno 2022 mese 6 #stato non completato.
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_22.zip" anno 2022 mese 3
-
+##    	x = Febbraio 2022 (3.1A) #stato non completato.
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_22.zip" anno 2022 mese 6
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_22.zip" anno 2022 mese 3
 #     	x = Marzo 2022 (3.1B)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_22.zip" anno 2022 mese 7
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_22.zip" anno 2022 mese 4 #stato non completato.
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_22.zip" anno 2022 mese 7
+    #stato non completato.
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_22.zip" anno 2022 mese 4
 #   	X = Aprile 2022 (3.1C)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_22.zip" anno 2022 mese 5
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8 #stato non completato.
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8
-
-
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_22.zip" anno 2022 mese 5
+    #stato non completato.
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8
 #**************** SCENARIO 4 MESE CORRENTE ********
-
 #     x= Novembre_26 mese corrente (4.1)
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_26.zip" anno 2026 mese 12
-Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2026 mese 3
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_26.zip" anno 2026 mese 12
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2026 mese 3
 
 #     x= novembre_26 mese corrente (4.2)
 #    	Eliminare "_dicembre_26.zip"
 #    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2026 mese 3
 
-
-    # Non presenti: Aprile, Giugno, Ottobre 2020
+# Non presenti: Aprile, Giugno, Ottobre 2020
 
 
 # aprile n , Luglio s
@@ -82,7 +62,6 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     And le mensilità mancanti sono
       | X+1 (2026-04) |
 
-
 # Marzo s , giugno n
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_1_B] Controllo su commessa con quarto mese successivo mancante, esito negativo
@@ -90,7 +69,6 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
       | X+4 (2026-06) |
-
 
 #giugno n , ottobre n
   @lambdaCheckPortFat
@@ -101,15 +79,11 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
       | X+1 (2020-06) |
       | X+4 (2020-10) |
 
-
-
 # Febbraio s, Maggio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_2_A] Controllo su commesse presenti, esito positivo
     When eseguo la lambda sender order check per il mese "2020-01"
     Then il risultato del controllo è "OK"
-
-
 
 #se novembre -> dicembre s , marzo_27 s
   @lambdaCheckPortFat
@@ -117,18 +91,15 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     When eseguo la lambda sender order check per il mese "2020-11"
     Then il risultato del controllo è "OK"
 
-
 #se dicembre -> gennaio s , aprile_27 s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_2_B] Controllo su commessa con mese che ricade nell'anno successivo, esito positivo
     When eseguo la lambda sender order check per il mese "2020-12"
     Then il risultato del controllo è "OK"
 
-
 #**********************************
 # **** Duplicati
 #**********************************
-
 
 # maggio s , agosto x2
   @lambdaCheckPortFat
@@ -136,20 +107,17 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     When eseguo la lambda sender order check per il mese "2026-04"
     Then il risultato del controllo è "OK"
 
-
 # agosto x2  , novembre s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_B] Controllo su commessa con quarto mese successivo duplicato, esito positivo
     When eseguo la lambda sender order check per il mese "2026-07"
     Then il risultato del controllo è "OK"
 
-
  # febbraio x2, maggio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_C] Controllo su commessa con mese successivo duplicato ma caricato in mese diverso, esito positivo
     When eseguo la lambda sender order check per il mese "2026-01"
     Then il risultato del controllo è "OK"
-
 
 #**********************************************
 # **** Mese corrente - nessun parametro in input
@@ -161,13 +129,11 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     When eseguo la lambda sender order check
     Then il risultato del controllo è "OK"
 
-
   #se novembre -> dicembre s , marzo_27 n
-  @lambdaCheckPortFat @ignore
+  #@lambdaCheckPortFat @ignore
   Scenario: [CHECK_PORTFAT_04_2] Controllo su commessa senza specificare il mese, esito negativo
     When eseguo la lambda sender order check
     Then il risultato del controllo è "KO"
-
 
 #**********************************
 # **** Stati diversi da completato
@@ -179,7 +145,7 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     When eseguo la lambda sender order check per il mese "2022-02"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
-      | X+1 (202x-06) |
+      | X+1 (2022-06) |
 
   # marzo
   @lambdaCheckPortFat
@@ -187,7 +153,7 @@ Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_mod
     When eseguo la lambda sender order check per il mese "2022-03"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
-      | X+1 (202x-04) |
+      | X+1 (2022-04) |
 
   # aprile
   @lambdaCheckPortFat
