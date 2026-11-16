@@ -1,12 +1,12 @@
-@catalog
+@compact-catalog
 Feature: Listing catalogo compatto e-services
-  Tutti gli utenti autenticati di enti PA, GSP e privati possono ottenere la lista compatta di e-services
+  Tutti gli utenti autenticati di enti PA, GSP e privati possono ottenere la lista di e-services
 
   @happy-path
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_1] Restituisce gli e-service nel catalogo compatto
     Given l'utente è un "<ruolo>" di "<ente>"
-    Given "PA1" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA1" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo compatto
     Then si ottiene status code 200 e la lista di 5 e-services dal catalogo compatto
 
@@ -32,7 +32,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_2] A fronte di 5 e-service esistenti e una richiesta di 3 e-service, restituisce solo i primi 3 risultati
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 4 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA1" ha già creato 4 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo compatto limitata ai primi 3 e-services
     Then si ottiene status code 200 e la lista di 3 e-services dal catalogo compatto
 
@@ -40,7 +40,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_3] A fronte di 5 e-service esistenti e una richiesta di offset 2, restituisce solo 3 risultati
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA1" ha già creato 5 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo compatto con offset 2
     Then si ottiene status code 200 e la lista di 3 e-services dal catalogo compatto
 
@@ -48,7 +48,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_5] Restituisce gli e-service a catalogo compatto per i quali lo specifico fruitore ha almeno un agreement in stato ACTIVE
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato 3 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA2" ha già creato 3 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     And "PA1" ha un agreement attivo con un e-service di "PA2"
     When l'utente richiede la lista del catalogo compatto per gli e-services per i quali ha almeno un agreement attivo
     Then si ottiene status code 200 e la lista di 1 e-service dal catalogo compatto
@@ -57,16 +57,16 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_6] Restituisce gli e-service nel catalogo compatto che contengono la keyword "test" all'interno del nome, con ricerca case insensitive
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
-    Given "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
-    When l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword "test"
+    And "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
+    And l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword "test"
     Then si ottiene status code 200 e la lista di 1 e-service dal catalogo compatto
 
   @happy-path
   @nrt-minimal
   Scenario: [COMPACT_CATALOG_LISTING_7] Restituisce un insieme vuoto di e-service nel catalogo compatto per una ricerca che non porta risultati
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato 10 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
+    And "PA2" ha già creato 10 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword "unknown"
     Then si ottiene status code 200 e la lista di 0 e-services dal catalogo compatto
 
@@ -74,7 +74,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_8] Filtra gli e-service nel catalogo compatto per modalità di erogazione (mode)
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 2 e-service in modalità "<modeCreato>" con un descrittore in stato "PUBLISHED"
+    And "PA1" ha già creato 2 e-service in modalità "<modeCreato>" con un descrittore in stato "PUBLISHED"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per modalità "<modeFiltro>"
     Then si ottiene status code 200
     And il risultato del catalogo compatto <esito> gli e-service con id "%actual"
@@ -90,8 +90,8 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_9] Filtra gli e-service nel catalogo compatto per delegabilità in fruizione (isConsumerDelegable)
     Given l'utente è un "admin" di "PA1"
-    Given "PA3" ha già creato e pubblicato 2 e-service delegabile in fruizione
-    Given "PA3" ha già creato e pubblicato 1 e-service
+    And "PA3" ha già creato e pubblicato 2 e-service delegabile in fruizione
+    And "PA3" ha già creato e pubblicato 1 e-service
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per isConsumerDelegable "<isConsumerDelegable>"
     Then si ottiene status code 200 e la lista di <risultati> e-services dal catalogo compatto
 
@@ -104,8 +104,8 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_10] Filtra gli e-service nel catalogo compatto per flag dati personali (personalData: TRUE, FALSE, DEFINED)
     Given l'utente è un "admin" di "PA1"
-    Given "PA2" ha già creato e pubblicato 2 e-services con personalData true
-    Given "PA2" ha già creato e pubblicato 1 e-service con personalData false
+    And "PA2" ha già creato e pubblicato 2 e-services con personalData true
+    And "PA2" ha già creato e pubblicato 1 e-service con personalData false
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData "<personalData>"
     Then si ottiene status code 200 e la lista di <risultati> e-services dal catalogo compatto
 
@@ -119,7 +119,7 @@ Feature: Listing catalogo compatto e-services
   @nrt-minimal
   Scenario Outline: [COMPACT_CATALOG_LISTING_10.1] Verifica il filtro personalData su e-service creati per modalità DELIVER e RECEIVE
     Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato 2 e-service in modalità "<mode>" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
+    And "PA1" ha già creato 2 e-service in modalità "<mode>" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData "<personalDataFilter>"
     Then si ottiene status code 200
     And il risultato del catalogo compatto <esito> gli e-service con id "%actual"

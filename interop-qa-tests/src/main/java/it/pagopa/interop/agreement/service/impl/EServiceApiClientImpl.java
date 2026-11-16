@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -208,6 +209,20 @@ public class EServiceApiClientImpl implements IEServiceClient {
         /* DEV. NOTE 22/10/2025: il campo "personalData" è stato aggiunto a posteriori della
          * stesura di questo metodo. Essendo opzionale, lo si pone a null per mantenere compatibilità con i test esistenti. */
         return eservicesApi.getEServicesCatalog(offset, limit, null, q, producersIds, attributesIds, states, agreementStates, mode, isConsumerDelegable);
+    }
+
+    @Override
+    public ResponseEntity<CompactCatalogEServices> getCompactCatalogEServicesWithHttpInfo(
+            Integer offset,
+            Integer limit,
+            @Nullable String q,
+            @Nullable List<EServiceDescriptorState> states,
+            @Nullable List<AgreementState> agreementStates,
+            @Nullable EServiceMode mode,
+            @Nullable Boolean isConsumerDelegable,
+            @Nullable PersonalDataFilter personalData) {
+        return eservicesApi.getCompactCatalogEServicesWithHttpInfo(
+                offset, limit, q, states, agreementStates, mode, isConsumerDelegable, personalData);
     }
 
     public CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId) {

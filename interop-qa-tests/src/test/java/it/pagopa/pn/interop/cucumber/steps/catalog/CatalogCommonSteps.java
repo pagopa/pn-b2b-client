@@ -51,6 +51,14 @@ public class CatalogCommonSteps {
                 ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
     }
 
+    @Then("si ottiene status code {int} e la lista di {int} e-service(s) dal catalogo compatto")
+    public void verifyReceivedCompactCatalogResponse(int statusCode, int eServiceNumber) {
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
+        Assertions.assertEquals(eServiceNumber,
+                ((ResponseEntity<CompactCatalogEServices>) httpCallExecutor.getResponse()).getBody().getResults().size());
+    }
+
     @Given("{string} ha già creato un e-service {isAsynchronous} con un descrittore in stato {string} con:")
     public void createEserviceWithDescriptorAndState(String tenantType, Boolean isAsync, String descriptorState, UpdateEServiceDescriptorSeed descriptorSeed) {
         createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed().asyncExchange(isAsync), descriptorSeed);
