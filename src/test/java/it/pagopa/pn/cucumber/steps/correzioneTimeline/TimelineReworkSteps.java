@@ -5,6 +5,9 @@ import io.cucumber.java.Before;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItem;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkItemsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery.rework.model.ReworkRequest;
@@ -29,7 +32,6 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.awaitility.core.ConditionFactory;
 import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,6 +40,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -47,8 +50,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils.getDataTableParams;
@@ -534,42 +539,74 @@ public class TimelineReworkSteps {
         String sentAt = fsn.getSentAt().toLocalDate().toString();
         String iun = fsn.getIun();
         String pk = paId + "_" + sentAt;
-        // l'assenza deve reggere per tutta la finestra: una lettura singola può arrivare prima della scrittura
-        ConditionFactory polling = expectedPresent
-                ? await().atMost(15, TimeUnit.MINUTES).pollInterval(30, TimeUnit.SECONDS)
-                : await().during(1, TimeUnit.MINUTES).atMost(2, TimeUnit.MINUTES).pollInterval(15, TimeUnit.SECONDS);
-
-        try {
-            polling.ignoreExceptions().untilAsserted(() -> {
+        Supplier<List<Map<String, AttributeValue>>> readRecords = () -> {
+            try {
                 List<Map<String, AttributeValue>> response = dynamoDbService.callAllPages(DynamoTableName.REWORKED_TIMELINES_FOR_INVOICING, Map.of(
                         ":v_paId_invoicingDay", AttributeValue.builder().s(pk).build(),
                         ":v_iun", AttributeValue.builder().s(iun).build()
                 ));
                 log.info("REWORKED_TIMELINES_FOR_INVOICING RESPONSE -> {}", response);
-                List<Map<String, AttributeValue>> records = response.stream().filter(
-                        e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
-                log.info("Filtered records -> {}", records);
+                return response;
+            } catch (RuntimeException e) {
+                log.warn("Lettura di pn-ReworkedTimelinesForInvoicing fallita, si riprova: {}", e.getMessage());
+                return null;
+            }
+        };
+        Consumer<List<Map<String, AttributeValue>>> verify = response -> {
+            assertThat(response).as("Lettura di pn-ReworkedTimelinesForInvoicing non riuscita. IUN = %s", iun).isNotNull();
+            List<Map<String, AttributeValue>> records = response.stream().filter(
+                    e -> e.containsKey("invoicingType") && e.get("invoicingType").s().equals(invoicingType)).toList();
+            log.info("Filtered records -> {}", records);
 
-                if (expectedPresent && isViewed && invoicingType.equals("NEW")) {
-                    assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW. IUN = %s", iun).isEqualTo(0);
-                    return;
-                }
-                assertThat(response.isEmpty())
-                        .as("Nessun record su pn-ReworkedTimelinesForInvoicing per il giorno %s. IUN = %s", sentAt, iun)
-                        .isFalse();
-                timelineElements.forEach((key, value) -> {
-                    String[] requirements = value.split(";");
-                    boolean found = records.stream()
-                            .anyMatch(r -> r.containsKey("invoincingTimestamp_timelineElementId")
-                                    && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains));
-                    assertThat(found)
-                            .as(expectedPresent
-                                            ? "Non è stato trovato nessun record in stato %s che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s"
-                                            : "È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s",
-                                    invoicingType, Arrays.toString(requirements), iun)
-                            .isEqualTo(expectedPresent);
-                });
+            if (expectedPresent && isViewed && invoicingType.equals("NEW")) {
+                assertThat(records.size()).as("In caso di notifica visualizzata, non dovrebbero esserci elementi con invoicingType NEW. IUN = %s", iun).isEqualTo(0);
+                return;
+            }
+            assertThat(response.isEmpty())
+                    .as("Nessun record su pn-ReworkedTimelinesForInvoicing per il giorno %s. IUN = %s", sentAt, iun)
+                    .isFalse();
+            timelineElements.forEach((key, value) -> {
+                String[] requirements = value.split(";");
+                boolean found = records.stream()
+                        .anyMatch(r -> r.containsKey("invoincingTimestamp_timelineElementId")
+                                && Arrays.stream(requirements).allMatch(r.get("invoincingTimestamp_timelineElementId").s()::contains));
+                assertThat(found)
+                        .as(expectedPresent
+                                        ? "Non è stato trovato nessun record in stato %s che nel timelineElement id abbia tutte le sottostringhe attese: %s . IUN = %s"
+                                        : "È stato trovato un record in stato %s che nel timelineElement id ha tutte le sottostringhe: %s . IUN = %s",
+                                invoicingType, Arrays.toString(requirements), iun)
+                        .isEqualTo(expectedPresent);
             });
+        };
+        Predicate<List<Map<String, AttributeValue>>> verified = response -> {
+            try {
+                verify.accept(response);
+                return true;
+            } catch (AssertionError e) {
+                return false;
+            }
+        };
+
+        // presenza: ci si ferma appena i record attesi compaiono
+        // assenza: deve reggere per tutta la finestra, ci si ferma solo se compare un record non atteso
+        Predicate<List<Map<String, AttributeValue>>> stopCondition = expectedPresent
+                ? verified
+                : response -> response != null && !response.isEmpty() && !verified.test(response);
+        PollingConfig pollingConfig = expectedPresent
+                ? PollingConfig.of(Duration.ofMinutes(15), Duration.ofSeconds(30))
+                // un intervallo in più perché l'ultima lettura cada a fine minuto
+                : PollingConfig.of(Duration.ofMinutes(1).plusSeconds(15), Duration.ofSeconds(15));
+
+        try {
+            List<Map<String, AttributeValue>> lastResponse;
+            try {
+                lastResponse = Poller.pollUntil(readRecords, stopCondition, pollingConfig);
+            } catch (PollingTimeoutException e) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, AttributeValue>> lastValue = (List<Map<String, AttributeValue>>) e.getLastValue();
+                lastResponse = lastValue;
+            }
+            verify.accept(lastResponse);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
