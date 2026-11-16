@@ -1,7 +1,7 @@
 Feature: verifica audit-log su delivery
 
   @NotificationDetailsError @work-item:QA-18841
-  Scenario: [NOTIFICHE_LEGALI_AUDIT_LOG_400_ERROR] Invio una notifica legale con external-registries spento e controllo che venga generato un audito log di errore con status code 502 quando viene chiamata l'api di dettaglio notifica
+  Scenario: [NOTIFICHE_LEGALI_AUDIT_LOG_400_ERROR] Invio una notifica legale con external-registries spento e controllo che venga generato un audit log di errore con status code 502 quando viene chiamata l'api di dettaglio notifica
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |
       | senderDenomination | comune di Palermo                |
