@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -17,6 +18,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LambdaInvoker {
@@ -75,9 +77,11 @@ public class LambdaInvoker {
             String payloadJson = payload instanceof String s ? s : objectMapper.writeValueAsString(payload);
 
             String rawResponse = invokeMyLambda(functionName, payloadJson);
+            log.info("Lambda [{}] raw response: {}", functionName, rawResponse);
+
 
             JsonNode root = objectMapper.readTree(rawResponse);
-
+            log.info("Lambda [{}] detected response type: {}", functionName, root.has("statusCode") ? "API_GATEWAY" : "DIRECT_DTO");
             // Compatibilità con lambda che restituiscono:
             // {
             //   "statusCode": 200,
@@ -89,6 +93,9 @@ public class LambdaInvoker {
                 JsonNode body = root.path("body");
 
                 if (statusCode != 200) {
+                    log.info("Lambda [{}] request: {}", functionName, payloadJson);
+                    log.info("Lambda [{}] response: {}", functionName, rawResponse);
+
                     String bodyText = body.isTextual() ? body.asText() : body.toString();
 
                     throw new RuntimeException("Lambda failed: " + bodyText);

@@ -1,5 +1,12 @@
 Feature: Censimento stime mittenti
 
+ # Questi step offrono un reminder delle commesse necessarie agli scenari riportati tra parentesi ().
+  # Una volta terminati i caricamenti, è necessario modificare il campo MonthSent così come riportato
+  # su ogni step di caricamento.
+  # La lambda effettua un controllo per il mese dato in input o mese corrente se non viene passato un valore
+  # Il controllo è superato se per il mese X è sono presenti le commese del mese x+1 e x+4
+  # queste devono essere state caricate lo stesso mese del controllo quindi x = MonthSent
+  # I file e il campo sono riportati sulla tabella pn-PortFatDownload.
   Scenario: [CHECK_PORTFAT_DATA_PREPARATION] Caricamento delle commesse necessarie per soddisfare i pre requisiti dei tst.
 #**************** SCENARIO 1 MESE SPECIFICATO *****************
 # 	  	 x= marzo_20 (1.1A) MonthSent=2020-03   OrderMonth=2020_07
@@ -52,14 +59,14 @@ Feature: Censimento stime mittenti
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_26.zip" anno 2026 mese 12
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2027 mese 3
 
-#     x= novembre_26 mese corrente (4.2)
-#    	Eliminare "_dicembre_26.zip"
+#    x= novembre_26 mese corrente (4.2)
+#    Per lo scenario 4.2 è necessario Eliminare "_dicembre_26.zip" dalla tabella pn-PortFatDownload
 #    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2027 mese 3
 
 # Non devono essere presenti: Aprile, Giugno, Ottobre 2020
 
 # aprile n , Luglio s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del mese successivo.
     When eseguo la lambda sender order check per il mese "2020-03"
@@ -68,7 +75,7 @@ Feature: Censimento stime mittenti
       | X+1 (2020-04) |
 
 # Marzo s , giugno n
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del quarto mese successivo.
     When eseguo la lambda sender order check per il mese "2020-02"
@@ -77,7 +84,7 @@ Feature: Censimento stime mittenti
       | X+4 (2020-06) |
 
 #giugno n , ottobre n
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_1_D] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza delle commesse relative al mese in input.
     When eseguo la lambda sender order check per il mese "2020-05"
@@ -87,21 +94,21 @@ Feature: Censimento stime mittenti
       | X+4 (2020-09) |
 
 # Febbraio s, Maggio s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_2_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-01"
     Then il risultato del controllo è "OK"
 
 #se novembre -> dicembre s , marzo s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_2_C] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-11"
     Then il risultato del controllo è "OK"
 
 #se dicembre -> gennaio s , aprile s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_01_2_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-12"
@@ -112,21 +119,21 @@ Feature: Censimento stime mittenti
 #**********************************
 
 # maggio s , agosto x2
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_02_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2020-04"
     Then il risultato del controllo è "OK"
 
 # agosto x2  , novembre s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_02_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2020-07"
     Then il risultato del controllo è "OK"
 
  # febbraio x2, maggio s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_02_1_C] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2023-01"
@@ -137,14 +144,14 @@ Feature: Censimento stime mittenti
 #***********************************************
 
   #se novembre -> dicembre s , marzo s
-  @lambdaCheckPortFat
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_04_1] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese in corso, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check
     Then il risultato del controllo è "OK"
 
   #se novembre -> dicembre s , marzo n
-  #@lambdaCheckPortFat @ignore
+  #@lambdaCheckPortFat @ignore @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_04_2] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese in corso, il test da esito negativo per mancanza di una commessa necessaria.
     When eseguo la lambda sender order check
@@ -154,8 +161,8 @@ Feature: Censimento stime mittenti
 # **** Stati diversi da completato
 #**********************************
 
-  # febbaraio
-  @lambdaCheckPortFat
+
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_03_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito negativo in quanto la commessa ha uno stato diverso da
   completato.
@@ -164,8 +171,8 @@ Feature: Censimento stime mittenti
     And le mensilità mancanti sono
       | X+4 (2022-06) |
 
-  # marzo
-  @lambdaCheckPortFat
+
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_03_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito negativo in quanto la commessa ha uno stato diverso da
   completato.
@@ -174,8 +181,8 @@ Feature: Censimento stime mittenti
     And le mensilità mancanti sono
       | X+1 (2022-04) |
 
-  # aprile
-  @lambdaCheckPortFat
+
+  @lambdaCheckPortFat @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_03_1_C] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test da esito positivo in quanto sono caricate le commesse necessarie con stato completato.
     When eseguo la lambda sender order check per il mese "2022-04"
