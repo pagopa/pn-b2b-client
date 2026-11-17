@@ -117,6 +117,35 @@ public class ParameterTypes {
         return value;
     }
 
+    // Versione dello stream facoltativa negli step: se assente il valore è null e si usa la versione definita dalla suite
+    // (StreamVersionContext). Le varianti seguono la formulazione già presente negli step.
+
+    @ParameterType("(?: con versione \"([^\"]*)\")?")
+    public static String versione(String version) {
+        return version;
+    }
+
+    @ParameterType("(?: con la versione \"([^\"]*)\")?")
+    public static String laVersione(String version) {
+        return version;
+    }
+
+    @ParameterType("(?: versione \"([^\"]*)\")?")
+    public static String versioneStream(String version) {
+        return version;
+    }
+
+    @ParameterType("(?: \"(V\\d+|" + MOST_RECENT + ")\")?")
+    public static String versioneTraVirgolette(String version) {
+        return version;
+    }
+
+    // Negli step Cross Versioning in cui la versione della suite è il secondo termine del confronto
+    @ParameterType("(?:versione )?\"([^\"]*)\"|versione della suite")
+    public static String versioneEsplicitaOSuite(String version) {
+        return version;
+    }
+
     @ParameterType("risultino|non risultino")
     public static boolean appear(String value) {
         return value.equals("risultino");
