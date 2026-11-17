@@ -1,18 +1,11 @@
 package it.pagopa.pn.cucumber.steps.visualtest.templates;
 
-import it.pagopa.common.pdf.visualtest.FieldLocators;
 import it.pagopa.common.pdf.visualtest.MaskStrategy;
 import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
+import it.pagopa.pn.cucumber.steps.visualtest.SendFieldLocators;
 import it.pagopa.pn.cucumber.steps.visualtest.SendFieldValidators;
 
-import static it.pagopa.common.pdf.visualtest.FieldValidators.present;
-
-/**
- * Template del documento <em>Attestazione di annullamento notifica</em>
- * (Notification Cancelled Legal Fact).
- *
- * <p>Chiave del template: {@value #KEY}</p>
- */
+/** Dichiarazione di annullamento della notifica. */
 public final class NotificationCancelledTemplate {
 
     public static final String KEY = "NOTIFICATION_CANCELLED";
@@ -22,19 +15,21 @@ public final class NotificationCancelledTemplate {
 
     public static PdfDocumentTemplate build() {
         return PdfDocumentTemplate.builder(KEY)
-                .field(
-                        "IUN",
-                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("IUN", 300f)),
+                .expectedPageCount(1)
+                .field("IUN",
+                        SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Data annullamento",
-                        FieldLocators.aboveY(550f, FieldLocators.labelSameLine("in data", 200f)),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Data annullamento",
+                        SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Codice Fiscale destinatario",
-                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("Codice fiscale", 250f)),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Ora annullamento",
+                        SendFieldLocators.time(),
+                        SendFieldValidators.oraHHmm(),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Codice fiscale destinatario",
+                        SendFieldLocators.codiceFiscalePf(),
                         SendFieldValidators.codiceFiscalePf(),
                         MaskStrategy.TIGHT_BOX)
                 .build();

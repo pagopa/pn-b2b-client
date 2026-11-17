@@ -29,6 +29,7 @@ import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
 import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -61,6 +62,7 @@ import static org.apache.commons.lang3.BooleanUtils.isTrue;
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BFFDataPreparationService {
+
     @Data
     @Builder
     public static class MutateDescriptorResult {
@@ -166,9 +168,11 @@ public class BFFDataPreparationService {
         this.mainDataPrepService.setHttpCallExecutor(httpCallExecutor);
 
         this.template = new DataPreparationServiceTemplate(
+                clientTokenConfigurator,
                 this.httpCallExecutor,
                 this.pollingService,
-                this.commonUtils
+                this.commonUtils,
+                sharedStepsContext
         );
 
         this.delayService = delayService;
@@ -465,8 +469,12 @@ public class BFFDataPreparationService {
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
+        return createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed, "e-service");
+    }
+
+    public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, String eServicePrefix) {
         EServiceSeed defaultEserviceSeed = new EServiceSeed()
-                .name(String.format("e-service %d", ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
+.name(String.format("%s %d", eServicePrefix, ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)))
                 .description("Descrizione e-service")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
@@ -970,6 +978,14 @@ public class BFFDataPreparationService {
         return new RiskAnalysis(String.format("finalità_test_%d", new Random().nextInt()), new RiskAnalysisFormSeed().version(version).answers(riskAnalysisAttributes.toMap()));
     }
 
+    public RiskAnalysisFormSeed getRiskAnalysisByExample(@NonNull String tenantKind, @NonNull DataPreparationServiceTemplate.RiskAnalysisExample example) {
+        return template.getRiskAnalysisByExample(tenantKind, example);
+    }
+
+    public RiskAnalysisFormTemplateSeed getRiskAnalysisTemplateByExample(@NonNull String suffix, @NonNull DataPreparationServiceTemplate.RiskAnalysisExample example) {
+        return template.getRiskAnalysisTemplateByExample(suffix, example);
+    }
+
     public RiskAnalysis getRiskAnalysisSpecifyingAnswers(RiskAnalysisDataFromJson.RiskAnalysisAttributes riskAnalysisAttributes) {
         httpCallExecutor.performCall(purposeApiClient::retrieveLatestRiskAnalysisConfiguration);
         assertValidResponse();
@@ -1201,6 +1217,13 @@ public class BFFDataPreparationService {
             () -> agreementClient.getAgreementById(agreementId),
             res -> res.getState() == AgreementState.ACTIVE,
             "There was an error while approving the agreement"
+        );
+    }
+
+    public void approveAgreementFailing(UUID agreementId, DelegationRef delegationRef, int failureCode) {
+        httpCallExecutor.performCall(() -> agreementClient.approveAgreement(agreementId, delegationRef));
+        Assertions.assertEquals(failureCode, httpCallExecutor.getResponseStatus().value(),
+                "Response status code"
         );
     }
 

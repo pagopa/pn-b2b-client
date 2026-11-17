@@ -21,14 +21,17 @@ public final class PdfComplianceReport {
     private final List<FieldIssue> fieldIssues;
     private final PdfVisualComparator.VisualDiffResult visualResult;
     private final List<String> structuralErrors;
+    private final List<String> textDifferences;
 
     PdfComplianceReport(
             List<FieldIssue> fieldIssues,
             PdfVisualComparator.VisualDiffResult visualResult,
-            List<String> structuralErrors) {
+            List<String> structuralErrors,
+            List<String> textDifferences) {
         this.fieldIssues       = Collections.unmodifiableList(new ArrayList<>(fieldIssues));
         this.visualResult      = visualResult;
         this.structuralErrors  = Collections.unmodifiableList(new ArrayList<>(structuralErrors));
+        this.textDifferences   = Collections.unmodifiableList(new ArrayList<>(textDifferences));
     }
 
     /** Problemi riscontrati durante la validazione dei campi dinamici. */
@@ -46,12 +49,16 @@ public final class PdfComplianceReport {
         return structuralErrors;
     }
 
+    public List<String> textDifferences() {
+        return textDifferences;
+    }
+
     /** @return {@code true} se il documento è pienamente conforme (zero errori su tutti i livelli) */
     public boolean isCompliant() {
         boolean fieldOk    = fieldIssues.isEmpty();
         boolean structOk   = structuralErrors.isEmpty();
         boolean visualOk   = visualResult == null || visualResult.equal();
-        return fieldOk && structOk && visualOk;
+        return fieldOk && structOk && visualOk && textDifferences.isEmpty();
     }
 
     /**
@@ -78,6 +85,10 @@ public final class PdfComplianceReport {
             fieldIssues.forEach(fi -> sb.add("  • " + fi));
         }
 
+        if (!textDifferences.isEmpty()) {
+            sb.add("▸ DIFFERENZE NEL TESTO STATICO:");
+            textDifferences.forEach(d -> sb.add("  • " + d));
+        }
         if (visualResult != null && !visualResult.equal()) {
             sb.add("▸ DIFFERENZE VISIVE:");
             sb.add("  • " + visualResult.errorMessage());
@@ -96,6 +107,7 @@ public final class PdfComplianceReport {
         return "PdfComplianceReport{compliant=" + isCompliant()
                 + ", fieldIssues=" + fieldIssues.size()
                 + ", structuralErrors=" + structuralErrors.size()
+                + ", textDifferences=" + textDifferences.size()
                 + ", visualEqual=" + (visualResult != null ? visualResult.equal() : "N/A")
                 + "}";
     }

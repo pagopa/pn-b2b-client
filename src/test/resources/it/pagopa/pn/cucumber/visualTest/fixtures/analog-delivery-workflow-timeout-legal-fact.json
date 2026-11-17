@@ -1,0 +1,23 @@
+{
+  "notification": {
+    "subject": "invio notifica VRT ANALOG_TIMEOUT",
+    "senderDenomination": "Comune di palermo"
+  },
+  "recipient": {
+    "name": "Gherkin Irreperibile",
+    "data": {
+      "digitalDomicile": "NULL"
+    }
+  },
+  "templateEngine": {
+    "iun": "VRTG-LDNM-STRF-202601-A-1",
+    "endWorkflowDate": "01/01/2026",
+    "endWorkflowTime": "09:00",
+    "attempt": "0",
+    "recipient": {
+      "denomination": "${recipient.name}",
+      "taxId": "02455090981",
+      "physicalAddress": "${recipient.name}<br/>Presso<br/>SCALA B<br/>VIA SENZA NOME<br/>87100 COSENZA COSENZA CS<br/>ITALIA"
+    }
+  }
+}

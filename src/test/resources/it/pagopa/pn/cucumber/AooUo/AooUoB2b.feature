@@ -10,7 +10,9 @@ Feature: verifica feature aoo/uo
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Root"
     And l'operazione ha generato un errore con status code "404"
 
-  @AOO_UO
+  # Questo test viene escluso da hotfix poiché in quell'ambiente non è presente una seconda PA di tipo SON
+  # Su hotfix viene però eseguito il test B2B-AOO-UO_FILTER_1.B che usa una sola PA
+  @AOO_UO @ignoreOnHotfixEnv
   Scenario: [B2B-AOO-UO_FILTER_1] Invocazione API per filtrare le PA di Root da una lista in input passando come input PA di tipo Root e PA figlie.
   Come risultato si ci aspetta che la risposta contenga solo id relativi a PA non di tipo Root.
     When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
@@ -22,10 +24,20 @@ Feature: verifica feature aoo/uo
       | "Comune_Son_2" |
 
   @AOO_UO
+  Scenario: [B2B-AOO-UO_FILTER_1.B] Invocazione API per filtrare le PA di Root da una lista in input passando come input PA di tipo Root e PA figlie.
+  Come risultato si ci aspetta che la risposta contenga solo id relativi a PA non di tipo Root.
+    When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
+      | "Comune_Son"  |
+      | "Comune_Root" |
+    Then si verifica che la risposta contenga gli id relativi alle seguenti PA:
+      | "Comune_Son" |
+
+
+  @AOO_UO
   Scenario: [B2B-AOO-UO_FILTER_2] Invocazione API per filtrare le PA di Root da una lista in input passando come input soltanto PA di tipo Root.
   Come risultato si ci aspetta che la risposta non contenga id.
     When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:
-      | "Comune_Root" |
+      | "Comune_Root"  |
       | "Comune_Multi" |
     Then si verifica che la risposta non contenga id
 

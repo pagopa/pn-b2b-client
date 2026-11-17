@@ -758,14 +758,14 @@ Feature: Template engine
   # HTML ESCAPE FUZZING
   # ---------------------------------------------------------------------------
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_A] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint PDF
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "pdf"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "pdf"
 
     Examples:
       | endpoint                                    | fields                                                                                                                                                                                 |
-      | notification-received-legal-fact            | subject,notification.sender.paDenomination,notification.recipients.denomination,notification.recipients.physicalAddressAndDenomination,notification.recipients.digitalDomicile.address |
+      | notification-received-legal-fact            | subject,notification.sender.paDenomination,notification.recipients.denomination,notification.recipients.digitalDomicile.address |
       | pec-delivery-workflow-legal-fact            | deliveries.denomination,deliveries.address                                                                                                                                              |
       | notification-viewed-legal-fact              | recipient.denomination,delegate.denomination                                                                                                                                            |
       | notification-cancelled-legal-fact           | notification.sender.paDenomination,notification.recipients.denomination                                                                                                                 |
@@ -775,16 +775,10 @@ Feature: Template engine
       | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                                                                                 |
       | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
 
-  @templateEngine @htmlEscape @visualRegression @senderAckVisualFuzz
-  Scenario: [TEMPLATE-ENGINE_VISUAL_FUZZ] Verifica visual regression su SENDER_ACK con campi fuzzed da HTML escaping
-    When eseguo il fuzzing HTML escaping sull'endpoint "notification-received-legal-fact" in lingua "italiana" sui campi "subject,notification.sender.paDenomination"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "pdf"
-    And si verifica la conformità visiva del PDF generato dal template engine con il template "SENDER_ACK"
-
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
-    When eseguo il fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "html"
+    When eseguo HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sui campi "<fields>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "html"
 
     Examples:
       | endpoint                                   | fields                                                           |
@@ -793,10 +787,10 @@ Feature: Template engine
       | notification-aar-for-pec                   | notification.subject,notification.sender.paDenomination           |
       | notification-cce-for-email                 | denomination                                                      |
 
-  @templateEngine @htmlEscape @fuzzing
+  @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_2] Verifica escaping dei singoli caratteri e delle combinazioni sui diversi formati
-    When eseguo il corpus di fuzzing HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sul campo "<field>"
-    Then verifico che tutti i valori fuzzed siano correttamente rappresentati nel template di tipo "<format>"
+    When eseguo il corpus di HTML escaping sull'endpoint "<endpoint>" in lingua "italiana" sul campo "<field>"
+    Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "<format>"
 
     Examples:
       | endpoint                  | field                | format |

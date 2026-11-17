@@ -1,0 +1,26 @@
+{
+  "notification": {
+    "subject": "invio notifica VRT PEC_DELIVERY",
+    "senderDenomination": "Comune di palermo"
+  },
+  "recipient": {
+    "name": "Mario Gherkin",
+    "data": {}
+  },
+  "templateEngine": {
+    "iun": "VRTG-LDNM-STRF-202601-A-1",
+    "endWorkflowDate": "01/01/2026 09:00",
+    "endWorkflowStatus": "SUCCESS",
+    "deliveries": [
+      {
+        "denomination": "${recipient.name}",
+        "taxId": "CLMCST42R12D969Z",
+        "address": "testpagopa3@pec.pagopa.it",
+        "type": "PEC",
+        "addressSource": "SPECIAL",
+        "responseDate": "01/01/2026 09:00",
+        "ok": true
+      }
+    ]
+  }
+}

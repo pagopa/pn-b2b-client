@@ -1,0 +1,22 @@
+{
+  "templateEngine": {
+    "iun": "VRTG-LDNM-STRF-202601-A-1",
+    "subject": "Test workflow",
+    "body": {
+      "primaryContent": "Contenuto principale della comunicazione VRT.",
+      "secondaryContent": null
+    },
+    "sender": {
+      "denomination": "Comune di Palermo",
+      "id": "5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce",
+      "service": "Servizio VRT"
+    },
+    "recipient": {
+      "denomination": "Ettore Fieramosca",
+      "taxId": "FRMTTR76M06B715E",
+      "recipientType": "PF"
+    },
+    "hasAttachment": true,
+    "hasPayment": false
+  }
+}

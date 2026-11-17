@@ -1,18 +1,13 @@
 package it.pagopa.pn.cucumber.steps.visualtest.templates;
 
 import it.pagopa.common.pdf.visualtest.FieldLocators;
+import it.pagopa.common.pdf.visualtest.FieldValidators;
 import it.pagopa.common.pdf.visualtest.MaskStrategy;
 import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
+import it.pagopa.pn.cucumber.steps.visualtest.SendFieldLocators;
 import it.pagopa.pn.cucumber.steps.visualtest.SendFieldValidators;
 
-import static it.pagopa.common.pdf.visualtest.FieldValidators.present;
-
-/**
- * Template del documento <em>Attestazione di malfunzionamento / ripristino</em>
- * (Legal Fact Malfunction).
- *
- * <p>Chiave del template: {@value #KEY}</p>
- */
+/** Attestazione di malfunzionamento e ripristino: la descrizione del disservizio ha lunghezza variabile, quindi il corpo dopo "ATTESTA CHE:" fino al footer è escluso dal confronto visivo. */
 public final class MalfunctionTemplate {
 
     public static final String KEY = "MALFUNCTION";
@@ -22,15 +17,18 @@ public final class MalfunctionTemplate {
 
     public static PdfDocumentTemplate build() {
         return PdfDocumentTemplate.builder(KEY)
-                .field(
-                        "Data inizio downtime",
-                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("a decorrere dalla data del", 200f)),
+                .expectedPageCount(1)
+                .field("Date disservizio",
+                        SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.FULL_LINE)
-                .field(
-                        "Data fine downtime",
-                        FieldLocators.aboveY(600f, FieldLocators.labelSameLine("e sino alla data", 200f)),
-                        SendFieldValidators.dataItaliana(),
+                        MaskStrategy.TIGHT_BOX)
+                .field("Ore disservizio",
+                        SendFieldLocators.time(),
+                        SendFieldValidators.oraHHmm(),
+                        MaskStrategy.TIGHT_BOX)
+                .field("Corpo dell'attestazione",
+                        FieldLocators.between(FieldLocators.lineContaining("CHE:"), FieldLocators.lineContaining("azioni")),
+                        FieldValidators.present(),
                         MaskStrategy.FULL_LINE)
                 .build();
     }

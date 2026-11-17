@@ -42,6 +42,7 @@ public final class PdfComplianceChecker {
             Path diffOutputPath) {
 
         List<String> structuralErrors = new ArrayList<>();
+        List<String> textDifferences = new ArrayList<>();
 
         // ── 1. Validazione numero pagine (pre-check) ──────────────────────
         if (template.expectedPageCount() > 0) {
@@ -60,7 +61,7 @@ public final class PdfComplianceChecker {
         } catch (PdfTextExtractor.PdfExtractionException e) {
             structuralErrors.add("Impossibile estrarre il testo dal PDF: " + e.getMessage());
             log.warn("PdfComplianceChecker: estrazione testo fallita", e);
-            return new PdfComplianceReport(List.of(), null, structuralErrors);
+            return new PdfComplianceReport(List.of(), null, structuralErrors, List.of());
         }
 
         // ── 3. Analisi dinamica dei campi ─────────────────────────────────
@@ -73,13 +74,18 @@ public final class PdfComplianceChecker {
         PdfVisualComparator.VisualDiffResult visualResult = null;
         if (structuralErrors.isEmpty()) {
             List<ExclusionArea> allExclusions = new ArrayList<>(analysis.exclusions());
+            allExclusions.addAll(template.fixedExclusions());
             // Estrai esclusioni anche dall'expectedPdf per mascherare i valori dinamici presenti nel documento di riferimento
             try {
                 ExtractedPdfText expectedExtracted = PdfTextExtractor.extract(expectedPdf);
                 DynamicFieldAnalyzer.AnalysisResult expectedAnalysis = DynamicFieldAnalyzer.analyze(expectedExtracted, template);
                 allExclusions.addAll(expectedAnalysis.exclusions());
-            } catch (Exception e) {
-                log.debug("Impossibile estrarre aree di esclusione dall'expectedPdf: {}", e.getMessage());
+                StaticTextComparator.firstDifference(
+                                StaticTextComparator.normalizedWords(expectedExtracted, template),
+                                StaticTextComparator.normalizedWords(extractedText, template))
+                        .ifPresent(textDifferences::add);
+            } catch (PdfTextExtractor.PdfExtractionException e) {
+                structuralErrors.add("Impossibile estrarre il testo del golden master: " + e.getMessage());
             }
 
             visualResult = PdfVisualComparator.compare(
@@ -88,7 +94,7 @@ public final class PdfComplianceChecker {
             log.warn("PdfComplianceChecker: confronto visivo saltato a causa di errori strutturali");
         }
 
-        return new PdfComplianceReport(analysis.issues(), visualResult, structuralErrors);
+        return new PdfComplianceReport(analysis.issues(), visualResult, structuralErrors, textDifferences);
     }
 
     /**

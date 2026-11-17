@@ -1,11 +1,13 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.After;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,6 +20,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV23;
@@ -25,6 +28,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.steps.pa.webhookVersions.*;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
@@ -42,6 +46,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 @Slf4j
@@ -137,7 +142,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private StreamVersion getStreamVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return StreamVersion.V29;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return StreamVersion.V30;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return StreamVersion.valueOf(version.trim().toUpperCase());
     }
@@ -201,6 +206,36 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         });
     }
 
+    private enum WebhookExtraField {
+        WAIT_FOR_ACCEPTED("waitForAccepted", 27),
+        COMMUNICATION_TYPE("communicationType", 30);
+
+        final String fieldName;
+        final int introducingVersion;
+
+        WebhookExtraField(String fieldName, int introducingVersion) {
+            this.fieldName = fieldName;
+            this.introducingVersion = introducingVersion;
+        }
+
+        private static WebhookExtraField fromFieldName(String fieldName) {
+            return Arrays.stream(values())
+                    .filter(f -> f.fieldName.equals(fieldName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Unknown fieldName: " + fieldName));
+        }
+    }
+
+    @ParameterType("waitForAccepted|communicationType")
+    public static WebhookExtraField webhookExtraField(String fieldName) {
+        return WebhookExtraField.fromFieldName(fieldName);
+    }
+
+    @ParameterType("LEGAL|INFORMAL")
+    public static CommunicationType communicationType(String type) {
+        return CommunicationType.fromValue(type);
+    }
+
     //versioni 23 e 27 only?
     @And("viene verificato che il campo legalFactIds sia valorizzato nel EventStream con la versione {string}")
     public void vieneVerificatoCheIlCampoLegalFactIdsSiaValorizzato(String version) {
@@ -222,15 +257,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         createStream(pa, streamVersion, null, false, null, false, null);
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro di timeline {string}")
-    public void createStreamWithFilteredTimeline(String pa, String version, String filter) {
-        setPaWebhook(pa);
-        StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, null, false, List.of(filter), false, null);
-    }
-
-    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro status {string}")
-    public void createStreamWithFilteredStatus(String pa, String version, String filter) {
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string} con versione {string} e filtro (timeline)(status) {string}")
+    public void createStreamWithFilters(String pa, String version, String filter) {
         String[] filterValues = new String[]{filter};
         if (filter.contains(",")) {
             filterValues = filter.split(",");
@@ -246,7 +274,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         updateApiKeyForStream();
         StreamVersion streamVersion = getStreamVersion(version);
-        createStream(pa, streamVersion, getGroupForStream(position, pa), false, List.of("DEFAULT"), false, null);
+        createStream(pa, streamVersion, getGroupForStream(position, pa), false, null, false, null);
     }
 
     @And("si crea il nuovo stream con versione {string} per il {string} \\(caso errato)")
@@ -330,14 +358,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateStreamByGroupsPA(streamVersion, pa, true);
     }
 
-    @Given("(allo)(agli) stream versione {string} si setta il campo waitForAccepted introdotto con la versione {int} a {string}")
-    public void setWaitForAccepted(String version, int introducingVersion, String waitForAccepted) {
+    @Given("(allo)(agli) stream versione {string} si setta il campo {webhookExtraField} a {string}")
+    public void setWebhookExtraField(String version, WebhookExtraField extraField, String extraFieldValue) {
         StreamVersion streamVersion = getStreamVersion(version);
         assumeThat(streamVersion.getValue())
-                .as("Test skipped: questo step deve comparire solo nei file feature dalla versione  " + introducingVersion + " in poi")
-                .isGreaterThanOrEqualTo(introducingVersion);
+                .as("Test skipped: questo step deve comparire solo nei file feature dalla versione  " + extraField.introducingVersion + " in poi")
+                .isGreaterThanOrEqualTo(extraField.introducingVersion);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        webhookStepsInterface.setValueForWaitForAccepted(Boolean.parseBoolean(waitForAccepted));
+        switch (extraField) {
+            case WAIT_FOR_ACCEPTED -> webhookStepsInterface.setValueForWaitForAccepted(extraFieldValue);
+            case COMMUNICATION_TYPE -> webhookStepsInterface.setValueForCommunicationType(extraFieldValue);
+        }
     }
 
     private void updateStreamByGroupsPA(StreamVersion streamVersion, String pa, boolean groupOfPa) {
@@ -711,7 +742,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     //V10 only
-    //TODO MATTEO: non sono convinto dell'implementazione di questo step, a me sembra che invece controlli proprio che sia uguale nel verifyAssertions
     @Then("Si verifica che l'elemento di timeline {string} dello stream con versione {string} di {string} non abbia il timestamp uguale a quella della notifica")
     public void readStreamTimelineElementAndVerify(String timelineEventCategory, String version, String pa) {
         //Il controllo viene effettuato
@@ -913,22 +943,35 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline con la versione {string}")
-    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version) throws JsonProcessingException {
+    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline(String version)
+            throws JsonProcessingException {
+
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
 
         List<Object> objectsToCompare = webhookStepsInterface.verificaCorrispondenzaElementiTimelineWebhookAndB2B();
+
         Object b2bElement = objectsToCompare.get(0);
         Object webhookElement = objectsToCompare.get(1);
 
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String jsonB2B = ow.writeValueAsString(serializeObject(b2bElement));
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectWriter writer = mapper.writer().withDefaultPrettyPrinter();
+
+        String jsonB2B = writer.writeValueAsString(serializeObject(b2bElement));
         System.out.println(jsonB2B);
-        String jsonWebhook = ow.writeValueAsString(serializeObject(webhookElement));
+
+        String jsonWebhook = writer.writeValueAsString(serializeObject(webhookElement));
         System.out.println(jsonWebhook);
 
-        ObjectMapper mapper = new ObjectMapper();
-        Assertions.assertEquals(mapper.readTree(jsonB2B), mapper.readTree(jsonWebhook));
+        JsonNode b2bNode = B2bUtils.normalize(mapper.readTree(jsonB2B));
+        JsonNode webhookNode = B2bUtils.normalize(mapper.readTree(jsonWebhook));
+
+        try {
+            assertThat(webhookNode).as("I due JSON non corrispondono").isEqualTo(b2bNode);
+        } catch (AssertionError assertionError) {
+            sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
     }
+
 
     private Object serializeObject(Object obj) {
         Map<String, Object> result = new LinkedHashMap<>();
@@ -1175,5 +1218,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("tra gli elementi di timeline versione {string} di categoria {string} {are} presenti legalFacts con categoria {string}")
     public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, boolean arePresent, String legalFactCategory) {
         getWebhookStep(version).checkLegalFactCategory(timelineCategory, legalFactCategory, arePresent);
+    }
+
+    @Then("lo stream {string} contiene solo elementi relativi a notifiche {communicationType}")
+    public void checkCommunicationTypeOfConsumeOutput(String version, CommunicationType communicationType) {
+        if (communicationType.equals(CommunicationType.INFORMAL)) {
+            StreamVersion streamVersion = getStreamVersion(version);
+            assumeThat(streamVersion.getValue()).as("Gli stream INFORMAL sono disponibili solo dalla V30 in poi").isGreaterThanOrEqualTo(30);
+        }
+        getWebhookStep(version).checkCommunicationTypeOfConsumeOutput(communicationType);
     }
 }

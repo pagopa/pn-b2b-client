@@ -1,18 +1,11 @@
 package it.pagopa.pn.cucumber.steps.visualtest.templates;
 
-import it.pagopa.common.pdf.visualtest.FieldLocators;
 import it.pagopa.common.pdf.visualtest.MaskStrategy;
 import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
+import it.pagopa.pn.cucumber.steps.visualtest.SendFieldLocators;
 import it.pagopa.pn.cucumber.steps.visualtest.SendFieldValidators;
 
-import static it.pagopa.common.pdf.visualtest.FieldValidators.present;
-
-/**
- * Template del documento <em>Attestazione di disponibilità feedback analogico</em>
- * (Analog Feedback Availability Statement).
- *
- * <p>Chiave del template: {@value #KEY}</p>
- */
+/** Attestazione di disponibilità dell'esito del recapito cartaceo. */
 public final class AnalogFeedbackAvailabilityStatementTemplate {
 
     public static final String KEY = "ANALOG_FEEDBACK_AVAILABILITY_STATEMENT";
@@ -22,16 +15,15 @@ public final class AnalogFeedbackAvailabilityStatementTemplate {
 
     public static PdfDocumentTemplate build() {
         return PdfDocumentTemplate.builder(KEY)
-                .field(
-                        "IUN",
-                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("IUN", 200f)),
+                .expectedPageCount(1)
+                .field("IUN",
+                        SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Data attestazione",
-                        FieldLocators.aboveY(680f, FieldLocators.labelSameLine("in data", 150f)),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Data attestazione",
+                        SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.FULL_LINE)
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
                 .build();
     }
 }

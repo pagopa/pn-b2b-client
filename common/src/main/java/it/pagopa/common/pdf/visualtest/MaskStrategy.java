@@ -26,6 +26,18 @@ public enum MaskStrategy {
     FULL_LINE,
 
     /**
+     * Maschera dal campo fino al margine destro della riga: per valori dentro una frase,
+     * dove una larghezza diversa sposta il testo che segue.
+     */
+    TO_LINE_END,
+
+    /**
+     * Come {@link #TO_LINE_END} e in più l'intera riga successiva: per valori a larghezza variabile
+     * che possono far andare a capo una parola diversa.
+     */
+    TO_LINE_END_AND_NEXT_LINE,
+
+    /**
      * Maschera un'area rettangolare più ampia che simula una cella di tabella,
      * aggiungendo padding verticale e orizzontale attorno al campo
      * (utile per campi inseriti in griglie o tabelle).

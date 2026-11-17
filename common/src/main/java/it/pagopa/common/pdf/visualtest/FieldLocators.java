@@ -43,9 +43,15 @@ public final class FieldLocators {
                         break;
                     }
                     TextFragment tf = allFragments.get(i + w);
-                    String cleanTfText = tf.text().toLowerCase(java.util.Locale.ROOT).replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", "");
-                    String cleanLabelWord = labelWords[w].replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", "");
-                    if (!cleanTfText.equalsIgnoreCase(cleanLabelWord) && !tf.text().toLowerCase(java.util.Locale.ROOT).contains(labelWords[w])) {
+                    String cleanTfText = java.text.Normalizer.normalize(
+                            tf.text().toLowerCase(java.util.Locale.ROOT).replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", ""),
+                            java.text.Normalizer.Form.NFKD);
+                    String cleanLabelWord = java.text.Normalizer.normalize(
+                            labelWords[w].replaceAll("^[\\p{Punct}\\s]+|[\\p{Punct}\\s]+$", ""),
+                            java.text.Normalizer.Form.NFKD);
+                    String normTfText = java.text.Normalizer.normalize(tf.text().toLowerCase(java.util.Locale.ROOT), java.text.Normalizer.Form.NFKD);
+                    String normLabelWord = java.text.Normalizer.normalize(labelWords[w], java.text.Normalizer.Form.NFKD);
+                    if (!cleanTfText.equalsIgnoreCase(cleanLabelWord) && !normTfText.contains(normLabelWord)) {
                         match = false;
                         break;
                     }
@@ -113,20 +119,38 @@ public final class FieldLocators {
         if (occurrenceIndex < 1) {
             throw new IllegalArgumentException("occurrenceIndex deve essere >= 1 (1-based)");
         }
+        String[] labelWords = labelText.trim().split("\s+");
         return allFragments -> {
             int occurrence = 0;
 
-            for (int i = 0; i < allFragments.size(); i++) {
-                TextFragment candidate = allFragments.get(i);
-                if (!candidate.text().trim().equalsIgnoreCase(labelText.trim())) continue;
+            for (int i = 0; i + labelWords.length <= allFragments.size(); i++) {
+                if (!startsWithWords(allFragments, i, labelWords)) continue;
 
                 occurrence++;
                 if (occurrence != occurrenceIndex) continue;
 
-                return valueColumnAfter(candidate, allFragments, i);
+                int last = i + labelWords.length - 1;
+                return valueColumnAfter(allFragments.get(last), allFragments, last);
             }
             return List.of();
         };
+    }
+
+    /**
+     * Extraction yields one fragment per word: a label matches a run of fragments, case-sensitive so that the
+     * same words inside a sentence are not taken as the label.
+     */
+    private static boolean startsWithWords(List<TextFragment> fragments, int start, String[] words) {
+        for (int w = 0; w < words.length; w++) {
+            if (!normalizeWord(fragments.get(start + w).text()).equals(normalizeWord(words[w]))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static String normalizeWord(String word) {
+        return java.text.Normalizer.normalize(word.trim(), java.text.Normalizer.Form.NFKD);
     }
 
     /**
@@ -212,6 +236,28 @@ public final class FieldLocators {
     /**
      * Localizza i frammenti di testo che contengono una determinata sottostringa (case-insensitive).
      */
+    /**
+     * Fragments strictly between the first fragment found by {@code upper} and the first fragment found by
+     * {@code lower} below it, on the same page: for a body whose length depends on dynamic data.
+     */
+    public static FieldLocator between(FieldLocator upper, FieldLocator lower) {
+        return allFragments -> {
+            TextFragment top = upper.locate(allFragments).stream().findFirst().orElse(null);
+            if (top == null) {
+                return List.of();
+            }
+            TextFragment bottom = lower.locate(allFragments).stream()
+                    .filter(f -> f.pageIndex() == top.pageIndex() && f.y() < top.y())
+                    .findFirst().orElse(null);
+            if (bottom == null) {
+                return List.of();
+            }
+            return allFragments.stream()
+                    .filter(f -> f.pageIndex() == top.pageIndex() && f.y() < top.y() - 1f && f.y() > bottom.yTop() + 1f)
+                    .toList();
+        };
+    }
+
     public static FieldLocator lineContaining(String substring) {
         String lower = substring.toLowerCase(java.util.Locale.ROOT);
         return allFragments -> allFragments.stream()

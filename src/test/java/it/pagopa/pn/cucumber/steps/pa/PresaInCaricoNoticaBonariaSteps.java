@@ -6,22 +6,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRecipientV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationStatusV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.MessageResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewMessageRequest;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDigests;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NotificationRequestRefusedProblemError;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.TerminationRequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.FullReceivedInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
@@ -54,13 +45,7 @@ import java.util.stream.IntStream;
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class PresaInCaricoNoticaBonariaSteps {
@@ -69,6 +54,8 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final SharedSteps sharedSteps;
     @Getter
     private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
+    @Getter
+    private final PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl;
 
     private InformalNotificationRequestV1 informalNotificationRequestV1;
     private MessageResponse messageResponse;
@@ -80,6 +67,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedNotificationRequestId;
     private TerminationRequestStatus terminationStatus;
     private String paName;
+    private SettableApiKey.ApiKeyType apiKeyType;
 
     private NewInformalNotificationResponse newInformalNotificationResponse;
     private NotificationAttachmentDownloadMetadataResponse attachmentResponse;
@@ -89,17 +77,16 @@ public class PresaInCaricoNoticaBonariaSteps {
     private final NotificationInformalUtilsV1 notificationInformalUtilsV1;
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;
-
+    private FullReceivedInformalNotificationV1 fullRecivedInformalNotificationResponse;
     private FullSentInformalNotificationV1 fullInformalNotificationResponse;
     private InformalTimelineElementV1 timelineElement;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.NotificationAttachmentDownloadMetadataResponse receivedAttachmentResponse;
 
     @Autowired
-    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper,
-                                           InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
-                                           SharedSteps sharedSteps, SendSharedContext sendSharedContext, DestinatarioRegistry destinatarioRegistry) {
+    public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper, InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl, SharedSteps sharedSteps, SendSharedContext sendSharedContext, DestinatarioRegistry destinatarioRegistry) {
         this.sharedSteps = sharedSteps;
         this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
+        this.pnPaB2bExternalInformalClientImpl = pnPaB2bExternalInformalClientImpl;
         this.informalNotificationRequestMapper = informalNotificationRequestMapper;
         this.notificationInformalUtilsV1 = notificationInformalUtilsV1;
         this.recipientBuilder = recipientBuilder;
@@ -113,8 +100,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void setSenderInformal(String paName) {
         setSenderContext(paName);
         if (!paName.equalsIgnoreCase("Comune_Root")) {
-            this.currentGroupId =
-                    sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
+            this.currentGroupId = sharedSteps.getGroupIdByPa(paName, GroupPosition.FIRST);
             sendSharedContext.getInformalNotificationContext().setGroupId(currentGroupId);
         }
         sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
@@ -144,7 +130,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         assertNotNull(informalNotificationRequestV1, "Creare prima la notifica bonaria");
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
-        InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
+        InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId, apiKeyType);
         informalNotificationRequestV1.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
     }
@@ -163,9 +149,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         setSenderInformal(paName);
         Map<String, String> cleanedRecipientData = trimData(recipientData);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(cleanedRecipientData.get("denomination")));
-        IntStream.range(0, notificationNumber)
-                .parallel()
-                .forEach(i -> createAndAwaitSingleInformalNotification(campaignId, cleanedRecipientData));
+        IntStream.range(0, notificationNumber).parallel().forEach(i -> createAndAwaitSingleInformalNotification(campaignId, cleanedRecipientData));
     }
 
     private void createAndAwaitSingleInformalNotification(String campaignId, Map<String, String> recipientData) {
@@ -174,7 +158,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         handleGroup(creationData);
         InformalNotificationRequestV1 request = informalNotificationRequestMapper.buildInformalNotificationRequest(creationData);
 
-        request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId));
+        request.getRecipients().add(recipientBuilder.build(new HashMap<>(recipientData), currentCxId, apiKeyType));
 
         try {
             request = notificationInformalUtilsV1.preloadAndPrepare(request, paName);
@@ -182,11 +166,10 @@ public class PresaInCaricoNoticaBonariaSteps {
             throw new UncheckedIOException("Errore durante la preparazione della notifica bonaria con campagna " + campaignId, e);
         }
 
-        NewInformalNotificationResponse response = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, request);
+        NewInformalNotificationResponse response = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(request, apiKeyType);
         String notificationRequestId = response.getNotificationRequestId();
 
-        NewInformalNotificationRequestStatusResponseV1 acceptedStatus =
-                pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());
+        NewInformalNotificationRequestStatusResponseV1 acceptedStatus = pollNotificationRequestStatus(notificationRequestId, InformalNotificationStatusV1.ACCEPTED.getValue());
         pollFullNotificationStatus(acceptedStatus.getIun(), InformalNotificationStatusV1.COMPLETED_REACHED.getValue());
     }
 
@@ -197,10 +180,7 @@ public class PresaInCaricoNoticaBonariaSteps {
      * parallelo, ognuno con il proprio IUN (vedi {@link #createAndAwaitSingleInformalNotification}).
      */
     private FullSentInformalNotificationV1 pollFullNotificationStatus(String iun, String expectedStatus) {
-        return pollUntilStatus("notifica IUN=" + iun,
-                () -> pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, iun, true),
-                notification -> notification.getNotificationStatus().getValue(),
-                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(30));
+        return pollUntilStatus("notifica IUN=" + iun, () -> pnPaB2bExternalInformalClientImpl.getSentInformalNotificationSender(iun, true, apiKeyType), notification -> notification.getNotificationStatus().getValue(), expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(30));
     }
 
     @Then("viene inviata una nuova notifica bonaria con content type non valido")
@@ -208,7 +188,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         try {
             informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setContentType("application/txt"));
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             lastException = null;
 
@@ -223,7 +203,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void sendInformalError() {
         try {
             informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
             fail("Atteso errore ma la richiesta è andata a buon fine " + newInformalNotificationResponse + "***" + informalNotificationRequestV1 + "***" + paName);
 
         } catch (Exception e) {
@@ -237,7 +217,7 @@ public class PresaInCaricoNoticaBonariaSteps {
         try {
             informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
             informalNotificationRequestV1.getDocuments().forEach(doc -> doc.setDigests(new NotificationAttachmentDigests().sha256("INVALID_SHA")));
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             lastException = null;
 
@@ -257,7 +237,7 @@ public class PresaInCaricoNoticaBonariaSteps {
             if (docs.size() >= 2) {
                 docs.get(1).getRef().setKey(docs.get(0).getRef().getKey());
             }
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             lastException = null;
 
@@ -278,7 +258,7 @@ public class PresaInCaricoNoticaBonariaSteps {
                     doc.getRef().setKey("PN_NOTIFICATION_ATTACHMENT-c3bc9525a5ac4f45a4fb7e940b2b9815.pdf");
                 }
             });
-            newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+            newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
             savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
             lastException = null;
 
@@ -302,7 +282,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta la creazione di un nuovo messaggio per le comunicazioni bonarie")
     public void createNewInformalMessage(NewMessageRequest newMessageRequest) {
         try {
-            this.messageResponse = pnPaB2bInternalInformalClientImpl.createMessage(currentCxId, newMessageRequest);
+            this.messageResponse = pnPaB2bExternalInformalClientImpl.createMessage(newMessageRequest, apiKeyType);
             assertNotNull(this.messageResponse.getMessageId(), "messageId non valorizzato: creazione messaggio fallita");
             this.messageId = this.messageResponse.getMessageId();
             this.lastException = null;
@@ -316,7 +296,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Then("tento il recupero del messaggio precedentemente creato per le comunicazioni bonarie")
     public void getInformalMessage() {
         try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId, currentCxId);
+            messageResponse = pnPaB2bExternalInformalClientImpl.getMessage(messageId, apiKeyType);
             lastException = null;
         } catch (Exception e) {
             lastException = e;
@@ -328,7 +308,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void getInformalMessageById(String messageIdString) {
         UUID messageId = toUuid(messageIdString);
         try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId, currentCxId);
+            messageResponse = pnPaB2bExternalInformalClientImpl.getMessage(messageId, apiKeyType);
             log.info("Message response: {}", messageResponse);
             lastException = null;
         } catch (Exception e) {
@@ -362,7 +342,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero documento della notifica bonaria")
     public void getDocument() {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(currentCxId, savedIun, 0);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, 0, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -374,7 +354,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero documento con indice {int}")
     public void getDocumentWithIndex(int docIdx) {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(currentCxId, savedIun, docIdx);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationDocument(savedIun, docIdx, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -386,7 +366,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero documento con IUN {string}")
     public void getDocumentWithIun(String iun) {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationDocument(currentCxId, iun, 0);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationDocument(iun, 0, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -470,7 +450,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero allegato pagamento con IUN {string}")
     public void getAttachmentWithIun(String iun) {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(iun, currentCxId, 0, 0);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationAttachment(iun, 0, 0, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -482,7 +462,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero allegato pagamento della notifica bonaria")
     public void getAttachment() {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, currentCxId, 0, 0);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, 0, 0, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -494,7 +474,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si tenta il recupero allegato pagamento con recipient {int} e attachment {int}")
     public void getAttachmentCustom(int recipientIdx, int attachmentIdx) {
         try {
-            attachmentResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, currentCxId, recipientIdx, attachmentIdx);
+            attachmentResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationAttachment(savedIun, recipientIdx, attachmentIdx, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -508,7 +488,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si verifica lo stato della richiesta della notifica bonaria con errore")
     public void getNotificationStatus() {
         try {
-            statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
+            statusResponse = pnPaB2bExternalInformalClientImpl.getNotificationStatusByRequestId(savedNotificationRequestId, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -520,7 +500,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("si verifica lo stato della richiesta di notifica bonaria con notification id {string}")
     public void getNotificationStatusWithNotificationId(String notificationId) {
         try {
-            statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, notificationId);
+            statusResponse = pnPaB2bExternalInformalClientImpl.getNotificationStatusByRequestId(notificationId, apiKeyType);
             lastException = null;
 
         } catch (Exception e) {
@@ -571,10 +551,7 @@ public class PresaInCaricoNoticaBonariaSteps {
      * non tocca campi di istanza ed è quindi sicuro da chiamare in parallelo su più notifiche.
      */
     private NewInformalNotificationRequestStatusResponseV1 pollNotificationRequestStatus(String notificationRequestId, String expectedStatus) {
-        return pollUntilStatus("richiesta notificationRequestId=" + notificationRequestId,
-                () -> pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, notificationRequestId),
-                NewInformalNotificationRequestStatusResponseV1::getNotificationRequestStatus,
-                expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(3));
+        return pollUntilStatus("richiesta notificationRequestId=" + notificationRequestId, () -> pnPaB2bExternalInformalClientImpl.getNotificationStatusByRequestId(notificationRequestId, apiKeyType), NewInformalNotificationRequestStatusResponseV1::getNotificationRequestStatus, expectedStatus, Duration.ofMinutes(12), Duration.ofSeconds(3));
     }
 
     /**
@@ -583,8 +560,7 @@ public class PresaInCaricoNoticaBonariaSteps {
      * {@code timeout}. Generalizza il polling usato per lo stato della richiesta e per lo stato della
      * notifica bonaria: non tocca campi di istanza, quindi è sicuro da invocare in parallelo su thread diversi.
      */
-    private <T> T pollUntilStatus(String description, Supplier<T> fetch, Function<T, String> statusExtractor,
-                                  String expectedStatus, Duration timeout, Duration pollInterval) {
+    private <T> T pollUntilStatus(String description, Supplier<T> fetch, Function<T, String> statusExtractor, String expectedStatus, Duration timeout, Duration pollInterval) {
         AtomicReference<String> lastStatus = new AtomicReference<>(null);
         AtomicReference<T> lastResult = new AtomicReference<>();
         try {
@@ -629,7 +605,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void terminateInformalNotification() {
 
         try {
-            terminationStatus = pnPaB2bInternalInformalClientImpl.terminateInformalWorkflow(currentCxId, savedIun);
+            terminationStatus = pnPaB2bExternalInformalClientImpl.terminateInformalWorkflow(savedIun, apiKeyType);
             lastException = null;
         } catch (Exception e) {
             lastException = e;
@@ -683,7 +659,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @When("il recupero del messaggio per le comunicazioni bonarie fallisce")
     public void getInformalMessageExpectError() {
         try {
-            messageResponse = pnPaB2bInternalInformalClientImpl.getMessage(messageId, currentCxId);
+            messageResponse = pnPaB2bExternalInformalClientImpl.getMessage(messageId, apiKeyType);
             fail("Atteso errore ma la richiesta è andata a buon fine");
 
         } catch (Exception e) {
@@ -707,11 +683,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     }
 
     private Map<String, String> trimData(Map<String, String> data) {
-        return data.entrySet().stream()
-                .collect(Collectors.toMap(
-                        e -> e.getKey().trim(),
-                        e -> e.getValue() != null ? e.getValue().trim() : null
-                ));
+        return data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
     }
 
     private void handleGroup(Map<String, String> data) {
@@ -755,6 +727,23 @@ public class PresaInCaricoNoticaBonariaSteps {
         }
     }
 
+    @Then("il destinatario {destinatario} vede in timeline l'elemento {string} della notifica bonaria")
+    public void verifyRecipientTimelineElement(Destinatario destinatario, String category) {
+
+        String recipientCxId = sharedSteps.getDestinatarioRegistry().getCxId(destinatario);
+        FullReceivedInformalNotificationV1 notification =
+                assertDoesNotThrow(() ->
+                        pnPaB2bInternalInformalClientImpl.getReceivedInformalNotification(recipientCxId, savedIun, toRecipientCxType(destinatario)));
+
+        assertNotNull(notification.getTimeline());
+
+        boolean found = notification.getTimeline()
+                .stream()
+                .anyMatch(t -> t.getCategory() != null && category.equals(t.getCategory().getValue()));
+
+        assertTrue(found, "Elemento timeline non trovato: " + category);
+    }
+
     @Given("l'ente mittente {string} compila una notifica bonaria con i seguenti dati:")
     public void createInformalNotification(String paName, Map<String, String> dataInput) {
 
@@ -768,7 +757,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         // STEP 3 - addInformalRecipientLight
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
-        InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId);
+        InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId, this.apiKeyType);
         informalNotificationRequestV1.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
     }
@@ -791,7 +780,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private FullSentInformalNotificationV1 getFullInformalNotification() {
 
         try {
-            fullInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(currentCxId, savedIun, true);
+            fullInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.getSentInformalNotificationSender(savedIun, true, apiKeyType);
             lastException = null;
             log.info("Full informal notification response: {}", fullInformalNotificationResponse);
             return fullInformalNotificationResponse;
@@ -810,7 +799,14 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         this.paName = paName;
         SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
+        this.apiKeyType = paInfo.getApiKeyType();
+
+        //todo t bonarie testare questo passaggio
+        //pnPaB2bExternalInformalClientImpl.setApiKeys(paInfo.getApiKeyType());
+
+
         this.currentCxId = paInfo.getSenderId();
+        sharedSteps.setInformalSenderId(currentCxId);
         sendSharedContext.getInformalNotificationContext().setSenderId(currentCxId);
 
         if (!COMUNE_ROOT.equalsIgnoreCase(paName)) {
@@ -823,7 +819,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     public void sendInformalAndWaitStatus(String expectedStatus) throws IOException {
 
         informalNotificationRequestV1 = notificationInformalUtilsV1.preloadAndPrepare(informalNotificationRequestV1, paName);
-        newInformalNotificationResponse = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(currentCxId, informalNotificationRequestV1);
+        newInformalNotificationResponse = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(informalNotificationRequestV1, apiKeyType);
         savedNotificationRequestId = newInformalNotificationResponse.getNotificationRequestId();
         log.info("Notifica inviata. notificationRequestId={}", savedNotificationRequestId);
 
@@ -832,7 +828,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         try {
             await().atMost(Duration.ofMinutes(12)).pollInterval(Duration.ofSeconds(5)).until(() -> {
-                statusResponse = pnPaB2bInternalInformalClientImpl.getNotificationStatusByRequestId(currentCxId, savedNotificationRequestId);
+                statusResponse = pnPaB2bExternalInformalClientImpl.getNotificationStatusByRequestId(savedNotificationRequestId, apiKeyType);
 
                 if (statusResponse == null) {
                     return false;
@@ -856,6 +852,28 @@ public class PresaInCaricoNoticaBonariaSteps {
         sharedSteps.setNotificationIun(savedIun);
         sendSharedContext.getInformalNotificationContext().setIun(savedIun);
         lastException = null;
+    }
+
+    @Then("non è presente l'elemento {string} della notifica bonaria con dettagli")
+    public void verifyTimelineElementNotPresent(String category, Map<String, String> dataMap) {
+
+        InformalDataTestV1 expected = InformalDataTestV1.convertMap(dataMap);
+        FullSentInformalNotificationV1 notification = getFullInformalNotification();
+        List<InformalTimelineElementV1> elements = NotificationInformalUtilsWorkFlowV1.getTimelineElementsByCategory(notification, category);
+
+        for (InformalTimelineElementV1 actual : elements) {
+            boolean match = false;
+
+            try {
+                NotificationInformalUtilsWorkFlowV1.checkTimelineElement(actual, expected.getTimelineElement());
+                match = true;
+
+            } catch (AssertionError ignored) {
+            }
+            if (match) {
+                fail("Trovato un elemento timeline non atteso: " + actual);
+            }
+        }
     }
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internawebrecipientinformal.model.CxTypeAuthFleet toRecipientCxType(Destinatario destinatario) {

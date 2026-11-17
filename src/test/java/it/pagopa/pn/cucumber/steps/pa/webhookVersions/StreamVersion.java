@@ -5,7 +5,7 @@ import lombok.Getter;
 
 public enum StreamVersion {
 
-    V10(10), V23(23), V24(24), V25(25), V26(26), V27(27), V28(28),V29(29);
+    V10(10), V23(23), V24(24), V25(25), V26(26), V27(27), V28(28), V29(29), V30(30);
 
     /**
      * Scopo di questo campo è quello di poter comparare le versioni con < o >
@@ -29,6 +29,7 @@ public enum StreamVersion {
             case V27 -> new WebhookStepsV27(webhookB2bSteps);
             case V28 -> new WebhookStepsV28(webhookB2bSteps);
             case V29 -> new WebhookStepsV29(webhookB2bSteps);
+            case V30 -> new WebhookStepsV30(webhookB2bSteps);
         };
     }
 }

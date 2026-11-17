@@ -496,8 +496,8 @@
         | SECONDO_TENTATIVO   | prepareRequestDate |
         | RESIDUO_PRIORITARIO | prepareRequestDate |
         | ALTRO               | notificationSentAt |
-      Then verifica che la spedizione con requestId "tcResiduoBuonoRitardo_11" sia al workflow step "EVALUATE_DRIVER_CAPACITY"
-      And verifica che la spedizione con requestId "tcResiduoBuonoRitardo_12" sia al workflow step "EVALUATE_DRIVER_CAPACITY"
+      Then verifica che la spedizione con requestId "tcResiduoBuonoRitardo_11" sia al workflow step "EVALUATE_RESIDUAL_CAPACITY"
+      And verifica che la spedizione con requestId "tcResiduoBuonoRitardo_12" sia al workflow step "EVALUATE_RESIDUAL_CAPACITY"
       And vengono recuperate le notifiche al workflow step "EVALUATE_PRINT_CAPACITY"
       And verifica che il processo fino al workflow step "EVALUATE_PRINT_CAPACITY" abbia rispettato i criteri di ranking per almeno un test case:
         | categoria           | ordinamentoCampo   |

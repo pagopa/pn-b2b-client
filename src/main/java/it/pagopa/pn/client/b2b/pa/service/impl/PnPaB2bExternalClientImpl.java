@@ -198,6 +198,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName, attachmentIdx);
     }
 
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
+        refreshAndSetTokenInteropClient();
+        return legalFactsApi.retrieveLegalFact(iun, legalFactType, legalFactId);
+    }
+
     public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId) {
         refreshAndSetTokenInteropClient();
         return legalFactsApi.downloadLegalFactById(iun, legalFactId);

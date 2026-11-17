@@ -17,6 +17,9 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingProfile;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -1680,19 +1683,26 @@ public class ApiServiceDeskSteps {
     }
 
     @And("viene atteso lo stato {string} dell'operazione")
-    public void pollOperationActStatus(String status) throws Exception {
-        pollByStatus(status, 600, 500);
+    public void pollOperationActStatus(String status) {
+        pollByStatus(status);
         checkOperationActStatus(status);
     }
 
-    public void pollByStatus(String status, int maxAttempts, int sleepMillis) throws Exception {
-        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            invokeApi("GET_ACT_OPERATION_STATUS");
-            System.out.println("Stato attuale: " + statusOperationResponse.toUpperCase());
-            if (status.equalsIgnoreCase(statusOperationResponse.toUpperCase())) return;
-            Thread.sleep(sleepMillis);
+    public void pollByStatus(String status) {
+        try {
+            Poller.pollUntil(
+                    () -> {
+                        invokeApi("GET_ACT_OPERATION_STATUS");
+                        log.debug("Stato attuale operationId {}: {}", operationId, statusOperationResponse);
+                        return statusOperationResponse;
+                    },
+                    status::equalsIgnoreCase,
+                    it.pagopa.common.polling.PollingConfig.of(java.time.Duration.ofMinutes(5), java.time.Duration.ofMillis(500)));
+        } catch (PollingTimeoutException e) {
+            // L'esito viene verificato da checkOperationActStatus sull'ultimo stato letto
+            log.warn("Stato {} non raggiunto per operationId {}, ultimo stato: {}. {}",
+                    status, operationId, e.getLastValue(), e.getMessage());
         }
-        log.debug("Polling esaurito per operationId {}", operationId);
     }
 
     private void createActOperationRequestV1(Map<String, String> data) {

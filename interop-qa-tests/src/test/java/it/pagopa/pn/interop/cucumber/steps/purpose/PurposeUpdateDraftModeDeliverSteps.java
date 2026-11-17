@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
@@ -11,6 +12,7 @@ import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
 
 import java.util.UUID;
 
@@ -23,11 +25,13 @@ public class PurposeUpdateDraftModeDeliverSteps {
     private final SharedStepsContext sharedStepsContext;
     private final IHttpExecutor httpCallExecutor;
     private final BFFDataPreparationService dataPreparationService;
+    private final IdentityService identityService;
 
     public PurposeUpdateDraftModeDeliverSteps(ClientTokenConfigurator clientTokenConfigurator,
                                        SharedStepsContext sharedStepsContext, BFFDataPreparationService dataPreparationService) {
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.sharedStepsContext = sharedStepsContext;
+        this.identityService = sharedStepsContext.getIdentityService();
         this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
         this.dataPreparationService = dataPreparationService;
     }
@@ -43,6 +47,27 @@ public class PurposeUpdateDraftModeDeliverSteps {
                                 .description("some new description")
                                 .isFreeOfCharge(true)
                                 .freeOfChargeReason("some new free of charge reason")
+                                .dailyCalls(49)
+                )
+        );
+    }
+
+
+    @When("l'utente aggiorna quella finalità per quell'e-service in erogazione diretta indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void updatePurposeDirectWithUrl() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        String kind = identityService.getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+        httpCallExecutor.performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
+                        new PurposeUpdateContent()
+                                .title("some new title")
+                                .description("some new description")
+                                .isFreeOfCharge(true)
+                                .freeOfChargeReason("some new free of charge reason")
+                                .riskAnalysisForm(riskAnalysisForm)
                                 .dailyCalls(49)
                 )
         );

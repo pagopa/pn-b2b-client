@@ -1,0 +1,25 @@
+{
+  "notification": {
+    "subject": "invio notifica VRT NOTIFICATION_CANCELLED",
+    "senderDenomination": "Comune di palermo"
+  },
+  "recipient": {
+    "name": "Mario Gherkin",
+    "data": {}
+  },
+  "templateEngine": {
+    "notificationCancelledDate": "01/01/2026 09:00",
+    "notification": {
+      "iun": "VRTG-LDNM-STRF-202601-A-1",
+      "sender": {
+        "paDenomination": "${notification.senderDenomination}"
+      },
+      "recipients": [
+        {
+          "denomination": "${recipient.name}",
+          "taxId": "CLMCST42R12D969Z"
+        }
+      ]
+    }
+  }
+}

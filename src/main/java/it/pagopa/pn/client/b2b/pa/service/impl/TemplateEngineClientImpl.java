@@ -208,4 +208,19 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
                 request
         );
     }
+
+    @Override
+    public String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication );
+    }
+
+    @Override
+    public String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalSmsCourtesy(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException {
+        return templateApi.courtesySmsCommunication(xLanguage, informalSmsCommunication);
+    }
 }

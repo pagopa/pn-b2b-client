@@ -22,11 +22,13 @@ public final class PdfDocumentTemplate {
     private final String key;
     private final int expectedPageCount;
     private final List<FieldDefinition> fieldDefinitions;
+    private final List<ExclusionArea> fixedExclusions;
 
     private PdfDocumentTemplate(Builder builder) {
         this.key = Objects.requireNonNull(builder.key, "key obbligatoria");
         this.expectedPageCount = builder.expectedPageCount;
         this.fieldDefinitions = Collections.unmodifiableList(new ArrayList<>(builder.fieldDefinitions));
+        this.fixedExclusions = List.copyOf(builder.fixedExclusions);
     }
 
     /** Chiave identificativa univoca del template. */
@@ -44,6 +46,11 @@ public final class PdfDocumentTemplate {
         return fieldDefinitions;
     }
 
+    /** Areas always excluded from the visual diff, e.g. images that change at every run (QR codes). */
+    public List<ExclusionArea> fixedExclusions() {
+        return fixedExclusions;
+    }
+
     // -----------------------------------------------------------------------
     // Builder
     // -----------------------------------------------------------------------
@@ -57,6 +64,7 @@ public final class PdfDocumentTemplate {
         private final String key;
         private int expectedPageCount = -1;
         private final List<FieldDefinition> fieldDefinitions = new ArrayList<>();
+        private final List<ExclusionArea> fixedExclusions = new ArrayList<>();
 
         private Builder(String key) {
             this.key = Objects.requireNonNull(key, "key obbligatoria");
@@ -82,6 +90,12 @@ public final class PdfDocumentTemplate {
          */
         public Builder field(String fieldName, FieldLocator locator, FieldValidator validator, MaskStrategy mask) {
             fieldDefinitions.add(new FieldDefinition(fieldName, locator, validator, mask));
+            return this;
+        }
+
+        /** Excludes a fixed area (PDF points, bottom-left origin) that no text locator can find. */
+        public Builder ignoreArea(int pageIndex, float x, float y, float width, float height) {
+            fixedExclusions.add(new ExclusionArea(pageIndex, x, y, width, height));
             return this;
         }
 

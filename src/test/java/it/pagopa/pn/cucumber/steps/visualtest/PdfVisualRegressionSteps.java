@@ -1,337 +1,231 @@
 package it.pagopa.pn.cucumber.steps.visualtest;
 
-import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.common.pdf.visualtest.DocumentTemplateRegistry;
+import io.cucumber.java.en.When;
+import it.pagopa.common.pdf.visualtest.DynamicFieldAnalyzer;
+import it.pagopa.common.pdf.visualtest.FieldLocators;
 import it.pagopa.common.pdf.visualtest.PdfComplianceChecker;
 import it.pagopa.common.pdf.visualtest.PdfComplianceReport;
-import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
+import it.pagopa.common.pdf.visualtest.PdfTextExtractor;
+import it.pagopa.common.pdf.visualtest.TextFragment;
+import it.pagopa.common.polling.PollingProfile;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
+import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
+import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Step Cucumber per il Visual Regression Testing dei documenti PDF.
- *
- * <p>Integra il motore {@link PdfComplianceChecker} di {@code common} con il
- * contesto Cucumber del modulo {@code pn-b2bclient}.</p>
- *
- * <p>Il golden master di ogni template è posizionato in:
- * {@code src/test/resources/it/pagopa/pn/cucumber/visualtest/expected-pdfs/<KEY>/expected.pdf}</p>
+ * Visual regression of the PDFs produced by SEND: the document of the scenario is compared with its golden master
+ * (repo, otherwise rendered by the Template Engine from the same fixture that built the notification).
  */
 @Slf4j
 public class PdfVisualRegressionSteps {
 
+    private static final Path ACTUAL_ROOT = Paths.get("target", "vrt", "actual");
+    private static final Path DIFF_ROOT = Paths.get("target", "vrt", "diff");
+
     private final SharedSteps sharedSteps;
-    private final DocumentTemplateRegistry registry;
-    private final it.pagopa.pn.cucumber.steps.pa.LegalFactContentVerifySteps legalFactContentVerifySteps;
-    private final it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineSteps templateEngineSteps;
+    private final DestinatarioRegistry destinatarioRegistry;
+    private final IPnDowntimeLogsClient downtimeLogsClient;
+    private final GoldenMasterProvider goldenMasters;
+    private final int downtimeMonthsBack;
 
-    /** Ultimo PDF scaricato (in byte) per poterlo riusare in step successivi. */
-    private byte[] lastDownloadedPdf;
-
-    /** Ultimo report prodotto (utile per step di asserzione separata). */
-    private PdfComplianceReport lastReport;
+    private VisualDocument document;
+    private byte[] actualPdf;
 
     @Autowired
     public PdfVisualRegressionSteps(SharedSteps sharedSteps,
-                                    DocumentTemplateRegistry registry,
-                                    it.pagopa.pn.cucumber.steps.pa.LegalFactContentVerifySteps legalFactContentVerifySteps,
-                                    @org.springframework.context.annotation.Lazy it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineSteps templateEngineSteps) {
+                                    DestinatarioRegistry destinatarioRegistry,
+                                    IPnDowntimeLogsClient downtimeLogsClient,
+                                    ITemplateEngineClient templateEngineClient,
+                                    @Value("${pn.vrt.downtime-months-back:6}") int downtimeMonthsBack) {
         this.sharedSteps = sharedSteps;
-        this.registry    = registry;
-        this.legalFactContentVerifySteps = legalFactContentVerifySteps;
-        this.templateEngineSteps = templateEngineSteps;
+        this.destinatarioRegistry = destinatarioRegistry;
+        this.downtimeLogsClient = downtimeLogsClient;
+        this.goldenMasters = new GoldenMasterProvider(new TemplateEngineGoldenRenderer(templateEngineClient));
+        this.downtimeMonthsBack = downtimeMonthsBack;
     }
 
-    // -----------------------------------------------------------------------
-    // Step: download PDF e confronto ibrido in un unico passo
-    // -----------------------------------------------------------------------
-
-    /**
-     * Confronta il PDF generato nell'ultimo step di Template Engine con il golden master.
-     */
-    @Then("si verifica la conformità visiva del PDF generato dal template engine con il template {string}")
-    public void verificaConformitaVisivaTemplateEngine(String templateKey) {
-        Assertions.assertNotNull(templateEngineSteps, "TemplateEngineSteps non disponibile");
-        byte[] actualPdf = templateEngineSteps.getLatestPdfBytes();
-        Assertions.assertNotNull(actualPdf, "Nessun PDF generato dal Template Engine disponibile per la verifica");
-        verificaConformitaVisiva(actualPdf, templateKey);
+    @Given("viene generata la notifica di riferimento del documento {string}")
+    public void vieneGenerataLaNotificaDiRiferimento(String documentKey) {
+        VisualFixture fixture = VisualFixture.load(VisualDocument.of(documentKey));
+        sharedSteps.prepareNotificationRequest(fixture.notificationData());
+        sharedSteps.addDestinatarioWithParams(destinatarioRegistry.destinatario(fixture.recipientName()),
+                fixture.recipientData());
     }
 
-    /**
-     * Scarica il PDF dall'URL fornito e lo confronta con il golden master
-     * del template indicato dalla chiave.
-     *
-     * <p>Step Gherkin:</p>
-     * <pre>
-     * Then si verifica la conformità visiva del PDF scaricato da "{url}" con il template "{templateKey}"
-     * </pre>
-     */
-    @Then("si verifica la conformità visiva del PDF scaricato da {string} con il template {string}")
-    public void verificaConformitaVisivaDa(String downloadUrl, String templateKey) {
-        byte[] actualPdf = B2bUtils.downloadFile(downloadUrl);
-        verificaConformitaVisiva(actualPdf, templateKey);
+    /** The timeline element that carries the document must already be there (scenario waits for it). */
+    @When("si recupera il documento {string} della notifica")
+    public void siRecuperaIlDocumentoDellaNotifica(String documentKey) {
+        document = VisualDocument.of(documentKey);
+        String key = switch (document.source().kind()) {
+            case TIMELINE_LEGAL_FACT -> legalFactKey(document.source());
+            case AAR -> aarKey(document.source());
+            case NOT_RETRIEVABLE -> throw new IllegalStateException(documentKey + " non recuperabile da SEND: "
+                    + document.source().keyPrefix());
+            case DOWNTIME -> throw new IllegalArgumentException(documentKey + " si recupera dai disservizi, non dalla notifica");
+        };
+        String iun = sharedSteps.getNotificationIun();
+        LegalFactDownloadMetadataResponse metadata = Poller.pollUntil(
+                () -> sharedSteps.getB2bClient().getDownloadLegalFact(iun, key),
+                response -> response != null && response.getUrl() != null,
+                PollingProfile.SLOW.toConfig(),
+                last -> "Documento " + documentKey + " (" + key + ") non ancora disponibile per " + iun);
+        storeActual(B2bUtils.downloadFile(metadata.getUrl()), iun);
     }
 
-    /**
-     * Scarica il PDF dal URL memorizzato nel contesto Shared Steps
-     * (ad es. l'URL del legal fact precedentemente scaricato) e lo confronta
-     * con il golden master del template.
-     *
-     * <p>Step Gherkin:</p>
-     * <pre>
-     * Then si verifica la conformità visiva del PDF con il template "{templateKey}"
-     * </pre>
-     */
-    @Then("si verifica la conformità visiva del PDF con il template {string}")
-    public void verificaConformitaVisivaUltimoUrl(String templateKey) {
-        String url = resolveLastLegalFactUrl();
-        byte[] actualPdf = B2bUtils.downloadFile(url);
-        verificaConformitaVisiva(actualPdf, templateKey);
+    @When("si recupera il documento {string} dell'ultimo disservizio risolto")
+    public void siRecuperaIlDocumentoDellUltimoDisservizio(String documentKey) {
+        document = VisualDocument.of(documentKey);
+        OffsetDateTime notBefore = GoldenMasterProvider.repoGoldenCreation(document).orElse(OffsetDateTime.MIN);
+        PnDowntimeEntry downtime = latestResolvedDowntimeWithLegalFact(notBefore);
+        String url = downtimeLogsClient.getLegalFact(downtime.getLegalFactId()).getUrl();
+        Assertions.assertNotNull(url, "URL del documento del disservizio " + downtime.getLegalFactId() + " assente");
+        storeActual(B2bUtils.downloadFile(url), downtime.getLegalFactId());
     }
 
-    /**
-     * Verifica solo i campi dinamici (senza visual diff) del PDF scaricato.
-     * Utile come step di smoke senza necessità di golden master.
-     *
-     * <p>Step Gherkin:</p>
-     * <pre>
-     * Then si verificano i campi dinamici del PDF con il template "{templateKey}"
-     * </pre>
-     */
-    @Then("si verificano i campi dinamici del PDF con il template {string}")
-    public void verificaCampiDinamiciSoloUrl(String templateKey) {
-        String url = resolveLastLegalFactUrl();
-        byte[] actualPdf = B2bUtils.downloadFile(url);
-        this.lastDownloadedPdf = actualPdf;
-        saveDownloadedPdfArtifacts(templateKey, actualPdf);
-
-        PdfDocumentTemplate template = registry.getOrThrow(templateKey);
-
-        it.pagopa.common.pdf.visualtest.ExtractedPdfText extracted =
-                it.pagopa.common.pdf.visualtest.PdfTextExtractor.extract(actualPdf);
-        it.pagopa.common.pdf.visualtest.DynamicFieldAnalyzer.AnalysisResult analysis =
-                it.pagopa.common.pdf.visualtest.DynamicFieldAnalyzer.analyze(extracted, template);
-
-        if (!analysis.isValid()) {
-            StringJoiner sb = new StringJoiner("\n");
-            sb.add("Errori nei campi dinamici del PDF (template: " + templateKey + "):");
-            analysis.issues().forEach(issue -> sb.add("  • " + issue));
-            Assertions.fail(sb.toString());
-        }
-        log.info("PdfVisualRegressionSteps: campi dinamici OK per template '{}'", templateKey);
-    }
-
-    // -----------------------------------------------------------------------
-    // Step: assert sul last report
-    // -----------------------------------------------------------------------
-
-    @And("il report PDF di conformità non deve avere errori")
-    public void ilReportPdfNonDeveAvereErrori() {
-        Assertions.assertNotNull(lastReport,
-                "Nessun report PDF disponibile: eseguire prima uno step di verifica conformità");
-        lastReport.assertCompliant();
-    }
-
-    // -----------------------------------------------------------------------
-    // Step: verifica campi per destinatario (DataTable campo/valore)
-    // -----------------------------------------------------------------------
-
-    /**
-     * Verifica, per un determinato destinatario, il valore di uno o più campi del PDF.
-     *
-     * <p>Ogni campo è individuato tramite {@link it.pagopa.common.pdf.visualtest.FieldLocators#labelProximityOccurrence}:
-     * si cerca l'etichetta indicata nella colonna {@code campo} e si prende la sua N-esima
-     * occorrenza nel documento, dove N è l'indice del destinatario (1-based). Questo copre
-     * i documenti in cui un blocco di campi (nome, codice fiscale, domicilio digitale, ...)
-     * si ripete una volta per ciascun destinatario.</p>
-     *
-     * <p>Step Gherkin:</p>
-     * <pre>
-     * Then per il destinatario 1 del PDF si verificano i seguenti campi
-     *   | campo                            | valore           |
-     *   | Codice Fiscale                   | BRGLRZ80D58H501Q |
-     *   | Domicilio digitale               | prova@pec.it     |
-     * </pre>
-     */
-    @Then("per il destinatario {int} del PDF si verificano i seguenti campi")
-    public void perIlDestinatarioDelPdfSiVerificanoISeguentiCampi(int recipientIndex, List<Map<String, String>> campiAttesi) {
-        Assertions.assertTrue(recipientIndex >= 1, "L'indice del destinatario deve essere >= 1 (1-based)");
-
-        List<it.pagopa.common.pdf.visualtest.TextFragment> allFragments =
-                it.pagopa.common.pdf.visualtest.PdfTextExtractor.extract(lastDownloadedPdfOrThrow()).allFragments();
-
-        for (Map<String, String> riga : campiAttesi) {
-            String campo = riga.get("campo");
-            String valoreAtteso = riga.get("valore");
-            Assertions.assertNotNull(campo, "Colonna 'campo' mancante nella tabella");
-            Assertions.assertNotNull(valoreAtteso, "Colonna 'valore' mancante nella tabella");
-
-            List<it.pagopa.common.pdf.visualtest.TextFragment> located =
-                    it.pagopa.common.pdf.visualtest.FieldLocators
-                            .labelProximityOccurrence(campo, recipientIndex)
-                            .locate(allFragments);
-
-            Assertions.assertFalse(located.isEmpty(),
-                    "Campo '" + campo + "' non trovato per il destinatario " + recipientIndex);
-
-            String found = located.stream()
-                    .map(it.pagopa.common.pdf.visualtest.TextFragment::text)
-                    .reduce((a, b) -> a + " " + b)
-                    .orElse("");
-
-            Assertions.assertTrue(found.contains(valoreAtteso),
-                    "Campo '" + campo + "' per il destinatario " + recipientIndex
-                            + ": atteso un testo contenente \"" + valoreAtteso + "\" ma trovato \"" + found + "\"");
-        }
-        log.info("PdfVisualRegressionSteps: {} campi verificati per il destinatario {}", campiAttesi.size(), recipientIndex);
-    }
-
-    // -----------------------------------------------------------------------
-    // Internals
-    // -----------------------------------------------------------------------
-
-    /**
-     * Restituisce l'ultimo PDF scaricato/generato, oppure fallisce con un messaggio chiaro
-     * se nessuno step precedente lo ha ancora reso disponibile.
-     */
-    private byte[] lastDownloadedPdfOrThrow() {
-        Assertions.assertNotNull(lastDownloadedPdf,
-                "Nessun PDF disponibile: eseguire prima uno step che scarichi o generi il PDF "
-                        + "(es. uno step di verifica conformità o di download del legal fact)");
-        return lastDownloadedPdf;
-    }
-
-    private void verificaConformitaVisiva(byte[] actualPdf, String templateKey) {
-        this.lastDownloadedPdf = actualPdf;
-        saveDownloadedPdfArtifacts(templateKey, actualPdf);
-
-        PdfDocumentTemplate template = registry.getOrThrow(templateKey);
-        byte[] expectedPdf          = loadGoldenMaster(templateKey);
-
-        Path diffOutputPath = buildDiffOutputPath(templateKey);
-
-        PdfComplianceReport report = PdfComplianceChecker.check(
-                expectedPdf, actualPdf, template, diffOutputPath);
-        this.lastReport = report;
-
-        log.info("PdfVisualRegressionSteps: report per template '{}': {}", templateKey, report);
+    @Then("il documento è conforme al golden master")
+    public void ilDocumentoEConformeAlGoldenMaster() {
+        byte[] expected = goldenMasters.resolve(currentDocument());
+        PdfComplianceReport report = PdfComplianceChecker.check(expected, currentActual(), currentDocument().template(),
+                diffPath());
+        log.info("VRT {}: {}", currentDocument().key(), report);
         report.assertCompliant();
     }
 
-    private void saveDownloadedPdfArtifacts(String templateKey, byte[] pdfBytes) {
-        String folder = templateKey.toLowerCase().replace('_', '-');
-        String iun = (sharedSteps != null && sharedSteps.getNotificationIun() != null)
-                ? sharedSteps.getNotificationIun()
-                : "NO_IUN";
+    @Then("i campi dinamici del documento sono validi")
+    public void iCampiDinamiciDelDocumentoSonoValidi() {
+        DynamicFieldAnalyzer.AnalysisResult analysis =
+                DynamicFieldAnalyzer.analyze(PdfTextExtractor.extract(currentActual()), currentDocument().template());
+        Assertions.assertTrue(analysis.isValid(), () -> "Campi dinamici non validi in " + currentDocument().key() + ":\n"
+                + analysis.issues().stream().map(Object::toString).collect(Collectors.joining("\n")));
+    }
 
-        // 1. Salva in target/downloaded-pdfs/
-        try {
-            Path targetDir = Paths.get("target", "downloaded-pdfs", folder);
-            Files.createDirectories(targetDir);
-            Path actualFile = targetDir.resolve("actual.pdf");
-            Path iunFile = targetDir.resolve(iun + "_" + folder + ".pdf");
-            Files.write(actualFile, pdfBytes);
-            Files.write(iunFile, pdfBytes);
-            log.info("PdfVisualRegressionSteps: salvato PDF scaricato in {}", actualFile.toAbsolutePath());
-        } catch (IOException e) {
-            log.warn("PdfVisualRegressionSteps: impossibile salvare in target/downloaded-pdfs: {}", e.getMessage());
-        }
-
-        // 2. Salva in expected-pdfs (aggiornamento automatico golden master)
-        try {
-            Path expectedPath = Paths.get("src/test/resources/it/pagopa/pn/cucumber/visualtest/expected-pdfs", folder, "expected.pdf");
-            Files.createDirectories(expectedPath.getParent());
-            Files.write(expectedPath, pdfBytes);
-            log.info("PdfVisualRegressionSteps: aggiornato Golden Master in {}", expectedPath.toAbsolutePath());
-        } catch (IOException e) {
-            log.warn("PdfVisualRegressionSteps: impossibile salvare in expected-pdfs: {}", e.getMessage());
+    /** Fields of a block repeated once per recipient: the N-th occurrence of each label belongs to recipient N. */
+    @Then("per il destinatario {int} del documento si verificano i seguenti campi")
+    public void perIlDestinatarioDelDocumentoSiVerificanoICampi(int recipientIndex, List<Map<String, String>> fields) {
+        Assertions.assertTrue(recipientIndex >= 1, "L'indice del destinatario parte da 1");
+        List<TextFragment> fragments = PdfTextExtractor.extract(currentActual()).allFragments();
+        for (Map<String, String> row : fields) {
+            String label = row.get("campo");
+            String expected = row.get("valore");
+            String found = FieldLocators.labelProximityOccurrence(label, recipientIndex).locate(fragments).stream()
+                    .map(TextFragment::text)
+                    .collect(Collectors.joining(" "));
+            Assertions.assertTrue(found.contains(expected), "Campo '" + label + "' del destinatario " + recipientIndex
+                    + ": atteso \"" + expected + "\", trovato \"" + found + "\"");
         }
     }
 
-    /**
-     * Carica il golden master dal classpath.
-     * Percorso atteso: {@code it/pagopa/pn/cucumber/visualtest/expected-pdfs/<key>/expected.pdf}
-     */
-    private byte[] loadGoldenMaster(String templateKey) {
-        String resourcePath = "it/pagopa/pn/cucumber/visualtest/expected-pdfs/"
-                + templateKey.toLowerCase().replace('_', '-')
-                + "/expected.pdf";
-        try (InputStream is = new ClassPathResource(resourcePath).getInputStream()) {
-            return is.readAllBytes();
-        } catch (IOException e) {
-            throw new IllegalStateException(
-                    "Golden master PDF non trovato per il template '" + templateKey + "'. "
-                    + "Percorso atteso nel classpath: " + resourcePath
-                    + ". Posizionare il file in: "
-                    + "src/test/resources/" + resourcePath,
-                    e);
-        }
+    private String legalFactKey(VisualDocument.Source source) {
+        return timeline().stream()
+                .filter(e -> source.timelineCategory().equals(e.getCategory()))
+                .map(TimelineElementV28::getLegalFactsIds)
+                .filter(Objects::nonNull)
+                .flatMap(List::stream)
+                .filter(id -> source.legalFactCategory().equals(id.getCategory()))
+                .map(LegalFactsIdV20::getKey)
+                .map(PdfVisualRegressionSteps::safeStorageKey)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Nessun legal fact " + source.legalFactCategory()
+                        + " su " + source.timelineCategory() + " per " + sharedSteps.getNotificationIun()));
     }
 
-    /**
-     * Costruisce il path di output per il diff, sotto {@code target/pdf-visual-diff/}.
-     */
-    private static Path buildDiffOutputPath(String templateKey) {
-        Path diffDir = Paths.get("target", "pdf-visual-diff");
+    private String aarKey(VisualDocument.Source source) {
+        return timeline().stream()
+                .filter(e -> source.timelineCategory().equals(e.getCategory()))
+                .map(e -> e.getDetails() == null ? null : e.getDetails().getGeneratedAarUrl())
+                .filter(Objects::nonNull)
+                .filter(url -> url.contains(source.keyPrefix()))
+                .map(url -> url.substring(url.indexOf(source.keyPrefix())))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Nessun AAR generato per " + sharedSteps.getNotificationIun()));
+    }
+
+    private List<TimelineElementV28> timeline() {
+        return sharedSteps.getSentNotificationLastVersion().getTimeline();
+    }
+
+    /** The attestation is produced once, when the downtime closes: older ones follow an older template. */
+    private PnDowntimeEntry latestResolvedDowntimeWithLegalFact(OffsetDateTime notBefore) {
+        LocalDate month = LocalDate.now();
+        for (int i = 0; i <= downtimeMonthsBack; i++, month = month.minusMonths(1)) {
+            PnDowntimeHistoryResponse resolved = downtimeLogsClient.getResolved(month.getYear(), month.getMonthValue());
+            if (resolved != null && resolved.getResult() != null) {
+                var latest = resolved.getResult().stream()
+                        .filter(e -> e.getLegalFactId() != null && Boolean.TRUE.equals(e.getFileAvailable()))
+                        .filter(e -> e.getFileAvailableTimestamp() != null && e.getFileAvailableTimestamp().isAfter(notBefore))
+                        .max(Comparator.comparing(PnDowntimeEntry::getStartDate));
+                if (latest.isPresent()) {
+                    return latest.get();
+                }
+            }
+        }
+        throw new AssertionError("Nessun disservizio risolto negli ultimi " + downtimeMonthsBack
+                + " mesi con attestazione prodotta dopo il golden master (" + notBefore + ")");
+    }
+
+    private static String safeStorageKey(String key) {
+        return key.startsWith("safestorage://") ? key.substring("safestorage://".length()) : key;
+    }
+
+    private void storeActual(byte[] pdf, String executionId) {
+        Assertions.assertTrue(pdf != null && pdf.length > 4 && pdf[0] == '%' && pdf[1] == 'P',
+                "Il contenuto scaricato per " + currentDocument().key() + " non è un PDF");
+        this.actualPdf = pdf;
+        Path file = ACTUAL_ROOT.resolve(currentDocument().folder()).resolve(executionId + ".pdf");
         try {
-            Files.createDirectories(diffDir);
+            Files.createDirectories(file.getParent());
+            Files.write(file, pdf);
         } catch (IOException e) {
-            log.warn("PdfVisualRegressionSteps: impossibile creare la directory diff: {}", e.getMessage());
-            return null;
+            throw new UncheckedIOException("Impossibile salvare " + file, e);
         }
-        return diffDir.resolve(templateKey.toLowerCase() + "-diff.pdf");
+        log.info("VRT {}: documento salvato in {}", currentDocument().key(), file.toAbsolutePath());
     }
 
-    /**
-     * Recupera l'URL del legal fact corrente dal contesto Cucumber condiviso.
-     */
-    private String resolveLastLegalFactUrl() {
-        if (legalFactContentVerifySteps != null && legalFactContentVerifySteps.getLegalFactUrl() != null) {
-            return legalFactContentVerifySteps.getLegalFactUrl();
-        }
+    private Path diffPath() {
+        Path dir = DIFF_ROOT.resolve(currentDocument().folder());
         try {
-            var legalFactStepsField = sharedSteps.getClass()
-                    .getDeclaredField("legalFactUrl");
-            legalFactStepsField.setAccessible(true);
-            return (String) legalFactStepsField.get(sharedSteps);
-        } catch (Exception e) {
-            throw new IllegalStateException(
-                    "Impossibile recuperare l'URL del legal fact dal contesto Cucumber. "
-                    + "Assicurarsi che il campo 'legalFactUrl' sia stato impostato dagli step precedenti.",
-                    e);
+            Files.createDirectories(dir);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Impossibile creare " + dir, e);
         }
+        String id = sharedSteps.getNotificationIun() != null ? sharedSteps.getNotificationIun() : "run-" + System.currentTimeMillis();
+        return dir.resolve(id + "-diff.pdf");
     }
 
-    // Inner helper per messaggio d'errore
-    private static class StringJoiner {
-        private final StringBuilder sb = new StringBuilder();
-        private final String delimiter;
+    private VisualDocument currentDocument() {
+        Assertions.assertNotNull(document, "Nessun documento recuperato: eseguire prima lo step di recupero");
+        return document;
+    }
 
-        StringJoiner(String delimiter) {
-            this.delimiter = delimiter;
-        }
-
-        void add(String value) {
-            if (!sb.isEmpty()) sb.append(delimiter);
-            sb.append(value);
-        }
-
-        @Override
-        public String toString() {
-            return sb.toString();
-        }
+    private byte[] currentActual() {
+        Assertions.assertNotNull(actualPdf, "Nessun documento recuperato: eseguire prima lo step di recupero");
+        return actualPdf;
     }
 }

@@ -53,13 +53,10 @@ public class PnContentExtractorUtils {
     }
 
     public static boolean isExactlyContained(String source, String subItem) {
-        if (source == null || subItem == null) {
-            return false;
-        }
         String quotedSubItem = Pattern.quote(subItem);
         String pattern = "(?<!\\S)" + quotedSubItem + "(?!\\S)";
 
-        Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+        Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(source);
         return m.find();
     }
@@ -113,8 +110,8 @@ public class PnContentExtractorUtils {
         }
         // Normalizzazione delle stringhe da cui iniziare la ricerca
         String sourceFromIndex = source.substring(fromIndex);
-        String normalizedSourceFromIndex = sourceFromIndex.replaceAll("[\r\n\\s]+", "").toLowerCase();
-        String normalizedToFind = toFind.replaceAll("[\r\n\\s]+", "").toLowerCase();
+        String normalizedSourceFromIndex = sourceFromIndex.replaceAll("[\r\n\\s]+", "");
+        String normalizedToFind = toFind.replaceAll("[\r\n\\s]+", "");
 
         int indexInNormalized = normalizedSourceFromIndex.indexOf(normalizedToFind);
         if (indexInNormalized == -1) {

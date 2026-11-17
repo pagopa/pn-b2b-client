@@ -230,3 +230,27 @@ Feature: finalità agevolata, purpose from purpose template
       | PA4     | GSP         |
       | GSP2    | PA          |
       | Privato | PA          |
+
+  @privacy-policy-url
+  @purposeTemplate @purposeFromPurposeTemplate
+  Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL_01] Modifica di una finalità creata a partire da un template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "GSP"
+    And viene creato un nuovo purpose template destinato a enti "GSP" indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali
+    And il purpose template creato viene spostato in stato PUBLISHED
+    #And l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    And l'utente crea con successo una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    When l'utente tenta di effettuare la modifica parziale della finalità creata da template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene response status code 200
+
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-11087 . Test introdotto apposta per la futura bug validation.
+  @purposeTemplate @purposeFromPurposeTemplate
+  Scenario: [PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL_02] La modifica di una finalità come se fosse stata creata a partire da un template SENZA che sia stata effettivamente creata a partire da un template produce un errore
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente è un "admin" di "GSP"
+    And viene creato un nuovo purpose template destinato a enti "GSP" indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali
+    And il purpose template creato viene spostato in stato PUBLISHED
+    When l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene response status code 400

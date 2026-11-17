@@ -23,7 +23,7 @@ public class PnDestinatarioAnalogico extends PnDestinatarioDigitale {
                                    String tipoDomicilioDigitale,
                                    String indirizzoFisico) {
         super(nomeCognomeRagioneSociale, codiceFiscale, domicilioDigitale, tipoDomicilioDigitale);
-        this.indirizzoFisico = indirizzoFisico != null ? indirizzoFisico.replaceAll(INDIRIZZO_REGEX, "$1") : null;
+        this.indirizzoFisico = indirizzoFisico.replaceAll(INDIRIZZO_REGEX, "$1");
     }
 
     @Override

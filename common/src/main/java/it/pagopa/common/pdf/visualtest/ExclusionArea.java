@@ -26,7 +26,25 @@ public record ExclusionArea(int pageIndex, float x, float y, float width, float 
      * @param pageWidthPt  larghezza della pagina in punti (necessaria per FULL_LINE)
      */
     public static ExclusionArea from(TextFragment fragment, MaskStrategy strategy, float pageWidthPt) {
+        return areas(fragment, strategy, pageWidthPt).get(0);
+    }
+
+    /** All the areas of a strategy: {@link MaskStrategy#TO_LINE_END_AND_NEXT_LINE} needs two. */
+    public static List<ExclusionArea> areas(TextFragment fragment, MaskStrategy strategy, float pageWidthPt) {
         final float paddingPt = 3.0f;
+        if (strategy == MaskStrategy.TO_LINE_END_AND_NEXT_LINE) {
+            float nextLineGap = fragment.height() * 1.3f;
+            return List.of(
+                    single(fragment, MaskStrategy.TO_LINE_END, pageWidthPt, paddingPt),
+                    new ExclusionArea(fragment.pageIndex(), 0,
+                            Math.max(0, fragment.y() - nextLineGap - paddingPt),
+                            pageWidthPt,
+                            fragment.height() + (paddingPt * 2)));
+        }
+        return List.of(single(fragment, strategy, pageWidthPt, paddingPt));
+    }
+
+    private static ExclusionArea single(TextFragment fragment, MaskStrategy strategy, float pageWidthPt, float paddingPt) {
         return switch (strategy) {
             case TIGHT_BOX -> new ExclusionArea(
                     fragment.pageIndex(),
@@ -41,6 +59,13 @@ public record ExclusionArea(int pageIndex, float x, float y, float width, float 
                     Math.max(0, fragment.y() - 2 - paddingPt),
                     pageWidthPt,
                     fragment.height() + 4 + (paddingPt * 2));
+
+            case TO_LINE_END, TO_LINE_END_AND_NEXT_LINE -> new ExclusionArea(
+                    fragment.pageIndex(),
+                    Math.max(0, fragment.x() - paddingPt),
+                    Math.max(0, fragment.y() - paddingPt),
+                    Math.max(0, pageWidthPt - fragment.x() + paddingPt),
+                    fragment.height() + (paddingPt * 2));
 
             case FULL_TABLE_CELL -> new ExclusionArea(
                     fragment.pageIndex(),

@@ -1,18 +1,11 @@
 package it.pagopa.pn.cucumber.steps.visualtest.templates;
 
-import it.pagopa.common.pdf.visualtest.FieldLocators;
 import it.pagopa.common.pdf.visualtest.MaskStrategy;
 import it.pagopa.common.pdf.visualtest.PdfDocumentTemplate;
+import it.pagopa.pn.cucumber.steps.visualtest.SendFieldLocators;
 import it.pagopa.pn.cucumber.steps.visualtest.SendFieldValidators;
 
-import static it.pagopa.common.pdf.visualtest.FieldValidators.present;
-
-/**
- * Template del documento <em>Attestato di mancato recapito</em>
- * (Analog Delivery Workflow Failure Legal Fact).
- *
- * <p>Chiave del template: {@value #KEY}</p>
- */
+/** Deposito dell'avviso di avvenuta ricezione per irreperibilità. */
 public final class AnalogFailureTemplate {
 
     public static final String KEY = "ANALOG_FAILURE";
@@ -22,25 +15,22 @@ public final class AnalogFailureTemplate {
 
     public static PdfDocumentTemplate build() {
         return PdfDocumentTemplate.builder(KEY)
-                .field(
-                        "IUN",
-                        FieldLocators.aboveY(680f, FieldLocators.labelSameLine("IUN", 300f)),
+                .expectedPageCount(1)
+                .field("IUN",
+                        SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Codice Fiscale destinatario",
-                        FieldLocators.aboveY(650f, FieldLocators.labelSameLine("CF:", 200f)),
-                        SendFieldValidators.codiceFiscalePg(),
-                        MaskStrategy.TIGHT_BOX)
-                .field(
-                        "Data fine workflow",
-                        FieldLocators.aboveY(620f, FieldLocators.labelSameLine("in data", 250f)),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Data deposito",
+                        SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.FULL_LINE)
-                .field(
-                        "Ora fine workflow",
-                        FieldLocators.aboveY(620f, FieldLocators.labelSameLine("alle ore", 150f)),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Ora deposito",
+                        SendFieldLocators.time(),
                         SendFieldValidators.oraHHmm(),
+                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                .field("Codice fiscale destinatario",
+                        SendFieldLocators.codiceFiscalePg(),
+                        SendFieldValidators.codiceFiscalePg(),
                         MaskStrategy.TIGHT_BOX)
                 .build();
     }

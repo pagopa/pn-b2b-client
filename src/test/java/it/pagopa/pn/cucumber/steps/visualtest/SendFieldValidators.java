@@ -21,7 +21,7 @@ public final class SendFieldValidators {
      * (es. {@code YDKG-AHTX-KRKA-202502-N-1}).
      */
     private static final Pattern IUN_PATTERN = Pattern.compile(
-            "\\b[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d\\b");
+            "\\b[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-[A-Z0-9]\\b");
 
     /**
      * Pattern Codice Fiscale persona fisica (16 caratteri alfanumerici standard).
