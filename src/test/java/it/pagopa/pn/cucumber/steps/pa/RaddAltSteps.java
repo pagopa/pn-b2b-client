@@ -1,11 +1,13 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -13,12 +15,11 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
-import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -40,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
@@ -81,6 +83,10 @@ public class RaddAltSteps {
     private HttpStatusCodeException expectedStartTransactionException;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
+    private static final Map<String, String> DOCUMENT_TYPE_ALIASES = Map.of(
+            "documentiFrontespizio", "COVER_FILE",
+            "documentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI"
+    );
 
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps, DataPreparationRaddVpceService dataPreparationService) {
@@ -324,6 +330,59 @@ public class RaddAltSteps {
         Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage());
         Assertions.assertEquals(errorDescription.trim().toLowerCase(), this.startTransactionResponse.getStatus().getMessage().toLowerCase());
         Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+    }
+
+
+    @And("l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:")
+    public void verificaRisultatiDownloadAttiRadd(DataTable dataTable) {
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+
+        Assertions.assertFalse(data.isEmpty(), "La tabella dei risultati non deve essere vuota");
+
+        int expectedCode = Integer.parseInt(data.get("codiceErrore"));
+        String expectedMessage = data.get("descrizioneErrore");
+
+        StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
+        Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
+        Assertions.assertEquals(expectedStatusCode, this.startTransactionResponse.getStatus().getCode(),
+                "Codice errore non coerente");
+        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage(), "Messaggio di errore non presente");
+        Assertions.assertEquals(expectedMessage.trim().toLowerCase(),
+                this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
+                "Descrizione errore non coerente");
+
+        Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList(),
+                "La lista degli atti non deve essere null");
+        Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty(),
+                "La lista degli atti non deve essere vuota");
+
+        Map<String, Long> expectedDocumentsByType = data.entrySet().stream()
+                .filter(e -> DOCUMENT_TYPE_ALIASES.containsKey(e.getKey()))
+                .collect(Collectors.toMap(
+                        e -> DOCUMENT_TYPE_ALIASES.get(e.getKey()),
+                        e -> Long.parseLong(e.getValue())
+                ));
+
+        Map<String, Long> actualDocumentsByType = this.startTransactionResponse.getDownloadUrlList().stream()
+                .filter(url -> url.getDocumentType() != null)
+                .collect(Collectors.groupingBy(
+                        url -> url.getDocumentType(),
+                        Collectors.counting()
+                ));
+
+        // 1. Verifica che ogni documento atteso nel feature sia presente nella risposta con la quantità corretta
+        expectedDocumentsByType.forEach((type, expectedCount) -> {
+            Long actualCount = actualDocumentsByType.get(type);
+            Assertions.assertNotNull(actualCount, "Tipo documento " + type + " dichiarato nel feature ma non presente nella risposta");
+            Assertions.assertEquals(expectedCount, actualCount, "Numero di documenti per tipo " + type + " non coerente");
+        });
+
+        // 2. Verifica che nella risposta non ci siano documenti non dichiarati nel feature
+        actualDocumentsByType.forEach((type, actualCount) -> {
+            Long expectedCount = expectedDocumentsByType.get(type);
+            Assertions.assertNotNull(expectedCount, "Nella risposta è presente il tipo di documento " + type + " ma non è dichiarato nel feature");
+        });
     }
 
     @And("l'operazione di download non restituisce atti, generando un errore {string} con codice {int} su radd alternative")

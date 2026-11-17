@@ -12,12 +12,19 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.mod
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class PnPaB2bInternalInformalClientImpl {
@@ -94,4 +101,58 @@ public class PnPaB2bInternalInformalClientImpl {
         return senderReadInformalNotificationB2BApi.getSentInformalNotificationV1(operatorId, CxTypeAuthFleet.PA, cxId, iun, groups, retrieveMessage);
     }
 
+    /**
+     * Overload di {@link #getSentInformalNotificationSender(String, String, Boolean)} con il tipo di risposta scelto dal
+     * chiamante. Con {@code String} il body resta il JSON così come ricevuto: serve a verificare che la risposta non
+     * contenga campi che il modello generato scarterebbe in deserializzazione.
+     */
+    public <T> ResponseEntity<T> getSentInformalNotificationSender(String cxId, String iun, Boolean retrieveMessage,
+                                                                   ParameterizedTypeReference<T> responseType) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient apiClient = senderReadInformalNotificationB2BApi.getApiClient();
+        return apiClient.invokeAPI(
+                "/delivery/v1/notifications/sent/{iun}",
+                HttpMethod.GET,
+                Map.of("iun", iun),
+                apiClient.parameterToMultiValueMap(null, "retrieveMessage", retrieveMessage),
+                null,
+                senderHeaders(apiClient, cxId),
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{},
+                responseType);
+    }
+
+    /**
+     * Stato della richiesta di invio ({@code GET /delivery/v1/requests}) letto lato mittente, con il tipo di risposta
+     * scelto dal chiamante ({@code String} per il JSON così come ricevuto).
+     */
+    public <T> ResponseEntity<T> getInformalNotificationRequestStatus(String cxId, String notificationRequestId,
+                                                                      ParameterizedTypeReference<T> responseType) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient apiClient = senderReadInformalNotificationB2BApi.getApiClient();
+        return apiClient.invokeAPI(
+                "/delivery/v1/requests",
+                HttpMethod.GET,
+                Map.of(),
+                apiClient.parameterToMultiValueMap(null, "notificationRequestId", notificationRequestId),
+                null,
+                senderHeaders(apiClient, cxId),
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{},
+                responseType);
+    }
+
+    /** Header di autenticazione interna del mittente, gli stessi che passano i metodi tipizzati. */
+    private HttpHeaders senderHeaders(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.ApiClient apiClient, String cxId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("x-pagopa-pn-uid", operatorId);
+        headers.add("x-pagopa-pn-cx-type", CxTypeAuthFleet.PA.getValue());
+        headers.add("x-pagopa-pn-cx-id", cxId);
+        headers.add("x-pagopa-pn-cx-groups", apiClient.parameterToString(groups));
+        return headers;
+    }
 }
