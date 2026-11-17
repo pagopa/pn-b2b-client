@@ -133,6 +133,12 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     }
 
     public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
+        if (bearerTokenSetted.isPf()) {
+            return mandateServiceApi.getMandatesByDelegateV1(null).stream()
+                    .map(item -> deepCopy(item, MandateDto.class))
+                    .filter(mandate -> mandate.getDelegator() != null && taxId.equalsIgnoreCase(mandate.getDelegator().getFiscalCode()))
+                    .toList();
+        }
         BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
