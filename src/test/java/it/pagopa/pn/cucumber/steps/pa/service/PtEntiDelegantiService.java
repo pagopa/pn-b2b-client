@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa.service;
 
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtDelegationStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitution;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitutionsResponse;
@@ -15,14 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Gestisce le deleghe PA→PT su Selfcare e la lettura dell'elenco degli Enti deleganti di un Partner Tecnologico.
@@ -36,6 +35,7 @@ import static org.awaitility.Awaitility.await;
 @RequiredArgsConstructor
 public class PtEntiDelegantiService {
     private static final int MAX_LIMIT = 50;
+    private static final PollingConfig DELEGATION_POLLING = PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(5));
     private static final String PA_NON_ADERENTE = "Comune di Castagnero";
 
     private final IPnPtInstitutionsClient ptInstitutionsClient;
@@ -139,15 +139,25 @@ public class PtEntiDelegantiService {
     }
 
     private void awaitDelegationStatus(String paId, String ptName, String delegationId, PtDelegationStatus status) {
-        await()
-                .atMost(10, TimeUnit.SECONDS)
-                .pollInterval(5, TimeUnit.SECONDS)
-                .ignoreExceptions()
-                .untilAsserted(() -> assertThat(readAllPages(ptName, null, null, MAX_LIMIT).institutions())
-                        .as("La delega %s non risulta %s nell'elenco dell'Ente PT %s", delegationId, status, ptName)
-                        .anyMatch(institution -> paId.equals(institution.getInstitutionId())
-                                && delegationId.equals(institution.getDelegationId())
-                                && status.equals(institution.getStatus())));
+        Poller.pollUntil(
+                () -> readInstitutionsIgnoringErrors(ptName),
+                institutions -> institutions.stream().anyMatch(institution -> paId.equals(institution.getInstitutionId())
+                        && delegationId.equals(institution.getDelegationId())
+                        && status.equals(institution.getStatus())),
+                DELEGATION_POLLING,
+                lastValue -> "La delega %s non risulta %s nell'elenco dell'Ente PT %s".formatted(delegationId, status, ptName));
+    }
+
+    /**
+     * Un errore di lettura non interrompe il polling: il tentativo conta come condizione non soddisfatta.
+     */
+    private List<PtInstitution> readInstitutionsIgnoringErrors(String ptName) {
+        try {
+            return readAllPages(ptName, null, null, MAX_LIMIT).institutions();
+        } catch (RuntimeException e) {
+            log.warn("Lettura elenco Enti deleganti di {} fallita, nuovo tentativo: {}", ptName, e.getMessage());
+            return List.of();
+        }
     }
 
     private DelegationRequest buildDelegationRequest(String institutionFromName, String ptName, String paId, String ptId) {
