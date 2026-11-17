@@ -161,62 +161,63 @@ public class EServiceCatalogListingSteps {
     @When("l'utente richiede una operazione di listing sul catalogo compatto")
     public void requireCompactEServiceCatalogList() {
         requireCompactEServiceCatalog(0, 12, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, null, null);
+                null, null, null, null, null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto limitata ai primi {int} e-services")
     public void requireCompactEServiceCatalogListWithLimit(int limit) {
         requireCompactEServiceCatalog(0, limit, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, null, null);
+                null, null, null, null, null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto con offset {int}")
     public void requireCompactEServiceCatalogListWithOffset(int offset) {
         requireCompactEServiceCatalog(offset, 12, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, null, null);
+                null, null, null, null, null);
     }
 
     @When("l'utente richiede la lista del catalogo compatto per gli e-services per i quali ha almeno un agreement attivo")
     public void requireCompactEServiceListWithActiveAgreement() {
         requireCompactEServiceCatalog(0, 12, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                List.of(AgreementState.ACTIVE), null, null, null);
+                null, List.of(AgreementState.ACTIVE), null, null, null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword {string}")
     public void requireCompactEServiceCatalogListByKeyword(String keyword) {
         requireCompactEServiceCatalog(0, 12,
                 String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, null, null);
+                null, null, null, null, null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per modalità {string}")
     public void requireCompactEServiceCatalogListByMode(String mode) {
-        requireCompactEServiceCatalog(0, 200, null,
-                List.of(EServiceDescriptorState.PUBLISHED),
-                null, EServiceMode.valueOf(mode), null, null);
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, EServiceMode.valueOf(mode), null, null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per isConsumerDelegable {string}")
     public void requireCompactEServiceCatalogListByConsumerDelegable(String isConsumerDelegable) {
         requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, Boolean.valueOf(isConsumerDelegable), null);
+                null, null, null, Boolean.valueOf(isConsumerDelegable), null);
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData {string}")
     public void requireCompactEServiceCatalogListByPersonalData(String personalData) {
         requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
-                List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED),
-                null, null, null, PersonalDataFilter.fromValue(personalData));
+                null, null, null, null, PersonalDataFilter.fromValue(personalData));
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati {string}")
     public void requireCompactEServiceCatalogListByStates(String states) {
+        List<EServiceDescriptorState> stateFilters = java.util.Arrays.stream(states.split(","))
+                .map(String::trim)
+                .map(EServiceDescriptorState::valueOf)
+                .toList();
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()), stateFilters, null, null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati {string} senza filtro sul nome")
+    public void requireCompactEServiceCatalogListByStatesWithoutNameFilter(String states) {
         List<EServiceDescriptorState> stateFilters = java.util.Arrays.stream(states.split(","))
                 .map(String::trim)
                 .map(EServiceDescriptorState::valueOf)
@@ -242,10 +243,7 @@ public class EServiceCatalogListingSteps {
 
     @Then("^il risultato del catalogo compatto (include|non include) gli e-service con id \"([^\"]*)\"$")
     public void verifyCompactCatalogEServiceIds(String operation, String eServiceIds) {
-        List<UUID> expectedEserviceIds = java.util.Arrays.stream(eServiceIds.split(","))
-                .map(String::trim)
-                .map(catalogResolver::resolveEServiceId)
-                .toList();
+        List<UUID> expectedEserviceIds = catalogResolver.resolveEServiceIds(eServiceIds);
 
         ResponseEntity<CompactCatalogEServices> response =
                 (ResponseEntity<CompactCatalogEServices>) httpExecutor.getResponse();

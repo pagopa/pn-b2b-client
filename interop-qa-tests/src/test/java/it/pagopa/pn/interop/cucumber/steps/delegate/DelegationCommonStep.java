@@ -22,6 +22,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.DelegationAvailabilityStrategy.producerStrategyUsing;
 import static org.apache.commons.lang3.ObjectUtils.allNull;
@@ -125,12 +126,15 @@ public class DelegationCommonStep {
         clientTokenConfigurator.setBearerToken(identityService.getToken(producer, null));
 
         if (createEService) {
+            String eserviceName = String.format("e-service-%d-%d",
+                    sharedStepsContext.getTestSeed(),
+                    ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
             // Il delegante crea l'e-service e vi associa un'interfaccia
             CatalogCommonSteps.createEServiceWithDescriptor(
                 "DRAFT",
                 dataPreparationService,
                 sharedStepsContext.getEServicesCommonContext(),
-                new EServiceSeed(), new UpdateEServiceDescriptorSeed());
+                new EServiceSeed().name(eserviceName), new UpdateEServiceDescriptorSeed());
         }
 
         // Il associa un'interfaccia all'e-service

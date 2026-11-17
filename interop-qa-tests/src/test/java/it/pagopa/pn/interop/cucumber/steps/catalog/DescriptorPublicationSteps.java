@@ -17,6 +17,7 @@ import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPrepara
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
@@ -71,8 +72,11 @@ public class DescriptorPublicationSteps {
 
     private void createEServiceModeAndState(String tenantType, String mode, String eServiceDescriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)),
+                new EServiceSeed().name(eserviceName).mode(EServiceMode.fromValue(mode)),
                 new UpdateEServiceDescriptorSeed()
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
@@ -115,8 +119,14 @@ public class DescriptorPublicationSteps {
 
     private void createEServiceModeStatePersonalData(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
+                new EServiceSeed()
+                        .name(eserviceName)
+                        .mode(EServiceMode.fromValue(mode))
+                        .personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
                 new UpdateEServiceDescriptorSeed()
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();

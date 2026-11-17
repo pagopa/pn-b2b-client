@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 
@@ -94,7 +95,13 @@ public class CatalogCommonSteps {
 
     private void createEService(String tenantType, EServiceState eServiceState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), eServiceState);
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(
+                new EServiceSeed().name(eserviceName),
+                new UpdateEServiceDescriptorSeed(),
+                eServiceState);
         sharedStepsContext.getEServicesCommonContext().registerCreatedEService(eServiceDescriptor, eServiceState.getValue());
     }
 
