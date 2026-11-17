@@ -64,6 +64,10 @@ import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsRea
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -306,7 +310,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerSkipSenderLimitService.class,
         IoMockScenarioContext.class,
         TransformedDocumentService.class,
-        DocumentTagsService.class
+        DocumentTagsService.class,
+        NotificheBonarieFatturazioneScenarioContext.class,
+        InternalTimelineService.class,
+        InvoicingRecordService.class,
+        NotificationCostExpectations.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -11,6 +11,8 @@ public enum DynamoTableName {
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
     NOTIFICATION_REWORKS("pn-NotificationReworks"),
     REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing"),
+    TIMELINES_FOR_INVOICING("pn-TimelinesForInvoicing"),
+    INFORMAL_TIMELINES_FOR_INVOICING("pn-InformalTimelinesForInvoicing"),
     COST_COMPONENTS("pn-CostComponents"),
     COST_UPDATE_RESULT("pn-CostUpdateResult"),
     USER_ATTRIBUTES("pn-UserAttributes"),
