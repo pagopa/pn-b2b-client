@@ -548,6 +548,25 @@ public class SharedSteps {
         }
     }
 
+    @When("la notifica viene inviata dal {string} con downstream spento")
+    public void laNotificaVieneInviataConDownstreamSpento(String paName) {
+        setPaAndSenderTaxId(paName);
+        try {
+            getNotificationStepInterface().uploadNotification(null);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Then("la notifica fallisce con status code {string}")
+    public void laNotificaFallisceConStatusCode(String statusCode) {
+        Assertions.assertNotNull(this.notificationError);
+        Assertions.assertEquals(Integer.parseInt(statusCode), this.notificationError.getStatusCode().value());
+    }
+
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED per controllo GPD")
     public void laNotificaVieneInviataOkGPD(String paName) {
         setPaAndSenderTaxId(paName);
