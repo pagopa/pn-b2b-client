@@ -31,15 +31,34 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
     When l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT1"
     And l'Ente PT "PT1" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
     Then l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
+      #################### CDT 1.2 - ENTE PA NON ADERENTE ####################
 
-  #################### CDT 1.2 - ENTE PA NON ADERENTE ####################
-
-  # Precondizione: "Comune di Castagnero" esiste su SelfCare ma non ha aderito a SEND
   @ptEntiDeleganti @work-item:QA-18530
   Scenario: [PT-ENTI-DELEGANTI_1.2] Un Ente PA presente su SelfCare ma non aderente a SEND conferisce la delega all'Ente PT.
   La delega viene scartata: anche dopo l'attesa della propagazione, l'Ente PA non compare nell'elenco degli Enti deleganti dell'Ente PT
     When l'Ente PA "Comune di Castagnero" conferisce la delega all'Ente PT "PT1"
     Then dopo 1 minuti l'Ente PA "Comune di Castagnero" non compare nell'elenco degli Enti deleganti dell'Ente PT "PT1"
+
+  #################### CDT 2.1 - STORICO DELLE VARIAZIONI ####################
+
+  @ptEntiDeleganti @work-item:QA-18530
+  Scenario: [PT-ENTI-DELEGANTI_2.1_E] L'Ente PA revoca la delega e in un momento successivo ne conferisce una nuova allo stesso Ente PT.
+  SEND conserva entrambe le variazioni nello storico, ma nell'elenco degli Enti deleganti mostra solo la più recente
+    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT1"
+    And l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT1"
+    When l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT1"
+    Then nella tabella delle deleghe dell'Ente PT "PT1" gli ultimi due record dell'Ente PA "Comune_Multi" hanno stato "ACTIVE" e "DELETED", dal più recente, in date diverse
+    And il record più recente riguarda la nuova delega e quello precedente la delega revocata
+    And l'Ente PT "PT1" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
+    And l'Ente PA "Comune_Multi" compare una sola volta con stato "ACTIVE" e l'identificativo della delega creata
+
+  @ptEntiDeleganti @work-item:QA-18530
+  Scenario: [PT-ENTI-DELEGANTI_2.1_G] L'Ente PA revoca la delega conferita all'Ente PT.
+  SEND aggiunge la revoca allo storico senza cancellare la variazione di creazione della delega
+    Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT1"
+    When l'Ente PA "Comune_Multi" revoca la delega per l'Ente PT "PT1"
+    Then nella tabella delle deleghe dell'Ente PT "PT1" gli ultimi due record dell'Ente PA "Comune_Multi" hanno stato "DELETED" e "ACTIVE", dal più recente, in date diverse
+    And i due record riguardano la delega creata
 
   #################### CDT 3.3 - VALORI NON VALIDI ####################
 

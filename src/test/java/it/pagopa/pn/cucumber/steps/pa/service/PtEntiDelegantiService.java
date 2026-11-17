@@ -8,7 +8,9 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.regis
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitutionsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.selfcaredelegationstest.model.DelegationRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.selfcaredelegationstest.model.DelegationResponse;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnPtInstitutionsClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnSelfcareDelegationsClient;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +45,13 @@ public class PtEntiDelegantiService {
     private final IPnPtInstitutionsClient ptInstitutionsClient;
     private final IPnSelfcareDelegationsClient selfcareDelegationsClient;
     private final SenderInfoProvider senderInfoProvider;
+    private final DynamoDbService dynamoDbService;
 
     @Value("${pn.external.pt.pa-non-aderente.id}")
     private String paNonAderenteId;
 
     private final Map<String, String> delegationIds = new HashMap<>();
+    private final Map<String, String> previousDelegationIds = new HashMap<>();
 
     public record AllPages(List<PtInstitution> institutions, PtInstitutionsResponse lastPage) {
     }
@@ -76,7 +82,10 @@ public class PtEntiDelegantiService {
         if (activeDelegationId != null)
             selfcareDelegationsClient.deleteDelegation(activeDelegationId);
         String delegationId = selfcareDelegationsClient.createDelegation(buildDelegationRequest(institutionFromName, ptName, paId, ptId)).getId();
-        delegationIds.put(delegationKey(paName, ptName), delegationId);
+        String key = delegationKey(paName, ptName);
+        if (delegationIds.containsKey(key))
+            previousDelegationIds.put(key, delegationIds.get(key));
+        delegationIds.put(key, delegationId);
         log.info("Delega {} conferita: {} -> {}", delegationId, paName, ptName);
         return delegationId;
     }
@@ -104,6 +113,44 @@ public class PtEntiDelegantiService {
 
     public String getDelegationId(String paName, String ptName) {
         return delegationIds.get(delegationKey(paName, ptName));
+    }
+
+    /**
+     * Delega conferita prima dell'ultima nello scenario corrente (null se nello scenario ne è stata conferita una sola).
+     */
+    public String getPreviousDelegationId(String paName, String ptName) {
+        return previousDelegationIds.get(delegationKey(paName, ptName));
+    }
+
+    /**
+     * Storico delle variazioni della delega PA→PT letto da pn-PtDelegations, dalla più recente.
+     */
+    public List<PtDelegationRecord> getDelegationHistory(String paName, String ptName) {
+        String paId = getPaInstitutionId(paName);
+        List<PtDelegationRecord> history = dynamoDbService.callAllPages(DynamoTableName.PT_DELEGATIONS, Map.of(
+                        ":v_ptId", AttributeValue.builder().s(ptInstitutionsClient.getPtCxId(ptName)).build()))
+                .stream()
+                .map(PtDelegationRecord::from)
+                .filter(delegationRecord -> paId.equals(delegationRecord.institutionId()))
+                .sorted(Comparator.comparing(PtDelegationRecord::lastChangeAt, Comparator.nullsFirst(Comparator.naturalOrder())).reversed())
+                .toList();
+        log.info("{} - storico delega {} -> {}: {}", DynamoTableName.PT_DELEGATIONS.getValue(), paName, ptName, history);
+        return history;
+    }
+
+    /**
+     * Attende che le ultime due variazioni della delega PA→PT abbiano gli stati attesi e le restituisce, dalla più recente.
+     */
+    public List<PtDelegationRecord> awaitLastTwoDelegationRecords(String paName, String ptName, String newerStatus, String olderStatus) {
+        List<PtDelegationRecord> history = Poller.pollUntil(
+                () -> getDelegationHistory(paName, ptName),
+                records -> records.size() >= 2
+                        && newerStatus.equals(records.get(0).status())
+                        && olderStatus.equals(records.get(1).status()),
+                DELEGATION_POLLING,
+                lastValue -> "Le ultime due variazioni della delega %s -> %s non hanno stato %s e %s: %s"
+                        .formatted(paName, ptName, newerStatus, olderStatus, lastValue));
+        return history.subList(0, 2);
     }
 
     public String getPaInstitutionId(String paName) {
