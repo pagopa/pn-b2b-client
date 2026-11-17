@@ -28,8 +28,8 @@ import java.util.Map;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
-    public static final String PT_A = "PT_A";
-    public static final String PT_B = "PT_B";
+    public static final String PT1 = "PT1";
+    public static final String PT2 = "PT2";
     public static final String PT_SENZA_DELEGHE = "PT_SENZA_DELEGHE";
 
     private static final String PT_INSTITUTIONS_PATH = "/ext-registry-private/pt/v1/institutions";
@@ -40,8 +40,8 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
     private final InfoPtApi infoPtApi;
 
     // TODO: placeholder, valorizzare le properties con i cx-id dei Partner Tecnologici di test
-    private final String ptACxId;
-    private final String ptBCxId;
+    private final String pt1CxId;
+    private final String pt2CxId;
     private final String ptSenzaDelegheCxId;
     private final String pnUid;
 
@@ -51,18 +51,18 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
 
     public PnPtInstitutionsClientImpl(RestTemplate restTemplate,
                                       @Value("${pn.external.registry.base-url:${pn.delivery.base-url}}") String basePath,
-                                      @Value("${pn.external.pt.cx-id.pt-a}") String ptACxId,
-                                      @Value("${pn.external.pt.cx-id.pt-b}") String ptBCxId,
+                                      @Value("${pn.external.pt.cx-id.pt1}") String pt1CxId,
+                                      @Value("${pn.external.pt.cx-id.pt2}") String pt2CxId,
                                       @Value("${pn.external.pt.uid}") String pnUid,
                                       @Value("${pn.external.pt.cx-id.pt-senza-deleghe}") String ptSenzaDelegheCxId) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
-        this.ptACxId = ptACxId;
-        this.ptBCxId = ptBCxId;
+        this.pt1CxId = pt1CxId;
+        this.pt2CxId = pt2CxId;
         this.pnUid = pnUid;
         this.ptSenzaDelegheCxId = ptSenzaDelegheCxId;
         this.infoPtApi = new InfoPtApi(newApiClient(restTemplate, basePath));
-        setPt(PT_A);
+        setPt(PT1);
     }
 
     // le API internal non richiedono bearer token: l'identita' e' veicolata dagli header cx-*
@@ -81,8 +81,8 @@ public class PnPtInstitutionsClientImpl implements IPnPtInstitutionsClient {
     @Override
     public String getPtCxId(String ptName) {
         return switch (ptName.toUpperCase()) {
-            case PT_A -> ptACxId;
-            case PT_B -> ptBCxId;
+            case PT1 -> pt1CxId;
+            case PT2 -> pt2CxId;
             case PT_SENZA_DELEGHE -> ptSenzaDelegheCxId;
             default -> throw new IllegalArgumentException("Ente PT non gestito: " + ptName);
         };
