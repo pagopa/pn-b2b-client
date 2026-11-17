@@ -3036,7 +3036,7 @@
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                                 <typeMapping>file=org.springframework.core.io.Resource</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/bf6b91b8f9c33041016feb39ed4252beb75d7750/docs/openapi/pn-pt-internal-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/refs/heads/develop/docs/openapi/pn-pt-internal-v1.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
