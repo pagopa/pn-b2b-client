@@ -45,6 +45,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
+import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.externalChannel.builders.PaperEngageRequestBuilder;
@@ -284,6 +285,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
+        PnPtInstitutionsClientImpl.class,
+        PnSelfcareDelegationsClientImpl.class,
+        PtEntiDelegantiService.class,
         OtpCodeService.class,
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,
