@@ -59,6 +59,7 @@ import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
+import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsReader;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
@@ -276,6 +277,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperEngageRequestBuilder.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
+        TimelineDetailsReader.class,
         AwsConfig.class,
         SenderInfoProvider.class,
         DestinatarioRegistry.class,
