@@ -73,8 +73,8 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
   #################### CDT 3.5 - ISOLAMENTO TRA PT ####################
 
   @ptEntiDeleganti @work-item:QA-18530
-  Scenario: [PT-ENTI-DELEGANTI_12] L'Ente PT A richiede l'elenco dei propri Enti deleganti, mentre altri Enti PA hanno delegato l'Ente PT B.
-  Il servizio restituisce solo gli Enti PA che hanno delegato l'Ente PT A e nessuno di quelli che hanno delegato l'Ente PT B
+  Scenario: [PT-ENTI-DELEGANTI_12] L'Ente PT 1 richiede l'elenco dei propri Enti deleganti, mentre altri Enti PA hanno delegato l'Ente PT 2.
+  Il servizio restituisce solo gli Enti PA che hanno delegato l'Ente PT 1 e nessuno di quelli che hanno delegato l'Ente PT 2
     Given l'Ente PA "Comune_Multi" crea una delega per l'Ente PT "PT1"
     And l'Ente PA "Comune_2" crea una delega per l'Ente PT "PT2"
     When l'Ente PT "PT1" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
