@@ -16,13 +16,13 @@ Feature: pn-paper-tracker - allegati non conformi alla macchina a stati corretti
     Then viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002A  | M05                  |              |              |
-    Then viene invocato il consolidatore con i seguenti dati:
+    And viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002B  |                      | AR           |              |
-    Then viene invocato il consolidatore con i seguenti dati:
+    And viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002B  |                      | Plico        |              |
-    Then viene invocato il consolidatore con i seguenti dati:
+    And viene invocato il consolidatore con i seguenti dati:
       | productType | attemptId | pcRetry   | recIndex   | statusCode | deliveryFailureCause | attachment_1 | attachment_2 |
       | AR          | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002C  |                      |              |              |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
