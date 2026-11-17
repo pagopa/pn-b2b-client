@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -37,6 +38,7 @@ public class PtEntiDelegantiSteps {
     private static final String TOKEN_VUOTO = "@vuoto";
     private static final String TOKEN_LUNGHEZZA = "@lunghezza_";
     private static final int MAX_LIMIT = 50;
+    private static final long SCENARIO_PADDING_SECONDS = 10;
 
     private final PtEntiDelegantiService ptEntiDelegantiService;
     private final SharedSteps sharedSteps;
@@ -52,6 +54,12 @@ public class PtEntiDelegantiSteps {
     public PtEntiDelegantiSteps(PtEntiDelegantiService ptEntiDelegantiService, SharedSteps sharedSteps) {
         this.ptEntiDelegantiService = ptEntiDelegantiService;
         this.sharedSteps = sharedSteps;
+    }
+
+    @After("@ptEntiDeleganti")
+    public void paddingAfterScenario() {
+        log.info("Padding di {}s prima del prossimo scenario PtEntiDeleganti", SCENARIO_PADDING_SECONDS);
+        SharedSteps.threadWait((int) TimeUnit.SECONDS.toMillis(SCENARIO_PADDING_SECONDS));
     }
 
     @Given("l'Ente PA {string} crea una delega per l'Ente PT {string}")
