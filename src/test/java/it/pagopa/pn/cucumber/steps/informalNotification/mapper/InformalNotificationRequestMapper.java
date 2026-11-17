@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.mapper;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import org.springframework.stereotype.Component;
 

@@ -6,25 +6,25 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo OLD
     Examples:
       | taxId            |
-      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null;esponente1=null
       | GNVGCM97E04L781N |
-      #toponimo!=null;numeroCivico=null
+      #toponimo!=null;numeroCivico=null;esponente1=null
       | JNOFBN86B05L781H |
-      #toponimo=null;numeroCivico=null;
+      #toponimo=null;numeroCivico=null;esponente1=null
       | BLLBBR95D46L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1=C
       | PRZPLA89E02L781K |
-      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1=C
       | BRNBNN92S02L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1=CAD
       | LNNLNZ02L27L781Z |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2="";esponente1=null
       | QDRQMD99C20L781Y |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null;esponente1=null
       | JRIJNN05A01L781M |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null;esponente1=null
       | RZORNZ95C11L781S |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null;esponente1=null
       | RGHLVC01H09H501K |
 
   @AdeguamentoIndirizzoANPR_Minimal
@@ -33,25 +33,25 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo MINIMAL
     Examples:
       | taxId            |
-      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null;esponente1=null
       | GNVGCM97E04L781N |
-      #toponimo!=null;numeroCivico=null
+      #toponimo!=null;numeroCivico=null;esponente1=null
       | JNOFBN86B05L781H |
-      #toponimo=null;numeroCivico=null;
+      #toponimo=null;numeroCivico=null;esponente1=null
       | BLLBBR95D46L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1=C
       | PRZPLA89E02L781K |
-      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1=C
       | BRNBNN92S02L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1=CAD
       | LNNLNZ02L27L781Z |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2="";esponente1=null
       | QDRQMD99C20L781Y |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null;esponente1=null
       | JRIJNN05A01L781M |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null;esponente1=null
       | RZORNZ95C11L781S |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null;esponente1=null
       | RGHLVC01H09H501K |
 
 
@@ -61,25 +61,25 @@ Feature: Adeguamento Indirizzo ANPR (SRS: https://pagopa.atlassian.net/wiki/spac
     Then si verifica che l'indirizzo sia correttamente formattato secondo le logiche dell'algoritmo FULL
     Examples:
       | taxId            |
-      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null
+      #toponimo=null;numeroCivico!=null;colore=1;corte!=null;scala!=null;scalaEsterna!=null;esponente1=null
       | GNVGCM97E04L781N |
-      #toponimo!=null;numeroCivico=null
+      #toponimo!=null;numeroCivico=null;esponente1=null
       | JNOFBN86B05L781H |
-      #toponimo=null;numeroCivico=null;
+      #toponimo=null;numeroCivico=null;esponente1=null
       | BLLBBR95D46L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera=null;metrico>0;esponente1=C
       | PRZPLA89E02L781K |
-      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie=null;numero=null;lettera!=null;metrico=0;progSnc>0;scala!=null;colore=3;esponente1=C
       | BRNBNN92S02L781R |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;progSnc>0;scala!=null;colore>5;esponente1=CAD
       | LNNLNZ02L27L781Z |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2=""
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=3;interno1!=null;interno2="";esponente1=null
       | QDRQMD99C20L781Y |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;interno1="";interno2!=null;esponente1=null
       | JRIJNN05A01L781M |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=1;interno1!=null;interno2!=null;esponente1=null
       | RZORNZ95C11L781S |
-      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null
+      #toponimo!=null;numeroCivico!=null;specie!=null;numero!=null;lettera!=null;metrico=lettera;colore=5;isolato!=null;esponente1=null
       | RGHLVC01H09H501K |
 
   @AdeguamentoIndirizzoANPR_Old_UAT
