@@ -60,7 +60,6 @@ public class LambdaInvoker {
         return lambdaClient;
     }
 
-
     public String invokeMyLambda(String functionName, String payload) {
         InvokeRequest request = InvokeRequest.builder()
                 .functionName(functionName)
@@ -73,27 +72,34 @@ public class LambdaInvoker {
 
     public <T> T invokeMyLambda(String functionName, Object payload, Class<T> bodyClass) {
         try {
-            String payloadJson = payload instanceof String s
-                    ? s
-                    : objectMapper.writeValueAsString(payload);
+            String payloadJson = payload instanceof String s ? s : objectMapper.writeValueAsString(payload);
 
             String rawResponse = invokeMyLambda(functionName, payloadJson);
 
             JsonNode root = objectMapper.readTree(rawResponse);
-            int statusCode = root.path("statusCode").asInt(-1);
 
-            JsonNode body = root.path("body");
+            // Compatibilità con lambda che restituiscono:
+            // {
+            //   "statusCode": 200,
+            //   "body": ...
+            // }
+            if (root.has("statusCode")) {
 
-            if (statusCode != 200) {
-                String bodyText = body.isTextual() ? body.asText() : body.toString();
-                throw new RuntimeException("Lambda failed: " + bodyText);
+                int statusCode = root.path("statusCode").asInt(-1);
+                JsonNode body = root.path("body");
+
+                if (statusCode != 200) {
+                    String bodyText = body.isTextual() ? body.asText() : body.toString();
+
+                    throw new RuntimeException("Lambda failed: " + bodyText);
+                }
+                if (body.isTextual()) {
+                    return objectMapper.readValue(body.asText(), bodyClass);
+                }
+                return objectMapper.treeToValue(body, bodyClass);
             }
-
-            if (body.isTextual()) {
-                return objectMapper.readValue(body.asText(), bodyClass);
-            }
-
-            return objectMapper.treeToValue(body, bodyClass);
+            // Compatibilità con lambda che restituiscono direttamente il DTO
+            return objectMapper.treeToValue(root, bodyClass);
 
         } catch (Exception e) {
             throw new RuntimeException(
