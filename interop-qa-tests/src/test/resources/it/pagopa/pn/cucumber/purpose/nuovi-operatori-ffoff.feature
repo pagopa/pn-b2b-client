@@ -29,7 +29,7 @@ Feature: Funzionalità della feature Nuovi Operatori in caso di feature flag dis
 	And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
 	And "PA2" ha già creato 1 finalità in stato "DRAFT" per quell'eservice
 	And l'utente è un "admin" di "PA2"
-	And l'utente acquisisce la versione dei metadati della finalità da convalidare
+    Given l'utente acquisisce la finalità e la versione dei metadati per la convalida
 	And l'utente è un "reviewer" di "PA2"
 	When l'utente convalida l'analisi del rischio della finalità
 	Then si ottiene status code 501
@@ -47,3 +47,4 @@ Feature: Funzionalità della feature Nuovi Operatori in caso di feature flag dis
 	Given l'utente è un "reviewer" di "PA2"
 	When tenta di interrogare l'endpoint delle assegnazioni del valutatore senza filtri
 	Then si ottiene status code 501
+

@@ -1,4 +1,4 @@
-@m2m-events @nuovi-operatori
+@m2m-events @nuovi-operatori @happy-path
 Feature: Eventi Nuovi Operatori
   # OK ticket chiuso https://pagopa.atlassian.net/browse/PIN-10410
   # PST: Scenario 11 - Caso 11.2

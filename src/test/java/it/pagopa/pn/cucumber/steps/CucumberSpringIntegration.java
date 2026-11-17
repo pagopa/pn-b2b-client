@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.cucumber.steps.config.SendHttpCallExecutorConfiguration;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
@@ -45,17 +46,23 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
+import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
+import it.pagopa.pn.cucumber.steps.externalChannel.builders.PaperEngageRequestBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
+import it.pagopa.pn.cucumber.steps.pa.service.DocumentTagsService;
+import it.pagopa.pn.cucumber.steps.pa.service.TransformedDocumentService;
+import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
+import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsReader;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
@@ -69,6 +76,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
+        SendHttpCallExecutorConfiguration.class,
         JacksonAutoConfiguration.class,
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
@@ -269,14 +277,19 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerCsvLoader.class,
         DelayerPlanner.class,
         PnExternalChannelsInternalClientImpl.class,
+        PaperEngageRequestBuilder.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
+        TimelineDetailsReader.class,
         AwsConfig.class,
         SenderInfoProvider.class,
         DestinatarioRegistry.class,
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
+        PnPtInstitutionsClientImpl.class,
+        PnSelfcareDelegationsClientImpl.class,
+        PtEntiDelegantiService.class,
         OtpCodeService.class,
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,
@@ -292,8 +305,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificationSearchCriteriaMapper.class,
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
-        PnPaB2bExternalInformalClientImpl.class,
         DelayerSkipSenderLimitService.class,
+        TransformedDocumentService.class,
+        DocumentTagsService.class,
         PortfatControlLambdaClient.class,
         IoMockScenarioContext.class
 })

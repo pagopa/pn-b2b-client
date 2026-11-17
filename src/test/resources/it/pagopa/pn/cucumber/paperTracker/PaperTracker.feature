@@ -1,3 +1,5 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1, 2.1, 2.2 e 3.1; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
 
   @paperTrackerAR
@@ -95,7 +97,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
-    And si verifica che la risposta tracking per la sequence "DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
+    And si verifica che la risposta tracking per la sequence "FAIL-DiscoveryIrreperibile_AR" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "FAIL-DiscoveryIrreperibile_AR"
 
   @paperTrackerAR
@@ -293,7 +295,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                     | physicalAddress                  |
       | OK_AR                        | Via@ok_AR                        |
@@ -341,7 +343,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "OK_AR_NOT_ORDERED"
     And si verifica che la risposta tracking per la sequence "OK_AR_NOT_ORDERED" contenga tutti gli elementi attesi e che sia strutturalmente valida
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK_AR_NOT_ORDERED"
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -389,7 +391,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
     And si verifica che la risposta tracking per la sequence "<sequence>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                      |
       | OK_RIR                        |
