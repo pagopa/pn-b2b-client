@@ -2,62 +2,66 @@ Feature: Censimento stime mittenti
 
   Scenario: [CHECK_PORTFAT_DATA_PREPARATION] Caricamento delle commesse necessarie per soddisfare i pre requisiti dei tst.
 #**************** SCENARIO 1 MESE SPECIFICATO *****************
-# 	  	 x= marzo_20 (1.1A) MonthSent=2020_03   OrderMonth=2020_07
+# 	  	 x= marzo_20 (1.1A) MonthSent=2020-03   OrderMonth=2020_07
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_20.zip" anno 2020 mese 7
-#		x= febbraio_20 (1.1B)
+#		x= febbraio_20 (1.1B) MonthSent=2020-02
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_20.zip" anno 2020 mese 3
-# 		x= gennaio_20 (1.2A)
+# 		x= gennaio_20 (1.2A) MonthSent=2020-01
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_20.zip" anno 2020 mese 2
-#		x= gennaio_20 (1.2A)
+#		x= gennaio_20 (1.2A) MonthSent=2020-01
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_20.zip" anno 2020 mese 5
-#        x= novembre_20 (1.2C)
+#        x= novembre_20 (1.2C) MonthSent=2020-11
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_20.zip" anno 2020 mese 12
-#		x= novembre_20 (1.2C)
+#		x= novembre_20 (1.2C) MonthSent=2020-11
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_21.zip" anno 2021 mese 3
-#        x= novembre_20 (1.2B)
+#        x= novembre_20 (1.2B) MonthSent=2020-12
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_gennaio_21.zip" anno 2021 mese 1
-#		x= novembre_20 (1.2B)
+#		x= novembre_20 (1.2B) MonthSent=2020-12
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_21.zip" anno 2021 mese 4
+
 #**************** SCENARIO 2 DUPLICATI *****************
-#     x= aprile (2.1A) x= luglio (2.1B)
+#     x= aprile (2.1A) MonthSent=2020-04
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
-#     x= luglio (2.1B)
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_20.zip" anno 2020 mese 5
+#     x= luglio (2.1B) MonthSent=2020-07
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_20.zip" anno 2020 mese 8
+  #     x= luglio (2.1B) MonthSent=2020-07
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_novembre_20.zip" anno 2020 mese 11
-#     x= gennaio_23 (2.1C) MonthSent=2023_01
-    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
-#		MonthSent=2023_05
-    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 3
+#     x= gennaio_23 (2.1C) MonthSent=2023-01
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_febbraio_23.zip" anno 2023 mese 2
+#		x= gennaio_23 (2.1C) MonthSent=2023-01
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_23.zip" anno 2023 mese 5
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_23.zip" anno 2023 mese 5
 #**************** SCENARIO 3 STATI DIVERSI DA COMPLETATO ********
-##    	x = Febbraio 2022 (3.1A) #stato non completato.
+##    	x = Febbraio 2022 (3.1A) MonthSent=2022-02 #stato non completato.
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_giugno_22.zip" anno 2022 mese 6
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_22.zip" anno 2022 mese 3
-#     	x = Marzo 2022 (3.1B)
+#     	x = Marzo 2022 (3.1B) MonthSent=2022-03
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_luglio_22.zip" anno 2022 mese 7
     #stato non completato.
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_22.zip" anno 2022 mese 4
-#   	X = Aprile 2022 (3.1C)
+#   	X = Aprile 2022 (3.1C) MonthSent=2022-04
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_22.zip" anno 2022 mese 5
     #stato non completato.
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_agosto_22.zip" anno 2022 mese 8
 #**************** SCENARIO 4 MESE CORRENTE ********
-#     x= Novembre_26 mese corrente (4.1)
+#     x= Novembre_26 mese corrente (4.1) MonthSent=2026-11
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_dicembre_26.zip" anno 2026 mese 12
-    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2026 mese 3
+    And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2027 mese 3
 
 #     x= novembre_26 mese corrente (4.2)
 #    	Eliminare "_dicembre_26.zip"
-#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2026 mese 3
+#    Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_marzo_27.zip" anno 2027 mese 3
 
-# Non presenti: Aprile, Giugno, Ottobre 2020
-
+# Non devono essere presenti: Aprile, Giugno, Ottobre 2020
 
 # aprile n , Luglio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del mese succssivo.
+  siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del mese successivo.
     When eseguo la lambda sender order check per il mese "2020-03"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
@@ -66,7 +70,7 @@ Feature: Censimento stime mittenti
 # Marzo s , giugno n
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del quarto mese succssivo.
+  siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del quarto mese successivo.
     When eseguo la lambda sender order check per il mese "2020-02"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
@@ -80,26 +84,26 @@ Feature: Censimento stime mittenti
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
       | X+1 (2020-06) |
-      | X+4 (2020-10) |
+      | X+4 (2020-09) |
 
 # Febbraio s, Maggio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_2_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le commesse per entrambi i mesi necessari.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-01"
     Then il risultato del controllo è "OK"
 
-#se novembre -> dicembre s , marzo_27 s
+#se novembre -> dicembre s , marzo s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_2_C] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le commesse per entrambi i mesi necessari.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-11"
     Then il risultato del controllo è "OK"
 
-#se dicembre -> gennaio s , aprile_27 s
+#se dicembre -> gennaio s , aprile s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_01_2_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le commesse per entrambi i mesi necessari.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check per il mese "2020-12"
     Then il risultato del controllo è "OK"
 
@@ -110,21 +114,21 @@ Feature: Censimento stime mittenti
 # maggio s , agosto x2
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2020-04"
     Then il risultato del controllo è "OK"
 
 # agosto x2  , novembre s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le comesse per entrambi i mesi necessari anche se duplicati.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2020-07"
     Then il risultato del controllo è "OK"
 
  # febbraio x2, maggio s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_02_1_C] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese dato in input, il test da esito postivo in quanto presenti le comesse per entrambi i mesi necessari anche se duplicati.
+  siano caricate le commesse del mese dato in input, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari anche se duplicati.
     When eseguo la lambda sender order check per il mese "2023-01"
     Then il risultato del controllo è "OK"
 
@@ -132,14 +136,14 @@ Feature: Censimento stime mittenti
 # **** Mese corrente - nessun parametro in input
 #***********************************************
 
-  #se novembre -> dicembre s , marzo_27 s
+  #se novembre -> dicembre s , marzo s
   @lambdaCheckPortFat
   Scenario: [CHECK_PORTFAT_04_1] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
-  siano caricate le commesse del mese in corso, il test da esito postivo in quanto presenti le comesse per entrambi i mesi necessari.
+  siano caricate le commesse del mese in corso, il test da esito positivo in quanto presenti le commesse per entrambi i mesi necessari.
     When eseguo la lambda sender order check
     Then il risultato del controllo è "OK"
 
-  #se novembre -> dicembre s , marzo_27 n
+  #se novembre -> dicembre s , marzo n
   #@lambdaCheckPortFat @ignore
   Scenario: [CHECK_PORTFAT_04_2] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese in corso, il test da esito negativo per mancanza di una commessa necessaria.
@@ -158,7 +162,7 @@ Feature: Censimento stime mittenti
     When eseguo la lambda sender order check per il mese "2022-02"
     Then il risultato del controllo è "KO"
     And le mensilità mancanti sono
-      | X+1 (2022-06) |
+      | X+4 (2022-06) |
 
   # marzo
   @lambdaCheckPortFat
