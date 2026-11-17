@@ -9,22 +9,27 @@ import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationRequestStatusResponseV1;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV30;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequestV30;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
-import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.web.client.RestClientException;
 
+import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +38,6 @@ import java.util.stream.StreamSupport;
 import static it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain.REQUEST_REFUSED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Riservatezza dei costi: ciò che l'ente vede di una comunicazione bonaria, cioè la comunicazione letta dall'API di
@@ -49,11 +53,13 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class FatturazioneComBoRiservatezzaSteps {
+public class NotificheBonarieFatturazioneRiservatezzaSteps {
 
     private static final String NOTIFICATION_COST = "notificationCost";
     private static final Duration POLL_INTERVAL = Duration.ofSeconds(20);
     private static final Duration STREAM_TIMEOUT = Duration.ofMinutes(10);
+    private static final ParameterizedTypeReference<String> RAW_JSON = new ParameterizedTypeReference<>() {
+    };
 
     /** Lettura permissiva, per ispezionare le risposte così come arrivano. */
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -62,14 +68,15 @@ public class FatturazioneComBoRiservatezzaSteps {
             .registerModule(new JavaTimeModule())
             .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
-    private final FatturazioneComBoScenarioContext context;
+    private final NotificheBonarieFatturazioneScenarioContext context;
     private final SendSharedContext sendSharedContext;
     private final PnPaB2bInternalInformalClientImpl informalClient;
     private final PnWebhookB2bExternalClientImpl webhookClient;
+    private final SenderInfoProvider senderInfoProvider;
 
     @Given("il {string} riceve gli aggiornamenti di stato delle comunicazioni bonarie")
     public void informalStreamCreated(String sender) {
-        webhookClient.setApiKeys(apiKeyOf(sender));
+        webhookClient.setApiKeys(senderInfoProvider.getApiKeyType(sender));
         StreamCreationRequestV30 request = new StreamCreationRequestV30()
                 .title("fatturazione-combo-" + UUID.randomUUID())
                 .eventType(StreamCreationRequestV30.EventTypeEnum.TIMELINE)
@@ -94,20 +101,22 @@ public class FatturazioneComBoRiservatezzaSteps {
         assertThat(context.getStreamId()).as("Lo scenario deve creare lo stream prima dell'invio").isNotNull();
         String senderId = sendSharedContext.getInformalNotificationContext().getSenderId();
         String exposed = isRefused()
-                ? informalClient.getNotificationStatusByRequestIdAsJson(senderId, context.getNotificationRequestId())
-                : informalClient.getSentInformalNotificationSenderAsJson(senderId, context.getIun());
+                ? informalClient.getInformalNotificationRequestStatus(senderId, context.getNotificationRequestId(), RAW_JSON).getBody()
+                : informalClient.getSentInformalNotificationSender(senderId, context.getIun(), null, RAW_JSON).getBody();
         context.setExposedNotification(objectMapper.readTree(exposed));
 
-        webhookClient.setApiKeys(apiKeyOf(sender));
+        webhookClient.setApiKeys(senderInfoProvider.getApiKeyType(sender));
         String closureCategory = closureCategory();
         String[] lastEventId = {null};
-        // Nel thread dello scenario: il contesto è un bean con scope di scenario, non accessibile dal thread di polling.
-        await().pollInSameThread().pollInterval(POLL_INTERVAL).atMost(STREAM_TIMEOUT).untilAsserted(() -> {
-            readNewEvents(lastEventId, context.getExposedStreamEvents());
-            assertThat(context.getExposedStreamEvents().stream().map(e -> e.path("informalElement").path("category").asText()))
-                    .as("Lo stream %s deve ricevere la chiusura %s della comunicazione %s", context.getStreamId(), closureCategory, context.getIun())
-                    .contains(closureCategory);
-        });
+        // Poller interroga nel thread dello scenario: il contesto è un bean con scope di scenario.
+        try {
+            Poller.pollUntil(() -> readNewEvents(lastEventId, context.getExposedStreamEvents()),
+                    events -> events.stream().anyMatch(e -> closureCategory.equals(e.path("informalElement").path("category").asText())),
+                    PollingConfig.of(STREAM_TIMEOUT, POLL_INTERVAL));
+        } catch (PollingTimeoutException e) {
+            throw new AssertionError("Lo stream %s deve ricevere la chiusura %s della comunicazione %s. Eventi ricevuti: %s"
+                    .formatted(context.getStreamId(), closureCategory, context.getIun(), context.getExposedStreamEvents()), e);
+        }
         log.info("Comunicazione {}: {} eventi ricevuti sullo stream", context.getIun(), context.getExposedStreamEvents().size());
     }
 
@@ -179,10 +188,10 @@ public class FatturazioneComBoRiservatezzaSteps {
      * Consuma lo stream fino all'ultimo evento disponibile e tiene quelli della comunicazione dello scenario. L'evento
      * di rifiuto non riporta lo IUN, solo l'id della richiesta.
      */
-    private void readNewEvents(String[] lastEventId, List<JsonNode> events) throws JsonProcessingException {
+    private List<JsonNode> readNewEvents(String[] lastEventId, List<JsonNode> events) {
         JsonNode page;
         do {
-            page = objectMapper.readTree(webhookClient.consumeEventStreamV30AsJson(context.getStreamId(), lastEventId[0]));
+            page = readJson(webhookClient.consumeEventStreamV30(context.getStreamId(), lastEventId[0], RAW_JSON).getBody());
             for (JsonNode event : page) {
                 lastEventId[0] = event.path("eventId").asText();
                 if (context.getIun().equals(event.path("iun").asText())
@@ -191,15 +200,14 @@ public class FatturazioneComBoRiservatezzaSteps {
                 }
             }
         } while (page.size() > 0);
+        return events;
     }
 
-    private static SettableApiKey.ApiKeyType apiKeyOf(String sender) {
-        return switch (sender) {
-            case "Comune_1" -> SettableApiKey.ApiKeyType.MVP_1;
-            case "Comune_2" -> SettableApiKey.ApiKeyType.MVP_2;
-            case "Comune_Multi" -> SettableApiKey.ApiKeyType.GA;
-            case "Comune_Son" -> SettableApiKey.ApiKeyType.SON;
-            default -> throw new IllegalArgumentException("Ente non gestito per gli stream: " + sender);
-        };
+    private JsonNode readJson(String json) {
+        try {
+            return objectMapper.readTree(json);
+        } catch (JsonProcessingException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

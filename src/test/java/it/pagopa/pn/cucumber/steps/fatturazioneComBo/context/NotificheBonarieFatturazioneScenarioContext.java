@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ScenarioScope
-public class FatturazioneComBoScenarioContext {
+public class NotificheBonarieFatturazioneScenarioContext {
 
     /**
      * Dominio della comunicazione oggetto dello scenario.

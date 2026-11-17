@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.fatturazioneComBo.service;
 
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InternalTimelineElement;
@@ -16,10 +19,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 import java.util.function.Predicate;
-
-import static org.awaitility.Awaitility.await;
 
 /**
  * Lettura delle tabelle di fatturazione. Le tabelle sono partizionate per ente e giorno di fatturazione
@@ -77,26 +78,34 @@ public class InvoicingRecordService {
      */
     public InvoicingRecord awaitRecordOf(CommunicationDomain domain, String iun, InternalTimelineElement element) {
         LocalDate day = invoicingDay(element.timestamp());
-        AtomicReference<InvoicingRecord> found = new AtomicReference<>();
         try {
-            await().atMost(recordTimeout).pollInterval(POLL_INTERVAL).ignoreExceptions().until(() -> {
-                records(domain, element.paId(), day, iun).stream()
-                        .filter(invoicingRecord -> element.timelineElementId().equals(invoicingRecord.timelineElementId()))
-                        .findFirst()
-                        .ifPresent(found::set);
-                return found.get() != null;
-            });
-        } catch (org.awaitility.core.ConditionTimeoutException e) {
+            return Poller.pollUntil(() -> findRecordIgnoringErrors(domain, iun, element, day), Optional::isPresent,
+                    PollingConfig.of(recordTimeout, POLL_INTERVAL)).orElseThrow();
+        } catch (PollingTimeoutException e) {
             throw new AssertionError("Entro %s l'elemento %s della notifica %s non risulta su %s"
                     .formatted(recordTimeout, element.timelineElementId(), iun, domain.getInvoicingTable().getValue()), e);
         }
-        return found.get();
+    }
+
+    /** Un errore di lettura (es. tabella non ancora pronta) vale come record non ancora presente: il polling prosegue. */
+    private Optional<InvoicingRecord> findRecordIgnoringErrors(CommunicationDomain domain, String iun,
+                                                               InternalTimelineElement element, LocalDate day) {
+        try {
+            return records(domain, element.paId(), day, iun).stream()
+                    .filter(invoicingRecord -> element.timelineElementId().equals(invoicingRecord.timelineElementId()))
+                    .findFirst();
+        } catch (RuntimeException e) {
+            log.warn("Lettura di {} non riuscita, nuovo tentativo: {}", domain.getInvoicingTable().getValue(), e.getMessage());
+            return Optional.empty();
+        }
     }
 
     /**
      * Verifica che per tutta la finestra di assestamento nessun record della notifica soddisfi la condizione.
      * Se la tabella non esiste (componente non ancora rilasciato nell'ambiente) nessun record può esservi scritto:
      * la verifica è soddisfatta, così i test di non regressione girano prima e dopo il rilascio.
+     * <p>
+     * Il polling si ferma appena compare un record non atteso; esaurire la finestra senza trovarne è l'esito atteso.
      */
     public void assertNeverRecorded(CommunicationDomain domain, String paId, LocalDate invoicingDay, String iun,
                                     Predicate<InvoicingRecord> unexpected, String description) {
@@ -104,16 +113,16 @@ public class InvoicingRecordService {
             log.warn("La tabella {} non esiste in questo ambiente: nessun record può esservi scritto", domain.getInvoicingTable().getValue());
             return;
         }
-        AtomicReference<List<InvoicingRecord>> lastRead = new AtomicReference<>(List.of());
+        List<InvoicingRecord> lastRead;
         try {
-            await().during(settleWindow).atMost(settleWindow.plus(POLL_INTERVAL.multipliedBy(2))).pollInterval(POLL_INTERVAL)
-                    .until(() -> {
-                        lastRead.set(records(domain, paId, invoicingDay, iun));
-                        return lastRead.get().stream().noneMatch(unexpected);
-                    });
-        } catch (org.awaitility.core.ConditionTimeoutException e) {
-            throw new AssertionError("Su %s non deve risultare %s per la notifica %s. Record letti: %s"
-                    .formatted(domain.getInvoicingTable().getValue(), description, iun, lastRead.get()), e);
+            // Un intervallo in più perché l'ultima lettura cada a fine finestra.
+            lastRead = Poller.pollUntil(() -> records(domain, paId, invoicingDay, iun),
+                    records -> records.stream().anyMatch(unexpected),
+                    PollingConfig.of(settleWindow.plus(POLL_INTERVAL), POLL_INTERVAL));
+        } catch (PollingTimeoutException e) {
+            return;
         }
+        throw new AssertionError("Su %s non deve risultare %s per la notifica %s. Record letti: %s"
+                .formatted(domain.getInvoicingTable().getValue(), description, iun, lastRead));
     }
 }

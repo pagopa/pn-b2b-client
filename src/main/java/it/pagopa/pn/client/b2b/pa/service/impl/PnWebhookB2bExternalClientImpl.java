@@ -515,10 +515,11 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     /**
-     * Stessa chiamata di {@link #consumeEventStreamV30}, ma restituisce il body JSON così come ricevuto:
-     * serve a verificare che gli eventi non contengano campi che il modello generato scarterebbe in deserializzazione.
+     * Overload di {@link #consumeEventStreamV30(UUID, String)} con il tipo di risposta scelto dal chiamante. Con
+     * {@code String} il body resta il JSON così come ricevuto: serve a verificare che gli eventi non contengano campi
+     * che il modello generato scarterebbe in deserializzazione.
      */
-    public String consumeEventStreamV30AsJson(UUID streamId, String lastEventId) throws RestClientException {
+    public <T> ResponseEntity<T> consumeEventStreamV30(UUID streamId, String lastEventId, ParameterizedTypeReference<T> responseType) throws RestClientException {
         refreshAndSetTokenInteropClient();
         ApiClient apiClient = eventsApi.getApiClient();
         return apiClient.invokeAPI(
@@ -533,8 +534,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
                 List.of(MediaType.APPLICATION_JSON),
                 null,
                 new String[]{"ApiKeyAuth"},
-                new ParameterizedTypeReference<String>() {
-                }).getBody();
+                responseType);
     }
 
 

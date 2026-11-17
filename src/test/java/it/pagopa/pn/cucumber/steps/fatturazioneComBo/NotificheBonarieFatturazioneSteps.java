@@ -6,7 +6,7 @@ import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InternalTimelineElement;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
@@ -40,7 +40,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class FatturazioneComBoSetupSteps {
+public class NotificheBonarieFatturazioneSteps {
 
     // Campagne delle comunicazioni bonarie
     /** Primo canale EMAIL: si chiude al feedback desiderato o al fallimento del canale. */
@@ -74,7 +74,7 @@ public class FatturazioneComBoSetupSteps {
     private static final Duration LEGAL_CLOSURE_TIMEOUT = Duration.ofMinutes(30);
     private static final Duration REFUSAL_TIMEOUT = Duration.ofMinutes(5);
 
-    private final FatturazioneComBoScenarioContext context;
+    private final NotificheBonarieFatturazioneScenarioContext context;
     private final SharedSteps sharedSteps;
     private final SendSharedContext sendSharedContext;
     private final DestinatarioRegistry destinatarioRegistry;

@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.fatturazioneComBo;
 
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InternalTimelineElement;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.InvoicingRecord;
@@ -33,14 +33,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
  */
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class FatturazioneComBoVerificheSteps {
+public class NotificheBonarieFatturazioneVerificheSteps {
 
     /** Invio cartaceo delle bonarie: sempre raccomandata semplice, un solo tentativo (SRS WI-1.1). */
     private static final String INFORMAL_PAPER_PREFIX = "SEND_ANALOG_MESSAGE.IUN_%s.RECINDEX_%d.ATTEMPT_0.DELIVERYTYPE_RS";
     private static final Set<String> INFORMAL_PAPER_CATEGORIES = Set.of("SEND_ANALOG_MESSAGE");
     private static final Set<String> LEGAL_PAPER_CATEGORIES = Set.of("SEND_ANALOG_DOMICILE", "SEND_SIMPLE_REGISTERED_LETTER");
 
-    private final FatturazioneComBoScenarioContext context;
+    private final NotificheBonarieFatturazioneScenarioContext context;
     private final InvoicingRecordService invoicingService;
     private final NotificationCostExpectations expectations;
 

@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.fatturazioneComBo.service;
 
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.model.CommunicationDomain;
@@ -14,9 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.awaitility.Awaitility.await;
+import java.util.function.Function;
 
 /**
  * Lettura della timeline interna (pn-Timelines), l'unica fonte del costo di notifica: le API e gli stream non lo espongono.
@@ -73,19 +74,27 @@ public class InternalTimelineService {
     }
 
     private InternalTimelineElement awaitElement(String iun, Duration timeout, String description,
-                                                 java.util.function.Function<List<InternalTimelineElement>, Optional<InternalTimelineElement>> finder) {
-        AtomicReference<InternalTimelineElement> found = new AtomicReference<>();
+                                                 Function<List<InternalTimelineElement>, Optional<InternalTimelineElement>> finder) {
+        InternalTimelineElement found;
         try {
-            await().atMost(timeout).pollInterval(POLL_INTERVAL).ignoreExceptions().until(() -> {
-                Optional<InternalTimelineElement> element = finder.apply(timeline(iun));
-                element.ifPresent(found::set);
-                return element.isPresent();
-            });
-        } catch (org.awaitility.core.ConditionTimeoutException e) {
+            found = Poller.pollUntil(() -> findIgnoringErrors(iun, finder), Optional::isPresent,
+                    PollingConfig.of(timeout, POLL_INTERVAL)).orElseThrow();
+        } catch (PollingTimeoutException e) {
             throw new AssertionError("Entro %s non è comparso nella timeline interna della notifica %s %s"
                     .formatted(timeout, iun, description), e);
         }
-        log.info("Timeline interna {}: {}", iun, found.get());
-        return found.get();
+        log.info("Timeline interna {}: {}", iun, found);
+        return found;
+    }
+
+    /** Un errore di lettura (es. transitorio su DynamoDB) vale come elemento non ancora presente: il polling prosegue. */
+    private Optional<InternalTimelineElement> findIgnoringErrors(String iun,
+                                                                 Function<List<InternalTimelineElement>, Optional<InternalTimelineElement>> finder) {
+        try {
+            return finder.apply(timeline(iun));
+        } catch (RuntimeException e) {
+            log.warn("Lettura della timeline interna {} non riuscita, nuovo tentativo: {}", iun, e.getMessage());
+            return Optional.empty();
+        }
     }
 }

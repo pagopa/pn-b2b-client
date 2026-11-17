@@ -62,7 +62,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
-import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.FatturazioneComBoScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
@@ -305,7 +305,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         IoMockScenarioContext.class,
         TransformedDocumentService.class,
         DocumentTagsService.class,
-        FatturazioneComBoScenarioContext.class,
+        NotificheBonarieFatturazioneScenarioContext.class,
         InternalTimelineService.class,
         InvoicingRecordService.class,
         NotificationCostExpectations.class
