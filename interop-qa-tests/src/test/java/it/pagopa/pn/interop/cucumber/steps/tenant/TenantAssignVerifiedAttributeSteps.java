@@ -36,6 +36,39 @@ public class TenantAssignVerifiedAttributeSteps {
         );
     }
 
+    @When("il delegato all'erogazione assegna a {string} l'attributo verificato precedentemente creato")
+    public void delegatedProducerAssignVerifiedAttribute(String tenantType) {
+        delegatedProducerAssignVerifiedAttribute(
+                tenantType, sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("specificando un ID delega casuale l'utente assegna a {string} l'attributo verificato precedentemente creato")
+    public void delegatedProducerAssignVerifiedAttributeWithRandomDelegationId(String tenantType) {
+        delegatedProducerAssignVerifiedAttribute(tenantType, UUID.randomUUID());
+    }
+
+    private void delegatedProducerAssignVerifiedAttribute(String tenantType, UUID delegationId) {
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        // Se non è stato indicato un delegato, usa il tenant corrente
+        if (delegateTenant == null) {
+            clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        } else {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+        }
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        sharedStepsContext.getAttributeCommonContext().setAttributeConsumerTenant(tenantType);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getTenantsApi().verifyVerifiedAttribute(
+                        tenantId,
+                        new VerifiedTenantAttributeSeed()
+                                .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
+                                .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
+                        //.delegationId(delegationId) TODO si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
+                )
+        );
+    }
+
     @When("l'utente assegna a {string} l'attributo verificato precedentemente creato con data di scadenza nel futuro")
     public void assignVerifiedAttributeWithFutureExpireDate(String tenantType) {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

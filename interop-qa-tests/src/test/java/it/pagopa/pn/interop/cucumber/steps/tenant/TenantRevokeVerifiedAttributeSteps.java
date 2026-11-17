@@ -41,6 +41,31 @@ public class TenantRevokeVerifiedAttributeSteps {
         revokeAttribute();
     }
 
+    @When("il delegato all'erogazione revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreated() {
+        delegatedProducerRevokeAttributePreviouslyCreated(
+                sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreatedWithRandomDelegationId() {
+        delegatedProducerRevokeAttributePreviouslyCreated(UUID.randomUUID());
+    }
+
+    private void delegatedProducerRevokeAttributePreviouslyCreated(UUID delegationId) {
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        if (delegateTenant == null) {
+            clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        } else {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+        }
+
+        // TODO serve chiamare un metodo che usi delegationId
+        // TODO si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
+        revokeAttribute();
+    }
+
     @When("{string} revoca l'attributo precedentemente verificato")
     public void revokeAttributePreviouslyCreated(String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
