@@ -39,7 +39,7 @@ public class PtEntiDelegantiSteps {
     private static final String TOKEN_VUOTO = "@vuoto";
     private static final String TOKEN_LUNGHEZZA = "@lunghezza_";
     private static final int MAX_LIMIT = 50;
-    private static final long SCENARIO_PADDING_SECONDS = 10;
+    private static final long SCENARIO_PADDING_SECONDS = 7;
 
     private final PtEntiDelegantiService ptEntiDelegantiService;
     private final SharedSteps sharedSteps;
