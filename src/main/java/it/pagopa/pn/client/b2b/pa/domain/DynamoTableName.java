@@ -11,6 +11,8 @@ public enum DynamoTableName {
     ONBOARD_INSTITUTIONS("pn-OnboardInstitutions"),
     NOTIFICATION_REWORKS("pn-NotificationReworks"),
     REWORKED_TIMELINES_FOR_INVOICING("pn-ReworkedTimelinesForInvoicing"),
+    TIMELINES_FOR_INVOICING("pn-TimelinesForInvoicing"),
+    INFORMAL_TIMELINES_FOR_INVOICING("pn-InformalTimelinesForInvoicing"),
     COST_COMPONENTS("pn-CostComponents"),
     COST_UPDATE_RESULT("pn-CostUpdateResult"),
     USER_ATTRIBUTES("pn-UserAttributes"),
@@ -21,7 +23,8 @@ public enum DynamoTableName {
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
     PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
-    NOTIFICATIONS_METADATA("pn-NotificationsMetadata");
+    NOTIFICATIONS_METADATA("pn-NotificationsMetadata"),
+    PT_DELEGATIONS("pn-PtDelegations");
 
     private final String value;
 

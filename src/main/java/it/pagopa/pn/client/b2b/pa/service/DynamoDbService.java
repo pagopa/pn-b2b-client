@@ -27,7 +27,7 @@ public class DynamoDbService {
         return switch (tableName) {
             //query WITH filters
             case TIMELINE -> queryWithFilters(tableName, List.of("iun", "category"), attributeValues);
-            case REWORKED_TIMELINES_FOR_INVOICING ->
+            case REWORKED_TIMELINES_FOR_INVOICING, TIMELINES_FOR_INVOICING, INFORMAL_TIMELINES_FOR_INVOICING ->
                     queryWithFilters(tableName, List.of("paId_invoicingDay", "iun"), attributeValues);
             //query WITHOUT filters
             case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->
@@ -40,6 +40,7 @@ public class DynamoDbService {
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
+            case PT_DELEGATIONS -> queryWithoutFilters(tableName, "ptId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
