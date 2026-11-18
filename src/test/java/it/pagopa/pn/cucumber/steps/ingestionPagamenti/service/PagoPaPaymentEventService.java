@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.ingestionPagamenti.service;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.NoticePaymentRequest;
-import it.pagopa.pn.client.b2b.pa.service.IPnNodoPagoPaMockClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnKafkaMockClient;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentEventAnomaly;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentNotice;
@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit;
 @RequiredArgsConstructor
 public class PagoPaPaymentEventService {
 
-    private final IPnNodoPagoPaMockClient nodoPagoPaMockClient;
+    private final IPnKafkaMockClient nodoPagoPaMockClient;
     private final IngestionPagamentiScenarioContext context;
 
     /**

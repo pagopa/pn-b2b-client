@@ -26,6 +26,12 @@ public class IngestionPagamentiScenarioContext {
     private boolean paidAlsoOnAppIo;
 
     /**
+     * Indica che il destinatario è raggiungibile su App IO ma il mock non segnala mai il pagamento: il canale IO resta
+     * in attesa e il pagamento può arrivare solo da pagoPA.
+     */
+    private boolean reachableOnAppIoWithoutPayment;
+
+    /**
      * Contenuto univoco dell'ultimo evento pubblicato, usato per ritrovarlo in DLQ o nei log.
      */
     private String lastEventMarker;

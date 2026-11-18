@@ -457,7 +457,7 @@ public class IngestionPagamentiVerificheSteps {
         try {
             await().atMost(settings.getAsyncProcessingTimeout()).pollInterval(Duration.ofSeconds(10)).untilAsserted(() ->
                     assertThat(logCount(settings.getCostServiceLogGroup(), query, publishedAt))
-                            .as("Nessun log di scarto su %s per la ricerca %s", settings.getCostServiceLogGroup(), query)
+                            .as("Nessun log INFO di scarto (REQ-FIL-02) su %s per la ricerca %s", settings.getCostServiceLogGroup(), query)
                             .isPositive());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);

@@ -51,6 +51,8 @@ public class PaymentEventsSettings {
     private final String informalRecipientEmail;
     private final String informalRecipientPec;
     private final String ioMockPaymentSequence;
+    /** Sequenza del mock di App IO che consegna e fa leggere il messaggio senza mai pagarlo. */
+    private final String ioMockNoPaymentSequence;
 
     public PaymentEventsSettings(
             Environment environment,
@@ -69,7 +71,8 @@ public class PaymentEventsSettings {
             @Value("${pn.payment-events.informal-recipient.denomination:Ettore Fieramosca}") String informalRecipientDenomination,
             @Value("${pn.payment-events.informal-recipient.email:tullio.test@virgilio.it}") String informalRecipientEmail,
             @Value("${pn.payment-events.informal-recipient.pec:example@OK-pecSuccess.it}") String informalRecipientPec,
-            @Value("${pn.payment-events.io-mock.payment-sequence:OK_READ_THEN_PAID}") String ioMockPaymentSequence) {
+            @Value("${pn.payment-events.io-mock.payment-sequence:OK_READ_THEN_PAID}") String ioMockPaymentSequence,
+            @Value("${pn.payment-events.io-mock.no-payment-sequence:OK_READ}") String ioMockNoPaymentSequence) {
         this.environment = environment;
         this.asyncProcessingTimeout = Duration.parse(asyncProcessingTimeout);
         this.legalWorkflowTimeout = Duration.parse(legalWorkflowTimeout);
@@ -87,6 +90,7 @@ public class PaymentEventsSettings {
         this.informalRecipientEmail = informalRecipientEmail;
         this.informalRecipientPec = informalRecipientPec;
         this.ioMockPaymentSequence = ioMockPaymentSequence;
+        this.ioMockNoPaymentSequence = ioMockNoPaymentSequence;
     }
 
     /**

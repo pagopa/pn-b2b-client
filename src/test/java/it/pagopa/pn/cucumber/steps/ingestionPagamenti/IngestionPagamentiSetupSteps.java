@@ -165,6 +165,11 @@ public class IngestionPagamentiSetupSteps {
         context.setPaidAlsoOnAppIo(true);
     }
 
+    @Given("il destinatario è raggiungibile su App IO ma non paga gli avvisi tramite App IO")
+    public void recipientReachableOnAppIoWithoutPayment() {
+        context.setReachableOnAppIoWithoutPayment(true);
+    }
+
     @Given("il {string} ha inviato una comunicazione bonaria con avviso pagoPA nella campagna {string}")
     public void informalNotificationWithPagoPaNotice(String paName, String campaignName) throws IOException {
         sendInformalNotificationWithPagoPaNotice(paName, campaignName, Map.of());
@@ -186,7 +191,7 @@ public class IngestionPagamentiSetupSteps {
         String campaignId = settings.campaignId(campaignName);
         Map<String, String> data = new HashMap<>(additionalData);
         data.put("campaignId", campaignId);
-        data.put("messageId", context.isPaidAlsoOnAppIo() ? messagePaidOnAppIo(paName) : "${NEW-IT}");
+        data.put("messageId", messageId(paName));
         data.put("subject", INFORMAL_SUBJECT);
         data.put("recipientType", INFORMAL_RECIPIENT_TYPE);
         data.put("taxId", settings.getInformalRecipientTaxId());
@@ -208,9 +213,19 @@ public class IngestionPagamentiSetupSteps {
      * pn-workflow-manager usa come oggetto del messaggio App IO quello del messaggio del destinatario, non l'oggetto
      * della comunicazione bonaria: il tag della sequenza del mock va quindi nel messaggio.
      */
-    private String messagePaidOnAppIo(String paName) {
+    private String messageId(String paName) {
+        if (context.isPaidAlsoOnAppIo()) {
+            return messageOnAppIo(paName, settings.getIoMockPaymentSequence());
+        }
+        if (context.isReachableOnAppIoWithoutPayment()) {
+            return messageOnAppIo(paName, settings.getIoMockNoPaymentSequence());
+        }
+        return "${NEW-IT}";
+    }
+
+    private String messageOnAppIo(String paName, String ioMockSequence) {
         String senderId = sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
-        String subject = InformalMessageTemplates.RISCUOTI_IT.getContent().getSubject() + IO_MOCK_SEQUENCE_PREFIX + settings.getIoMockPaymentSequence();
+        String subject = InformalMessageTemplates.RISCUOTI_IT.getContent().getSubject() + IO_MOCK_SEQUENCE_PREFIX + ioMockSequence;
         return informalMessageProvider.createMessageITWithSubject(senderId, subject);
     }
 

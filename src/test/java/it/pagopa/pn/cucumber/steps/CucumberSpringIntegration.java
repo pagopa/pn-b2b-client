@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.pn.cucumber.steps.config.SendHttpCallExecutorConfiguration;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
@@ -158,7 +159,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnIOConnectorClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnIoUserAttributerExternaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnNodoPagoPaMockClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnKafkaMockClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnNotificationCostClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
@@ -224,6 +225,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
+        SendHttpCallExecutorConfiguration.class,
         JacksonAutoConfiguration.class,
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
@@ -450,7 +452,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPaB2bExternalInformalClientImpl.class,
         DelayerSkipSenderLimitService.class,
         IoMockScenarioContext.class,
-        PnNodoPagoPaMockClientImpl.class,
+        PnKafkaMockClientImpl.class,
         SqsService.class,
         IngestionPagamentiScenarioContext.class,
         PagoPaPaymentEventService.class,

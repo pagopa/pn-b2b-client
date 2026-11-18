@@ -1,3 +1,5 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1, 2.1 e 2.2; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto 890
 
 
@@ -201,7 +203,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_responseStatus     | OK       |
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GIACENZA-LTE10_890"
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_RUN_MODE_890_2] Viene verificato che tutti gli elementi desiderati per la sequence OK-GIACENZA-GT10_890 siano generati
@@ -473,6 +475,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                         |
       | OK_890                           |

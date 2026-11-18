@@ -1,3 +1,9 @@
+## Generatori del flusso di lavoro
+
+Gli strumenti di generazione sono raccolti in [tools/generators](tools/generators/README.md).
+Il [generatore PST](tools/generators/pst/README.md) produce i documenti delle QA Epic
+appartenenti alle release in corso, con esecuzione locale e test dedicati.
+
 ## Istruzioni per l'utilizzo
 - creare i file 'api-keys-dev.properties' ,'api-keys-svil.properties' nel path 'pn-b2b-client/config/'
 - inserire nei file appena creato la stringa 'pn.external.api-keys.pagopa-dev=<api_key>' sostituendo ad <api_key> l'api key corretta

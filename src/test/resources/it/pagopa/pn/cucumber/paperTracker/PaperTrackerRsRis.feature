@@ -1,3 +1,5 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1 e 2.2; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto RS/RIS
 
   # ---------------- DRY RUN MODE ----------------
@@ -73,7 +75,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName                       |
       | OK_RS                              |
@@ -109,7 +111,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     Examples:
       | sequenceName |
       | OK_RIS       |
