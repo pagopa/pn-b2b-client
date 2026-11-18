@@ -360,10 +360,6 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | iun   | auto                          |
       | error | Invoking external service IPA |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                        |
-      | log   | INIPEC - nextSource: [INAD] |
-      | error | digital Address not found   |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
 
@@ -397,10 +393,6 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | iun   | auto                          |
       | error | Invoking external service IPA |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                        |
-      | log   | INIPEC - nextSource: [INAD] |
-      | error | digital Address not found   |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                  |
       | error | INAD - CF non trovato |
 
@@ -429,10 +421,6 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                          |
       | error | Invoking external service IPA |
-    And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                        |
-      | log   | INIPEC - nextSource: [INAD] |
-      | error | digital Address not found   |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
       | iun   | auto                                |
       | error | retrieved digital address from INAD |
