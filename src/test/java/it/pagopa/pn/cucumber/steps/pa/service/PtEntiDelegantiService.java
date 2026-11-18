@@ -40,7 +40,7 @@ import java.util.Map;
 public class PtEntiDelegantiService {
     private static final int MAX_LIMIT = 50;
     private static final PollingConfig DELEGATION_POLLING = PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(5));
-    private static final Duration DELEGATION_CHANGE_PADDING = Duration.ofSeconds(1);
+    private static final Duration DELEGATION_CHANGE_PADDING = Duration.ofSeconds(2);
     private static final String PA_NON_ADERENTE = "Comune di Castagnero";
 
     private final IPnPtInstitutionsClient ptInstitutionsClient;
