@@ -4,8 +4,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -34,7 +34,7 @@ public class SegregazioneDeliveryPushSteps {
     private final IPnWebPaClient webPaClient;
     private final Map<String, String> failedIUN = new HashMap<>();
     private final String deliveryPushBaseUrl;
-    private BffNotificationsResponse searchResponse;
+    private BffLegalNotificationsResponse searchResponse;
     private QueryParamsPojo queryParamsPojo;
     private static final String NEW_TIMELINE_URL = "/delivery-push-private/test/new-impl/timeline/";
 
@@ -75,7 +75,7 @@ public class SegregazioneDeliveryPushSteps {
         searchResponse = webPaClient.searchSentNotification(
                 queryParamsPojo.dateStart,
                 queryParamsPojo.dateEnd,
-                null, null, null, null, 50, null);
+                null, null, null, 50, null);
     }
 
     @Then("confronto le timeline ottenute chiamando la nuova API e la vecchia impostando confidentialInfoRequired a {string}")
@@ -86,7 +86,7 @@ public class SegregazioneDeliveryPushSteps {
 
         int counter = 0;
         while (counter < queryParamsPojo.notificationSampleSize) {
-            for (NotificationSearchRow x : searchResponse.getResultsPage()) {
+            for (BffLegalNotificationSearchRow x : searchResponse.getResultsPage()) {
                 String iun = x.getIun();
                 String queryParams = Boolean.parseBoolean(confidentialInfoRequired) ? "?confidentialInfoRequired=true" : "";
                 iunList.add(iun);
@@ -117,7 +117,7 @@ public class SegregazioneDeliveryPushSteps {
                 searchResponse = webPaClient.searchSentNotification(
                         queryParamsPojo.dateStart,
                         queryParamsPojo.dateEnd,
-                        null, null, null, null, 50, nextPageKey);
+                        null, null, null, 50, nextPageKey);
             } else {
                 counter = queryParamsPojo.notificationSampleSize;
             }
@@ -136,7 +136,7 @@ public class SegregazioneDeliveryPushSteps {
 
         int counter = 0;
         while (counter < queryParamsPojo.notificationSampleSize) {
-            for (NotificationSearchRow x : searchResponse.getResultsPage()) {
+            for (BffLegalNotificationSearchRow x : searchResponse.getResultsPage()) {
                 String iun = x.getIun();
                 int recipientNum = x.getRecipients().size();
                 OffsetDateTime createdAt = x.getSentAt();
@@ -169,7 +169,7 @@ public class SegregazioneDeliveryPushSteps {
                 searchResponse = webPaClient.searchSentNotification(
                         queryParamsPojo.dateStart,
                         queryParamsPojo.dateEnd,
-                        null, null, null, null, 20, nextPageKey);
+                        null, null, null, 20, nextPageKey);
             } else {
                 counter = queryParamsPojo.notificationSampleSize;
             }
