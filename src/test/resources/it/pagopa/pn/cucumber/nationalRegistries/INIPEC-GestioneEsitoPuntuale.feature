@@ -36,7 +36,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta verso il servizio INIPEC per il cf "CTNMCP34B16H501T" risulta in stato WORKED
     Then il batch associato alla richiesta verso INIPEC per il cf "CTNMCP34B16H501T" risulta in stato WORKED
 
-
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_2_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale,
   quindi viene fatta una chiamata verso INIPEC per recuperarlo,
@@ -53,10 +52,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then la risposta sul registro INIPEC per il cf "GNFRSS80A01G203W" non contiene recapiti
     Then il batch associato alla richiesta verso INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-
     Then la richiesta verso il servizio INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_2_B] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
@@ -91,7 +88,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la risposta sul registro INIPEC per il cf "39274018561" non contiene recapiti
     Then il batch associato alla richiesta verso INIPEC per il cf "39274018561" risulta in stato WORKED
     Then la risposta sul registro INIPEC per il cf "39274018561" non contiene recapiti
@@ -128,11 +124,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la richiesta verso il servizio INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
     Then il ritentativo della chiamata verso INIPEC per il cf "TSTGNN80A01F839X" risulta correttamente registrato
-
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_3_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
@@ -149,7 +143,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then il ritentativo della chiamata verso INIPEC per il cf "17492068394" risulta correttamente registrato
-
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
@@ -185,7 +178,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "28223913097" risulta in stato WORKED
     Then la richiesta verso il servizio INAD per il cf "28223913097" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "28223913097" risulta in stato WORKED
-
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
@@ -255,7 +247,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then la richiesta verso il servizio INAD per il cf "MTTBNN14A01A001N" risulta in errore
 
-
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD senza recuperare indirizzi,
@@ -288,13 +279,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la risposta sul registro INIPEC per il cf "85385800199" non contiene recapiti
     Then il batch associato alla richiesta verso INIPEC per il cf "85385800199" risulta in stato WORKED
-
     Then la risposta sul registro INAD per il cf "85385800199" non contiene recapiti
     Then il batch associato alla richiesta verso INAD per il cf "85385800199" risulta in stato WORKED
-
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_05_1] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
@@ -310,13 +298,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la risposta sul registro INAD per il cf "PRPMGG80A41H501W" non contiene recapiti
     Then il batch associato alla richiesta verso INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
-
     Then la richiesta verso il servizio INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
     Then il batch associato alla richiesta verso INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
-
 
   @inadMassive @mockNR @ignoreUAT @inadMassiveTrueInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
@@ -334,11 +319,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-
     Then la richiesta verso il servizio INAD per il cf "39274018561" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "39274018561" risulta in stato WORKED
-
-
+    
   @inadMassive @mockNR @ignoreUAT @inadMassiveFalseInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:false;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
