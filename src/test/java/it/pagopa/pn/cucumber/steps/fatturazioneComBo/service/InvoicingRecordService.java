@@ -79,7 +79,7 @@ public class InvoicingRecordService {
     public InvoicingRecord awaitRecordOf(CommunicationDomain domain, String iun, InternalTimelineElement element) {
         LocalDate day = invoicingDay(element.timestamp());
         try {
-            return Poller.pollUntil(() -> findRecordIgnoringErrors(domain, iun, element, day), Optional::isPresent,
+            return Poller.pollUntil(() -> findRecordIgnoringErrors(domain, iun, element, day), Optional<InvoicingRecord>::isPresent,
                     PollingConfig.of(recordTimeout, POLL_INTERVAL)).orElseThrow();
         } catch (PollingTimeoutException e) {
             throw new AssertionError("Entro %s l'elemento %s della notifica %s non risulta su %s"
@@ -117,7 +117,7 @@ public class InvoicingRecordService {
         try {
             // Un intervallo in più perché l'ultima lettura cada a fine finestra.
             lastRead = Poller.pollUntil(() -> records(domain, paId, invoicingDay, iun),
-                    records -> records.stream().anyMatch(unexpected),
+                    (List<InvoicingRecord> records) -> records.stream().anyMatch(unexpected),
                     PollingConfig.of(settleWindow.plus(POLL_INTERVAL), POLL_INTERVAL));
         } catch (PollingTimeoutException e) {
             return;
