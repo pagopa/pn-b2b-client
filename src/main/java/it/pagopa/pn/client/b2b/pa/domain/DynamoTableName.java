@@ -23,7 +23,8 @@ public enum DynamoTableName {
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
     PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
-    NOTIFICATIONS_METADATA("pn-NotificationsMetadata");
+    NOTIFICATIONS_METADATA("pn-NotificationsMetadata"),
+    PT_DELEGATIONS("pn-PtDelegations");
 
     private final String value;
 
