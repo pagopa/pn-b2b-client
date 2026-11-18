@@ -40,6 +40,7 @@ import java.util.Map;
 public class PtEntiDelegantiService {
     private static final int MAX_LIMIT = 50;
     private static final PollingConfig DELEGATION_POLLING = PollingConfig.of(Duration.ofSeconds(10), Duration.ofSeconds(5));
+    private static final Duration DELEGATION_CHANGE_PADDING = Duration.ofSeconds(2);
     private static final String PA_NON_ADERENTE = "Comune di Castagnero";
 
     private final IPnPtInstitutionsClient ptInstitutionsClient;
@@ -81,6 +82,7 @@ public class PtEntiDelegantiService {
                 : findActiveDelegationId(paId, ptName);
         if (activeDelegationId != null)
             selfcareDelegationsClient.deleteDelegation(activeDelegationId);
+        padDelegationChange();
         String delegationId = selfcareDelegationsClient.createDelegation(buildDelegationRequest(institutionFromName, ptName, paId, ptId)).getId();
         String key = delegationKey(paName, ptName);
         if (delegationIds.containsKey(key))
@@ -97,6 +99,7 @@ public class PtEntiDelegantiService {
         String paId = getPaInstitutionId(paName);
         String delegationId = findActiveDelegationId(paId, ptName);
         if (delegationId != null) {
+            padDelegationChange();
             selfcareDelegationsClient.deleteDelegation(delegationId);
             delegationIds.put(delegationKey(paName, ptName), delegationId);
             log.info("Delega {} revocata: {} -> {}", delegationId, paName, ptName);
@@ -183,6 +186,18 @@ public class PtEntiDelegantiService {
             lastKey = response.getLastKey();
         } while (lastKey != null);
         return new AllPages(institutions, response);
+    }
+
+    /**
+     * Garantisce che due variazioni consecutive della stessa delega abbiano lastChangeAt diversi su pn-PtDelegations.
+     */
+    private void padDelegationChange() {
+        try {
+            Thread.sleep(DELEGATION_CHANGE_PADDING.toMillis());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Attesa tra le variazioni della delega interrotta", e);
+        }
     }
 
     private void awaitDelegationStatus(String paId, String ptName, String delegationId, PtDelegationStatus status) {
