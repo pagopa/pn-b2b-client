@@ -13,7 +13,7 @@ class StaticTextAndLayoutRulesTest {
 
     private static final PdfDocumentTemplate IUN_TEMPLATE = PdfDocumentTemplate.builder("T")
             .field("IUN", FieldLocators.regex(Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d")),
-                    FieldValidators.present(), MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                    FieldValidators.present(), MaskStrategy.INLINE_VALUE)
             .build();
 
     @Test
@@ -51,17 +51,6 @@ class StaticTextAndLayoutRulesTest {
         List<TextFragment> located = FieldLocators.labelProximityOccurrence("Domicilio digitale", 1).locate(fragments);
 
         assertEquals(List.of("prova@pec.it"), located.stream().map(TextFragment::text).toList());
-    }
-
-    @Test
-    void toLineEndAndNextLineMasksTheRestOfTheLineAndTheFollowingOne() {
-        TextFragment value = new TextFragment("AAAA-BBBB-CCCC-202601-A-1", 200, 600, 140, 10, 0);
-
-        List<ExclusionArea> areas = ExclusionArea.areas(value, MaskStrategy.TO_LINE_END_AND_NEXT_LINE, 595);
-
-        assertEquals(2, areas.size());
-        assertTrue(areas.get(0).x() < 200 && areas.get(0).x() + areas.get(0).width() >= 595);
-        assertTrue(areas.get(1).x() == 0 && areas.get(1).y() < 600 - 10);
     }
 
     private static ExtractedPdfText text(List<String> words) {

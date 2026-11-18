@@ -19,15 +19,15 @@ public final class PecDeliveryTemplate {
                 .field("IUN",
                         SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Data consegna",
                         SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Ora consegna",
                         SendFieldLocators.time(),
                         SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Codice fiscale destinatario",
                         SendFieldLocators.codiceFiscalePf(),
                         SendFieldValidators.codiceFiscalePf(),

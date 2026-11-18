@@ -26,16 +26,11 @@ public enum MaskStrategy {
     FULL_LINE,
 
     /**
-     * Maschera dal campo fino al margine destro della riga: per valori dentro una frase,
-     * dove una larghezza diversa sposta il testo che segue.
+     * Value inside a running paragraph, whose width changes with the data. Only the value is masked when
+     * {@link LayoutStability} proves from the golden geometry that the layout stays identical; otherwise the document
+     * is compared by vertical bands ({@link PdfBandComparator}) and the paragraph is checked as text only.
      */
-    TO_LINE_END,
-
-    /**
-     * Come {@link #TO_LINE_END} e in più l'intera riga successiva: per valori a larghezza variabile
-     * che possono far andare a capo una parola diversa.
-     */
-    TO_LINE_END_AND_NEXT_LINE,
+    INLINE_VALUE,
 
     /**
      * Maschera un'area rettangolare più ampia che simula una cella di tabella,

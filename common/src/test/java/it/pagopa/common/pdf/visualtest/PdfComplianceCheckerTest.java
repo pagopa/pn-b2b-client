@@ -85,7 +85,7 @@ class PdfComplianceCheckerTest {
                 .field("IUN",
                         FieldLocators.regex(Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d")),
                         FieldValidators.regex(Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-\\d"), "IUN (XXXX-XXXX-XXXX-YYYYMM-X-N)"),
-                        MaskStrategy.TO_LINE_END)
+                        MaskStrategy.INLINE_VALUE)
                 .field("nome cognome",
                         FieldLocators.labelProximity("Ragione Sociale", 300f, 20f),
                         FieldValidators.present(),
@@ -105,7 +105,7 @@ class PdfComplianceCheckerTest {
                 .field("orario",
                         FieldLocators.regex(Pattern.compile("\\b(?:[01]\\d|2[0-3]):[0-5]\\d\\b")),
                         FieldValidators.regex(Pattern.compile("\\b(?:[01]\\d|2[0-3]):[0-5]\\d\\b"), "orario HH:mm"),
-                        MaskStrategy.TO_LINE_END)
+                        MaskStrategy.INLINE_VALUE)
                 .build();
     }
 

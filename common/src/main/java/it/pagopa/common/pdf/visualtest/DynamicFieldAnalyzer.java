@@ -57,7 +57,7 @@ public final class DynamicFieldAnalyzer {
             // Aggiungi le aree di esclusione anche se la validazione fallisce,
             // così il visual diff esclude comunque le aree dinamiche.
             for (TextFragment f : located) {
-                exclusions.addAll(ExclusionArea.areas(f, def.maskStrategy(), pageWidthPt));
+                exclusions.add(ExclusionArea.from(f, def.maskStrategy(), pageWidthPt));
             }
         }
 

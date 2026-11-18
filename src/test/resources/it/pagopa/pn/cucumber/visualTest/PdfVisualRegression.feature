@@ -2,8 +2,8 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
 
   # Ogni documento prodotto da SEND viene confrontato, testo dei campi dinamici e resa visiva, con il suo golden master,
   # generato dal Template Engine con gli stessi dati della notifica di riferimento.
-  # Limiti: l'attestazione di timeout del workflow analogico, l'attestazione di disponibilità dell'esito cartaceo e la
-  # comunicazione bonaria cartacea non sono recuperabili tramite API: per questi documenti esiste solo il golden master.
+  # Limiti: l'attestazione di disponibilità dell'esito cartaceo e la comunicazione bonaria cartacea non sono recuperabili
+  # tramite API: per questi documenti esiste solo il golden master.
   # Blocchi attuali:
   # - [VRT-06] in TEST nessun disservizio risolto ha un'attestazione prodotta dopo il golden master: quelle esistenti
   #   seguono il template precedente (footer diverso).
@@ -73,4 +73,11 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And si recupera il documento "NOTIFICATION_AAR_RADD_ALT" della notifica
+    Then il documento è conforme al golden master
+
+  @visualTest @work-item:QA-18240
+  Scenario: [VRT-09] L'attestazione di timeout del workflow analogico corrisponde al golden master
+    Given viene generata la notifica di riferimento del documento "ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And si recupera il documento "ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT" della notifica
     Then il documento è conforme al golden master

@@ -18,7 +18,7 @@ public final class InformalAnalogCommunicationTemplate {
                 .field("IUN",
                         SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TO_LINE_END)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Codice fiscale destinatario",
                         SendFieldLocators.codiceFiscalePf(),
                         SendFieldValidators.codiceFiscalePf(),

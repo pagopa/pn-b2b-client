@@ -19,15 +19,15 @@ public final class NotificationCancelledTemplate {
                 .field("IUN",
                         SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Data annullamento",
                         SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Ora annullamento",
                         SendFieldLocators.time(),
                         SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Codice fiscale destinatario",
                         SendFieldLocators.codiceFiscalePf(),
                         SendFieldValidators.codiceFiscalePf(),

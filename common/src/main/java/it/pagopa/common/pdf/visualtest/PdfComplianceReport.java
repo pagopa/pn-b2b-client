@@ -22,16 +22,22 @@ public final class PdfComplianceReport {
     private final PdfVisualComparator.VisualDiffResult visualResult;
     private final List<String> structuralErrors;
     private final List<String> textDifferences;
+    private final LayoutStability.Mode layoutMode;
+    private final List<String> layoutNotes;
 
     PdfComplianceReport(
             List<FieldIssue> fieldIssues,
             PdfVisualComparator.VisualDiffResult visualResult,
             List<String> structuralErrors,
-            List<String> textDifferences) {
+            List<String> textDifferences,
+            LayoutStability.Mode layoutMode,
+            List<String> layoutNotes) {
         this.fieldIssues       = Collections.unmodifiableList(new ArrayList<>(fieldIssues));
         this.visualResult      = visualResult;
         this.structuralErrors  = Collections.unmodifiableList(new ArrayList<>(structuralErrors));
         this.textDifferences   = Collections.unmodifiableList(new ArrayList<>(textDifferences));
+        this.layoutMode        = layoutMode;
+        this.layoutNotes       = Collections.unmodifiableList(new ArrayList<>(layoutNotes));
     }
 
     /** Problemi riscontrati durante la validazione dei campi dinamici. */
@@ -51,6 +57,16 @@ public final class PdfComplianceReport {
 
     public List<String> textDifferences() {
         return textDifferences;
+    }
+
+    /** How the page was compared: whole page (layout proved identical, or no inline values) or by bands. */
+    public LayoutStability.Mode layoutMode() {
+        return layoutMode;
+    }
+
+    /** Per line of a paragraph with inline values: width variation and margins of the golden master. */
+    public List<String> layoutNotes() {
+        return layoutNotes;
     }
 
     /** @return {@code true} se il documento è pienamente conforme (zero errori su tutti i livelli) */
@@ -98,6 +114,11 @@ public final class PdfComplianceReport {
             }
         }
 
+        if (!layoutNotes.isEmpty()) {
+            sb.add("▸ LAYOUT (" + layoutMode + "):");
+            layoutNotes.forEach(n -> sb.add("  • " + n));
+        }
+
         sb.add("═══════════════════════════════════════════════════════════════");
         throw new AssertionError(sb.toString());
     }
@@ -108,6 +129,7 @@ public final class PdfComplianceReport {
                 + ", fieldIssues=" + fieldIssues.size()
                 + ", structuralErrors=" + structuralErrors.size()
                 + ", textDifferences=" + textDifferences.size()
+                + ", layout=" + layoutMode
                 + ", visualEqual=" + (visualResult != null ? visualResult.equal() : "N/A")
                 + "}";
     }

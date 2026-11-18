@@ -14,7 +14,8 @@ import java.util.List;
  *   <li>Controllo strutturale sul numero di pagine (pre-check economico via {@link PdfTextExtractor})</li>
  *   <li>Estrazione geometrica del testo con {@link PdfTextExtractor}</li>
  *   <li>Analisi dinamica dei campi con {@link DynamicFieldAnalyzer}</li>
- *   <li>Confronto visivo pixel-level con {@link PdfVisualComparator} usando le aree di esclusione calcolate</li>
+ *   <li>Verifica della stabilità del layout con {@link LayoutStability}: confronto pixel-level con {@link PdfVisualComparator}
+ *       se garantita, altrimenti per bande con {@link PdfBandComparator}</li>
  * </ol>
  *
  * <p>La classe è {@code final} e stateless: ogni invocazione di {@link #check} è indipendente.</p>
@@ -61,7 +62,7 @@ public final class PdfComplianceChecker {
         } catch (PdfTextExtractor.PdfExtractionException e) {
             structuralErrors.add("Impossibile estrarre il testo dal PDF: " + e.getMessage());
             log.warn("PdfComplianceChecker: estrazione testo fallita", e);
-            return new PdfComplianceReport(List.of(), null, structuralErrors, List.of());
+            return new PdfComplianceReport(List.of(), null, structuralErrors, List.of(), LayoutStability.Mode.NOT_APPLICABLE, List.of());
         }
 
         // ── 3. Analisi dinamica dei campi ─────────────────────────────────
@@ -70,31 +71,56 @@ public final class PdfComplianceChecker {
         log.debug("PdfComplianceChecker: analisi campi completata – {} errori, {} exclusions",
                 analysis.issues().size(), analysis.exclusions().size());
 
-        // ── 4. Confronto visivo pixel-level ───────────────────────────────
+        // ── 4. Confronto visivo ───────────────────────────────────────────
         PdfVisualComparator.VisualDiffResult visualResult = null;
+        LayoutStability.Mode layoutMode = LayoutStability.Mode.NOT_APPLICABLE;
+        List<String> layoutNotes = List.of();
         if (structuralErrors.isEmpty()) {
-            List<ExclusionArea> allExclusions = new ArrayList<>(analysis.exclusions());
-            allExclusions.addAll(template.fixedExclusions());
-            // Estrai esclusioni anche dall'expectedPdf per mascherare i valori dinamici presenti nel documento di riferimento
             try {
                 ExtractedPdfText expectedExtracted = PdfTextExtractor.extract(expectedPdf);
                 DynamicFieldAnalyzer.AnalysisResult expectedAnalysis = DynamicFieldAnalyzer.analyze(expectedExtracted, template);
-                allExclusions.addAll(expectedAnalysis.exclusions());
                 StaticTextComparator.firstDifference(
                                 StaticTextComparator.normalizedWords(expectedExtracted, template),
                                 StaticTextComparator.normalizedWords(extractedText, template))
                         .ifPresent(textDifferences::add);
+
+                LayoutStability.Result layout = LayoutStability.evaluate(expectedExtracted, extractedText, template);
+                layoutMode = layout.mode();
+                layoutNotes = layout.notes();
+
+                List<ExclusionArea> expectedMasks = new ArrayList<>(expectedAnalysis.exclusions());
+                expectedMasks.addAll(template.fixedExclusions());
+                List<ExclusionArea> actualMasks = new ArrayList<>(analysis.exclusions());
+                if (layoutMode == LayoutStability.Mode.NOT_GUARANTEED) {
+                    visualResult = PdfBandComparator.compare(expectedPdf, actualPdf, expectedExtracted, extractedText,
+                            template, expectedMasks, actualMasks, diffOutputPath);
+                    if (visualResult.coverage() != null) {
+                        layoutNotes = new ArrayList<>(layoutNotes);
+                        layoutNotes.add("copertura: " + visualResult.coverage());
+                    }
+                } else {
+                    List<ExclusionArea> all = new ArrayList<>(expectedMasks);
+                    all.addAll(actualMasks);
+                    all.addAll(layout.tailMasks());
+                    visualResult = PdfVisualComparator.compare(expectedPdf, actualPdf, List.copyOf(all), diffOutputPath);
+                    if (visualResult.equal() && !layout.tailMasks().isEmpty()) {
+                        PdfVisualComparator.VisualDiffResult words = PdfBandComparator.compareWordsOnly(expectedPdf,
+                                actualPdf, expectedExtracted, extractedText, template, expectedMasks, actualMasks,
+                                diffOutputPath);
+                        if (!words.equal()) {
+                            visualResult = words;
+                        }
+                    }
+                }
             } catch (PdfTextExtractor.PdfExtractionException e) {
                 structuralErrors.add("Impossibile estrarre il testo del golden master: " + e.getMessage());
             }
-
-            visualResult = PdfVisualComparator.compare(
-                    expectedPdf, actualPdf, List.copyOf(allExclusions), diffOutputPath);
         } else {
             log.warn("PdfComplianceChecker: confronto visivo saltato a causa di errori strutturali");
         }
 
-        return new PdfComplianceReport(analysis.issues(), visualResult, structuralErrors, textDifferences);
+        return new PdfComplianceReport(analysis.issues(), visualResult, structuralErrors, textDifferences,
+                layoutMode, layoutNotes);
     }
 
     /**

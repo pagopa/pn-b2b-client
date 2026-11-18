@@ -33,7 +33,7 @@ public enum VisualDocument {
             Source.legalFact(TimelineElementCategoryV28.NOTIFICATION_CANCELLED, "NOTIFICATION_CANCELLED")),
     MALFUNCTION(MalfunctionTemplate::build, Source.downtime()),
     ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT(AnalogDeliveryWorkflowTimeoutLegalFactTemplate::build,
-            Source.notRetrievable("lives on SEND_ANALOG_TIMEOUT, a timeline category not exposed by the B2B API")),
+            Source.hiddenLegalFact("SEND_ANALOG_TIMEOUT_CREATION_REQUEST")),
     NOTIFICATION_AAR(NotificationAarTemplate::build, Source.aar("PN_AAR")),
     NOTIFICATION_AAR_RADD_ALT(NotificationAarRaddAltTemplate::build, Source.aar("PN_AAR")),
     ANALOG_FEEDBACK_AVAILABILITY_STATEMENT(AnalogFeedbackAvailabilityStatementTemplate::build,
@@ -74,11 +74,19 @@ public enum VisualDocument {
     public record Source(Kind kind, TimelineElementCategoryV28 timelineCategory, String legalFactCategory,
                          String keyPrefix) {
 
-        /** NOT_RETRIEVABLE: golden master only, keyPrefix holds the reason. */
-        public enum Kind { TIMELINE_LEGAL_FACT, AAR, DOWNTIME, NOT_RETRIEVABLE }
+        /**
+         * NOT_RETRIEVABLE: golden master only, keyPrefix holds the reason. HIDDEN_LEGAL_FACT: the timeline element is
+         * not exposed by B2B, keyPrefix is its category and the legal fact id is read from pn-Timelines; the file is
+         * then downloaded through the usual B2B legal fact API.
+         */
+        public enum Kind { TIMELINE_LEGAL_FACT, HIDDEN_LEGAL_FACT, AAR, DOWNTIME, NOT_RETRIEVABLE }
 
         static Source legalFact(TimelineElementCategoryV28 timelineCategory, String legalFactCategory) {
             return new Source(Kind.TIMELINE_LEGAL_FACT, timelineCategory, legalFactCategory, null);
+        }
+
+        static Source hiddenLegalFact(String timelineCategory) {
+            return new Source(Kind.HIDDEN_LEGAL_FACT, null, null, timelineCategory);
         }
 
         static Source aar(String keyPrefix) {

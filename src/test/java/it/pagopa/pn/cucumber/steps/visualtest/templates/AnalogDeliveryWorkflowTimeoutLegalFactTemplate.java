@@ -19,15 +19,15 @@ public final class AnalogDeliveryWorkflowTimeoutLegalFactTemplate {
                 .field("IUN",
                         SendFieldLocators.iun(),
                         SendFieldValidators.iun(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Data decorrenza termini",
                         SendFieldLocators.date(),
                         SendFieldValidators.dataItaliana(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Ora decorrenza termini",
                         SendFieldLocators.time(),
                         SendFieldValidators.oraHHmm(),
-                        MaskStrategy.TO_LINE_END_AND_NEXT_LINE)
+                        MaskStrategy.INLINE_VALUE)
                 .field("Codice fiscale destinatario",
                         SendFieldLocators.codiceFiscalePg(),
                         SendFieldValidators.codiceFiscalePg(),

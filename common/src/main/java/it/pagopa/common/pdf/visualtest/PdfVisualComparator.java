@@ -187,14 +187,19 @@ public final class PdfVisualComparator {
      * @param diffImagePath  path al PDF di diff generato ({@code null} se non generato)
      * @param pageCount      numero di pagine confrontate ({@code -1} se fallimento precoce)
      */
-    public record VisualDiffResult(boolean equal, String errorMessage, Path diffImagePath, int pageCount) {
+    public record VisualDiffResult(boolean equal, String errorMessage, Path diffImagePath, int pageCount,
+                                   String coverage) {
 
         static VisualDiffResult success(int pageCount) {
-            return new VisualDiffResult(true, null, null, pageCount);
+            return new VisualDiffResult(true, null, null, pageCount, null);
+        }
+
+        VisualDiffResult withCoverage(String coverage) {
+            return new VisualDiffResult(equal, errorMessage, diffImagePath, pageCount, coverage);
         }
 
         static VisualDiffResult failure(String message, Path diffPath) {
-            return new VisualDiffResult(false, message, diffPath, -1);
+            return new VisualDiffResult(false, message, diffPath, -1, null);
         }
     }
 }

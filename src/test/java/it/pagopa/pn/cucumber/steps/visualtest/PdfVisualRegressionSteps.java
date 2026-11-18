@@ -21,10 +21,12 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLog
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
+import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsReader;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -52,21 +54,25 @@ public class PdfVisualRegressionSteps {
     private final SharedSteps sharedSteps;
     private final DestinatarioRegistry destinatarioRegistry;
     private final IPnDowntimeLogsClient downtimeLogsClient;
+    private final TimelineDetailsReader timelineDetails;
     private final GoldenMasterProvider goldenMasters;
     private final int downtimeMonthsBack;
 
     private VisualDocument document;
     private byte[] actualPdf;
+    private Map<String, String> hiddenDetails;
 
     @Autowired
     public PdfVisualRegressionSteps(SharedSteps sharedSteps,
                                     DestinatarioRegistry destinatarioRegistry,
                                     IPnDowntimeLogsClient downtimeLogsClient,
                                     ITemplateEngineClient templateEngineClient,
+                                    TimelineDetailsReader timelineDetails,
                                     @Value("${pn.vrt.downtime-months-back:6}") int downtimeMonthsBack) {
         this.sharedSteps = sharedSteps;
         this.destinatarioRegistry = destinatarioRegistry;
         this.downtimeLogsClient = downtimeLogsClient;
+        this.timelineDetails = timelineDetails;
         this.goldenMasters = new GoldenMasterProvider(new TemplateEngineGoldenRenderer(templateEngineClient));
         this.downtimeMonthsBack = downtimeMonthsBack;
     }
@@ -85,6 +91,7 @@ public class PdfVisualRegressionSteps {
         document = VisualDocument.of(documentKey);
         String key = switch (document.source().kind()) {
             case TIMELINE_LEGAL_FACT -> legalFactKey(document.source());
+            case HIDDEN_LEGAL_FACT -> hiddenLegalFactKey(document.source());
             case AAR -> aarKey(document.source());
             case NOT_RETRIEVABLE -> throw new IllegalStateException(documentKey + " non recuperabile da SEND: "
                     + document.source().keyPrefix());
@@ -92,7 +99,7 @@ public class PdfVisualRegressionSteps {
         };
         String iun = sharedSteps.getNotificationIun();
         LegalFactDownloadMetadataResponse metadata = Poller.pollUntil(
-                () -> sharedSteps.getB2bClient().getDownloadLegalFact(iun, key),
+                () -> downloadMetadataOrNull(iun, key),
                 response -> response != null && response.getUrl() != null,
                 PollingProfile.SLOW.toConfig(),
                 last -> "Documento " + documentKey + " (" + key + ") non ancora disponibile per " + iun);
@@ -115,7 +122,30 @@ public class PdfVisualRegressionSteps {
         PdfComplianceReport report = PdfComplianceChecker.check(expected, currentActual(), currentDocument().template(),
                 diffPath());
         log.info("VRT {}: {}", currentDocument().key(), report);
+        report.layoutNotes().forEach(note -> log.info("VRT {}: {}", currentDocument().key(), note));
         report.assertCompliant();
+        assertValuesBelongToTheNotification();
+    }
+
+    /** The IUN, the tax id and the time printed in the document are those of this scenario's notification. */
+    private void assertValuesBelongToTheNotification() {
+        VisualDocument.Source source = currentDocument().source();
+        if (source.kind() != VisualDocument.Source.Kind.TIMELINE_LEGAL_FACT && source.kind() != VisualDocument.Source.Kind.AAR
+                && source.kind() != VisualDocument.Source.Kind.HIDDEN_LEGAL_FACT) {
+            return;
+        }
+        String taxId = destinatarioRegistry.destinatario(VisualFixture.load(currentDocument()).recipientName()).getTaxId();
+        OffsetDateTime eventTime = source.kind() == VisualDocument.Source.Kind.TIMELINE_LEGAL_FACT
+                ? timeline().stream().filter(e -> source.timelineCategory().equals(e.getCategory()))
+                .map(TimelineElementV28::getTimestamp).filter(Objects::nonNull).findFirst().orElse(null)
+                : source.kind() == VisualDocument.Source.Kind.HIDDEN_LEGAL_FACT && hiddenDetails.get("timeoutDate") != null
+                ? OffsetDateTime.parse(hiddenDetails.get("timeoutDate"))
+                : null;
+        List<String> problems = DynamicValueChecks.check(PdfTextExtractor.extract(currentActual()).allFragments(),
+                sharedSteps.getNotificationIun(), taxId, currentDocument().template().fieldDefinitions().stream()
+                        .anyMatch(d -> d.fieldName().startsWith("Data")) ? eventTime : null);
+        Assertions.assertTrue(problems.isEmpty(), () -> "Valori del documento " + currentDocument().key()
+                + " non della notifica: " + problems);
     }
 
     @Then("i campi dinamici del documento sono validi")
@@ -142,6 +172,15 @@ public class PdfVisualRegressionSteps {
         }
     }
 
+    /** A legal fact that is still being generated by SafeStorage answers 404 for a while. */
+    private LegalFactDownloadMetadataResponse downloadMetadataOrNull(String iun, String key) {
+        try {
+            return sharedSteps.getB2bClient().getDownloadLegalFact(iun, key);
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
+    }
+
     private String legalFactKey(VisualDocument.Source source) {
         return timeline().stream()
                 .filter(e -> source.timelineCategory().equals(e.getCategory()))
@@ -154,6 +193,18 @@ public class PdfVisualRegressionSteps {
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("Nessun legal fact " + source.legalFactCategory()
                         + " su " + source.timelineCategory() + " per " + sharedSteps.getNotificationIun()));
+    }
+
+    /** The element is not exposed by B2B: its legal fact id is read from pn-Timelines once the workflow has written it. */
+    private String hiddenLegalFactKey(VisualDocument.Source source) {
+        String iun = sharedSteps.getNotificationIun();
+        List<Map<String, String>> details = Poller.pollUntil(
+                () -> timelineDetails.readDetails(iun, source.keyPrefix(), 0, null),
+                found -> found != null && found.stream().anyMatch(d -> d.get("legalFactId") != null),
+                PollingProfile.SLOW.toConfig(),
+                last -> "Elemento " + source.keyPrefix() + " con legal fact non ancora scritto per " + iun);
+        hiddenDetails = details.stream().filter(d -> d.get("legalFactId") != null).findFirst().orElseThrow();
+        return safeStorageKey(hiddenDetails.get("legalFactId"));
     }
 
     private String aarKey(VisualDocument.Source source) {

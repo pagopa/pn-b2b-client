@@ -1,12 +1,16 @@
 {
   "notification": {
     "subject": "invio notifica VRT ANALOG_TIMEOUT",
-    "senderDenomination": "Comune di palermo"
+    "senderDenomination": "Comune di palermo",
+    "physicalCommunication": "AR_REGISTERED_LETTER"
   },
   "recipient": {
     "name": "Gherkin Irreperibile",
     "data": {
-      "digitalDomicile": "NULL"
+      "digitalDomicile": "NULL",
+      "physicalAddress_State": "MESSICO",
+      "physicalAddress_zip": "ZONE_2",
+      "physicalAddress_address": "Via @sequence.6m-CON080.5s-CON020"
     }
   },
   "templateEngine": {
@@ -17,7 +21,7 @@
     "recipient": {
       "denomination": "${recipient.name}",
       "taxId": "02455090981",
-      "physicalAddress": "${recipient.name}<br/>Presso<br/>SCALA B<br/>VIA SENZA NOME<br/>87100 COSENZA COSENZA CS<br/>ITALIA"
+      "physicalAddress": "${recipient.name}<br/>Presso<br/>SCALA B<br/>VIA @SEQUENCE.6M-CON080.5S-CON020<br/>ZONE_2 COSENZA COSENZA CS<br/>MESSICO"
     }
   }
 }
