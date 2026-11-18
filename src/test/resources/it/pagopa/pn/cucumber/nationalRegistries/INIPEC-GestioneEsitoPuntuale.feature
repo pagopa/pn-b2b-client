@@ -11,6 +11,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
   #   "non risulta alcuna richiesta INIPEC"       -> nessun record (né SENT né NOT_SENT)
   #   "risulta in ERROR e inviata in DLQ"         -> sendStatus = SENT_TO_DLQ, status = ERROR
   #                                                  + messaggio su pn-national_registry_gateway_inputs-DLQ
+  #   "risulta con polling in ERROR e inviata in DLQ" -> campo batchId del record su pn-batchRequests,
+  #                                                  pn-batchPolling (per batchId) con status = ERROR, retry = 3
+  #                                                  + messaggio su pn-national_registry_gateway_inputs-DLQ
   #
 
   @inipecGestionePuntuale @inipecParallel @mockNR
@@ -125,4 +128,4 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-    Then la richiesta INIPEC per il cf "10433218194" risulta in ERROR e inviata in DLQ
+    Then la richiesta INIPEC per il cf "10433218194" risulta con polling in ERROR e inviata in DLQ

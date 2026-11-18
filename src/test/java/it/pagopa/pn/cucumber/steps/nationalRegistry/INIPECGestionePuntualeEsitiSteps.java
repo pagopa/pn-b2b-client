@@ -16,10 +16,12 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,6 +40,9 @@ import static org.assertj.core.api.Assertions.assertThat;
  *   <li><b>In ERROR e inviata in DLQ</b>  &rarr; {@code sendStatus = SENT_TO_DLQ}, {@code status = ERROR} e messaggio
  *       (InternalCodeSqsDto con {@code taxId} e prefisso del {@code correlationId}) presente su
  *       {@code pn-national_registry_gateway_inputs-DLQ}</li>
+ *   <li><b>Con polling in ERROR e inviata in DLQ</b> &rarr; campo {@code batchId} letto dal record su
+ *       {@code pn-batchRequests}, record su {@code pn-batchPolling} per quel {@code batchId} con {@code status = ERROR}, {@code retry = 3}
+ *       e poi messaggio su {@code pn-national_registry_gateway_inputs-DLQ}</li>
  * </ul>
  */
 @Slf4j
@@ -61,6 +66,11 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     private static final String MIN_LAST_RESERVED = "2000-01-01T00:00:00Z";
     private static final String STATUS_ERROR = "ERROR";
+    private static final String NO_BATCH_ID = "NO_BATCH_ID";
+    /**
+     * Numero di retry del polling atteso su pn-batchPolling quando i tentativi sono esauriti.
+     */
+    private static final int MAX_POLLING_RETRY = 3;
     private static final String NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ = "pn-national_registry_gateway_inputs-DLQ";
 
     private final DynamoDbService dynamoDbService;
@@ -80,7 +90,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     /**
      * Attesa del record SENT_TO_DLQ su DB: il servizio deve prima esaurire internamente tutti i retry.
      */
-    private static final PollingConfig DLQ_DB_POLLING = PollingConfig.of(Duration.ofMinutes(10), Duration.ofSeconds(5));
+    private static final PollingConfig DLQ_DB_POLLING = PollingConfig.of(Duration.ofMinutes(10), Duration.ofSeconds(30));
     /**
      * Attesa del messaggio sulla coda DLQ: fino a 10 minuti, una lettura ogni 30 secondi.
      */
@@ -164,6 +174,80 @@ public class INIPECGestionePuntualeEsitiSteps {
                 .distinct()
                 .toList();
 
+        assertDlqMessagesFor(cf, expectedCorrelationIds);
+    }
+
+    // Fallimento sul polling dell'esito: il batchId (campo del record su pn-batchRequests) identifica il polling
+    // su pn-batchPolling; solo quando questo è in ERROR (retry del polling esauriti) si cerca il messaggio in DLQ.
+    @Then("la richiesta INIPEC per il cf {string} risulta con polling in ERROR e inviata in DLQ")
+    public void requestPollingInErrorAndSentToDlq(String cf) {
+        String iun = sharedSteps.getNotificationIun();
+
+        // 1. Record della richiesta su pn-batchRequests: il sendStatus in questa fase non è noto, quindi si interrogano
+        //    tutti i valori. Filtro su IUN per escludere record di run precedenti con lo stesso CF.
+        List<Map<String, AttributeValue>> requestItems = Poller.pollUntil(
+                () -> Arrays.stream(SendStatus.values())
+                        .flatMap(sendStatus -> retrieveBatchRequestItemsBySendStatus(cf, sendStatus).stream())
+                        .filter(item -> item.containsKey("correlationId")
+                                && item.get("correlationId").s().contains(iun))
+                        .filter(INIPECGestionePuntualeEsitiSteps::hasBatchId)
+                        .toList(),
+                // Lambda a blocco: un'espressione sarebbe ambigua fra gli overload Predicate/Consumer di Poller.pollUntil.
+                items -> {
+                    assertThat(items)
+                            .as("Nessuna richiesta con batchId valorizzato trovata per cf=%s e iun=%s", cf, iun)
+                            .isNotEmpty();
+                },
+                DLQ_DB_POLLING);
+
+        List<String> batchIds = requestItems.stream()
+                .map(item -> item.get("batchId").s())
+                .distinct()
+                .toList();
+        List<String> correlationIds = requestItems.stream()
+                .map(item -> item.get("correlationId").s())
+                .distinct()
+                .toList();
+
+        // 2. Polling su pn-batchPolling per batchId, finché lo status non è ERROR.
+        Poller.pollUntil(
+                () -> batchIds.stream()
+                        .collect(Collectors.toMap(
+                                batchId -> batchId,
+                                batchId -> dynamoDbService.callAllPages(DynamoTableName.BATCH_POLLING,
+                                        Map.of(":v_batchId", AttributeValue.builder().s(batchId).build())))),
+                (Map<String, List<Map<String, AttributeValue>>> pollingByBatchId) -> {
+                    assertThat(pollingByBatchId).allSatisfy((batchId, pollingItems) -> {
+                        assertThat(pollingItems)
+                                .as("cf=%s: nessun record su pn-batchPolling per batchId=%s", cf, batchId)
+                                .isNotEmpty();
+                        assertThat(pollingItems).allSatisfy(item -> {
+                            assertThat(item.containsKey("status") ? item.get("status").s() : null)
+                                    .as("cf=%s: atteso status=ERROR su pn-batchPolling per batchId=%s", cf, batchId)
+                                    .isEqualTo(STATUS_ERROR);
+                            assertThat(item.containsKey("retry") ? retryOf(item) : null)
+                                    .as("cf=%s: atteso retry=%s su pn-batchPolling per batchId=%s", cf, MAX_POLLING_RETRY, batchId)
+                                    .isEqualTo(MAX_POLLING_RETRY);
+                        });
+                    });
+                },
+                DLQ_DB_POLLING);
+
+        // 3. Messaggio in DLQ.
+        assertDlqMessagesFor(cf, correlationIds);
+    }
+
+    /**
+     * Il batchId è valorizzato solo dopo la creazione del batch: prima il backend usa il placeholder {@code NO_BATCH_ID}.
+     */
+    private static boolean hasBatchId(Map<String, AttributeValue> item) {
+        return item.containsKey("batchId")
+                && item.get("batchId").s() != null
+                && !item.get("batchId").s().isEmpty()
+                && !NO_BATCH_ID.equals(item.get("batchId").s());
+    }
+
+    private void assertDlqMessagesFor(String cf, List<String> expectedCorrelationIds) {
         // Il messaggio in DLQ (InternalCodeSqsDto) viene riconosciuto tramite taxId + prefisso del correlationId del record
         // (già filtrato per IUN): così si escludono messaggi residui di run precedenti con lo stesso CF.
         // Il servizio pubblica correlationId.split(batchRequestPkSeparator)[0], quindi quello del messaggio è un prefisso di quello su DB.
