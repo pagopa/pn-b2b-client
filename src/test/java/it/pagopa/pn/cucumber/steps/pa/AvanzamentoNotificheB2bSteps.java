@@ -125,8 +125,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("recupero l'id correlato alla richiesta dall'elemento di timeline {string}")
-    public void checkPresenceOfTimelineElementAndGetCorrelationId(String version, String timelineEventCategory) {
-        checkPresenceOfTimelineElement(version, true, timelineEventCategory);
+    public void checkPresenceOfTimelineElementAndGetCorrelationId(String timelineEventCategory) {
+        getB2bStepsInterface().checkFullSentNotificationWithVersion(true, timelineEventCategory);
     }
 
     @Then("recuperando la fullSentNotification con la versione b2b {string} {is} presente l'elemento di timeline {string}")

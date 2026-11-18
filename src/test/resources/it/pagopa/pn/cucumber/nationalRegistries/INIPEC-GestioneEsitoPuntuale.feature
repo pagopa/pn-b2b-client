@@ -1,8 +1,7 @@
 Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch verso INIPEC
 
 
-
-@inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
+  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_1_A] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
   quindi viene fatta una chiamata verso INIPEC per recuperarlo,
   la richiesta verso i registri è tracciata nelle tabelle dedicate al monitoraggio.
@@ -87,8 +86,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 39274018561 |
-      | digitalDomicile | NULL             |
-      | recipientType   | PG               |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -107,8 +106,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 83016259471 |
-      | digitalDomicile | NULL             |
-      | recipientType   | PG               |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -144,8 +143,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 17492068394 |
-      | digitalDomicile | NULL             |
-      | recipientType   | PG               |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -186,7 +185,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "28223913097" risulta in stato WORKED
     Then la richiesta verso il servizio INAD per il cf "28223913097" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "28223913097" risulta in stato WORKED
-
 
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
@@ -258,7 +256,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then la richiesta verso il servizio INAD per il cf "MTTBNN14A01A001N" risulta in errore
 
 
-
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD senza recuperare indirizzi,
@@ -299,18 +296,17 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INAD per il cf "85385800199" risulta in stato WORKED
 
 
-
-
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_05_1] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD e successivamente verso INIPEC per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo           |
+    Given viene generata una nuova notifica
+  | subject            | invio notifica con cucumber |
+  | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | PRPMGG80A41H501W |
-      | digitalDomicile | NULL |
-      | recipientType   | PF   |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -322,17 +318,17 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then il batch associato alla richiesta verso INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
 
 
-
   @inadMassive @mockNR @ignoreUAT @inadMassiveTrueInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo           |
+    Given viene generata una nuova notifica
+  | subject            | invio notifica con cucumber |
+  | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 39274018561 |
-      | digitalDomicile | NULL |
-      | recipientType   | PG   |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -347,18 +343,19 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
-  | subject            | invio notifica con cucumber |
-  | senderDenomination | Comune di palermo           |
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 39274018561 |
-      | digitalDomicile | NULL |
-      | recipientType   | PG   |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then risulta una richiesta INAD per il cf "28223913097"
+    Then risulta una richiesta INAD per il cf "39274018561"
 
 
   # COSA VERIFICHIAMO
