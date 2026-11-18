@@ -151,7 +151,7 @@ Feature: Censimento stime mittenti
     Then il risultato del controllo è "OK"
 
   #se novembre -> dicembre s , marzo n
-  @lambdaCheckPortFat @ignore @work-item:QA-18558
+  @lambdaCheckPortFatAlone @ignore @work-item:QA-18558
   Scenario: [CHECK_PORTFAT_04_2] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese in corso, il test da esito negativo per mancanza di una commessa necessaria.
     When eseguo la lambda sender order check
