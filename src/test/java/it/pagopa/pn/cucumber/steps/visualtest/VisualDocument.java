@@ -39,7 +39,7 @@ public enum VisualDocument {
     ANALOG_FEEDBACK_AVAILABILITY_STATEMENT(AnalogFeedbackAvailabilityStatementTemplate::build,
             Source.notRetrievable("produced only by an operations script, never by a notification workflow")),
     INFORMAL_ANALOG_COMMUNICATION(InformalAnalogCommunicationTemplate::build,
-            Source.notRetrievable("cover page stored in SafeStorage without a download API"));
+            Source.informalCoverpage());
 
     private final Supplier<PdfDocumentTemplate> template;
     private final Source source;
@@ -79,7 +79,7 @@ public enum VisualDocument {
          * not exposed by B2B, keyPrefix is its category and the legal fact id is read from pn-Timelines; the file is
          * then downloaded through the usual B2B legal fact API.
          */
-        public enum Kind { TIMELINE_LEGAL_FACT, HIDDEN_LEGAL_FACT, AAR, DOWNTIME, NOT_RETRIEVABLE }
+        public enum Kind { TIMELINE_LEGAL_FACT, HIDDEN_LEGAL_FACT, AAR, DOWNTIME, INFORMAL_COVERPAGE, NOT_RETRIEVABLE }
 
         static Source legalFact(TimelineElementCategoryV28 timelineCategory, String legalFactCategory) {
             return new Source(Kind.TIMELINE_LEGAL_FACT, timelineCategory, legalFactCategory, null);
@@ -95,6 +95,14 @@ public enum VisualDocument {
 
         static Source downtime() {
             return new Source(Kind.DOWNTIME, null, null, null);
+        }
+
+        /**
+         * Cover page of a paper informal notification: its key is on the COVERPAGE_CREATION_REQUEST element of the
+         * informal timeline; there is no public download API, the file is read from the private SafeStorage API.
+         */
+        static Source informalCoverpage() {
+            return new Source(Kind.INFORMAL_COVERPAGE, null, null, "COVERPAGE_CREATION_REQUEST");
         }
 
         static Source notRetrievable(String reason) {

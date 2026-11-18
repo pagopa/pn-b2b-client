@@ -17,7 +17,15 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
+import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
+import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionalityStatus;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusUpdateEvent;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -57,10 +65,16 @@ public class PdfVisualRegressionSteps {
     private final TimelineDetailsReader timelineDetails;
     private final GoldenMasterProvider goldenMasters;
     private final int downtimeMonthsBack;
+    private final String downtimeOperatorUid;
+    private final PnPaB2bInternalInformalClientImpl informalClient;
+    private final IPnSafeStoragePrivateClient safeStorageClient;
+    private final SendSharedContext sendSharedContext;
 
     private VisualDocument document;
     private byte[] actualPdf;
     private Map<String, String> hiddenDetails;
+    private PnFunctionality createdDowntimeFunctionality;
+    private OffsetDateTime createdDowntimeStart;
 
     @Autowired
     public PdfVisualRegressionSteps(SharedSteps sharedSteps,
@@ -68,13 +82,21 @@ public class PdfVisualRegressionSteps {
                                     IPnDowntimeLogsClient downtimeLogsClient,
                                     ITemplateEngineClient templateEngineClient,
                                     TimelineDetailsReader timelineDetails,
-                                    @Value("${pn.vrt.downtime-months-back:6}") int downtimeMonthsBack) {
+                                    PnPaB2bInternalInformalClientImpl informalClient,
+                                    IPnSafeStoragePrivateClient safeStorageClient,
+                                    SendSharedContext sendSharedContext,
+                                    @Value("${pn.vrt.downtime-months-back:6}") int downtimeMonthsBack,
+                                    @Value("${pn.vrt.downtime-operator-uid:pn-b2b-client-vrt}") String downtimeOperatorUid) {
         this.sharedSteps = sharedSteps;
         this.destinatarioRegistry = destinatarioRegistry;
         this.downtimeLogsClient = downtimeLogsClient;
         this.timelineDetails = timelineDetails;
         this.goldenMasters = new GoldenMasterProvider(new TemplateEngineGoldenRenderer(templateEngineClient));
         this.downtimeMonthsBack = downtimeMonthsBack;
+        this.downtimeOperatorUid = downtimeOperatorUid;
+        this.informalClient = informalClient;
+        this.safeStorageClient = safeStorageClient;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @Given("viene generata la notifica di riferimento del documento {string}")
@@ -96,6 +118,7 @@ public class PdfVisualRegressionSteps {
             case NOT_RETRIEVABLE -> throw new IllegalStateException(documentKey + " non recuperabile da SEND: "
                     + document.source().keyPrefix());
             case DOWNTIME -> throw new IllegalArgumentException(documentKey + " si recupera dai disservizi, non dalla notifica");
+            case INFORMAL_COVERPAGE -> throw new IllegalArgumentException(documentKey + " si recupera dalla notifica bonaria");
         };
         String iun = sharedSteps.getNotificationIun();
         LegalFactDownloadMetadataResponse metadata = Poller.pollUntil(
@@ -104,6 +127,107 @@ public class PdfVisualRegressionSteps {
                 PollingProfile.SLOW.toConfig(),
                 last -> "Documento " + documentKey + " (" + key + ") non ancora disponibile per " + iun);
         storeActual(B2bUtils.downloadFile(metadata.getUrl()), iun);
+    }
+
+    /**
+     * The cover page key is on the informal timeline; the file is downloaded from the private SafeStorage API
+     * ({@code pn.safeStorage.base-url}: in local runs a tunnel on 8888 towards the confidential ALB).
+     */
+    @When("si recupera il documento {string} della notifica bonaria")
+    public void siRecuperaIlDocumentoDellaNotificaBonaria(String documentKey) {
+        document = VisualDocument.of(documentKey);
+        Assertions.assertEquals(VisualDocument.Source.Kind.INFORMAL_COVERPAGE, document.source().kind(),
+                documentKey + " non si recupera dalla notifica bonaria");
+        String iun = informalIun();
+        String senderId = sendSharedContext.getInformalNotificationContext().getSenderId();
+        String category = document.source().keyPrefix();
+        String key = Poller.pollUntil(
+                () -> informalClient.getSentInformalNotificationSender(senderId, iun, false).getTimeline().stream()
+                        .filter(e -> e.getCategory() != null && category.equals(e.getCategory().getValue()))
+                        .map(InformalTimelineElementV1::getDetails)
+                        .filter(Objects::nonNull)
+                        .map(d -> d.getFileKey())
+                        .filter(Objects::nonNull)
+                        .findFirst().orElse(null),
+                Objects::nonNull,
+                PollingProfile.SLOW.toConfig(),
+                last -> "Elemento " + category + " con fileKey non ancora prodotto per la bonaria " + iun);
+        String fileKey = safeStorageKey(key);
+        FileDownloadResponse file = Poller.pollUntil(
+                () -> safeStorageFileOrNull(fileKey),
+                response -> response != null && response.getDownload() != null && response.getDownload().getUrl() != null,
+                PollingProfile.SLOW.toConfig(),
+                last -> "Copertina " + fileKey + " non ancora disponibile su SafeStorage per " + iun);
+        storeActual(B2bUtils.downloadFile(file.getDownload().getUrl()), iun);
+    }
+
+    private FileDownloadResponse safeStorageFileOrNull(String fileKey) {
+        try {
+            return safeStorageClient.getFile(fileKey, false, false);
+        } catch (HttpClientErrorException.NotFound e) {
+            return null;
+        }
+    }
+
+    private String informalIun() {
+        String iun = sendSharedContext.getInformalNotificationContext().getIun();
+        Assertions.assertNotNull(iun, "Nessuna notifica bonaria inviata nello scenario");
+        return iun;
+    }
+
+    /**
+     * Prepared, not yet run: the only way to obtain a malfunction attestation newer than the golden master is to
+     * open and close a downtime through the internal pn-downtime-logs API (KO then OK on one functionality). It
+     * writes to the environment's downtime history and shows in the platform status, so the scenario that uses it
+     * stays @ignore until the team agrees on running it.
+     */
+    @Given("viene aperto e chiuso un disservizio della funzionalità {string}")
+    public void vieneApertoEChiusoUnDisservizio(String functionality) {
+        createdDowntimeFunctionality = PnFunctionality.valueOf(functionality);
+        createdDowntimeStart = OffsetDateTime.now().minusMinutes(2).withNano(0);
+        downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid, List.of(downtimeEvent(PnFunctionalityStatus.KO,
+                createdDowntimeStart)));
+        downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid, List.of(downtimeEvent(PnFunctionalityStatus.OK,
+                createdDowntimeStart.plusMinutes(1))));
+    }
+
+    /** The attestation is generated asynchronously when the downtime closes. */
+    @When("si recupera il documento {string} del disservizio creato")
+    public void siRecuperaIlDocumentoDelDisservizioCreato(String documentKey) {
+        document = VisualDocument.of(documentKey);
+        Assertions.assertNotNull(createdDowntimeStart, "Nessun disservizio creato nello scenario");
+        PnDowntimeEntry downtime = Poller.pollUntil(
+                this::createdDowntimeWithLegalFact,
+                Objects::nonNull,
+                PollingProfile.SLOW.toConfig(),
+                last -> "Attestazione del disservizio " + createdDowntimeFunctionality + " del " + createdDowntimeStart
+                        + " non ancora disponibile");
+        String url = downtimeLogsClient.getLegalFact(downtime.getLegalFactId()).getUrl();
+        Assertions.assertNotNull(url, "URL del documento del disservizio " + downtime.getLegalFactId() + " assente");
+        storeActual(B2bUtils.downloadFile(url), downtime.getLegalFactId());
+    }
+
+    private PnStatusUpdateEvent downtimeEvent(PnFunctionalityStatus status, OffsetDateTime timestamp) {
+        return new PnStatusUpdateEvent()
+                .status(status)
+                .timestamp(timestamp)
+                .functionality(List.of(createdDowntimeFunctionality))
+                .sourceType(PnStatusUpdateEvent.SourceTypeEnum.OPERATOR)
+                .source("pn-b2b-client visual regression");
+    }
+
+    private PnDowntimeEntry createdDowntimeWithLegalFact() {
+        PnDowntimeHistoryResponse resolved = downtimeLogsClient.getResolved(createdDowntimeStart.getYear(),
+                createdDowntimeStart.getMonthValue());
+        if (resolved == null || resolved.getResult() == null) {
+            return null;
+        }
+        return resolved.getResult().stream()
+                .filter(e -> createdDowntimeFunctionality.equals(e.getFunctionality()))
+                .filter(e -> e.getStartDate() != null
+                        && Math.abs(e.getStartDate().toEpochSecond() - createdDowntimeStart.toEpochSecond()) <= 2)
+                .filter(e -> e.getLegalFactId() != null && Boolean.TRUE.equals(e.getFileAvailable()))
+                .findFirst().orElse(null);
     }
 
     @When("si recupera il documento {string} dell'ultimo disservizio risolto")
@@ -130,6 +254,14 @@ public class PdfVisualRegressionSteps {
     /** The IUN, the tax id and the time printed in the document are those of this scenario's notification. */
     private void assertValuesBelongToTheNotification() {
         VisualDocument.Source source = currentDocument().source();
+        if (source.kind() == VisualDocument.Source.Kind.INFORMAL_COVERPAGE) {
+            String taxId = sendSharedContext.getInformalNotificationContext().getRecipient().getDestinatario().getTaxId();
+            List<String> problems = DynamicValueChecks.check(PdfTextExtractor.extract(currentActual()).allFragments(),
+                    informalIun(), taxId, null);
+            Assertions.assertTrue(problems.isEmpty(), () -> "Valori del documento " + currentDocument().key()
+                    + " non della notifica bonaria: " + problems);
+            return;
+        }
         if (source.kind() != VisualDocument.Source.Kind.TIMELINE_LEGAL_FACT && source.kind() != VisualDocument.Source.Kind.AAR
                 && source.kind() != VisualDocument.Source.Kind.HIDDEN_LEGAL_FACT) {
             return;
@@ -266,7 +398,9 @@ public class PdfVisualRegressionSteps {
         } catch (IOException e) {
             throw new UncheckedIOException("Impossibile creare " + dir, e);
         }
-        String id = sharedSteps.getNotificationIun() != null ? sharedSteps.getNotificationIun() : "run-" + System.currentTimeMillis();
+        String iun = currentDocument().source().kind() == VisualDocument.Source.Kind.INFORMAL_COVERPAGE
+                ? sendSharedContext.getInformalNotificationContext().getIun() : sharedSteps.getNotificationIun();
+        String id = iun != null ? iun : "run-" + System.currentTimeMillis();
         return dir.resolve(id + "-diff.pdf");
     }
 

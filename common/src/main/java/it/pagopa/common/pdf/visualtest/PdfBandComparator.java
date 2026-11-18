@@ -41,9 +41,12 @@ final class PdfBandComparator {
     private static final float SPACING_TOLERANCE_PT = 0.3f;
     private static final float EDGE_ZONE = 0.12f;
     private static final int CHANNEL_THRESHOLD = 40;
+    /** 8 (3%) inside flat fills: 0 false positives on 165 TE renders, colour shifts from 6% detected. */
+    private static final int FLAT_CHANNEL_THRESHOLD = 8;
     private static final int MIN_ALLOWED_PIXELS = 8;
     private static final double ALLOWED_FRACTION = 0.00001;
     private static final int MARGIN_PX = 2;
+    /** 8, 4 and 2 pt each gave a false positive (AAR RADD, wide variant) on 165 TE renders. */
     private static final float FRAME_PT = 14f;
     private static final float WORD_PAD_PT = 1.5f;
     private static final int MIN_ALLOWED_WORD_PIXELS = 16;
@@ -91,6 +94,7 @@ final class PdfBandComparator {
             PDFRenderer expectedRenderer = new PDFRenderer(expectedDoc);
             PDFRenderer actualRenderer = new PDFRenderer(actualDoc);
             List<BufferedImage> failures = new ArrayList<>();
+            List<BufferedImage> maps = new ArrayList<>();
             List<String> coverage = new ArrayList<>();
             int runCount = 0;
             for (int page = 0; page < expectedDoc.getNumberOfPages(); page++) {
@@ -118,9 +122,15 @@ final class PdfBandComparator {
                 compareWords(entries, page, expectedValues, actualValues, golden, moved, actualRenderer, pageWidth,
                         pageHeight, expectedMasks, actualMasks, pixels, problems, unverified);
                 coverage.add("pagina " + (page + 1) + ": " + pixels.summary(golden));
+                if (CoverageMap.enabled(diffOutputPath)) {
+                    maps.add(pixels.map(golden));
+                }
             }
             String coverageText = String.join("; ", coverage) + (unverified.isEmpty() ? ""
                     : "; parole non confrontabili: " + String.join(", ", unverified));
+            if (!maps.isEmpty()) {
+                CoverageMap.write(maps, diffOutputPath);
+            }
             if (problems.isEmpty()) {
                 log.debug("PdfBandComparator: {} bande identiche", runCount);
                 return PdfVisualComparator.VisualDiffResult.success(expectedDoc.getNumberOfPages()).withCoverage(coverageText);
@@ -143,6 +153,21 @@ final class PdfBandComparator {
             this.width = width;
             this.compared = new BitSet(width * height);
             this.masked = new BitSet(width * height);
+        }
+
+        /** Grey: ink compared; blue: masked; yellow: ink not verified; white: paper. */
+        BufferedImage map(BufferedImage golden) {
+            BufferedImage map = new BufferedImage(width, golden.getHeight(), BufferedImage.TYPE_INT_RGB);
+            for (int y = 0; y < golden.getHeight(); y++) {
+                for (int x = 0; x < width; x++) {
+                    int i = y * width + x;
+                    boolean ink = !CoverageMap.nearWhite(golden.getRGB(x, y));
+                    int color = masked.get(i) && !compared.get(i) ? (ink ? CoverageMap.INK_UNDER_MASK : CoverageMap.BLUE)
+                            : ink ? (compared.get(i) ? CoverageMap.GREY : CoverageMap.YELLOW) : 0xFFFFFF;
+                    map.setRGB(x, y, color);
+                }
+            }
+            return map;
         }
 
         String summary(BufferedImage golden) {
@@ -278,7 +303,7 @@ final class PdfBandComparator {
                             pixels.masked.set(index);
                         } else {
                             pixels.compared.set(index);
-                            if (differs(golden.getRGB(x, y), image.getRGB(x, y))) {
+                            if (differs(golden, image, x, y)) {
                                 diffs++;
                             }
                         }
@@ -485,7 +510,7 @@ final class PdfBandComparator {
                 }
                 pixels.compared.set(y * width + x);
                 compared++;
-                if (differs(g, moved.getRGB(x, y))) {
+                if (differs(golden, moved, x, y)) {
                     diffs++;
                     overlay.setRGB(x, y - rowStart, 0xFF0000);
                 } else {
@@ -565,16 +590,41 @@ final class PdfBandComparator {
         }
     }
 
-    private static boolean differs(int a, int b) {
+    /**
+     * Edges (text, thin rules, gradients) are rendered with a different anti-aliasing phase when they move, so they get
+     * the wide threshold; inside a flat fill, where both renders are uniform around the pixel, a smaller colour
+     * change is already a defect.
+     */
+    private static boolean differs(BufferedImage expected, BufferedImage actual, int x, int y) {
+        int a = expected.getRGB(x, y);
+        int b = actual.getRGB(x, y);
         if (a == b) {
             return false;
         }
         if (squiggleAgainstPaper(a, b) || squiggleAgainstPaper(b, a)) {
             return false;
         }
-        return Math.abs(((a >> 16) & 0xFF) - ((b >> 16) & 0xFF)) > CHANNEL_THRESHOLD
-                || Math.abs(((a >> 8) & 0xFF) - ((b >> 8) & 0xFF)) > CHANNEL_THRESHOLD
-                || Math.abs((a & 0xFF) - (b & 0xFF)) > CHANNEL_THRESHOLD;
+        int threshold = flat(expected, x, y) && flat(actual, x, y)
+                ? FLAT_CHANNEL_THRESHOLD : CHANNEL_THRESHOLD;
+        return Math.abs(((a >> 16) & 0xFF) - ((b >> 16) & 0xFF)) > threshold
+                || Math.abs(((a >> 8) & 0xFF) - ((b >> 8) & 0xFF)) > threshold
+                || Math.abs((a & 0xFF) - (b & 0xFF)) > threshold;
+    }
+
+    /** The 3x3 neighbourhood has a single colour. */
+    private static boolean flat(BufferedImage image, int x, int y) {
+        if (x < 1 || y < 1 || x >= image.getWidth() - 1 || y >= image.getHeight() - 1) {
+            return false;
+        }
+        int c = image.getRGB(x, y);
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (image.getRGB(x + dx, y + dy) != c) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

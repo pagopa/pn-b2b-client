@@ -103,6 +103,13 @@ public final class PdfComplianceChecker {
                     all.addAll(actualMasks);
                     all.addAll(layout.tailMasks());
                     visualResult = PdfVisualComparator.compare(expectedPdf, actualPdf, List.copyOf(all), diffOutputPath);
+                    if (CoverageMap.enabled(diffOutputPath)) {
+                        try {
+                            CoverageMap.write(CoverageMap.ofMasks(expectedPdf, all), diffOutputPath);
+                        } catch (java.io.IOException e) {
+                            log.warn("PdfComplianceChecker: mappa di copertura non scritta: {}", e.getMessage());
+                        }
+                    }
                     if (visualResult.equal() && !layout.tailMasks().isEmpty()) {
                         PdfVisualComparator.VisualDiffResult words = PdfBandComparator.compareWordsOnly(expectedPdf,
                                 actualPdf, expectedExtracted, extractedText, template, expectedMasks, actualMasks,
