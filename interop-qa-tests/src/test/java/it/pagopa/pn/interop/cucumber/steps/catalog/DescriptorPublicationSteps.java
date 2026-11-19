@@ -13,10 +13,11 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-
-import java.util.UUID;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.MutateDescriptorResult;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.isExpectedPersonalData;
 import static it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.getRiskAnalysisFromAnswersDataTable;
@@ -57,11 +58,25 @@ public class DescriptorPublicationSteps {
         sharedStepsContext.getEServicesCommonContext().setCallbackInterfaceId(callbackInterfaceId);
     }
 
+    @Given("{string} ha già creato {int} e-service in modalità {string} con un descrittore in stato {string}")
+    public void createMultipleEServiceWithModeAndState(String tenantType, int count, String mode, String eServiceDescriptorState) {
+        for (int i = 0; i < count; i++) {
+            createEServiceModeAndState(tenantType, mode, eServiceDescriptorState);
+        }
+    }
+
     @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string}")
     public void createEServiceWithModeAndState(String tenantType, String mode, String eServiceDescriptorState) {
+        createEServiceModeAndState(tenantType, mode, eServiceDescriptorState);
+    }
+
+    private void createEServiceModeAndState(String tenantType, String mode, String eServiceDescriptorState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)),
+                new EServiceSeed().name(eserviceName).mode(EServiceMode.fromValue(mode)),
                 new UpdateEServiceDescriptorSeed()
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
@@ -87,13 +102,31 @@ public class DescriptorPublicationSteps {
                 false
         );
         eServicesCommonContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
+        eServicesCommonContext.registerCreatedEService(eServiceDescriptor, eServiceDescriptorState);
+    }
+
+    @Given("{string} ha già creato {int} e-service in modalità {string} con un descrittore in stato {string} e flag dati personali a {string}")
+    public void createEServiceWithModeAndStateAndPersonaDataFlag(String tenantType, int count, String mode, String eServiceDescriptorState, String personalDataFlag) {
+        for (int i = 0; i < count; i++) {
+            createEServiceModeStatePersonalData(tenantType, mode, eServiceDescriptorState, personalDataFlag);
+        }
     }
 
     @Given("{string} ha già creato un e-service in modalità {string} con un descrittore in stato {string} e flag dati personali a {string}")
     public void createEServiceWithModeAndStateAndPersonaDataFlag(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
+        createEServiceModeStatePersonalData(tenantType, mode, eServiceDescriptorState, personalDataFlag);
+    }
+
+    private void createEServiceModeStatePersonalData(String tenantType, String mode, String eServiceDescriptorState, String personalDataFlag) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
         EServiceDescriptor eServiceDescriptor = dataPreparationService.createEServiceAndDraftDescriptor(
-                new EServiceSeed().mode(EServiceMode.fromValue(mode)).personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
+                new EServiceSeed()
+                        .name(eserviceName)
+                        .mode(EServiceMode.fromValue(mode))
+                        .personalData(personalDataFlag.equals("undefined") ? null : personalDataFlag.equalsIgnoreCase("true")),
                 new UpdateEServiceDescriptorSeed()
         );
         EServicesCommonContext eServicesCommonContext = sharedStepsContext.getEServicesCommonContext();
@@ -119,6 +152,7 @@ public class DescriptorPublicationSteps {
                 false
         );
         eServicesCommonContext.setDocumentsMetadata(mutateDescriptorResult.getDocumentsMetadata());
+        eServicesCommonContext.registerCreatedEService(eServiceDescriptor, eServiceDescriptorState);
     }
 
     @When("{string} crea un e-service in modalità {string} con un descrittore in stato {string} specificando nell'analisi del rischio:")

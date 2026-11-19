@@ -1,8 +1,11 @@
 package it.pagopa.pn.interop.cucumber.steps.catalog.utils;
 
+import it.pagopa.interop.agreement.domain.EServiceDescriptor;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 public class CatalogResolver extends AbstractResolver {
@@ -20,6 +23,27 @@ public class CatalogResolver extends AbstractResolver {
                 UUID::randomUUID,
                 () -> null
         );
+    }
+
+    public List<UUID> resolveEServiceIds(String eServiceIds) {
+        return Arrays.stream(eServiceIds.split(","))
+                .map(String::trim)
+                .flatMap(token -> this.<List<UUID>>resolveOrParse(
+                        token,
+                        v -> List.of(UUID.fromString(v)),
+                        () -> {
+                            List<EServiceDescriptor> created = sharedStepsContext.getEServicesCommonContext().getCreatedEServicesIds();
+                            if (created != null && !created.isEmpty()) {
+                                return created.stream().map(EServiceDescriptor::getEServiceId).toList();
+                            }
+                            UUID singleId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+                            return singleId == null ? List.of() : List.of(singleId);
+                        },
+                        null,
+                        () -> List.of(UUID.randomUUID()),
+                        List::of
+                ).stream())
+                .toList();
     }
 
     public UUID resolveDescriptorId(String descriptorId) {

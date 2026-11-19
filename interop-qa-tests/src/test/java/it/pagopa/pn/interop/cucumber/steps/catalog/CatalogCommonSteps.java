@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
 
@@ -51,6 +52,14 @@ public class CatalogCommonSteps {
                 ((ResponseEntity<CompactEServicesLight>) httpCallExecutor.getResponse()).getBody().getResults().size());
     }
 
+    @Then("si ottiene status code {int} e la lista di {int} e-service(s) dal catalogo compatto")
+    public void verifyReceivedCompactCatalogResponse(int statusCode, int eServiceNumber) {
+        IHttpExecutor httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        Assertions.assertEquals(HttpStatus.valueOf(statusCode), httpCallExecutor.getResponseStatus());
+        Assertions.assertEquals(eServiceNumber,
+                ((ResponseEntity<CompactCatalogEServices>) httpCallExecutor.getResponse()).getBody().getResults().size());
+    }
+
     @Given("{string} ha già creato un e-service {isAsynchronous} con un descrittore in stato {string} con:")
     public void createEserviceWithDescriptorAndState(String tenantType, Boolean isAsync, String descriptorState, UpdateEServiceDescriptorSeed descriptorSeed) {
         createEServiceWithDescriptorInState(tenantType, descriptorState, new EServiceSeed().asyncExchange(isAsync), descriptorSeed);
@@ -71,12 +80,29 @@ public class CatalogCommonSteps {
         createEServiceWithDescriptorInStateSpecifyingConsumerDelegationFlags(tenantType, descriptorState, nullableBoolean(isConsumerDelegable), nullableBoolean(isClientAccessDelegable));
     }
 
+    @Given("{string} ha già creato {int} e-services in stato {eServiceState}")
+    public void createEservice(String tenantType, int count, EServiceState eServiceState) {
+        for (int i = 0; i < count; i++) {
+            createEService(tenantType, eServiceState);
+        }
+    }
+
+
     @Given("{string} ha già creato un e-service in stato {eServiceState}")
     public void createEservice(String tenantType, EServiceState eServiceState) {
+        createEService(tenantType, eServiceState);
+    }
+
+    private void createEService(String tenantType, EServiceState eServiceState) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));
-        EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(new EServiceSeed(), new UpdateEServiceDescriptorSeed(), eServiceState);
-        sharedStepsContext.getEServicesCommonContext().setEserviceId(eServiceDescriptor.getEServiceId());
-        sharedStepsContext.getEServicesCommonContext().setDescriptorId(eServiceDescriptor.getDescriptorId());
+        String eserviceName = String.format("e-service-%d-%d",
+                sharedStepsContext.getTestSeed(),
+                ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE));
+        EServiceDescriptor eServiceDescriptor = this.dataPreparationService.createEServiceInState(
+                new EServiceSeed().name(eserviceName),
+                new UpdateEServiceDescriptorSeed(),
+                eServiceState);
+        sharedStepsContext.getEServicesCommonContext().registerCreatedEService(eServiceDescriptor, eServiceState.getValue());
     }
 
     private void createEServiceWithDescriptorInState(String tenantType, String descriptorState, EServiceSeed eServiceSeed, UpdateEServiceDescriptorSeed descriptorSeed) {
