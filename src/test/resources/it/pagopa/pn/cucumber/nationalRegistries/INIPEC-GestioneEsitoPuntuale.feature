@@ -314,6 +314,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | taxId           | 39274018561 |
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
+    And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
@@ -321,7 +322,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     Then la richiesta verso il servizio INAD per il cf "39274018561" risulta in stato WORKED
     Then il batch associato alla richiesta verso INAD per il cf "39274018561" risulta in stato WORKED
-    
+
   @inadMassive @mockNR @ignoreUAT @inadMassiveFalseInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:false;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
@@ -333,6 +334,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | taxId           | 39274018561 |
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
+    And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
