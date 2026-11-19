@@ -21,6 +21,19 @@ public interface ITemplateEngineStrategy {
         return List.of(getTextToCheckLanguage(language, recipientType));
     }
 
+    /**
+     * Testo completo (decodificato, senza markup) che deve essere contenuto nel contenuto
+     * visibile del template per la lingua/recipientType indicati. A differenza di
+     * {@link #getTextToCheckLanguage}, che verifica una porzione del template contro l'HTML
+     * grezzo, questo metodo verifica l'intero contenuto testuale visibile; va sovrascritto solo
+     * dalle strategie che espongono un controllo di questo tipo, leggendo il testo atteso da
+     * config/template-engine.yml.
+     */
+    default String getFullTextToCheck(String language, String recipientType) {
+        throw new UnsupportedOperationException(
+                "Controllo sul testo visibile completo non supportato da " + getClass().getSimpleName());
+    }
+
     default LanguageEnum selectLanguage(String language) {
         return switch (language.toUpperCase()) {
             case "ITALIANA" -> LanguageEnum.IT;

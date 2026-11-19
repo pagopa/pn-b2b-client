@@ -220,6 +220,17 @@ public class TemplateEngineSteps {
         }
     }
 
+    @And("il contenuto testuale del template {string} in lingua {string} corrisponde al testo atteso")
+    public void verificoCheIlContenutoTestualeCorrispondaAlTestoAtteso(String templateType, String language) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        assertThat(result.getTemplateHtmlReturned()).isNotNull();
+        String actualVisibleText = result.retrieveVisibleText();
+        String expectedText = templateEngineStrategy.get(templateTypeObject).getFullTextToCheck(language, recipientType);
+        assertThat(actualVisibleText)
+                .as("Checking if the visible text content of the template contains the expected text")
+                .contains(expectedText);
+    }
+
     @And("controllo che la notifica {string} abbia i giusti campi valorizzati")
     public void controlloCheLaNotificaAbbiaIGiustiCampiValorizzati(String notificationType) {
         switch (notificationType) {

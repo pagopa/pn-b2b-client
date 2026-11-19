@@ -32,11 +32,23 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
 //        return "Hai ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
 //    }
 
-        @Override
+    @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (recipientType.toUpperCase()) {
-            case "PG" -> "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata  dopo 7 giorni dalla ricezione.";
-            default -> "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+            case "PG" ->
+                    "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata  dopo 7 giorni dalla ricezione.";
+            default ->
+                    "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali.\nLa notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
+        };
+    }
+
+    @Override
+    public String getFullTextToCheck(String language, String recipientType) {
+        return switch (recipientType.toUpperCase()) {
+            case "PG" ->
+                    "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali. La notifica a valore legale risulterà legalmente consegnata dopo 7 giorni dalla ricezione.";
+            default ->
+                    "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi a SEND - Servizio Notifiche Digitali. La notifica risulterà legalmente consegnata a te dopo 7 giorni dalla ricezione.";
         };
     }
 
@@ -48,6 +60,7 @@ public class NotificationAARForSMSDigitalStrategy implements ITemplateEngineStra
                 .recipient(createRecipient(context))
                 .notification(createNotification(context));
     }
+
     private AarForSmsRecipientDigital createRecipient(TemplateRequestContext context) {
         return new AarForSmsRecipientDigital()
                 .recipientType(context.getRecipientType());

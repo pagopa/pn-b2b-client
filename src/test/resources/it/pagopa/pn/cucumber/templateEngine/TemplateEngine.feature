@@ -362,6 +362,7 @@ Feature: Template engine
     When recupero il template per "OTP di conferma email" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "OTP di conferma email" il file "html" sia in lingua "<language>"
+    And il contenuto testuale del template "OTP di conferma email" in lingua "<language>" corrisponde al testo atteso
     Examples:
       | language |
       | italiana |
@@ -392,6 +393,7 @@ Feature: Template engine
     When recupero il template per "OTP di conferma pec" in lingua "<language>"
     Then verifico che il template è in formato "html"
     And controllo che per il template "OTP di conferma pec" il file "html" sia in lingua "<language>"
+    And il contenuto testuale del template "OTP di conferma pec" in lingua "<language>" corrisponde al testo atteso
     Examples:
       | language |
       | italiana |
@@ -587,28 +589,29 @@ Feature: Template engine
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+    And il contenuto testuale del template "avviso di cortesia EMAIL digitale" in lingua "italiana" corrisponde al testo atteso
+
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_40] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana (PG)
     When recupero il template per "avviso di cortesia SMS" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "text"
     And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "accedi con SPID"
+    And il contenuto testuale del template "avviso di cortesia SMS" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_41] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "una notifica da parte di"
+    And il contenuto testuale del template "avviso di cortesia EMAIL" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine @templateEngineCM
   Scenario: [TEMPLATE-ENGINE_42] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
     When recupero il template per "AVVISO DI CORTESIA SMS DIGITALE" in lingua "slovena" con recipient Type "PG"
     Then verifico che il template è in formato "text"
     And controllo che per il template "AVVISO DI CORTESIA SMS DIGITALE" il file "text" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "accedi a SEND"
+    And il contenuto testuale del template "AVVISO DI CORTESIA SMS DIGITALE" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine @templateEngineCM
   Scenario: [TEMPLATE-ENGINE_43] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
@@ -628,28 +631,29 @@ Feature: Template engine
     When recupero il template per "AVVISO DI CORTESIA SMS DIGITALE" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "text"
     And controllo che per il template "AVVISO DI CORTESIA SMS DIGITALE" il file "text" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "accedi a SEND"
+    And il contenuto testuale del template "AVVISO DI CORTESIA SMS DIGITALE" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-email-digital
   Scenario: [TEMPLATE-ENGINE_39] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+    And il contenuto testuale del template "avviso di cortesia EMAIL digitale" in lingua "italiana" corrisponde al testo atteso
+
 
   @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_40] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
     When recupero il template per "avviso di cortesia SMS" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "text"
     And controllo che per il template "avviso di cortesia SMS" il file "text" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "accedi con SPID"
+    And il contenuto testuale del template "avviso di cortesia SMS" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_41] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese (PF)
     When recupero il template per "avviso di cortesia EMAIL" in lingua "italiana" con recipient Type "PF"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "italiana"
-    And il corpo del messaggio contiene il testo "una notifica da parte di"
+    And il contenuto testuale del template "avviso di cortesia EMAIL" in lingua "italiana" corrisponde al testo atteso
 
   @templateEngine
   Scenario Outline: [TEMPLATE-ENGINE_42] Verifica dell'intero template AAR-NO-RADD per PF e PG per le lingue IT,DE,FR,SL
@@ -707,28 +711,28 @@ Feature: Template engine
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PG"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
-    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+    And il corpo del messaggio contiene il testo "una notifica a valore legale da parte di"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_47] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PG"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
-    And il corpo del messaggio contiene il testo "una notifica da parte di"
+    And il corpo del messaggio contiene il testo "una notifica a valore legale da parte di"
 
   @templateEngine @templateEngineCM #templates-engine-private/v1/templates/notification-aar-for-email-digital
   Scenario: [TEMPLATE-ENGINE_48] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di cortesia EMAIL digitale" in lingua "inglese" con recipient Type "PF"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL digitale" il file "html" sia in lingua "inglese"
-    And il corpo del messaggio contiene il testo "una comunicazione a valore legale da parte di"
+    And il corpo del messaggio contiene il testo "una notifica a valore legale da parte di"
 
   @templateEngine @templateEngineCM #Per flusso Analogico o con flag courtesy message:OFF - templates-engine-private/v1/templates/notification-aar-for-email
   Scenario: [TEMPLATE-ENGINE_49] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese (PF)
     When recupero il template per "avviso di cortesia EMAIL" in lingua "inglese" con recipient Type "PF"
     Then verifico che il template è in formato "html"
     And controllo che per il template "avviso di cortesia EMAIL" il file "html" sia in lingua "inglese"
-    And il corpo del messaggio contiene il testo "una notifica da parte di"
+    And il corpo del messaggio contiene il testo "una notifica a valore legale da parte di"
 
   @templateEngine @templateEngineCM
   Scenario: [TEMPLATE-ENGINE_50] Richiamare l’API per il recupero del template di avviso di cortesia SMS - lingua italiana
@@ -764,16 +768,16 @@ Feature: Template engine
     Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "pdf"
 
     Examples:
-      | endpoint                                    | fields                                                                                                                                                                                 |
+      | endpoint                                    | fields                                                                                                                          |
       | notification-received-legal-fact            | subject,notification.sender.paDenomination,notification.recipients.denomination,notification.recipients.digitalDomicile.address |
-      | pec-delivery-workflow-legal-fact            | deliveries.denomination,deliveries.address                                                                                                                                              |
-      | notification-viewed-legal-fact              | recipient.denomination,delegate.denomination                                                                                                                                            |
-      | notification-cancelled-legal-fact           | notification.sender.paDenomination,notification.recipients.denomination                                                                                                                 |
-      | analog-delivery-workflow-failure-legal-fact | recipient.denomination                                                                                                                                                                  |
-      | analog-delivery-workflow-timeout-legal-fact | recipient.denomination,recipient.physicalAddress                                                                                                                                        |
-      | notification-aar-radd-alt                   | notification.subject,notification.sender.paDenomination,recipient.denomination                                                                                                          |
-      | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                                                                                 |
-      | analog-feedback-availability-statement      | senderDenomination                                                                                                                                                                      |
+      | pec-delivery-workflow-legal-fact            | deliveries.denomination,deliveries.address                                                                                      |
+      | notification-viewed-legal-fact              | recipient.denomination,delegate.denomination                                                                                    |
+      | notification-cancelled-legal-fact           | notification.sender.paDenomination,notification.recipients.denomination                                                         |
+      | analog-delivery-workflow-failure-legal-fact | recipient.denomination                                                                                                          |
+      | analog-delivery-workflow-timeout-legal-fact | recipient.denomination,recipient.physicalAddress                                                                                |
+      | notification-aar-radd-alt                   | notification.subject,notification.sender.paDenomination,recipient.denomination                                                  |
+      | notification-aar                            | notification.subject,notification.sender.paDenomination                                                                         |
+      | analog-feedback-availability-statement      | senderDenomination                                                                                                              |
 
   @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_1_B] Verifica HTML escaping su tutti i campi dichiarati per gli endpoint HTML
@@ -781,11 +785,11 @@ Feature: Template engine
     Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "html"
 
     Examples:
-      | endpoint                                   | fields                                                           |
-      | notification-aar-for-email                 | notification.sender.paDenomination                                |
-      | notification-aar-for-email-digital         | notification.sender.paDenomination                                |
-      | notification-aar-for-pec                   | notification.subject,notification.sender.paDenomination           |
-      | notification-cce-for-email                 | denomination                                                      |
+      | endpoint                           | fields                                                  |
+      | notification-aar-for-email         | notification.sender.paDenomination                      |
+      | notification-aar-for-email-digital | notification.sender.paDenomination                      |
+      | notification-aar-for-pec           | notification.subject,notification.sender.paDenomination |
+      | notification-cce-for-email         | denomination                                            |
 
   @templateEngineEscapeOn
   Scenario Outline: [TEMPLATE-ENGINE_HTML-ESCAPE_2] Verifica escaping dei singoli caratteri e delle combinazioni sui diversi formati

@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.data;
 
 import lombok.Data;
+import org.jsoup.Jsoup;
 import org.springframework.core.io.Resource;
 
 @Data
@@ -32,5 +33,15 @@ public class TemplateEngineResult {
                 .replaceAll("\\r", " ")
                 .replaceAll("\\s+", " ")
                 .trim();
+    }
+
+    /**
+     * Estrae il testo effettivamente visibile dall'HTML (tag, stili e commenti esclusi,
+     * entity HTML decodificate, spazi normalizzati) tramite un parser HTML, cosi' da poter
+     * confrontare il contenuto di un template con il testo atteso indipendentemente dal markup.
+     */
+    public String retrieveVisibleText() {
+        if (templateHtmlReturned == null) return "";
+        return Jsoup.parse(templateHtmlReturned).body().text();
     }
     }

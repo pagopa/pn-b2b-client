@@ -21,6 +21,6 @@ public class PecBodyRejectStrategy implements ITemplateEngineStrategy{
 
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
-        return "Ricevi questa comunicazione perch&eacute; hai inserito questo indirizzo";
+        return "Ricevi questa email perch&eacute; hai inserito il tuo indirizzo";
     }
 }

@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSubjectNotification;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForSubjectSender;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForSubject;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
+public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy {
     private ITemplateEngineClient templateEngineClient;
 
     public NotificationAARSubjectStrategy(ITemplateEngineClient templateEngineClient) {
@@ -27,8 +29,8 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
-            case  "ITALIANA" -> {
-                yield "SEND - Nuova notifica da string - string";
+            case "ITALIANA" -> {
+                yield "SEND - Nuova notifica a valore legale da string - string";
             }
             case "TEDESCA" -> {
                 yield "SEND - Neue Zustellung von • Nuova notifica da string - string";
@@ -37,10 +39,10 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
                 yield "SEND - Nova obvestila od • Nuova notifica da string - string";
             }
             case "FRANCESE" -> {
-                yield "SEND - Nouvelle notification de • Nuova notifica da string - string";
+                yield "SEND - Nouvelle notification à valeur juridique de • Nuova notifica a valore legale da string - string";
             }
             case "INGLESE" -> {
-                yield "SEND - New notification from • Nuova notifica da string - string";
+                yield "SEND - New legally binding notification from • Nuova notifica a valore legale da string - string";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
         };

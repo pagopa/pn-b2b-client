@@ -4,20 +4,24 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.A
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailRecipientDigital;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.AarForEmailSenderDigital;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templatesengine.model.NotificationAarForEmailDigital;
+import it.pagopa.pn.client.b2b.pa.config.TemplateEngineMessageConfigs;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateNotification;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineStrategy {
     private ITemplateEngineClient templateEngineClient;
+    private final TemplateEngineMessageConfigs configs;
 
-    public NotificationAARForEMAILDigitalStrategy(ITemplateEngineClient templateEngineClient) {
+    public NotificationAARForEMAILDigitalStrategy(ITemplateEngineClient templateEngineClient, TemplateEngineMessageConfigs configs) {
         this.templateEngineClient = templateEngineClient;
+        this.configs = configs;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
     public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (language.toUpperCase()) {
             case  "ITALIANA" -> {
-                yield "ll termine per il pagamento, se previsto, e per eventuali impugnazioni &egrave; indicato nei documenti.";
+                yield "Il termine per il pagamento, se previsto, e per eventuali impugnazioni &egrave; indicato nei documenti.";
             }
             case "TEDESCA" -> {
                 yield "Sie haben ab dem Zeitpunkt der Zustellung der Mitteilung 120 Tage Zeit, um die Dokumente online einzusehen.";
@@ -46,6 +50,28 @@ public class NotificationAARForEMAILDigitalStrategy implements ITemplateEngineSt
                 yield "The deadline for payment, if applicable, and for any appeals is indicated in the documents.";
             }
             default -> throw new IllegalArgumentException("NO VALID LANGUANGE");
+        };
+    }
+
+    @Override
+    public String getFullTextToCheck(String language, String recipientType) {
+        return String.join(" ", getYamlText("avviso-cortesia-email-digitale", recipientType, language));
+    }
+
+    private List<String> getYamlText(String templateKey, String recipientType, String language) {
+        TemplateEngineMessageConfigs.LocalizedText localizedText =
+                Optional.ofNullable(configs.getMessages().get(templateKey))
+                        .map(inner -> inner.get(recipientType.toLowerCase()))
+                        .orElseThrow(() -> new IllegalArgumentException(
+                                "Template non trovato: " + templateKey + " " + recipientType));
+
+        return switch (language.toUpperCase()) {
+            case "ITALIANA" -> localizedText.getIt();
+            case "TEDESCA" -> localizedText.getDe();
+            case "FRANCESE" -> localizedText.getFr();
+            case "SLOVENA" -> localizedText.getSl();
+            case "INGLESE" -> localizedText.getEn();
+            default -> throw new IllegalArgumentException("Lingua non valida: " + language);
         };
     }
 

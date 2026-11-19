@@ -33,10 +33,10 @@ public class TemplateConfiguration {
         map.put(TemplateType.DEPOSITO_AVVENUTA_RICEZIONE, new AnalogDeliveryWorkflowFailureLegalFactStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE, new NotificationAARStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE_RADD, new NotificationAARRADDaltStrategy(templateEngineClient, templateEngineConfigBean));
-        map.put(TemplateType.AVVISO_CORTESIA_EMAIL, new NotificationAARForEMAILStrategy(templateEngineClient));
+        map.put(TemplateType.AVVISO_CORTESIA_EMAIL, new NotificationAARForEMAILStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.AVVISO_CORTESIA_PEC, new NotificationAARForPECStrategy(templateEngineClient));
-        map.put(TemplateType.OTP_CONFERMA_EMAIL, new ConfirmEmailBodyStrategy(templateEngineClient));
-        map.put(TemplateType.OTP_CONFERMA_PEC, new ConfirmPecBodyStrategy(templateEngineClient));
+        map.put(TemplateType.OTP_CONFERMA_EMAIL, new ConfirmEmailBodyStrategy(templateEngineClient, templateEngineConfigBean));
+        map.put(TemplateType.OTP_CONFERMA_PEC, new ConfirmPecBodyStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.PEC_VALIDA, new ValidPecBodyStrategy(templateEngineClient));
         map.put(TemplateType.PEC_NON_VALIDA, new PecBodyRejectStrategy(templateEngineClient));
         map.put(TemplateType.AVVISO_CORTESIA_SMS, new NotificationAARForSMSStrategy(templateEngineClient));
@@ -47,7 +47,7 @@ public class TemplateConfiguration {
         map.put(TemplateType.PEC_VALIDA_OBJECT, new ValidPecBodyObjectStrategy(templateEngineClient));
         map.put(TemplateType.PEC_NON_VALIDA_OBJECT, new PecBodyRejectObjectStrategy(templateEngineClient));
 
-        map.put(TemplateType.AVVISO_CORTESIA_EMAIL_DIGITALE, new NotificationAARForEMAILDigitalStrategy(templateEngineClient));
+        map.put(TemplateType.AVVISO_CORTESIA_EMAIL_DIGITALE, new NotificationAARForEMAILDigitalStrategy(templateEngineClient, templateEngineConfigBean));
         map.put(TemplateType.AVVISO_CORTESIA_SMS_DIGITALE, new NotificationAARForSMSDigitalStrategy(templateEngineClient));
 
         map.put(TemplateType.COMUNICAZIONE_BONARIA, new InformalAnalogCommunicationStrategy(templateEngineClient, templateEngineConfigBean));

@@ -41,7 +41,6 @@ Feature: Comunicazioni bonarie
     Then verifico che il template è in formato "text"
 
 
-
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-email-communication-subject
   Scenario: [COMBO_TEMPLATE_ENGINE_03_2_A] Richiamare l’API per il recupero del template relativo al oggetto di avviso di cortesia dell'EMAIL
     When recupero il template per "email subject avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
@@ -55,7 +54,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "Ricevi le prossime comunicazioni dagli enti pubblici, aggiungi i tuoi documenti personali, ottieni bonus e sconti."
 
   @templateEngine #/templates-engine-private/v1/templates/informal/courtesy-sms-communication
-    Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS
+  Scenario: [COMBO_TEMPLATE_ENGINE_03_2_C] Richiamare l’API per il recupero del template relativo al body di avviso di cortesia dell'SMS
     When recupero il template per "sms avviso di cortesia comunicazione bonaria" in lingua "italiana" con recipient Type "PG"
     Then verifico che il template è in formato "text"
     And il corpo del messaggio contiene il testo "Una comunicazione inviata alla tua impresa da senderPaDenomination richiede la tua attenzione. Per leggerla, accedi al sito di SEND - Servizio Notifiche Digitali."
@@ -304,7 +303,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "<message>"
     Examples:
       | hasAttachment | message                                                                                                                                                                                                       |
-      | true          | All&#39;attenzione di recipient_denomination, body_primaryContent Per avere maggiori informazioni si consiglia di prendere visione degli allegati , che possono fornire dettagli importanti                   |
+      | true          | All&#39;attenzione di recipient_denomination, body_primaryContent Per avere maggiori informazioni &egrave; necessario prendere visione degli allegati , che possono fornire dettagli importanti               |
       | false         | All&#39;attenzione di recipient_denomination, body_primaryContent In ogni caso, qualora si avesse bisogno di assistenza, &egrave; possibile contattare sender_denomination attraverso i suoi canali ufficiali |
 
   @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-body
@@ -530,10 +529,10 @@ Feature: Comunicazioni bonarie
     Then verifico che tutti i valori siano correttamente rappresentati nel template di tipo "<format>"
 
     Examples:
-      | endpoint                                   | format | fields                                                           |
-      | informal/analog-communication              | pdf    | subject,sender.denomination,recipient.denomination                |
-      | informal/email-communication-body          | html   | subject,sender.denomination,sender.service,recipient.denomination |
-      | informal/pec-communication-body            | html   | subject,sender.denomination,sender.service,recipient.denomination |
-      | informal/io-communication                  | text   | sender.denomination,recipient.denomination                        |
+      | endpoint                          | format | fields                                                            |
+      | informal/analog-communication     | pdf    | subject,sender.denomination,recipient.denomination                |
+      | informal/email-communication-body | html   | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/pec-communication-body   | html   | subject,sender.denomination,sender.service,recipient.denomination |
+      | informal/io-communication         | text   | sender.denomination,recipient.denomination                        |
 
 

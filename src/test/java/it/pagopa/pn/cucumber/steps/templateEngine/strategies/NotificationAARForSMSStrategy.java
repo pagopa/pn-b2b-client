@@ -30,9 +30,14 @@ public class NotificationAARForSMSStrategy implements ITemplateEngineStrategy {
     @Override
     public String getTextToCheckLanguage(String language, String recipientType) {
         return switch (recipientType.toUpperCase()) {
-            case "PG" -> "La tua impresa ha ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
-            default -> "Hai ricevuto una notifica da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+            case "PG" -> "La tua impresa ha ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
+            default -> "Hai ricevuto una notifica SEND da string con Codice IUN string. Per leggerla, accedi con SPID o CIE al sito di SEND - Servizio Notifiche Digitali.";
         };
+    }
+
+    @Override
+    public String getFullTextToCheck(String language, String recipientType) {
+        return getTextToCheckLanguage(language, recipientType);
     }
 
     private NotificationAarForSmsAnalog createRequest(boolean body, TemplateRequestContext context) {
