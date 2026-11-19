@@ -21,6 +21,16 @@ public class IngestionPagamentiScenarioContext {
     private PaymentNotice notice;
 
     /**
+     * IUN della notifica precedente, quando lo scenario ne crea una seconda con lo stesso avviso.
+     */
+    private String previousNotificationIun;
+
+    /**
+     * Stato HTTP con cui SEND ha rifiutato la seconda notifica con lo stesso avviso; null se è stata accettata.
+     */
+    private Integer secondNotificationRejectionStatus;
+
+    /**
      * Indica che la comunicazione bonaria viene inviata in modo che il mock di App IO ne segnali il pagamento.
      */
     private boolean paidAlsoOnAppIo;

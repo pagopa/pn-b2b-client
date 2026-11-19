@@ -165,6 +165,65 @@ Feature: Recupero degli eventi di pagamento pagoPA
       | A        | pagoPA | App IO  |
       | B        | App IO | pagoPA  |
 
+  # DUPLICATE_05 - Stesso avviso di una notifica legale pagato da pagoPA e comunicato dall'ente via B2B
+
+  # L'ente può comunicare il pagamento anche se pagoPA lo ha già pubblicato (o prima che l'evento arrivi): gli id dei due
+  # elementi sono diversi, quindi coesistono (SRS §6.5). Atteso da confermare con il team in fase di collaudo.
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario Outline: [PAYMENT_EVENTS_DUPLICATE_05_1_<variante>] Il pagamento di una notifica legale comunicato da pagoPA e dall'ente viene registrato una sola volta per canale (<primo> poi <secondo>)
+    Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
+    And la notifica legale ha concluso il proprio workflow
+    When il pagamento dell'avviso legale viene comunicato prima da "<primo>" e poi da "<secondo>"
+    Then SEND registra il pagamento pagoPA nella timeline della notifica
+    And la notifica risulta pagata
+    And il pagamento risulta comunicato dall'ente
+    And nella timeline della notifica è presente un solo pagamento pagoPA
+    And il pagamento pagoPA non è esposto nella timeline della notifica
+
+    Examples:
+      | variante | primo  | secondo |
+      | A        | pagoPA | ente    |
+      | B        | ente   | pagoPA  |
+
+  # Un avviso (creditorTaxId + codice avviso) non può essere usato da due notifiche attive, legali o bonarie: la
+  # seconda creazione è rifiutata con 409, quindi il pagamento pagoPA ha sempre una sola notifica di destinazione.
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario: [PAYMENT_EVENTS_DUPLICATE_05_3_A] Un avviso già usato da una notifica legale viene rifiutato su una seconda notifica legale
+    Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
+    When il "Comune_Multi" tenta di notificare a Mario Gherkin una seconda notifica legale con lo stesso avviso pagoPA
+    Then SEND rifiuta la seconda notifica perché l'avviso è già utilizzato
+
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario: [PAYMENT_EVENTS_DUPLICATE_05_3_B] Un avviso già usato da una comunicazione bonaria viene rifiutato su una seconda comunicazione bonaria
+    Given il "Comune_Multi" ha inviato una comunicazione bonaria con avviso pagoPA nella campagna "FattOrd"
+    When il "Comune_Multi" tenta di inviare una seconda comunicazione bonaria con lo stesso avviso pagoPA nella campagna "FattOrd"
+    Then SEND rifiuta la seconda notifica perché l'avviso è già utilizzato
+
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario: [PAYMENT_EVENTS_DUPLICATE_05_3_C] Un avviso già usato da una notifica legale viene rifiutato su una comunicazione bonaria
+    Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA il cui codice termina con 00
+    When il "Comune_Multi" tenta di inviare una seconda comunicazione bonaria con lo stesso avviso pagoPA nella campagna "FattOrd"
+    Then SEND rifiuta la seconda notifica perché l'avviso è già utilizzato
+
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario: [PAYMENT_EVENTS_DUPLICATE_05_3_D] Un avviso già usato da una comunicazione bonaria viene rifiutato su una notifica legale
+    Given il "Comune_Multi" ha inviato una comunicazione bonaria con avviso pagoPA nella campagna "FattOrd"
+    When il "Comune_Multi" tenta di notificare a Mario Gherkin una seconda notifica legale con lo stesso avviso pagoPA
+    Then SEND rifiuta la seconda notifica perché l'avviso è già utilizzato
+
+  # Lo stesso avviso non può stare in due notifiche attive (409 alla seconda), ma si libera con l'annullamento: l'ente può
+  # annullare e rinotificare con lo stesso avviso. Il pagamento deve andare alla nuova notifica e non alla annullata.
+  @ingestionPagamentiPagoPA @work-item:QA-18499
+  Scenario: [PAYMENT_EVENTS_DUPLICATE_05_2_A] Il pagamento di un avviso riusato dopo l'annullamento viene registrato solo sulla nuova notifica
+    Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
+    And il "Comune_Multi" ha annullato la notifica legale
+    And il "Comune_Multi" notifica a Mario Gherkin una seconda notifica legale con lo stesso avviso pagoPA
+    And la notifica legale ha concluso il proprio workflow
+    When pagoPA comunica il pagamento dell'avviso
+    Then SEND registra il pagamento pagoPA nella timeline della notifica
+    And nella timeline della notifica è presente un solo pagamento pagoPA
+    And la prima notifica legale resta annullata senza pagamento pagoPA
+
   # DATA_03 - Eventi malformati
 
   @ingestionPagamentiPagoPA @work-item:QA-18499

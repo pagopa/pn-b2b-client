@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.ingestionPagamenti;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -18,10 +19,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.RestClientResponseException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -77,14 +80,30 @@ public class IngestionPagamentiSetupSteps {
 
     @Given("il {string} ha notificato a {destinatario} una notifica legale con avviso pagoPA")
     public void legalNotificationWithPagoPaNotice(String paName, Destinatario destinatario) {
+        legalNotificationWithPagoPaNotice(paName, destinatario, Map.of());
+    }
+
+    /**
+     * Le comunicazioni bonarie costruiscono il codice avviso dalle prime 16 cifre della base più l'indice del pagamento
+     * (00): per riusare in una bonaria l'avviso di una legale il codice della legale deve terminare con 00.
+     */
+    @Given("il {string} ha notificato a {destinatario} una notifica legale con avviso pagoPA il cui codice termina con 00")
+    public void legalNotificationWithPagoPaNoticeEndingWith00(String paName, Destinatario destinatario) {
+        String noticeCode = "3" + String.format("%015d", java.util.concurrent.ThreadLocalRandom.current().nextLong(1_000_000_000_000_000L)) + "00";
+        legalNotificationWithPagoPaNotice(paName, destinatario, Map.of("payment_noticeCode", noticeCode));
+    }
+
+    private void legalNotificationWithPagoPaNotice(String paName, Destinatario destinatario, Map<String, String> additionalPaymentData) {
         sharedSteps.prepareNotificationRequest(new HashMap<>(Map.of(
                 "subject", "Notifica legale con avviso pagoPA",
                 "senderDenomination", "Comune di Milano",
                 "physicalCommunication", "REGISTERED_LETTER_890",
                 "feePolicy", "FLAT_RATE")));
-        sharedSteps.addDestinatarioWithParams(destinatario, new HashMap<>(Map.of(
+        Map<String, String> paymentData = new HashMap<>(Map.of(
                 "payment_pagoPaForm", "SI",
-                "payment_f24", "NULL")));
+                "payment_f24", "NULL"));
+        paymentData.putAll(additionalPaymentData);
+        sharedSteps.addDestinatarioWithParams(destinatario, paymentData);
         sharedSteps.sendNotification(paName, "ACCEPTED");
 
         context.setNotice(new PaymentNotice(
@@ -92,6 +111,78 @@ public class IngestionPagamentiSetupSteps {
                 sharedSteps.getRecipientNoticeCode(0, 0),
                 LEGAL_PAYMENT_AMOUNT));
         log.info("Notifica legale {} con avviso {}", sharedSteps.getNotificationIun(), context.getNotice());
+    }
+
+    /**
+     * Stesso avviso (creditorTaxId + codice avviso) già usato dallo scenario in un'altra notifica: serve a verificare
+     * se SEND accetta due notifiche con lo stesso avviso. Il tentativo si aspetta ACCEPTED, così un rifiuto emerge
+     * come errore dello step con il motivo restituito da SEND.
+     */
+    @Given("il {string} notifica a {destinatario} una seconda notifica legale con lo stesso avviso pagoPA")
+    public void secondLegalNotificationWithSameNotice(String paName, Destinatario destinatario) {
+        PaymentNotice notice = context.getNotice();
+        assertThat(notice).as("Nessun avviso pagoPA preparato nello scenario").isNotNull();
+        String firstIun = sharedSteps.getNotificationIun();
+        context.setPreviousNotificationIun(firstIun);
+        sharedSteps.prepareNotificationRequest(new HashMap<>(Map.of(
+                "subject", "Seconda notifica legale con lo stesso avviso pagoPA",
+                "senderDenomination", "Comune di Milano",
+                "physicalCommunication", "REGISTERED_LETTER_890",
+                "feePolicy", "FLAT_RATE")));
+        sharedSteps.addDestinatarioWithParams(destinatario, new HashMap<>(Map.of(
+                "payment_pagoPaForm", "SI",
+                "payment_f24", "NULL",
+                "payment_creditorTaxId", notice.creditorTaxId(),
+                "payment_noticeCode", notice.noticeCode())));
+        sharedSteps.sendNotification(paName, "ACCEPTED");
+        log.info("IUV SEND {}: prima notifica {}, seconda notifica legale {}", notice, firstIun, sharedSteps.getNotificationIun());
+    }
+
+    @Given("il {string} invia una seconda comunicazione bonaria con lo stesso avviso pagoPA nella campagna {string}")
+    public void secondInformalNotificationWithSameNotice(String paName, String campaignName) throws IOException {
+        PaymentNotice notice = context.getNotice();
+        assertThat(notice).as("Nessun avviso pagoPA preparato nello scenario").isNotNull();
+        String firstIun = sharedSteps.getNotificationIun();
+        sendInformalNotificationWithPagoPaNotice(paName, campaignName, Map.of(
+                "payment_creditorTaxId", notice.creditorTaxId(),
+                "payment_noticeCode", notice.noticeCode()));
+        log.info("IUV SEND {}: prima notifica {}, seconda comunicazione bonaria {} con avviso {}", notice, firstIun, sharedSteps.getNotificationIun(), context.getNotice());
+    }
+
+    /**
+     * Stesso avviso di una notifica attiva: SEND deve rifiutare la seconda notifica. L'esito (stato HTTP del rifiuto)
+     * viene registrato per la verifica; un errore diverso da un rifiuto HTTP fa fallire lo step.
+     */
+    @When("il {string} tenta di notificare a {destinatario} una seconda notifica legale con lo stesso avviso pagoPA")
+    public void attemptSecondLegalNotificationWithSameNotice(String paName, Destinatario destinatario) {
+        recordRejectionOf(() -> secondLegalNotificationWithSameNotice(paName, destinatario));
+    }
+
+    @When("il {string} tenta di inviare una seconda comunicazione bonaria con lo stesso avviso pagoPA nella campagna {string}")
+    public void attemptSecondInformalNotificationWithSameNotice(String paName, String campaignName) {
+        recordRejectionOf(() -> {
+            try {
+                secondInformalNotificationWithSameNotice(paName, campaignName);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+    }
+
+    private void recordRejectionOf(Runnable attempt) {
+        context.setSecondNotificationRejectionStatus(null);
+        try {
+            attempt.run();
+        } catch (RuntimeException | AssertionError e) {
+            for (Throwable cause = e; cause != null; cause = cause.getCause()) {
+                if (cause instanceof RestClientResponseException httpError) {
+                    context.setSecondNotificationRejectionStatus(httpError.getRawStatusCode());
+                    log.info("Seconda notifica con lo stesso avviso rifiutata da SEND con stato {}", httpError.getRawStatusCode());
+                    return;
+                }
+            }
+            throw e;
+        }
     }
 
     /**

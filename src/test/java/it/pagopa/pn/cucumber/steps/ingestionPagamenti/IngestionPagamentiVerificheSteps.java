@@ -418,6 +418,32 @@ public class IngestionPagamentiVerificheSteps {
                 .toList();
     }
 
+    /**
+     * La notifica annullata il cui avviso è stato riusato da una nuova notifica non deve ricevere il pagamento:
+     * resta con l'elemento di annullamento e senza PAYMENT_NOTICE_PAID per tutta la finestra di osservazione.
+     */
+    @Then("la prima notifica legale resta annullata senza pagamento pagoPA")
+    public void previousLegalNotificationCancelledWithoutPayment() {
+        String previousIun = context.getPreviousNotificationIun();
+        assertThat(previousIun).as("Lo scenario non ha creato una seconda notifica con lo stesso avviso").isNotNull();
+        assertThat(timelineItemsOf(previousIun, "NOTIFICATION_CANCELLED"))
+                .as("La notifica %s deve risultare annullata", previousIun).isNotEmpty();
+        await().during(settings.getSideEffectWindow())
+                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
+                .pollInterval(Duration.ofSeconds(5))
+                .until(() -> timelineItemsOf(previousIun, PAYMENT_NOTICE_PAID).isEmpty());
+    }
+
+    /**
+     * Un avviso già usato da una notifica attiva non può essere usato da un'altra: la creazione fallisce con 409.
+     */
+    @Then("SEND rifiuta la seconda notifica perché l'avviso è già utilizzato")
+    public void secondNotificationRejectedBecauseNoticeAlreadyUsed() {
+        assertThat(context.getSecondNotificationRejectionStatus())
+                .as("La seconda notifica con lo stesso avviso %s è stata accettata invece di essere rifiutata con 409", context.getNotice())
+                .isEqualTo(409);
+    }
+
     @Then("la notifica legale resta nello stato {string}")
     public void legalNotificationStatusUnchanged(String expectedStatus) {
         assertThat(sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue())
@@ -488,8 +514,12 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     private List<Map<String, AttributeValue>> timelineItems(String category) {
+        return timelineItemsOf(sharedSteps.getNotificationIun(), category);
+    }
+
+    private List<Map<String, AttributeValue>> timelineItemsOf(String iun, String category) {
         QueryResponse response = dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
-                ":v_iun", AttributeValue.builder().s(sharedSteps.getNotificationIun()).build(),
+                ":v_iun", AttributeValue.builder().s(iun).build(),
                 ":v_category", AttributeValue.builder().s(category).build()));
         return response.items();
     }

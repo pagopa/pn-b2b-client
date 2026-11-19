@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -27,6 +29,7 @@ public class IngestionPagamentiEventiSteps {
     private final PagoPaPaymentEventService paymentEventService;
     private final PresaInCaricoNoticaBonariaSteps informalNotificationSteps;
     private final AvanzamentoNotificheB2bSteps legalNotificationSteps;
+    private final IngestionPagamentiVerificheSteps verificheSteps;
 
     @When("pagoPA comunica il pagamento dell'avviso")
     public void pagoPaNotifiesPayment() {
@@ -48,6 +51,24 @@ public class IngestionPagamentiEventiSteps {
     @When("l'ente comunica il pagamento dell'avviso tramite API B2B")
     public void senderNotifiesPaymentViaB2b() {
         legalNotificationSteps.laNotificaVienePagata();
+    }
+
+    /**
+     * Notifica legale: il pagamento arriva da pagoPA (evento Kafka) e dall'ente (API B2B), in entrambi gli ordini.
+     * Il pagamento pagoPA viene atteso in timeline prima del secondo canale, così l'ordine è quello dichiarato.
+     */
+    @When("il pagamento dell'avviso legale viene comunicato prima da {string} e poi da {string}")
+    public void legalPaymentNotifiedByPagoPaAndSender(String firstChannel, String secondChannel) {
+        assertThat(List.of(firstChannel, secondChannel)).as("I due canali devono essere pagoPA ed ente, in un ordine qualsiasi")
+                .containsExactlyInAnyOrder("pagoPA", "ente");
+        if ("pagoPA".equals(firstChannel)) {
+            pagoPaNotifiesPayment();
+            verificheSteps.paymentNoticePaidRegistered();
+            senderNotifiesPaymentViaB2b();
+        } else {
+            senderNotifiesPaymentViaB2b();
+            pagoPaNotifiesPayment();
+        }
     }
 
     /**
