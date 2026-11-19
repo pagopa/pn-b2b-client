@@ -136,7 +136,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         if (bearerTokenSetted.isPf()) {
             return mandateServiceApi.getMandatesByDelegateV1(null).stream()
                     .map(item -> deepCopy(item, MandateDto.class))
-                    .filter(mandate -> mandate.getDelegator() != null && taxId.equalsIgnoreCase(mandate.getDelegator().getFiscalCode()))
+                    .filter(mandate -> taxId == null || (mandate.getDelegator() != null && taxId.equalsIgnoreCase(mandate.getDelegator().getFiscalCode())))
                     .toList();
         }
         BffSearchMandateRequest searchMandateRequestDto = new BffSearchMandateRequest();
