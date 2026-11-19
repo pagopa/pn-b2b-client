@@ -8,8 +8,12 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
   # - RUN_ALGORITHM (mock)      -> pn-PaperDeliveryDriverUsedCapacitiesMock, pn-PaperDeliveryUsedSenderLimitMock
   # I limiti mittente utilizzati sono scritti alla settimana precedente la deliveryDate (cfr. checkSenderLimitForPA)
 
-  @delayerMockTables
+  @delayerMockTables @work-item:QA-18551
   Scenario: [DELAYER-MOCK-TABLES-1] Verifica che DELETE_MOCK_TABLES rimuova completamente i dati dalle tabelle mock
+    Si popolano tutte e sei le tabelle mock del Simulatore (limiti mittente, contatori, capacità dichiarate,
+    spedizioni, capacità utilizzate e limiti mittente utilizzati) e se ne verifica la presenza dei dati.
+    Dopo l'invocazione di DELETE_MOCK_TABLES si verifica che nessuna delle sei tabelle contenga più i dati inseriti.
+
     Given vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
     And vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
@@ -35,8 +39,12 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
     And non devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And non devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
 
-  @delayerMockTables
+  @delayerMockTables @work-item:QA-18551
   Scenario: [DELAYER-MOCK-TABLES-2] Verifica che le tabelle mock ricreate siano nuovamente utilizzabili dal Simulatore con la configurazione attesa
+    Si parte da tabelle mock appena eliminate e ricreate tramite DELETE_MOCK_TABLES.
+    Si riesegue il flusso completo del Simulatore (INSERT_MOCK_SENDER_LIMITS, INSERT_MOCK_CAPACITIES, IMPORT_DATA e RUN_ALGORITHM)
+    e si verifica che le tabelle ricreate vengano popolate correttamente, con gli stessi risultati attesi su tabelle mai cancellate.
+
     Given vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES
     And non devono esistere limiti mittente mock per la deliveryDate "2026-04-27" e la provincia "P1"
     When vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_aprile_26.zip"
@@ -56,8 +64,11 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
     And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
 
-  @delayerMockTables
+  @delayerMockTables @work-item:QA-18551
   Scenario: [DELAYER-MOCK-TABLES-3] Verifica che DELETE_MOCK_TABLES invocata su tabelle mock già vuote completi correttamente il ciclo di delete/create
+    Si invoca DELETE_MOCK_TABLES due volte di seguito: la seconda invocazione avviene su tabelle mock già vuote.
+    Si verifica che il ciclo di delete/create venga completato senza errori e che tutte le tabelle mock restino vuote.
+
     Given vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES
     And non devono esistere limiti mittente mock per la deliveryDate "2026-04-27" e la provincia "P1"
     When vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES
@@ -68,8 +79,13 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
     And non devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And non devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
 
-  @delayerMockTables
+  @delayerMockTables @work-item:QA-18551
   Scenario: [DELAYER-MOCK-TABLES-4] Verifica che DELETE_MOCK_TABLES non modifichi le tabelle reali
+    Si caricano per la stessa settimana e provincia sia i moduli commessa reali (7 spedizioni 890 su P1)
+    sia quelli mock (46 spedizioni 890 su P1).
+    Dopo DELETE_MOCK_TABLES si verifica che i contatori mock siano stati rimossi mentre quelli reali restano invariati,
+    a conferma che l'operazione agisce esclusivamente sulle tabelle *Mock.
+
     Given vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_aprile_26.zip"
     And vengono caricati i moduli commessa come file zip su portfat: "portfatt_modulo_commessa_maggio_26.zip"
     And per la settimana "2026-04-27", per il prodotto "890" per la provincia "P1" si verifica che la somma delle commesse sia:
