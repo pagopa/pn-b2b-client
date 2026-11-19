@@ -69,6 +69,10 @@ import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFat
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
 import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PagoPaPaymentEventService;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PaymentErrorQueueService;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -316,7 +320,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         NotificheBonarieFatturazioneScenarioContext.class,
         InternalTimelineService.class,
         InvoicingRecordService.class,
-        NotificationCostExpectations.class
+        NotificationCostExpectations.class,
+        PnKafkaMockClientImpl.class,
+        PaymentEventsScenarioContext.class,
+        PagoPaPaymentEventService.class,
+        PaymentErrorQueueService.class,
+        PaymentEventsSettings.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -25,7 +25,8 @@ public enum DynamoTableName {
     PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata"),
-    PT_DELEGATIONS("pn-PtDelegations");
+    PT_DELEGATIONS("pn-PtDelegations"),
+    CAMPAIGNS("pn-Campaigns");
 
     private final String value;
 
