@@ -29,6 +29,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v30.*;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -45,6 +46,7 @@ import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
+import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
 import it.pagopa.pn.cucumber.steps.delayer.validator.DelayerValidator;
 import it.pagopa.pn.cucumber.steps.externalChannel.builders.PaperEngageRequestBuilder;
@@ -59,9 +61,14 @@ import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
 import it.pagopa.pn.cucumber.steps.recipient.OtpCodeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.TemplateConfiguration;
+import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsReader;
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -276,12 +283,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperEngageRequestBuilder.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
+        SqsService.class,
+        TimelineDetailsReader.class,
         AwsConfig.class,
         SenderInfoProvider.class,
         DestinatarioRegistry.class,
         CacheConfig.class,
         AooUoIdsClientImpl.class,
         AooUoIdsApi.class,
+        PnPtInstitutionsClientImpl.class,
+        PnSelfcareDelegationsClientImpl.class,
+        PtEntiDelegantiService.class,
         OtpCodeService.class,
         InformalRecipientBuilder.class,
         InformalNotificationRequestMapper.class,
@@ -300,7 +312,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         DelayerSkipSenderLimitService.class,
         IoMockScenarioContext.class,
         TransformedDocumentService.class,
-        DocumentTagsService.class
+        DocumentTagsService.class,
+        NotificheBonarieFatturazioneScenarioContext.class,
+        InternalTimelineService.class,
+        InvoicingRecordService.class,
+        NotificationCostExpectations.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -294,6 +295,59 @@ class PollerTest {
         for (int i = 1; i < callTimes.size(); i++) {
             assertTrue(callTimes.get(i) - callTimes.get(i - 1) >= config.interval().toNanos());
         }
+    }
+
+    @Test
+    void consumerOverloadRetriesUntilAssertionsPass() {
+        Supplier<String> responses = sequence("WAIT", "WAIT", "OK");
+        AtomicInteger calls = new AtomicInteger();
+
+        String result = Poller.pollUntil(() -> {
+            calls.incrementAndGet();
+            return responses.get();
+        }, value -> {
+            assertEquals("OK", value);
+        }, SHORT_POLLING);
+
+        assertEquals("OK", result);
+        assertEquals(3, calls.get());
+    }
+
+    @Test
+    void consumerOverloadRethrowsLastAssertionErrorOnTimeout() {
+        PollingConfig config = PollingConfig.of(Duration.ofMillis(250), Duration.ofMillis(50));
+        AtomicInteger calls = new AtomicInteger();
+
+        AssertionError error = assertThrows(AssertionError.class, () -> Poller.pollUntil(
+                () -> "WAIT-" + calls.incrementAndGet(),
+                value -> {
+                    assertEquals("OK", value, "ultimo valore: " + value);
+                },
+                config));
+
+        assertTrue(error.getMessage().contains("ultimo valore: WAIT-" + calls.get()));
+        assertEquals(1, error.getSuppressed().length);
+        PollingTimeoutException timeout = assertInstanceOf(PollingTimeoutException.class, error.getSuppressed()[0]);
+        assertEquals("WAIT-" + calls.get(), timeout.getLastValue());
+        assertEquals(calls.get(), timeout.getAttempts());
+    }
+
+    @Test
+    void consumerOverloadWrapsNonAssertionExceptionWithoutRetrying() {
+        IllegalStateException cause = new IllegalStateException("invalid status");
+        AtomicInteger calls = new AtomicInteger();
+        // Variabile tipizzata: un blocco che lancia sempre e' compatibile sia con Predicate sia con Consumer.
+        Consumer<String> failingVerify = value -> {
+            throw cause;
+        };
+
+        PollingExecutionException ex = assertThrows(PollingExecutionException.class, () -> Poller.pollUntil(() -> {
+            calls.incrementAndGet();
+            return "WAIT";
+        }, failingVerify, SHORT_POLLING));
+
+        assertSame(cause, ex.getCause());
+        assertEquals(1, calls.get());
     }
 
     @Test
