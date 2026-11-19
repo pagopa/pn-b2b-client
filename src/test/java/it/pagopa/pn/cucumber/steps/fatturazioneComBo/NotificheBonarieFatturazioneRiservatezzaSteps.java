@@ -111,7 +111,7 @@ public class NotificheBonarieFatturazioneRiservatezzaSteps {
         // Poller interroga nel thread dello scenario: il contesto è un bean con scope di scenario.
         try {
             Poller.pollUntil(() -> readNewEvents(lastEventId, context.getExposedStreamEvents()),
-                    events -> events.stream().anyMatch(e -> closureCategory.equals(e.path("informalElement").path("category").asText())),
+                    (List<JsonNode> events) -> events.stream().anyMatch(e -> closureCategory.equals(e.path("informalElement").path("category").asText())),
                     PollingConfig.of(STREAM_TIMEOUT, POLL_INTERVAL));
         } catch (PollingTimeoutException e) {
             throw new AssertionError("Lo stream %s deve ricevere la chiusura %s della comunicazione %s. Eventi ricevuti: %s"

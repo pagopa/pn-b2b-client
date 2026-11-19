@@ -77,7 +77,7 @@ public class InternalTimelineService {
                                                  Function<List<InternalTimelineElement>, Optional<InternalTimelineElement>> finder) {
         InternalTimelineElement found;
         try {
-            found = Poller.pollUntil(() -> findIgnoringErrors(iun, finder), Optional::isPresent,
+            found = Poller.pollUntil(() -> findIgnoringErrors(iun, finder), Optional<InternalTimelineElement>::isPresent,
                     PollingConfig.of(timeout, POLL_INTERVAL)).orElseThrow();
         } catch (PollingTimeoutException e) {
             throw new AssertionError("Entro %s non è comparso nella timeline interna della notifica %s %s"

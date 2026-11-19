@@ -41,6 +41,7 @@ public class DynamoDbService {
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
             case PT_DELEGATIONS -> queryWithoutFilters(tableName, "ptId", attributeValues);
+            case BATCH_POLLING -> queryWithoutFilters(tableName, "batchId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
