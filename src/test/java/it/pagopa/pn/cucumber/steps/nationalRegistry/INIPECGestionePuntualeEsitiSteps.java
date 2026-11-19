@@ -20,7 +20,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -118,48 +118,77 @@ public class INIPECGestionePuntualeEsitiSteps {
         this.sharedSteps = sharedSteps;
     }
 
-    private Map<String, AttributeValue> retrieveNationalRegistryBatchByBatchId(String batchId) {
+    // Le query restituiscono la lista grezza: Poller ritenta solo sulle AssertionError del Consumer,
+    // quindi tutte le asserzioni (anche quelle sulla cardinalità) vanno nel Consumer, non nel Supplier.
+    private List<Map<String, AttributeValue>> retrieveNationalRegistryBatchesByBatchId(String batchId) {
 
         Map<String, AttributeValue> attributes = Map.of(":v_batchId", AttributeValue.builder().s(batchId).build());
         QueryResponse response = dynamoDbService.call(DynamoTableName.NATIONAL_REGISTRIES_BATCHES, attributes);
-        assertThat(response.items()).as("Nessun batch trovato per batchId=%s", batchId).hasSize(1);
-        return response.items().get(0);
+        return response.items();
     }
 
     @Then("la risposta sul registro {eservice} per il cf {string} non contiene recapiti")
     public void verifyResponseWithoutAddresses(Eservice eservice, String cf) {
 
-            await().atMost(DB_POLL_TIMEOUT)
-                    .pollInterval(DB_POLL_INTERVAL)
-                    .untilAsserted(() -> {
+        Poller.pollUntil(
+                () -> retrieveNationalRegistryRequests(eservice),
+                items -> {
+                    Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
+                    assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(RequestStatus.WORKED.name());
 
-                        Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
+                    String resultPayload = request.containsKey("resultPayload") ? request.get("resultPayload").s() : null;
 
-                        assertThat(request.get("taxId").s()).isEqualTo(cf);
-                        assertThat(request.get("registry").s()).isEqualTo(eservice.name());
-                        assertThat(request.get("status").s()).isEqualTo("WORKED");
+                    if (eservice == Eservice.INAD) {
+                        assertThat(resultPayload).isNotBlank();
+                        assertThat(resultPayload).contains("\"digitalAddress\":[]");
+                    } else if (eservice == Eservice.INIPEC) {
+                        assertThat(resultPayload).isBlank();
+                    }
+                },
+                DB_POLLING);
+    }
 
-                        String resultPayload = request.get("resultPayload").s();
-
-                        if (eservice == Eservice.INAD) {
-                            assertThat(resultPayload).isNotBlank();
-                            assertThat(resultPayload).contains("\"digitalAddress\":[]");
-                        } else if (eservice == Eservice.INIPEC) {
-                            assertThat(resultPayload).isBlank();
-                        }
-                    });
-        }
-
-
-    private Map<String, AttributeValue> retrieveNationalRegistryRequest(Eservice eservice) {
+    private List<Map<String, AttributeValue>> retrieveNationalRegistryRequests(Eservice eservice) {
 
         String correlationId = sharedSteps.getCorrelationId();
-        List<Map<String, AttributeValue>> items = retrieveNationalRegistryRequestsByCorrelationId(correlationId);
-        List<Map<String, AttributeValue>> matchingItems = items.stream().filter(item -> item.containsKey("registry"))
+        return retrieveNationalRegistryRequestsByCorrelationId(correlationId).stream()
+                .filter(item -> item.containsKey("registry"))
                 .filter(item -> eservice.name().equals(item.get("registry").s()))
-                .filter(item -> item.containsKey("registry")).toList();
-        assertThat(matchingItems).as("Attesa una sola request %s per correlationId=%s", eservice, correlationId).hasSize(1);
-        return matchingItems.get(0);
+                .toList();
+    }
+
+    private Map<String, AttributeValue> assertSingleRequest(List<Map<String, AttributeValue>> items, Eservice eservice, String cf) {
+
+        assertThat(items).as("Attesa una sola request %s per correlationId=%s", eservice, sharedSteps.getCorrelationId()).hasSize(1);
+        Map<String, AttributeValue> request = items.get(0);
+        assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
+        assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+        return request;
+    }
+
+    /**
+     * Attende la request con batchId valorizzato, poi il relativo batch, su cui applica {@code batchAssertions}.
+     */
+    private void verifyBatchOf(Eservice eservice, String cf, Consumer<Map<String, AttributeValue>> batchAssertions) {
+
+        // 1. Request con batchId valorizzato (il placeholder NO_BATCH_ID non conta).
+        List<Map<String, AttributeValue>> requests = Poller.pollUntil(
+                () -> retrieveNationalRegistryRequests(eservice),
+                items -> {
+                    Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
+                    assertThat(hasBatchId(request)).as("cf=%s: batchId non ancora valorizzato", cf).isTrue();
+                },
+                DB_POLLING);
+        String batchId = requests.get(0).get("batchId").s();
+
+        // 2. Batch associato, con le asserzioni specifiche dello step.
+        Poller.pollUntil(
+                () -> retrieveNationalRegistryBatchesByBatchId(batchId),
+                batches -> {
+                    assertThat(batches).as("Nessun batch trovato per batchId=%s", batchId).hasSize(1);
+                    batchAssertions.accept(batches.get(0));
+                },
+                DB_POLLING);
     }
 
     private List<Map<String, AttributeValue>> retrieveNationalRegistryRequestsByCorrelationId(String correlationId) {
@@ -171,40 +200,23 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in errore")
     public void verifyRequestInError(Eservice eservice, String cf) {
-
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
-            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
-            assertThat(request.get("status").s()).as("La request deve risultare in errore").isEqualTo(RequestStatus.ERROR.name());
-        });
+        verifyRequestStatus(eservice, cf, RequestStatus.ERROR);
     }
 
     @Then("il batch associato alla richiesta verso {eservice} per il cf {string} risulta in errore")
     public void verifyBatchInError(Eservice eservice, String cf) {
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
-            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
-            assertThat(request).containsKey("batchId");
-            String batchId = request.get("batchId").s();
-            assertThat(batchId).isNotBlank();
-            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
-            assertThat(batch.get("status").s()).as("Il batch deve risultare in errore").isEqualTo("ERROR");
+        verifyBatchOf(eservice, cf, batch -> {
+            assertThat(batch.get("status").s()).as("Il batch deve risultare in errore").isEqualTo(STATUS_ERROR);
         });
     }
 
     @Then("il ritentativo della chiamata verso {eservice} per il cf {string} risulta correttamente registrato")
     public void verifyBatchInRetry(Eservice eservice, String cf) {
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
-            String batchId = request.get("batchId").s();
-            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
+        verifyBatchOf(eservice, cf, batch -> {
             assertThat(batch.get("status").s()).as("Il batch deve risultare nuovamente pianificato").isEqualTo("REQUEST_SENT");
-            assertThat(batch.get("registry").s()).isEqualTo(eservice.name());
+            assertThat(batch.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
             int errorRetryCount = getNumber(batch, "errorRetryCount");
             int inProgressRetryCount = getNumber(batch, "inProgressRetryCount");
             assertThat(errorRetryCount > 0 || inProgressRetryCount > 0).as("Atteso almeno un retry registrato sul batch").isTrue();
@@ -226,24 +238,21 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in stato {requestStatus}")
     public void verifyRequestStatus(Eservice eservice, String cf, RequestStatus expectedStatus) {
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
-            assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
-            assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(expectedStatus.name());
-        });
+        Poller.pollUntil(
+                () -> retrieveNationalRegistryRequests(eservice),
+                items -> {
+                    Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
+                    assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(expectedStatus.name());
+                },
+                DB_POLLING);
     }
 
     @Then("il batch associato alla richiesta verso {eservice} per il cf {string} risulta in stato {requestStatus}")
     public void verifyBatchStatus(Eservice eservice, String cf, RequestStatus expectedStatus) {
 
-        await().atMost(DB_POLL_TIMEOUT).pollInterval(DB_POLL_INTERVAL).untilAsserted(() -> {
-            Map<String, AttributeValue> request = retrieveNationalRegistryRequest(eservice);
-            assertThat(request.get("taxId").s()).isEqualTo(cf);
-            String batchId = request.get("batchId").s();
-            Map<String, AttributeValue> batch = retrieveNationalRegistryBatchByBatchId(batchId);
-            assertThat(batch.get("registry").s()).isEqualTo(eservice.name());
-            assertThat(batch.get("status").s()).isEqualTo(expectedStatus.name());
+        verifyBatchOf(eservice, cf, batch -> {
+            assertThat(batch.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+            assertThat(batch.get("status").s()).as("Stato atteso").isEqualTo(expectedStatus.name());
         });
     }
 
