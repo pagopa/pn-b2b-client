@@ -2,8 +2,11 @@ package it.pagopa.pn.cucumber.steps.ingestionPagamenti;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -11,7 +14,7 @@ import it.pagopa.pn.cucumber.steps.common.InformalNotificationContext;
 import it.pagopa.pn.cucumber.steps.informalNotification.InformalTemplateMessage.InformalMessageTemplates;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
-import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentNotice;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.PresaInCaricoNoticaBonariaSteps;
@@ -27,11 +30,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Preparazione delle notifiche legali, delle comunicazioni bonarie e delle campagne su cui vengono simulati i pagamenti.
@@ -39,21 +43,18 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class IngestionPagamentiSetupSteps {
+public class PaymentEventsSetupSteps {
 
-    /**
-     * L'importo dell'evento pagoPA non viene confrontato con l'avviso: SEND correla il pagamento solo per creditorTaxId e noticeCode.
-     */
+    // SEND correla il pagamento solo per creditorTaxId e noticeCode: l'importo non viene confrontato con l'avviso
     private static final int LEGAL_PAYMENT_AMOUNT = 10000;
     private static final int INFORMAL_PAYMENT_AMOUNT = 5000;
 
     private static final String INFORMAL_SUBJECT = "Comunicazione bonaria con avviso pagoPA";
-    // Il router di pn-io-connector-mock instrada sul mock i messaggi IO il cui oggetto contiene @io:<sequenza>.
-    // Con OK_READ_THEN_PAID (default) il mock risponde READ a 60-90 s e PAID dopo 90 s al polling di pn-io-connector
+    // Il mock di App IO gestisce i messaggi il cui oggetto contiene @io:<sequenza>
     private static final String IO_MOCK_SEQUENCE_PREFIX = " @io:";
 
     private static final String PAYMENT_NOTICE_PAID = "PAYMENT_NOTICE_PAID";
-    // Su pn-Timelines il pagamento comunicato dall'ente (NOTIFICATION_PAID nell'API) ha categoria PAYMENT
+    // NOTIFICATION_PAID nell'API, PAYMENT su pn-Timelines
     private static final String SENDER_PAYMENT_CATEGORY = "PAYMENT";
     private static final String STOP_ON_PAID = "stopOnPaid";
     private static final String CAMPAIGN_WORKFLOW = "workflow";
@@ -64,8 +65,10 @@ public class IngestionPagamentiSetupSteps {
     private static final String NOTIFICATION_STATUS_CANCELLED = "CANCELLED";
     private static final String LEGAL_WORKFLOW_COMPLETED_CATEGORY = "REFINEMENT";
     private static final String INFORMAL_STATUS_COMPLETED = "COMPLETED_REACHED";
+    private static final Duration POLL_INTERVAL = Duration.ofSeconds(5);
+    private static final Duration LEGAL_WORKFLOW_POLL_INTERVAL = Duration.ofSeconds(15);
 
-    private final IngestionPagamentiScenarioContext context;
+    private final PaymentEventsScenarioContext context;
     private final PaymentEventsSettings settings;
     private final SharedSteps sharedSteps;
     private final SendSharedContext sendSharedContext;
@@ -84,13 +87,11 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * Le comunicazioni bonarie costruiscono il codice avviso dalle prime 16 cifre della base più l'indice del pagamento
-     * (00): per riusare in una bonaria l'avviso di una legale il codice della legale deve terminare con 00.
+     * Le bonarie generano codici avviso che terminano con l'indice del pagamento (00): così l'avviso è riusabile in una bonaria.
      */
     @Given("il {string} ha notificato a {destinatario} una notifica legale con avviso pagoPA il cui codice termina con 00")
     public void legalNotificationWithPagoPaNoticeEndingWith00(String paName, Destinatario destinatario) {
-        String noticeCode = "3" + String.format("%015d", java.util.concurrent.ThreadLocalRandom.current().nextLong(1_000_000_000_000_000L)) + "00";
-        legalNotificationWithPagoPaNotice(paName, destinatario, Map.of("payment_noticeCode", noticeCode));
+        legalNotificationWithPagoPaNotice(paName, destinatario, Map.of("payment_noticeCode", PaymentNotice.randomNoticeCodeEndingWith("00")));
     }
 
     private void legalNotificationWithPagoPaNotice(String paName, Destinatario destinatario, Map<String, String> additionalPaymentData) {
@@ -114,9 +115,7 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * Stesso avviso (creditorTaxId + codice avviso) già usato dallo scenario in un'altra notifica: serve a verificare
-     * se SEND accetta due notifiche con lo stesso avviso. Il tentativo si aspetta ACCEPTED, così un rifiuto emerge
-     * come errore dello step con il motivo restituito da SEND.
+     * Si aspetta ACCEPTED, così un rifiuto emerge come errore dello step con il motivo restituito da SEND.
      */
     @Given("il {string} notifica a {destinatario} una seconda notifica legale con lo stesso avviso pagoPA")
     public void secondLegalNotificationWithSameNotice(String paName, Destinatario destinatario) {
@@ -150,8 +149,7 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * Stesso avviso di una notifica attiva: SEND deve rifiutare la seconda notifica. L'esito (stato HTTP del rifiuto)
-     * viene registrato per la verifica; un errore diverso da un rifiuto HTTP fa fallire lo step.
+     * Registra lo stato HTTP del rifiuto per la verifica; un errore diverso da un rifiuto HTTP fa fallire lo step.
      */
     @When("il {string} tenta di notificare a {destinatario} una seconda notifica legale con lo stesso avviso pagoPA")
     public void attemptSecondLegalNotificationWithSameNotice(String paName, Destinatario destinatario) {
@@ -186,20 +184,17 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * Il workflow si conclude con il perfezionamento (REFINEMENT): da lì lo stato resta stabile senza azioni del
-     * destinatario, quindi un cambio di stato dopo il pagamento sarebbe attribuibile solo al pagamento. Lo stato
-     * raggiunto dipende dalle tempistiche dell'ambiente (EFFECTIVE_DATE, oppure DELIVERED quando il perfezionamento
-     * ha un timestamp precedente alla consegna) e viene registrato per il confronto successivo.
+     * Dopo il perfezionamento lo stato resta stabile, quindi un cambio di stato è attribuibile solo al pagamento.
+     * Lo stato raggiunto dipende dalle tempistiche dell'ambiente e viene registrato per il confronto successivo.
      */
     @Given("la notifica legale ha concluso il proprio workflow")
     public void legalWorkflowCompleted() {
         String iun = sharedSteps.getNotificationIun();
-        await().atMost(settings.getLegalWorkflowTimeout()).pollInterval(Duration.ofSeconds(15)).untilAsserted(() ->
-                assertThat(dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
-                        ":v_iun", AttributeValue.builder().s(iun).build(),
-                        ":v_category", AttributeValue.builder().s(LEGAL_WORKFLOW_COMPLETED_CATEGORY).build())).items())
-                        .as("La notifica legale %s non ha ancora l'elemento %s", iun, LEGAL_WORKFLOW_COMPLETED_CATEGORY)
-                        .isNotEmpty());
+        Consumer<List<Map<String, AttributeValue>>> verify = items -> assertThat(items)
+                .as("La notifica legale %s non ha ancora l'elemento %s", iun, LEGAL_WORKFLOW_COMPLETED_CATEGORY)
+                .isNotEmpty();
+        Poller.pollUntil(() -> timelineItems(iun, LEGAL_WORKFLOW_COMPLETED_CATEGORY), verify,
+                PollingConfig.of(settings.getLegalWorkflowTimeout(), LEGAL_WORKFLOW_POLL_INTERVAL));
         context.setLegalStatusBeforePayment(sharedSteps.getSentNotificationLastVersion().getNotificationStatus().getValue());
         log.info("Notifica legale {} perfezionata nello stato {}", iun, context.getLegalStatusBeforePayment());
     }
@@ -212,23 +207,21 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * pn-notification-cost-service rimuove gli avvisi da pn-PaymentInfo in modo asincrono dopo NOTIFICATION_CANCELLED:
-     * un pagamento pubblicato prima della rimozione verrebbe ancora correlato alla notifica annullata.
+     * La rimozione è asincrona: un pagamento pubblicato prima verrebbe ancora correlato alla notifica annullata.
      */
     private void awaitNoticeRemovedFromPaymentInfo() {
         String pk = context.getNotice().paymentInfoPk();
-        await().atMost(settings.getPaymentInfoRemovalTimeout()).pollInterval(Duration.ofSeconds(5)).untilAsserted(() ->
-                assertThat(dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of(
-                        ":v_pk", AttributeValue.builder().s(pk).build())).items())
-                        .as("L'avviso %s è ancora censito su pn-PaymentInfo dopo l'annullamento della notifica", pk)
-                        .isEmpty());
+        Consumer<List<Map<String, AttributeValue>>> verify = items -> assertThat(items)
+                .as("L'avviso %s è ancora censito su pn-PaymentInfo dopo l'annullamento della notifica", pk)
+                .isEmpty();
+        Poller.pollUntil(() -> dynamoDbService.call(DynamoTableName.PAYMENT_INFO, Map.of(
+                        ":v_pk", AttributeValue.builder().s(pk).build())).items(), verify,
+                PollingConfig.of(settings.getPaymentInfoRemovalTimeout(), POLL_INTERVAL));
     }
 
     /**
-     * L'id di PAYMENT_NOTICE_PAID dipende solo da IUN e avviso (SRS §6.5): su una notifica già pagata un nuovo
-     * pagamento verrebbe scartato come duplicato e il test troverebbe l'elemento di un'esecuzione precedente.
-     * Si sceglie quindi il primo record storico la cui notifica non risulta pagata né da pagoPA né dall'ente.
-     * Le notifiche annullate non compaiono: con lo stato CANCELLED i loro record vengono rimossi da pn-PaymentInfo.
+     * Su una notifica già pagata il nuovo pagamento verrebbe scartato come duplicato: si sceglie un record storico
+     * la cui notifica non risulta pagata.
      */
     @Given("una notifica legale il cui avviso è stato censito prima dell'introduzione del tipo comunicazione")
     public void legacyLegalNotification() {
@@ -242,9 +235,13 @@ public class IngestionPagamentiSetupSteps {
     }
 
     private boolean isNotPaid(String iun) {
-        return Stream.of(PAYMENT_NOTICE_PAID, SENDER_PAYMENT_CATEGORY).allMatch(category -> dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
+        return Stream.of(PAYMENT_NOTICE_PAID, SENDER_PAYMENT_CATEGORY).allMatch(category -> timelineItems(iun, category).isEmpty());
+    }
+
+    private List<Map<String, AttributeValue>> timelineItems(String iun, String category) {
+        return dynamoDbService.call(DynamoTableName.TIMELINE, Map.of(
                 ":v_iun", AttributeValue.builder().s(iun).build(),
-                ":v_category", AttributeValue.builder().s(category).build())).items().isEmpty());
+                ":v_category", AttributeValue.builder().s(category).build())).items();
     }
 
     // =========================================================================
@@ -266,17 +263,13 @@ public class IngestionPagamentiSetupSteps {
         sendInformalNotificationWithPagoPaNotice(paName, campaignName, Map.of());
     }
 
-    /**
-     * Destinatario raggiungibile su più canali digitali, così che il workflow possa proseguire oltre il primo canale.
-     */
     @Given("il {string} ha inviato una comunicazione bonaria con avviso pagoPA e recapiti EMAIL e PEC nella campagna {string}")
     public void informalNotificationWithPagoPaNoticeAndPec(String paName, String campaignName) throws IOException {
         sendInformalNotificationWithPagoPaNotice(paName, campaignName, Map.of("digitalDomicile", settings.getInformalRecipientPec()));
     }
 
     /**
-     * La campagna effettiva può essere diversa da quella nominata nello scenario (vedi {@link PaymentEventsSettings}).
-     * La durata del primo canale della campagna viene registrata: determina quando il workflow passerebbe al canale successivo.
+     * La durata del primo canale della campagna determina quando il workflow passerebbe al canale successivo.
      */
     private void sendInformalNotificationWithPagoPaNotice(String paName, String campaignName, Map<String, String> additionalData) throws IOException {
         String campaignId = settings.campaignId(campaignName);
@@ -301,8 +294,7 @@ public class IngestionPagamentiSetupSteps {
     }
 
     /**
-     * pn-workflow-manager usa come oggetto del messaggio App IO quello del messaggio del destinatario, non l'oggetto
-     * della comunicazione bonaria: il tag della sequenza del mock va quindi nel messaggio.
+     * Su App IO l'oggetto è quello del messaggio, non della comunicazione: la sequenza del mock va nel messaggio.
      */
     private String messageId(String paName) {
         if (context.isPaidAlsoOnAppIo()) {
@@ -315,14 +307,13 @@ public class IngestionPagamentiSetupSteps {
     }
 
     private String messageOnAppIo(String paName, String ioMockSequence) {
-        String senderId = sharedSteps.getSenderInfoProvider().getPaInfo(paName).getSenderId();
+        SenderInfoProvider.PaInfo paInfo = sharedSteps.getSenderInfoProvider().getPaInfo(paName);
         String subject = InformalMessageTemplates.RISCUOTI_IT.getContent().getSubject() + IO_MOCK_SEQUENCE_PREFIX + ioMockSequence;
-        return informalMessageProvider.createMessageITWithSubject(senderId, subject);
+        return informalMessageProvider.createMessageITWithSubject(subject, paInfo.getSenderId(), paInfo.getApiKeyType());
     }
 
     /**
-     * Durata del primo canale del workflow della campagna previsto per i destinatari persona fisica; null se il
-     * canale non ha una durata (es. ANALOG).
+     * Durata del primo canale della campagna per le persone fisiche; null se il canale non ne ha una (es. ANALOG).
      */
     private static Duration firstChannelTimeout(Map<String, AttributeValue> campaign) {
         AttributeValue workflow = campaign.get(CAMPAIGN_WORKFLOW);
@@ -346,10 +337,7 @@ public class IngestionPagamentiSetupSteps {
     }
 
     // =========================================================================
-    // CAMPAGNE
-    // Le campagne vengono create dal team SEND: i test non possono crearle né modificarle, quindi gli step verificano
-    // soltanto che la configurazione sia quella attesa dallo scenario. La campagna effettiva si può cambiare per
-    // ambiente con pn.payment-events.campaign.<nome> (vedi PaymentEventsSettings).
+    // CAMPAGNE (in sola lettura: gli step verificano che la configurazione sia quella attesa dallo scenario)
     // =========================================================================
 
     @Given("la campagna {string} del {string} conclude il workflow al pagamento")

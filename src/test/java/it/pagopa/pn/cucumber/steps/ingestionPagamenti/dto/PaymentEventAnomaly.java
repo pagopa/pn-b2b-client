@@ -6,9 +6,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 /**
- * Anomalie che rendono un evento di pagamento non conforme alle regole di validazione di pn-kafka-bridge.
- * Sono solo quelle riproducibili con il mock del Nodo pagoPA: un campo obbligatorio omesso viene pubblicato assente.
- * Il mock non permette di omettere l'importo (lo valorizza a "1000"), né di inviare id, sezioni o contenuti arbitrari.
+ * Anomalie riproducibili con il mock del Nodo pagoPA: un campo obbligatorio omesso viene pubblicato assente.
  */
 public enum PaymentEventAnomaly {
     NOTICE_NUMBER_MISSING("numero avviso mancante", request -> request.setNoticeNumber(null)),
@@ -23,11 +21,17 @@ public enum PaymentEventAnomaly {
         this.mutation = mutation;
     }
 
+    /**
+     * Applica l'anomalia alla richiesta e la restituisce.
+     */
     public NoticePaymentRequest applyTo(NoticePaymentRequest validRequest) {
         mutation.accept(validRequest);
         return validRequest;
     }
 
+    /**
+     * Anomalia corrispondente all'etichetta usata negli scenari.
+     */
     public static PaymentEventAnomaly fromLabel(String label) {
         return Arrays.stream(values())
                 .filter(anomaly -> anomaly.label.equalsIgnoreCase(label))

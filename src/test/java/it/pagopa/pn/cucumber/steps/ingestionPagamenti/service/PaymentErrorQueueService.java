@@ -7,18 +7,15 @@ import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PnErrorEventPayload;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.services.sqs.model.Message;
 
 import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Accesso in sola lettura alla DLQ in cui pn-kafka-bridge scarta gli eventi di pagamento malformati
- * (env PN_KAFKA_BRIDGE_SQS_TOPICS_ERROR_EVENT_INPUT, stesso nome in tutti gli ambienti; sovrascrivibile con
- * -Dpn.kafka-bridge.payments-dlq-name). È anche la redrive DLQ della coda pn-kafka-bridge-payments.
- * La DLQ non ha consumer (SRS §5.2) e conserva i messaggi per 14 giorni, quindi ogni ricerca la scorre per intero.
- * I messaggi letti restano nascosti per VISIBILITY_TIMEOUT_SECONDS: una ricerca successiva vede solo quelli arrivati
- * nel frattempo. Il timeout resta inferiore alle finestre di attesa degli step: se l'evento atteso viene nascosto
- * dalla ricerca di uno scenario precedente, torna visibile prima che la verifica scada.
+ * Accesso in sola lettura alla DLQ degli eventi di pagamento malformati. La DLQ non ha consumer, quindi ogni ricerca
+ * la scorre per intero; il visibility timeout resta inferiore alle finestre di attesa degli step, così un evento
+ * nascosto dalla ricerca di uno scenario precedente torna visibile prima che la verifica scada.
  */
 @Slf4j
 @Component
@@ -37,11 +34,15 @@ public class PaymentErrorQueueService {
         this.dlqName = dlqName;
     }
 
+    /**
+     * Primo evento della DLQ il cui messaggio originale contiene {@code marker}.
+     */
     public Optional<PnErrorEventPayload> findEventContaining(String marker) {
-        return sqsService.readAllMessageBodies(dlqName, VISIBILITY_TIMEOUT_SECONDS).stream()
+        return sqsService.receiveAllMessages(dlqName, VISIBILITY_TIMEOUT_SECONDS).stream()
+                .map(Message::body)
                 .map(this::parse)
                 .filter(Objects::nonNull)
-                .filter(event -> event.getOriginalMessage() != null && event.getOriginalMessage().contains(marker))
+                .filter(event -> event.originalMessage() != null && event.originalMessage().contains(marker))
                 .findFirst();
     }
 

@@ -5,7 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.common.polling.Poller;
 import it.pagopa.common.polling.PollingConfig;
-import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.OnboardingInstitution;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.OnboardingRequest;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
@@ -32,15 +31,12 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static it.pagopa.pn.cucumber.utils.ObservationWindow.assertHoldsFor;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Elaborazione delle adesioni degli enti pubblicate con il mock Kafka di pn-external-channels: pn-kafka-bridge le
- * filtra per prodotto SEND e le inoltra a pn-external-registries, che le registra su pn-OnboardInstitutions con chiave
- * l'internalInstitutionId dell'adesione.
- * <p>
- * Ogni scenario usa un internalInstitutionId nuovo, così non tocca enti esistenti. Il prodotto SEND dell'ambiente è
- * ricavato dal log di avvio del filtro di pn-kafka-bridge; si sovrascrive con pn.onboarding.selfcare.product-id.
+ * Elaborazione delle adesioni degli enti comunicate da SelfCare. Ogni scenario usa un ente nuovo, così non tocca enti
+ * esistenti; il prodotto SEND dell'ambiente si sovrascrive con pn.onboarding.selfcare.product-id.
  */
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -48,7 +44,6 @@ public class InstitutionOnboardingSteps {
 
     private static final String STATUS_ACTIVE = "ACTIVE";
     private static final String STATUS_SUSPENDED = "SUSPENDED";
-    // "Filter enabled for onboarding: true with productId: prod-pn-dev", dentro il log JSON di CloudWatch
     private static final String PRODUCT_FILTER_LOG = "Filter enabled for onboarding";
     private static final Pattern PRODUCT_FILTER = Pattern.compile("Filter enabled for onboarding: (true|false) with productId: ([^\\s\",]*)");
     private static final Duration LOG_LOOKBACK = Duration.ofDays(14);
@@ -61,6 +56,7 @@ public class InstitutionOnboardingSteps {
     private final String configuredSendProductId;
     private final String otherProductId;
     private final String institutionTaxCode;
+    private final String institutionDigitalAddress;
     private final Duration registrationTimeout;
     private final Duration ignoredOnboardingWindow;
 
@@ -73,6 +69,7 @@ public class InstitutionOnboardingSteps {
                                       @Value("${pn.onboarding.selfcare.product-id:}") String configuredSendProductId,
                                       @Value("${pn.onboarding.selfcare.other-product-id:prod-io}") String otherProductId,
                                       @Value("${pn.onboarding.test-institution.tax-code:12345678901}") String institutionTaxCode,
+                                      @Value("${pn.onboarding.test-institution.digital-address:ente-test-pn-b2b@pec.it}") String institutionDigitalAddress,
                                       @Value("${pn.onboarding.timeout.registration:PT3M}") String registrationTimeout,
                                       @Value("${pn.onboarding.window.ignored-onboarding:PT1M}") String ignoredOnboardingWindow) {
         this.kafkaMockClient = kafkaMockClient;
@@ -82,6 +79,7 @@ public class InstitutionOnboardingSteps {
         this.configuredSendProductId = configuredSendProductId;
         this.otherProductId = otherProductId;
         this.institutionTaxCode = institutionTaxCode;
+        this.institutionDigitalAddress = institutionDigitalAddress;
         this.registrationTimeout = Duration.parse(registrationTimeout);
         this.ignoredOnboardingWindow = Duration.parse(ignoredOnboardingWindow);
     }
@@ -127,19 +125,11 @@ public class InstitutionOnboardingSteps {
         awaitInstitutionWithStatus(STATUS_SUSPENDED);
     }
 
-    /**
-     * Per tutta la finestra di osservazione l'ente non deve comparire su pn-OnboardInstitutions.
-     */
     @Then("SEND non censisce l'ente tra gli enti aderenti")
     public void institutionNotRegistered() {
         String id = onboarding.getInternalInstitutionId();
-        try {
-            Optional<Map<String, AttributeValue>> found = Poller.pollUntil(() -> institution(id), Optional::isPresent,
-                    PollingConfig.of(ignoredOnboardingWindow, POLL_INTERVAL));
-            assertThat(found).as("L'ente %s di un prodotto diverso da SEND è stato censito: %s", id, found).isEmpty();
-        } catch (PollingTimeoutException expected) {
-            log.info("Ente {} non censito per tutta la finestra di {}", id, ignoredOnboardingWindow);
-        }
+        assertHoldsFor(ignoredOnboardingWindow, POLL_INTERVAL, () -> institution(id), found ->
+                assertThat(found).as("L'ente %s di un prodotto diverso da SEND è stato censito: %s", id, found).isEmpty());
     }
 
     private void publishNewOnboarding(String productId) {
@@ -156,7 +146,7 @@ public class InstitutionOnboardingSteps {
                 .institution(new OnboardingInstitution()
                         .taxCode(institutionTaxCode)
                         .description("Ente di test pn-b2b-client " + institutionId)
-                        .digitalAddress("ente-test-pn-b2b@pec.it")
+                        .digitalAddress(institutionDigitalAddress)
                         .institutionType("PA")
                         .origin("IPA")
                         .originId("pnb2b" + institutionId.substring(institutionId.length() - 6)));

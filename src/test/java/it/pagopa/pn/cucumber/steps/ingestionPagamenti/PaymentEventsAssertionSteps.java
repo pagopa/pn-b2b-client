@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps.ingestionPagamenti;
 
 import io.cucumber.java.en.Then;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
 import it.pagopa.common.util.CloudWatchQueryBuilder;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementDetailsV1;
@@ -9,9 +11,8 @@ import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElementV30;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsWorkFlowV1;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
-import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentChannel;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
@@ -33,9 +34,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
+import static it.pagopa.pn.cucumber.utils.ObservationWindow.assertHoldsFor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Verifica degli effetti dei pagamenti su SEND: posizione debitoria, timeline, stato e workflow delle notifiche.
@@ -43,11 +46,10 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class IngestionPagamentiVerificheSteps {
+public class PaymentEventsAssertionSteps {
 
     private static final String PAYMENT_NOTICE_PAID = "PAYMENT_NOTICE_PAID";
-    // Il pagamento comunicato dall'ente è esposto come NOTIFICATION_PAID (id NOTIFICATION_PAID.IUN_...), ma su
-    // pn-Timelines la sua categoria è PAYMENT: le query su DynamoDB filtrano per categoria
+    // NOTIFICATION_PAID nell'API, PAYMENT su pn-Timelines
     private static final String SENDER_PAYMENT_CATEGORY = "PAYMENT";
     private static final String INFORMAL_PAYMENT = "PAYMENT";
     private static final String WORKFLOW_DONE_REACHED = "WORKFLOW_DONE_REACHED";
@@ -64,10 +66,12 @@ public class IngestionPagamentiVerificheSteps {
     private static final String INFORMAL_RECIPIENT_TYPE = "PF";
 
     private static final Duration POLL_INTERVAL = Duration.ofSeconds(5);
+    private static final Duration SLOW_POLL_INTERVAL = Duration.ofSeconds(10);
+    private static final Duration STREAM_POLL_INTERVAL = Duration.ofSeconds(15);
     private static final String STREAM_VERSION = "V30";
     private static final int MAX_STREAM_CONSUME_CALLS = 500;
 
-    private final IngestionPagamentiScenarioContext context;
+    private final PaymentEventsScenarioContext context;
     private final PaymentEventsSettings settings;
     private final SharedSteps sharedSteps;
     private final SendSharedContext sendSharedContext;
@@ -82,10 +86,6 @@ public class IngestionPagamentiVerificheSteps {
     // POSIZIONE DEBITORIA
     // =========================================================================
 
-    /**
-     * Con US-3 anche la validazione delle bonarie con avviso pagoPA passa dal microservizio dei costi e ne lascia
-     * traccia con i due elementi diagnostici (REQ-VAL-07).
-     */
     @Then("SEND registra la validazione della posizione debitoria nella timeline della comunicazione bonaria")
     public void costValidationRegistered() {
         awaitTimelineElementOnDynamo(COST_VALIDATION_REQUEST);
@@ -97,25 +97,18 @@ public class IngestionPagamentiVerificheSteps {
         assertElementNotExposed(COST_VALIDATION_ELEMENT_PREFIX);
     }
 
-    /**
-     * Gli elementi della validazione sono diagnostici anche per pn-stream (REQ-VAL-07, SRS §6.7): con US-3 compaiono
-     * per la prima volta nelle timeline delle bonarie.
-     */
     @Then("la validazione della posizione debitoria non è esposta negli eventi dello stream dell'ente")
     public void costValidationNotStreamed() {
         assertElementNotStreamed(COST_VALIDATION_ELEMENT_PREFIX);
     }
 
     /**
-     * Per le bonarie non si calcolano i costi di notificazione (REQ-VAL-06): pn-NotificationDeliveryCost non ha record.
-     * Il record verrebbe scritto in modo asincrono, quindi l'assenza va verificata per tutta la finestra di osservazione.
+     * Il record verrebbe scritto in modo asincrono: l'assenza si verifica per tutta la finestra di osservazione.
      */
     @Then("SEND non registra costi di notificazione per la comunicazione bonaria")
     public void noDeliveryCostForInformal() {
-        await().during(settings.getSideEffectWindow())
-                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> deliveryCostItems().isEmpty());
+        assertHoldsFor(settings.getSideEffectWindow(), POLL_INTERVAL, this::deliveryCostItems, items ->
+                assertThat(items).as("Costi di notificazione registrati per la comunicazione bonaria %s", sharedSteps.getNotificationIun()).isEmpty());
     }
 
     private List<Map<String, AttributeValue>> deliveryCostItems() {
@@ -127,16 +120,16 @@ public class IngestionPagamentiVerificheSteps {
     @Then("la posizione debitoria dell'avviso è censita come {string}")
     public void paymentInfoHasCommunicationType(String expectedCommunicationType) {
         String pk = context.getNotice().paymentInfoPk();
+        Consumer<List<Map<String, AttributeValue>>> verify = items -> {
+            assertThat(items).as("Record pn-PaymentInfo con pk %s non trovato", pk).hasSize(1);
+            AttributeValue communicationType = items.get(0).get(COMMUNICATION_TYPE);
+            assertThat(communicationType)
+                    .as("Il record pn-PaymentInfo %s deve avere l'attributo %s", pk, COMMUNICATION_TYPE)
+                    .isNotNull();
+            assertThat(communicationType.s()).isEqualTo(expectedCommunicationType);
+        };
         try {
-            await().atMost(settings.getAsyncProcessingTimeout()).pollInterval(POLL_INTERVAL).untilAsserted(() -> {
-                List<Map<String, AttributeValue>> items = paymentInfoItems(pk);
-                assertThat(items).as("Record pn-PaymentInfo con pk %s non trovato", pk).hasSize(1);
-                AttributeValue communicationType = items.get(0).get(COMMUNICATION_TYPE);
-                assertThat(communicationType)
-                        .as("Il record pn-PaymentInfo %s deve avere l'attributo %s", pk, COMMUNICATION_TYPE)
-                        .isNotNull();
-                assertThat(communicationType.s()).isEqualTo(expectedCommunicationType);
-            });
+            Poller.pollUntil(() -> paymentInfoItems(pk), verify, PollingConfig.of(settings.getAsyncProcessingTimeout(), POLL_INTERVAL));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
@@ -152,77 +145,57 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     /**
-     * PAYMENT_NOTICE_PAID è diagnostico e l'API della timeline non lo espone: il conteggio si fa su DynamoDB.
-     * Per tutta la finestra di osservazione non deve comparire una seconda occorrenza.
+     * L'API della timeline non espone PAYMENT_NOTICE_PAID: il conteggio si fa su DynamoDB.
      */
     @Then("nella timeline della notifica è presente un solo pagamento pagoPA")
     public void singlePaymentNoticePaid() {
-        await().during(settings.getSideEffectWindow())
-                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> timelineItems(PAYMENT_NOTICE_PAID).size() <= 1);
-        assertThat(timelineItems(PAYMENT_NOTICE_PAID))
+        List<Map<String, AttributeValue>> payments = assertHoldsFor(settings.getSideEffectWindow(), POLL_INTERVAL,
+                () -> timelineItems(PAYMENT_NOTICE_PAID),
+                current -> assertThat(current)
+                        .as("Più di un %s nella timeline della notifica %s", PAYMENT_NOTICE_PAID, sharedSteps.getNotificationIun())
+                        .hasSizeLessThanOrEqualTo(1));
+        assertThat(payments)
                 .as("Attesa una sola occorrenza di %s nella timeline della notifica %s", PAYMENT_NOTICE_PAID, sharedSteps.getNotificationIun())
                 .hasSize(1);
     }
 
-    /**
-     * Per tutta la finestra di osservazione l'elemento PAYMENT_NOTICE_PAID non deve comparire.
-     */
     @Then("SEND non registra il pagamento pagoPA nella timeline della notifica")
     public void paymentNoticePaidNotRegistered() {
-        await().during(settings.getIgnoredPaymentWindow())
-                .atMost(settings.getIgnoredPaymentWindow().plus(Duration.ofMinutes(1)))
-                .pollInterval(Duration.ofSeconds(10))
-                .until(() -> timelineItems(PAYMENT_NOTICE_PAID).isEmpty());
+        assertNoTimelineElementFor(settings.getIgnoredPaymentWindow(), sharedSteps.getNotificationIun(), PAYMENT_NOTICE_PAID);
     }
 
     /**
-     * Il flusso pagoPA delle legali scrive solo PAYMENT_NOTICE_PAID (REQ-LEG-03): l'eventuale NOTIFICATION_PAID verrebbe
-     * scritto dallo stesso consumer, quindi la finestra di osservazione parte dopo la registrazione del pagamento pagoPA.
+     * L'eventuale NOTIFICATION_PAID verrebbe scritto dallo stesso consumer di PAYMENT_NOTICE_PAID: la finestra parte
+     * dopo la registrazione del pagamento pagoPA.
      */
     @Then("SEND non registra il pagamento pagoPA come pagamento comunicato dall'ente")
     public void notificationPaidNotRegistered() {
-        await().during(settings.getSideEffectWindow())
-                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> timelineItems(SENDER_PAYMENT_CATEGORY).isEmpty());
+        assertNoTimelineElementFor(settings.getSideEffectWindow(), sharedSteps.getNotificationIun(), SENDER_PAYMENT_CATEGORY);
     }
 
-    /**
-     * PAYMENT_NOTICE_PAID è diagnostico e non va esposto (REQ-LEG-04, REQ-INF-06). Il suo id è costruito come quello di
-     * NOTIFICATION_PAID con la chiave PAYMENT_NOTICE_PAID (SRS §6.5). Una categoria sconosciuta esposta dall'API
-     * farebbe fallire anche la deserializzazione della risposta.
-     */
     @Then("il pagamento pagoPA non è esposto nella timeline della notifica")
     public void paymentNoticePaidNotExposed() {
         assertElementNotExposed(PAYMENT_NOTICE_PAID);
     }
 
-    /**
-     * PAYMENT_NOTICE_PAID è diagnostico anche per pn-stream, sia per le legali sia per le bonarie (REQ-STR-01).
-     */
     @Then("il pagamento pagoPA non è esposto negli eventi dello stream dell'ente")
     public void paymentNoticePaidNotStreamed() {
         assertElementNotStreamed(PAYMENT_NOTICE_PAID);
     }
 
     /**
-     * Lo stream dell'ente, creato prima della notifica, viene letto tutto dall'inizio e devono esserci eventi della
-     * notifica, altrimenti la verifica non sarebbe significativa. Come per l'API, una categoria sconosciuta esposta
-     * farebbe fallire anche la deserializzazione degli eventi.
+     * Lo stream viene riletto dall'inizio per tutto il tempo di propagazione verso pn-stream. Deve contenere eventi
+     * della notifica, altrimenti l'assenza dell'elemento non sarebbe significativa.
      */
     private void assertElementNotStreamed(String elementIdPrefix) {
-        await().pollDelay(settings.getStreamPropagationDelay())
-                .atMost(settings.getStreamPropagationDelay().plus(POLL_INTERVAL))
-                .until(() -> true);
-        List<ProgressResponseElementV30> events = streamEventsOfNotification(webhookSteps.getStreamId(STREAM_VERSION));
-        assertThat(events)
-                .as("Lo stream dell'ente non contiene eventi della notifica %s", sharedSteps.getNotificationIun())
-                .isNotEmpty();
-        assertThat(events.stream().map(this::streamedElementId).toList())
-                .as("Lo stream dell'ente non deve esporre elementi %s della notifica %s", elementIdPrefix, sharedSteps.getNotificationIun())
-                .noneMatch(elementId -> elementId != null && elementId.startsWith(elementIdPrefix));
+        UUID streamId = webhookSteps.getStreamId(STREAM_VERSION);
+        String iun = sharedSteps.getNotificationIun();
+        List<ProgressResponseElementV30> events = assertHoldsFor(settings.getStreamPropagationDelay(), STREAM_POLL_INTERVAL,
+                () -> streamEventsOf(streamId, iun),
+                streamed -> assertThat(streamed.stream().map(this::streamedElementId).toList())
+                        .as("Lo stream dell'ente non deve esporre elementi %s della notifica %s", elementIdPrefix, iun)
+                        .noneMatch(elementId -> elementId != null && elementId.startsWith(elementIdPrefix)));
+        assertThat(events).as("Lo stream dell'ente non contiene eventi della notifica %s", iun).isNotEmpty();
     }
 
     private String streamedElementId(ProgressResponseElementV30 event) {
@@ -232,8 +205,7 @@ public class IngestionPagamentiVerificheSteps {
         return event.getInformalElement() != null ? event.getInformalElement().getElementId() : null;
     }
 
-    private List<ProgressResponseElementV30> streamEventsOfNotification(UUID streamId) {
-        String iun = sharedSteps.getNotificationIun();
+    private List<ProgressResponseElementV30> streamEventsOf(UUID streamId, String iun) {
         List<ProgressResponseElementV30> events = new ArrayList<>();
         String lastEventId = null;
         for (int call = 0; call < MAX_STREAM_CONSUME_CALLS; call++) {
@@ -248,7 +220,7 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     /**
-     * Gli elementi diagnostici hanno id che iniziano con la categoria (SRS §6.5, §6.7).
+     * Gli id degli elementi diagnostici iniziano con la categoria.
      */
     private void assertElementNotExposed(String elementIdPrefix) {
         List<String> exposedElementIds = sharedSteps.isLegalNotification()
@@ -274,10 +246,6 @@ public class IngestionPagamentiVerificheSteps {
         informalNotificationSteps.verifyTimelineElementArrive(INFORMAL_PAYMENT);
     }
 
-    /**
-     * PAYMENT e PAYMENT_NOTICE_PAID impostano paid = true sui metadati di ricerca della bonaria (REQ-MET-01).
-     * L'esposizione nell'API di ricerca (REQ-MET-02) richiede il client generato dal contratto con CommunicationOutcomes.paid.
-     */
     @Then("i metadati di ricerca della comunicazione bonaria la indicano come pagata")
     public void informalSearchMetadataPaid() {
         String recipientTaxId = sendSharedContext.getInformalNotificationContext().getRecipient().getDestinatario().getTaxId();
@@ -286,8 +254,7 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     /**
-     * Il pagamento da App IO produce anche un SEND_DIGITAL_MESSAGE_PROGRESS con code PAID (SRS §3.3): è la prova che
-     * il secondo canale ha davvero comunicato il pagamento, anche quando il suo PAYMENT viene scartato come duplicato.
+     * Prova che App IO ha comunicato il pagamento anche quando il suo PAYMENT viene scartato come duplicato.
      */
     @Then("App IO ha comunicato il pagamento dell'avviso")
     public void appIoNotifiedPayment() {
@@ -295,31 +262,26 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     /**
-     * Va usato dopo le verifiche che entrambi i canali hanno comunicato il pagamento: la finestra copre solo l'ordine
-     * non definito fra PAYMENT_NOTICE_PAID e PAYMENT nel consumer pagoPA (SRS 13.15). Per tutta la finestra non deve
-     * comparire un secondo elemento e alla fine deve essercene esattamente uno.
+     * Va usato dopo le verifiche che entrambi i canali hanno comunicato il pagamento.
      */
     @Then("nella timeline della comunicazione bonaria è presente un solo elemento {string}")
     public void singleInformalTimelineElement(String category) {
-        await().during(settings.getSideEffectWindow())
-                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> informalTimelineCount(category) <= 1);
-        assertThat(informalTimelineCount(category))
+        long count = assertHoldsFor(settings.getSideEffectWindow(), POLL_INTERVAL, () -> informalTimelineCount(category),
+                current -> assertThat(current)
+                        .as("Più di un elemento %s nella timeline della comunicazione bonaria %s", category, sharedSteps.getNotificationIun())
+                        .isLessThanOrEqualTo(1));
+        assertThat(count)
                 .as("Attesa una sola occorrenza di %s nella timeline della comunicazione bonaria %s", category, sharedSteps.getNotificationIun())
                 .isEqualTo(1);
     }
 
     /**
-     * Il paymentSourceChannel non distingue i canali (vedi {@link PaymentChannel}): il PAYMENT scritto da pagoPA ha
-     * come eventTimestamp la data di pagamento pubblicata dal test (WI-5.7), quello scritto da App IO no.
-     * Con entrambi i canali la verifica rileva anche la sovrascrittura del PAYMENT da parte del secondo canale,
-     * che il solo conteggio degli elementi non distingue.
+     * Il paymentSourceChannel non distingue i canali (vedi {@link PaymentChannel}): solo il PAYMENT scritto da pagoPA
+     * ha come eventTimestamp la data di pagamento pubblicata dal test.
      */
     @Then("l'elemento PAYMENT della comunicazione bonaria è stato scritto dal pagamento comunicato da {string}")
     public void informalPaymentWrittenBy(String channel) {
-        List<InformalTimelineElementV1> payments = NotificationInformalUtilsWorkFlowV1
-                .getTimelineElementsByCategory(sharedSteps.getSentInformalSentNotificationLastVersion(), INFORMAL_PAYMENT);
+        List<InformalTimelineElementV1> payments = elementsOf(sharedSteps.getSentInformalSentNotificationLastVersion().getTimeline(), INFORMAL_PAYMENT);
         assertThat(payments).as("Elemento %s non presente nella comunicazione bonaria %s", INFORMAL_PAYMENT, sharedSteps.getNotificationIun()).hasSize(1);
         InformalTimelineElementDetailsV1 details = payments.get(0).getDetails();
         assertThat(details).as("Details dell'elemento %s non valorizzati", INFORMAL_PAYMENT).isNotNull();
@@ -349,30 +311,28 @@ public class IngestionPagamentiVerificheSteps {
     // =========================================================================
 
     /**
-     * Con stopOnPaid = true il pagamento chiude subito il workflow (REQ-INF-05): per tutta la durata del primo canale
-     * della campagna non deve partire alcun invio su un canale successivo. La campagna non deve prevedere feedback
-     * desiderati sul primo canale, altrimenti la chiusura potrebbe dipendere da quelli.
+     * Per tutta la durata del primo canale della campagna non deve partire alcun invio su un canale successivo.
      */
     @Then("il workflow della comunicazione bonaria si interrompe al pagamento senza proseguire sugli altri canali")
     public void informalWorkflowStopsOnPaid() {
         Duration escalationWindow = escalationWindow();
         informalNotificationSteps.verifyTimelineElementArrive(WORKFLOW_DONE_REACHED);
         informalNotificationSteps.verifyFinalNotificationStatus(INFORMAL_STATUS_COMPLETED);
-        await().during(escalationWindow)
-                .atMost(escalationWindow.plus(Duration.ofMinutes(1)))
-                .pollInterval(Duration.ofSeconds(10))
-                .until(() -> escalationSends().isEmpty());
+        assertHoldsFor(escalationWindow, SLOW_POLL_INTERVAL, this::escalationSends, sends ->
+                assertThat(sends).as("La comunicazione bonaria %s è stata inviata su un canale successivo dopo il pagamento", sharedSteps.getNotificationIun()).isEmpty());
     }
 
     /**
-     * Con stopOnPaid = false o assente il pagamento non interrompe il workflow: allo scadere del primo canale la
-     * comunicazione viene inviata sul canale successivo, senza chiusure precedenti. Lo scenario è significativo solo
-     * se il pagamento è stato registrato prima di quell'invio.
+     * Lo scenario è significativo solo se il pagamento è stato registrato prima dell'invio sul canale successivo.
      */
     @Then("il workflow della comunicazione bonaria prosegue sugli altri canali dopo il pagamento")
     public void informalWorkflowContinuesAfterPayment() {
-        InformalTimelineElementV1 escalation = await().atMost(escalationWindow()).pollInterval(Duration.ofSeconds(10))
-                .until(() -> escalationSends().stream().findFirst(), Optional::isPresent)
+        Duration escalationWindow = escalationWindow();
+        Predicate<Optional<InformalTimelineElementV1>> escalated = Optional::isPresent;
+        InformalTimelineElementV1 escalation = Poller.pollUntil(() -> escalationSends().stream().findFirst(), escalated,
+                        PollingConfig.of(escalationWindow, SLOW_POLL_INTERVAL),
+                        last -> String.format("La comunicazione bonaria %s non è stata inviata su un canale successivo entro %s",
+                                sharedSteps.getNotificationIun(), escalationWindow))
                 .orElseThrow();
         List<InformalTimelineElementV1> timeline = sharedSteps.getSentInformalSentNotificationLastVersion().getTimeline();
 
@@ -386,10 +346,6 @@ public class IngestionPagamentiVerificheSteps {
                 .noneMatch(workflowDone -> workflowDone.getTimestamp().isBefore(escalation.getTimestamp()));
     }
 
-    /**
-     * Durata del primo canale della campagna usata più il margine di schedulazione: entro questa finestra il workflow
-     * passerebbe al canale successivo.
-     */
     private Duration escalationWindow() {
         assertThat(context.getFirstChannelTimeout())
                 .as("Il primo canale della campagna della comunicazione bonaria non ha una durata")
@@ -418,25 +374,15 @@ public class IngestionPagamentiVerificheSteps {
                 .toList();
     }
 
-    /**
-     * La notifica annullata il cui avviso è stato riusato da una nuova notifica non deve ricevere il pagamento:
-     * resta con l'elemento di annullamento e senza PAYMENT_NOTICE_PAID per tutta la finestra di osservazione.
-     */
     @Then("la prima notifica legale resta annullata senza pagamento pagoPA")
     public void previousLegalNotificationCancelledWithoutPayment() {
         String previousIun = context.getPreviousNotificationIun();
         assertThat(previousIun).as("Lo scenario non ha creato una seconda notifica con lo stesso avviso").isNotNull();
         assertThat(timelineItemsOf(previousIun, "NOTIFICATION_CANCELLED"))
                 .as("La notifica %s deve risultare annullata", previousIun).isNotEmpty();
-        await().during(settings.getSideEffectWindow())
-                .atMost(settings.getSideEffectWindow().plus(Duration.ofSeconds(30)))
-                .pollInterval(Duration.ofSeconds(5))
-                .until(() -> timelineItemsOf(previousIun, PAYMENT_NOTICE_PAID).isEmpty());
+        assertNoTimelineElementFor(settings.getSideEffectWindow(), previousIun, PAYMENT_NOTICE_PAID);
     }
 
-    /**
-     * Un avviso già usato da una notifica attiva non può essere usato da un'altra: la creazione fallisce con 409.
-     */
     @Then("SEND rifiuta la seconda notifica perché l'avviso è già utilizzato")
     public void secondNotificationRejectedBecauseNoticeAlreadyUsed() {
         assertThat(context.getSecondNotificationRejectionStatus())
@@ -471,46 +417,51 @@ public class IngestionPagamentiVerificheSteps {
     // =========================================================================
 
     /**
-     * Prova che l'evento è arrivato a pn-notification-cost-service ed è stato scartato perché l'avviso non è su
-     * pn-PaymentInfo (REQ-FIL-02, REQ-FIL-07): le verifiche negative successive partono da un'elaborazione avvenuta.
-     * L'SRS chiede un log per lo scarto senza definirne il testo: log group e testo sono configurabili
-     * (pn.payment-events.cost-service.*), con default il log "PaymentInfo not found for iuv=<creditorTaxId>##<noticeCode>".
+     * Prova che l'evento è stato elaborato e scartato: le verifiche negative successive partono da un'elaborazione
+     * avvenuta. Log group e testo del log sono configurabili (pn.payment-events.cost-service.*).
      */
     @Then("SEND scarta il pagamento perché l'avviso non è censito")
     public void paymentDiscardedForUnknownNotice() {
         String query = String.format("\"%s\" \"%s\"", settings.getPaymentDiscardedLogMessage(), context.getNotice().paymentInfoPk());
         Instant publishedAt = context.getLastEventPublishedAt();
+        Consumer<Long> verify = count -> assertThat(count)
+                .as("Nessun log di scarto su %s per la ricerca %s", settings.getCostServiceLogGroup(), query)
+                .isPositive();
         try {
-            await().atMost(settings.getAsyncProcessingTimeout()).pollInterval(Duration.ofSeconds(10)).untilAsserted(() ->
-                    assertThat(logCount(settings.getCostServiceLogGroup(), query, publishedAt))
-                            .as("Nessun log INFO di scarto (REQ-FIL-02) su %s per la ricerca %s", settings.getCostServiceLogGroup(), query)
-                            .isPositive());
+            Poller.pollUntil(() -> logCount(settings.getCostServiceLogGroup(), query, publishedAt), verify,
+                    PollingConfig.of(settings.getAsyncProcessingTimeout(), SLOW_POLL_INTERVAL));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
     }
 
     /**
-     * Va usato dopo la verifica dello scarto: per tutta la finestra di osservazione non devono comparire errori,
-     * così è coperto anche un log scritto o indicizzato da CloudWatch dopo quello di scarto.
+     * Va usato dopo la verifica dello scarto, così copre anche un log indicizzato da CloudWatch dopo quello di scarto.
      */
     @Then("SEND ignora il pagamento senza registrare errori")
     public void paymentIgnoredWithoutErrors() {
         String errorLogQuery = String.format("\"ERROR\" \"%s\"", context.getNotice().noticeCode());
         Instant publishedAt = context.getLastEventPublishedAt();
-        await().during(settings.getIgnoredPaymentWindow())
-                .atMost(settings.getIgnoredPaymentWindow().plus(Duration.ofMinutes(1)))
-                .pollInterval(Duration.ofSeconds(10))
-                .until(() -> logCount(settings.getCostServiceLogGroup(), errorLogQuery, publishedAt) == 0);
+        assertHoldsFor(settings.getIgnoredPaymentWindow(), SLOW_POLL_INTERVAL,
+                () -> logCount(settings.getCostServiceLogGroup(), errorLogQuery, publishedAt),
+                count -> assertThat(count)
+                        .as("Log di errore su %s per la ricerca %s", settings.getCostServiceLogGroup(), errorLogQuery)
+                        .isZero());
     }
 
     private void awaitTimelineElementOnDynamo(String category) {
+        Consumer<List<Map<String, AttributeValue>>> verify = items ->
+                assertThat(items).as("Elemento %s non presente nella timeline", category).isNotEmpty();
         try {
-            await().atMost(settings.getAsyncProcessingTimeout()).pollInterval(POLL_INTERVAL).untilAsserted(() ->
-                    assertThat(timelineItems(category)).as("Elemento %s non presente nella timeline", category).isNotEmpty());
+            Poller.pollUntil(() -> timelineItems(category), verify, PollingConfig.of(settings.getAsyncProcessingTimeout(), POLL_INTERVAL));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
+    }
+
+    private void assertNoTimelineElementFor(Duration window, String iun, String category) {
+        assertHoldsFor(window, SLOW_POLL_INTERVAL, () -> timelineItemsOf(iun, category), items ->
+                assertThat(items).as("Elemento %s presente nella timeline della notifica %s", category, iun).isEmpty());
     }
 
     private List<Map<String, AttributeValue>> timelineItems(String category) {
@@ -530,19 +481,17 @@ public class IngestionPagamentiVerificheSteps {
     }
 
     private long informalTimelineCount(String category) {
-        return NotificationInformalUtilsWorkFlowV1
-                .getTimelineElementsByCategory(sharedSteps.getSentInformalSentNotificationLastVersion(), category)
-                .size();
+        return elementsOf(sharedSteps.getSentInformalSentNotificationLastVersion().getTimeline(), category).size();
     }
 
     /**
-     * Awaitility valuta le condizioni in un thread separato, dove il contesto di scenario non è accessibile:
-     * l'istante di pubblicazione va letto prima dell'attesa e passato qui.
+     * Scorre tutte le pagine: CloudWatch può restituire pagine vuote o parziali prima di quelle con i risultati.
      */
-    private int logCount(String logGroup, String query, Instant publishedAt) {
+    private long logCount(String logGroup, String query, Instant publishedAt) {
         long minutesSincePublish = Duration.between(publishedAt, Instant.now()).toMinutes() + 1;
-        return cloudWatchLogsClient.filterLogEvents(CloudWatchQueryBuilder.search(logGroup, query, minutesSincePublish))
+        return cloudWatchLogsClient.filterLogEventsPaginator(CloudWatchQueryBuilder.search(logGroup, query, minutesSincePublish))
                 .events()
-                .size();
+                .stream()
+                .count();
     }
 }

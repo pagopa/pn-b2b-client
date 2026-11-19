@@ -12,14 +12,12 @@ import org.springframework.web.client.RestClientException;
 public interface IPnKafkaMockClient {
 
     /**
-     * Pubblica un evento di pagamento tramite POST /external-channels/v1/kafka/payment. I campi non valorizzati
-     * vengono omessi dalla richiesta: il mock li pubblica assenti (tranne amount, che valorizza a "1000").
+     * Pubblica un evento di pagamento; i campi non valorizzati vengono pubblicati assenti, tranne l'importo.
      */
     KafkaProducerResponse publishPaymentEvent(NoticePaymentRequest request) throws RestClientException;
 
     /**
-     * Pubblica un'adesione tramite POST /external-channels/v1/kafka/onboarding. I campi non valorizzati vengono
-     * generati dal mock con valori di default.
+     * Pubblica un'adesione; i campi non valorizzati vengono generati dal mock.
      */
     KafkaProducerResponse publishOnboardingEvent(OnboardingRequest request) throws RestClientException;
 }

@@ -28,8 +28,7 @@ public class DynamoDbService {
 
     /**
      * Restituisce il primo item della tabella privo dell'attributo indicato che soddisfa il criterio.
-     * In uno Scan il Limit si applica prima del FilterExpression, quindi le pagine vengono scorse
-     * con il paginator, in modo lazy, fino al primo item che soddisfa filtro e criterio.
+     * Le pagine dello Scan vengono scorse in modo lazy: il Limit si applica prima del filtro.
      */
     public Optional<Map<String, AttributeValue>> findFirstItemWithoutAttribute(DynamoTableName tableName, String attributeName,
                                                                                Predicate<Map<String, AttributeValue>> criteria) {
@@ -49,7 +48,7 @@ public class DynamoDbService {
         return switch (tableName) {
             //query WITH filters
             case TIMELINE -> queryWithFilters(tableName, List.of("iun", "category"), attributeValues);
-            case REWORKED_TIMELINES_FOR_INVOICING ->
+            case REWORKED_TIMELINES_FOR_INVOICING, TIMELINES_FOR_INVOICING, INFORMAL_TIMELINES_FOR_INVOICING ->
                     queryWithFilters(tableName, List.of("paId_invoicingDay", "iun"), attributeValues);
             //query WITHOUT filters
             case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->
@@ -63,6 +62,8 @@ public class DynamoDbService {
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
             case CAMPAIGNS -> queryWithoutFilters(tableName, List.of("senderId", "campaignId"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
+            case PT_DELEGATIONS -> queryWithoutFilters(tableName, "ptId", attributeValues);
+            case BATCH_POLLING -> queryWithoutFilters(tableName, "batchId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);

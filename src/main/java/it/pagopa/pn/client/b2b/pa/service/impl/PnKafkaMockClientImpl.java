@@ -21,11 +21,15 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnKafkaMockClientImpl implements IPnKafkaMockClient {
+
+    // Il client è prototype: il controllo della connessione vale per tutta l'esecuzione
+    private static final AtomicBoolean KAFKA_CONNECTION_CHECKED = new AtomicBoolean(false);
 
     private final PaymentApi paymentApi;
     private final OnboardingApi onboardingApi;
@@ -39,10 +43,8 @@ public class PnKafkaMockClientImpl implements IPnKafkaMockClient {
     }
 
     /**
-     * Il RestTemplate condiviso serializza le date java.time come timestamp decimali (es. 1794910037.140306900): il mock
-     * rifiuta con 400 i campi date-time dell'adesione (createdAt, updatedAt) in quel formato. Per questo client si usa
-     * una copia che le serializza in ISO-8601, come da contratto, mantenendo request factory (con gli interceptor) ed
-     * error handler del RestTemplate condiviso.
+     * Il mock rifiuta le date serializzate come timestamp decimali, come fa il RestTemplate condiviso: questa copia
+     * le serializza in ISO-8601 e mantiene request factory ed error handler.
      */
     private static RestTemplate withIsoDateSerialization(RestTemplate sharedRestTemplate) {
         List<HttpMessageConverter<?>> messageConverters = sharedRestTemplate.getMessageConverters().stream()
@@ -82,14 +84,22 @@ public class PnKafkaMockClientImpl implements IPnKafkaMockClient {
     }
 
     /**
-     * Dopo un errore di connessione a Kafka il mock disattiva il producer (kill switch) e rifiuta ogni pubblicazione
-     * finché la connessione non viene riabilitata: senza riattivarla, un disservizio passato farebbe fallire tutti
-     * gli scenari successivi. Se Kafka è ancora irraggiungibile la pubblicazione fallisce e il mock si disattiva di nuovo.
+     * Dopo un errore di connessione il mock disattiva il producer finché non viene riabilitato: senza riattivarlo, un
+     * disservizio passato farebbe fallire tutti gli scenari. Il controllo si fa alla prima pubblicazione dell'esecuzione.
      */
     private void ensureKafkaConnectionEnabled() {
-        if (!Boolean.TRUE.equals(connectionApi.checkKafkaConnection().getEnabled())) {
-            log.warn("Connessione a Kafka del mock disattivata: viene riattivata");
-            connectionApi.setKafkaConnection(new KafkaConnection().enabled(true));
+        if (KAFKA_CONNECTION_CHECKED.get()) {
+            return;
+        }
+        synchronized (KAFKA_CONNECTION_CHECKED) {
+            if (KAFKA_CONNECTION_CHECKED.get()) {
+                return;
+            }
+            if (!Boolean.TRUE.equals(connectionApi.checkKafkaConnection().getEnabled())) {
+                log.warn("Connessione a Kafka del mock disattivata: viene riattivata");
+                connectionApi.setKafkaConnection(new KafkaConnection().enabled(true));
+            }
+            KAFKA_CONNECTION_CHECKED.set(true);
         }
     }
 }

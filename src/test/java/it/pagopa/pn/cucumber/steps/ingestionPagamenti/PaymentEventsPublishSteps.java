@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.ingestionPagamenti;
 
 import io.cucumber.java.en.When;
-import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentChannel;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentEventAnomaly;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentNotice;
@@ -17,19 +17,21 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Comunicazione dei pagamenti a SEND dai diversi canali: pagoPA (via il mock del Nodo pagoPA), App IO e API B2B dell'ente.
+ * Comunicazione dei pagamenti a SEND dai diversi canali: pagoPA, App IO e API B2B dell'ente.
  */
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @RequiredArgsConstructor
-public class IngestionPagamentiEventiSteps {
+public class PaymentEventsPublishSteps {
 
     private static final String INFORMAL_PAYMENT_CATEGORY = "PAYMENT";
+    private static final String PAGOPA_CHANNEL = "pagoPA";
+    private static final String SENDER_CHANNEL = "ente";
 
-    private final IngestionPagamentiScenarioContext context;
+    private final PaymentEventsScenarioContext context;
     private final PagoPaPaymentEventService paymentEventService;
     private final PresaInCaricoNoticaBonariaSteps informalNotificationSteps;
     private final AvanzamentoNotificheB2bSteps legalNotificationSteps;
-    private final IngestionPagamentiVerificheSteps verificheSteps;
+    private final PaymentEventsAssertionSteps assertionSteps;
 
     @When("pagoPA comunica il pagamento dell'avviso")
     public void pagoPaNotifiesPayment() {
@@ -54,27 +56,26 @@ public class IngestionPagamentiEventiSteps {
     }
 
     /**
-     * Notifica legale: il pagamento arriva da pagoPA (evento Kafka) e dall'ente (API B2B), in entrambi gli ordini.
-     * Il pagamento pagoPA viene atteso in timeline prima del secondo canale, così l'ordine è quello dichiarato.
+     * Il pagamento del primo canale viene atteso in timeline prima del secondo, così l'ordine è quello dichiarato.
      */
     @When("il pagamento dell'avviso legale viene comunicato prima da {string} e poi da {string}")
     public void legalPaymentNotifiedByPagoPaAndSender(String firstChannel, String secondChannel) {
         assertThat(List.of(firstChannel, secondChannel)).as("I due canali devono essere pagoPA ed ente, in un ordine qualsiasi")
-                .containsExactlyInAnyOrder("pagoPA", "ente");
-        if ("pagoPA".equals(firstChannel)) {
+                .containsExactlyInAnyOrder(PAGOPA_CHANNEL, SENDER_CHANNEL);
+        if (PAGOPA_CHANNEL.equals(firstChannel)) {
             pagoPaNotifiesPayment();
-            verificheSteps.paymentNoticePaidRegistered();
+            assertionSteps.paymentNoticePaidRegistered();
             senderNotifiesPaymentViaB2b();
         } else {
             senderNotifiesPaymentViaB2b();
+            assertionSteps.paymentNotifiedBySender();
             pagoPaNotifiesPayment();
         }
     }
 
     /**
-     * Il pagamento da App IO non viene inviato dal test: lo segnala il mock di App IO al polling di pn-io-connector,
-     * perché il messaggio App IO della comunicazione bonaria ha nell'oggetto la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
-     * Lo step attende il PAYMENT scritto dal flusso App IO.
+     * Il pagamento da App IO lo segnala il mock di App IO, configurato dall'oggetto del messaggio: lo step ne attende
+     * il PAYMENT.
      */
     @When("App IO comunica il pagamento dell'avviso")
     public void appIoNotifiesPayment() {
@@ -83,10 +84,8 @@ public class IngestionPagamentiEventiSteps {
     }
 
     /**
-     * Il pagamento da App IO non viene inviato dal test: lo segnala il mock di App IO al polling di pn-io-connector,
-     * perché il messaggio App IO della comunicazione bonaria ha nell'oggetto la sequenza OK_READ_THEN_PAID (PAID dopo 90 secondi).
-     * In entrambi gli ordini si attende il PAYMENT del primo canale prima che possa intervenire il secondo:
-     * se l'ordine non viene rispettato, la verifica su chi ha scritto il PAYMENT lo rileva.
+     * Si attende il PAYMENT del primo canale prima che possa intervenire il secondo: se l'ordine non viene rispettato,
+     * la verifica su chi ha scritto il PAYMENT lo rileva.
      */
     @When("il pagamento dell'avviso viene comunicato prima da {string} e poi da {string}")
     public void paymentNotifiedByBothChannels(String firstChannel, String secondChannel) {

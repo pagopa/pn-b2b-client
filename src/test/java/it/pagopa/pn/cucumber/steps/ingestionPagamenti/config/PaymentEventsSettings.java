@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.ingestionPagamenti.config;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -8,20 +9,16 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 
 /**
- * Valori dei test sugli eventi di pagamento che possono cambiare tra ambienti o con il rilascio: nomi delle campagne,
- * tempi di attesa, log group e testo dei log, recapiti e sequenze dei mock. Ogni valore ha un default e si sovrascrive
- * con una system property (-D), senza modificare i file in config/.
- * <ul>
- *     <li>{@code pn.payment-events.campaign.<nome>}: campagna effettiva da usare al posto di quella nominata nello
- *     scenario (es. {@code -Dpn.payment-events.campaign.StopOnPaid-QA=FattOrdStop}); senza override si usa il nome dello scenario</li>
- *     <li>{@code pn.payment-events.timeout.*} e {@code pn.payment-events.window.*}: durate ISO-8601 (es. PT3M)</li>
- * </ul>
+ * Valori dei test sugli eventi di pagamento che possono cambiare tra ambienti, sovrascrivibili con -D:
+ * {@code pn.payment-events.campaign.<nome>} sostituisce la campagna nominata nello scenario, timeout e finestre
+ * sono durate ISO-8601.
  */
 @Getter
 @Component
 public class PaymentEventsSettings {
     private static final String CAMPAIGN_PROPERTY_PREFIX = "pn.payment-events.campaign.";
 
+    @Getter(AccessLevel.NONE)
     private final Environment environment;
 
     /** Elaborazione asincrona di un evento (timeline, pn-PaymentInfo, log). */
@@ -40,7 +37,7 @@ public class PaymentEventsSettings {
     private final Duration dlqObservationWindow;
     /** Margine di schedulazione oltre la durata del primo canale della campagna. */
     private final Duration escalationMargin;
-    /** Ritardo con cui pn-stream riceve gli elementi di timeline. */
+    /** Propagazione degli elementi di timeline verso gli stream degli enti. */
     private final Duration streamPropagationDelay;
 
     private final String costServiceLogGroup;

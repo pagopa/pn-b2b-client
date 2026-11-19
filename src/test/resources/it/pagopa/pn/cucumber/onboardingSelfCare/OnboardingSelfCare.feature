@@ -7,12 +7,11 @@ Feature: Non regressione della ricezione delle adesioni degli enti da SelfCare
   #   già ricevute e non le divide con altri ambienti collegati allo stesso SelfCare.
   #
   # Perimetro: NR_01 verifica il collegamento a SelfCare e la sua continuità tra i rilasci; NR_02 l'elaborazione di
-  # un'adesione, pubblicata con il mock Kafka di pn-external-channels. Ogni scenario NR_02 censisce un ente di test
-  # nuovo, che resta tra gli enti aderenti dell'ambiente.
+  # un'adesione simulata. Ogni scenario NR_02 censisce un ente di test nuovo, che resta tra gli enti aderenti
+  # dell'ambiente.
   #
   # Blocchi attuali (2026-11-12); gli scenari bloccati sono @ignore:
-  # - in nessun ambiente SEND riceve le adesioni pubblicate dal mock: pn-kafka-bridge le legge dal canale di
-  #   SelfCare, il mock le pubblica sul cluster Kafka di SEND. Serve che il team colleghi la ricezione al mock: NR_02
+  # - in nessun ambiente SEND riceve le adesioni simulate, perché le legge solo dal canale reale di SelfCare: NR_02
 
   @onboardingSelfCare @work-item:QA-18904
   Scenario: [ONBOARDING_NR_01_1] SEND riceve le adesioni degli enti da SelfCare senza errori

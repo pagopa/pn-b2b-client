@@ -1,32 +1,29 @@
 Feature: Recupero degli eventi di pagamento pagoPA
 
-  # Scope: SEND riceve da pagoPA (via Kafka, pn-kafka-bridge) gli eventi di pagamento degli avvisi e li correla alle
-  # notifiche legali e alle comunicazioni bonarie che li contengono. Gli eventi sono pubblicati con il mock del Nodo
-  # pagoPA di pn-external-channels; il pagamento da App IO è simulato dal mock di pn-io-connector.
+  # Scope: SEND riceve da pagoPA gli eventi di pagamento degli avvisi e li correla alle notifiche legali e alle
+  # comunicazioni bonarie che li contengono.
   #
   # Copertura:
-  # - BASIC: registrazione del pagamento su legali e bonarie, conclusione del workflow bonario secondo stopOnPaid,
-  #   non regressione dell'API B2B dell'ente, avvisi censiti prima del rilascio, tipo della posizione debitoria,
-  #   avvisi sconosciuti a SEND
+  # - BASIC: registrazione del pagamento su legali e bonarie, conclusione del workflow bonario secondo la campagna,
+  #   non regressione del pagamento comunicato dall'ente, avvisi censiti prima del rilascio, avvisi sconosciuti a SEND
   # - RACE: stesso pagamento comunicato da App IO e da pagoPA, nei due ordini
-  # - DATA: eventi malformati scartati nella DLQ senza bloccare i successivi
+  # - DUPLICATE: stesso avviso pagato da più canali o usato da più notifiche
+  # - DATA: eventi malformati scartati senza bloccare i successivi
   # - ENDED_FLOW: pagamento su legale annullata o bonaria conclusa
   #
   # Limiti non coperti:
-  # - bonarie e legali con più destinatari o più avvisi: ogni scenario usa un destinatario e un avviso
-  # - eventi non JSON o oltre 1MB (scarto con log FATAL) e campi diversi da avviso, ente, data e importo: il mock
-  #   pubblica solo eventi JSON con questi quattro campi e canale di pagamento fisso
-  # - canale di pagamento nell'elemento PAYMENT scritto da pagoPA: il mock lo fissa a IO
-  # - creazione e modifica delle campagne: il client è in sola lettura, gli scenari verificano soltanto che la campagna
-  #   nominata abbia la configurazione attesa (sostituibile per ambiente con -Dpn.payment-events.campaign.<nome>=<id>)
+  # - notifiche con più destinatari o più avvisi
+  # - eventi non JSON o con campi diversi da avviso, ente, data e importo
+  # - creazione delle campagne: gli scenari verificano solo che la campagna nominata abbia la configurazione attesa
+  #
+  # Runner dedicati, da attivare su richiesta:
+  # - PaymentEventsDlqTest (@paymentEventsDlq): gli scenari DATA lasciano gli eventi scartati nella coda di errore,
+  #   che fa scattare un allarme a chi la presidia; vanno eseguiti d'accordo con quel team
+  # - PaymentEventsLegacyNoticeTest (@paymentEventsLegacyNotice): 01_4_A cerca un avviso storico non pagato scorrendo
+  #   le posizioni debitorie dell'ambiente, una ricerca che si allunga a ogni esecuzione
   #
   # Blocchi attuali (2026-11-18); lo scenario bloccato è @ignore:
-  # - campagne con stopOnPaid true: in TEST esistono solo quelle delle famiglie FattOrd e Reminder (primo canale IO),
-  #   usate da 01_7_A e 02_2 (FattOrd) dove il destinatario è su App IO e il canale IO attende fino a 8 minuti; per usarne
-  #   altre -Dpn.payment-events.campaign.<nome>=<id>
-  # - nessuna campagna priva dell'attributo stopOnPaid (in DEV tutte lo valorizzano, BonarieAllChannels a false): 01_2_C
-  # Nota: la DLQ dei pagamenti non ha consumer e conserva i messaggi 14 giorni, quindi 03_1_A e 03_2_A tengono in
-  # allarme la coda (in TEST l'allarme era già in ALARM dal 2026-11-17): eseguirli d'accordo con il team che lo riceve.
+  # - nessuna campagna priva della configurazione di chiusura al pagamento: 01_2_C
 
   # BASIC_01 - Pagamenti su notifiche legali e comunicazioni bonarie
 
@@ -65,10 +62,6 @@ Feature: Recupero degli eventi di pagamento pagoPA
     And il pagamento pagoPA non è esposto nella timeline della notifica
     And il workflow della comunicazione bonaria prosegue sugli altri canali dopo il pagamento
 
-  # @ignore (2026-11-18): lo scenario richiede una campagna di Comune_Multi priva dell'attributo stopOnPaid (assente =
-  # false, REQ-INF-05), ma in TEST tutte le campagne di pn-Campaigns lo valorizzano (BonarieAllChannels è a false) e non
-  # esistono campagne di altri mittenti. Il client è in sola lettura: va tolto @ignore quando il team SEND ne crea una
-  # (nome sostituibile con -Dpn.payment-events.campaign.BonarieAllChannels=<id>).
   @ingestionPagamentiPagoPA @ignore @cleanWebhook @work-item:QA-18499
   Scenario: [PAYMENT_EVENTS_BASIC_01_2_C] Il pagamento pagoPA non conclude il workflow di una bonaria di una campagna senza stopOnPaid
     Given la campagna "BonarieAllChannels" del "Comune_Multi" non specifica se concludere il workflow al pagamento
@@ -90,7 +83,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
     Then la notifica risulta pagata
     And il pagamento risulta comunicato dall'ente
 
-  @ingestionPagamentiPagoPA @work-item:QA-18499
+  @paymentEventsLegacyNotice @work-item:QA-18499
   Scenario: [PAYMENT_EVENTS_BASIC_01_4_A] Il pagamento di un avviso censito prima del rilascio viene trattato come legale
     Given una notifica legale il cui avviso è stato censito prima dell'introduzione del tipo comunicazione
     When pagoPA comunica il pagamento dell'avviso
@@ -167,8 +160,6 @@ Feature: Recupero degli eventi di pagamento pagoPA
 
   # DUPLICATE_05 - Stesso avviso di una notifica legale pagato da pagoPA e comunicato dall'ente via B2B
 
-  # L'ente può comunicare il pagamento anche se pagoPA lo ha già pubblicato (o prima che l'evento arrivi): gli id dei due
-  # elementi sono diversi, quindi coesistono (SRS §6.5). Atteso da confermare con il team in fase di collaudo.
   @ingestionPagamentiPagoPA @work-item:QA-18499
   Scenario Outline: [PAYMENT_EVENTS_DUPLICATE_05_1_<variante>] Il pagamento di una notifica legale comunicato da pagoPA e dall'ente viene registrato una sola volta per canale (<primo> poi <secondo>)
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
@@ -185,8 +176,6 @@ Feature: Recupero degli eventi di pagamento pagoPA
       | A        | pagoPA | ente    |
       | B        | ente   | pagoPA  |
 
-  # Un avviso (creditorTaxId + codice avviso) non può essere usato da due notifiche attive, legali o bonarie: la
-  # seconda creazione è rifiutata con 409, quindi il pagamento pagoPA ha sempre una sola notifica di destinazione.
   @ingestionPagamentiPagoPA @work-item:QA-18499
   Scenario: [PAYMENT_EVENTS_DUPLICATE_05_3_A] Un avviso già usato da una notifica legale viene rifiutato su una seconda notifica legale
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
@@ -211,8 +200,6 @@ Feature: Recupero degli eventi di pagamento pagoPA
     When il "Comune_Multi" tenta di notificare a Mario Gherkin una seconda notifica legale con lo stesso avviso pagoPA
     Then SEND rifiuta la seconda notifica perché l'avviso è già utilizzato
 
-  # Lo stesso avviso non può stare in due notifiche attive (409 alla seconda), ma si libera con l'annullamento: l'ente può
-  # annullare e rinotificare con lo stesso avviso. Il pagamento deve andare alla nuova notifica e non alla annullata.
   @ingestionPagamentiPagoPA @work-item:QA-18499
   Scenario: [PAYMENT_EVENTS_DUPLICATE_05_2_A] Il pagamento di un avviso riusato dopo l'annullamento viene registrato solo sulla nuova notifica
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
@@ -226,8 +213,8 @@ Feature: Recupero degli eventi di pagamento pagoPA
 
   # DATA_03 - Eventi malformati
 
-  @ingestionPagamentiPagoPA @work-item:QA-18499
-  Scenario Outline: [PAYMENT_EVENTS_DATA_03_1_A] Un evento di pagamento malformato viene scartato nella DLQ: <anomalia>
+  @paymentEventsDlq @work-item:QA-18499
+  Scenario Outline: [PAYMENT_EVENTS_DATA_03_1_A] Un evento di pagamento malformato viene scartato: <anomalia>
     When pagoPA pubblica un evento di pagamento con "<anomalia>"
     Then l'evento malformato viene scartato nella coda degli eventi di pagamento malformati
 
@@ -237,7 +224,7 @@ Feature: Recupero degli eventi di pagamento pagoPA
       | codice fiscale dell'ente creditore mancante |
       | data di pagamento mancante                  |
 
-  @ingestionPagamentiPagoPA @work-item:QA-18499
+  @paymentEventsDlq @work-item:QA-18499
   Scenario: [PAYMENT_EVENTS_DATA_03_2_A] Un evento malformato non blocca l'elaborazione dei pagamenti successivi
     Given il "Comune_Multi" ha notificato a Mario Gherkin una notifica legale con avviso pagoPA
     When pagoPA pubblica un evento di pagamento con "data di pagamento mancante"

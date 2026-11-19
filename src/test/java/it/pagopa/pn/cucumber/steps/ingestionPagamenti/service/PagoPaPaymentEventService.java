@@ -2,7 +2,7 @@ package it.pagopa.pn.cucumber.steps.ingestionPagamenti.service;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.nodopagopa.model.NoticePaymentRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnKafkaMockClient;
-import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.IngestionPagamentiScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentEventAnomaly;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto.PaymentNotice;
 import lombok.RequiredArgsConstructor;
@@ -15,22 +15,23 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Pubblica gli eventi di pagamento tramite il mock del Nodo pagoPA di pn-external-channels, registrando nel contesto
- * dello scenario il contenuto con cui ritrovarli in DLQ o nei log. Il mock genera id, timestamp e i dati statici
- * dell'evento (fra cui paymentChannel "IO"): il test valorizza solo i campi che il mock accetta.
+ * Pubblica gli eventi di pagamento tramite il mock del Nodo pagoPA, registrando nel contesto dello scenario il
+ * contenuto con cui ritrovarli in DLQ o nei log.
  */
 @Component
 @RequiredArgsConstructor
 public class PagoPaPaymentEventService {
 
+    private static final ZoneId ROME = ZoneId.of("Europe/Rome");
+    // Ora locale di Roma, senza offset, con 6 decimali di secondo: il formato degli eventi pagoPA
+    private static final DateTimeFormatter PAGOPA_DATE_TIME = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSS");
+
     private final IPnKafkaMockClient nodoPagoPaMockClient;
-    private final IngestionPagamentiScenarioContext context;
+    private final PaymentEventsScenarioContext context;
 
     /**
-     * L'evento si ritrova tramite il numero avviso. L'importo è in centesimi nell'avviso; nel mock va inviato in euro con i decimali, come lo pubblica pagoPA, e
-     * pn-kafka-bridge lo riconverte in centesimi.
-     * La data di pagamento è troncata al secondo, così il confronto con l'eventTimestamp del PAYMENT non dipende
-     * dalla precisione con cui SEND la memorizza o la espone.
+     * Pubblica il pagamento dell'avviso. La data è troncata al secondo, così il confronto con l'eventTimestamp del
+     * PAYMENT non dipende dalla precisione con cui SEND la memorizza.
      */
     public void publishPaymentOf(PaymentNotice notice) {
         Instant paymentDateTime = Instant.now().truncatedTo(ChronoUnit.SECONDS);
@@ -40,8 +41,8 @@ public class PagoPaPaymentEventService {
     }
 
     /**
-     * Il numero avviso è il riferimento più preciso; se l'anomalia lo ha rimosso si usa la data di pagamento,
-     * che il mock pubblica così come viene inviata.
+     * Pubblica un evento con l'anomalia indicata. Il riferimento per ritrovarlo è il numero avviso o, se l'anomalia
+     * lo ha rimosso, la data di pagamento.
      */
     public void publishMalformed(PaymentEventAnomaly anomaly) {
         NoticePaymentRequest request = anomaly.applyTo(paymentRequestOf(PaymentNotice.unknownToSend(), Instant.now()));
@@ -51,10 +52,7 @@ public class PagoPaPaymentEventService {
         trackPublishedEvent(marker);
     }
 
-    private static final ZoneId ROME = ZoneId.of("Europe/Rome");
-    /** Formato atteso dal mock e da pn-kafka-bridge: ora locale di Roma, senza offset, con 6 decimali di secondo. */
-    private static final DateTimeFormatter PAGOPA_DATE_TIME = DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSSSS");
-
+    // L'importo dell'avviso è in centesimi, l'evento pagoPA lo riporta in euro
     private static NoticePaymentRequest paymentRequestOf(PaymentNotice notice, Instant paymentDateTime) {
         return new NoticePaymentRequest()
                 .noticeNumber(notice.noticeCode())

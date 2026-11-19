@@ -23,18 +23,8 @@ import java.util.regex.Pattern;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Non regressione della ricezione delle adesioni degli enti da SelfCare dopo la WI-1.2 di PN-20853 (SRS §6.12:
- * proprietà Kafka per cluster, nuova container factory, coesistenza con il consumer dei pagamenti).
- * <p>
- * SEND non può pubblicare sul topic di SelfCare, quindi gli step osservano il consumer di onboarding di
- * pn-kafka-bridge senza alimentarlo, tramite i log:
- * <ul>
- *     <li>log di ribilanciamento di spring-kafka: "&lt;groupId&gt;: partitions assigned: [sc-contracts-0, ...]"
- *     e "partitions revoked";</li>
- *     <li>log del client Kafka, che riportano "groupId=&lt;groupId&gt;".</li>
- * </ul>
- * Nessun valore dipende dall'ambiente: il consumer group è ricavato dai log. Log group e topic hanno un default
- * valido in tutti gli ambienti, sovrascrivibile da proprietà di sistema.
+ * Non regressione della ricezione delle adesioni da SelfCare. I test non possono pubblicare sul topic di SelfCare:
+ * gli step osservano il consumer di onboarding tramite i suoi log, da cui ricavano anche il consumer group.
  */
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -44,7 +34,7 @@ public class OnboardingSelfCareSteps {
     private static final String PARTITIONS_REVOKED = "partitions revoked";
     // "<groupId>: partitions assigned: [...]": il group-id è la parola che precede il messaggio di spring-kafka
     private static final Pattern ASSIGNMENT_GROUP_ID = Pattern.compile("([A-Za-z0-9._-]+): " + PARTITIONS_ASSIGNED);
-    // Pari alla retention del log group di pn-kafka-bridge: è la storia disponibile per confrontare i rilasci
+    // Retention del log group: è la storia disponibile per confrontare i rilasci
     private static final Duration LOG_LOOKBACK = Duration.ofDays(14);
 
     private final CloudWatchLogsClient cloudWatchLogsClient;
@@ -60,9 +50,7 @@ public class OnboardingSelfCareSteps {
     }
 
     /**
-     * Il consumer è agganciato se l'ultima assegnazione di partizioni del topic è successiva all'ultima revoca:
-     * a ogni avvio o ribilanciamento spring-kafka logga la revoca e poi la nuova assegnazione, allo spegnimento
-     * solo la revoca.
+     * Il consumer è agganciato se l'ultima assegnazione di partizioni del topic è successiva all'ultima revoca.
      */
     @Then("SEND è collegato al canale con cui SelfCare comunica le adesioni degli enti")
     public void onboardingConsumerIsAttached() {
@@ -78,9 +66,7 @@ public class OnboardingSelfCareSteps {
     }
 
     /**
-     * Copre gli errori di configurazione che la WI-1.2 può introdurre: credenziali o bootstrap del cluster (log del
-     * client Kafka con groupId) e deserializer o listener (errori sulle partizioni del topic).
-     * La finestra parte dall'ultima assegnazione, cioè dall'avvio del consumer attualmente in esercizio.
+     * Errori del client Kafka (groupId) e del listener (topic) dall'avvio del consumer attualmente in esercizio.
      */
     @Then("la ricezione delle adesioni non ha registrato errori dall'ultimo collegamento")
     public void onboardingConsumerHasNoErrorsSinceLastAssignment() {
@@ -96,12 +82,8 @@ public class OnboardingSelfCareSteps {
     }
 
     /**
-     * Il consumer group non deve cambiare tra un rilascio e l'altro (SRS §6.12, coesistenza dei consumer): con
-     * auto.offset.reset=earliest un group nuovo rileggerebbe tutto il topic, e ambienti collegati allo stesso EventHub
-     * con lo stesso group si dividerebbero le partizioni.
-     * Il group atteso non è configurato: tutte le assegnazioni del topic nella storia dei log devono appartenere a un
-     * solo group. Prima del rilascio la storia contiene il group AS-IS dell'ambiente; dopo un rilascio che lo cambia,
-     * o che mette un altro consumer sul topic con un group diverso, i group diventano due.
+     * Un group nuovo rileggerebbe tutto il topic: tutte le assegnazioni nella storia dei log devono appartenere a un
+     * solo group, senza configurare quello atteso.
      */
     @Then("la ricezione delle adesioni usa la stessa sottoscrizione dei rilasci precedenti")
     public void onboardingConsumerGroupUnchanged() {
@@ -148,8 +130,7 @@ public class OnboardingSelfCareSteps {
     }
 
     /**
-     * Scorre tutte le pagine: con una finestra lunga CloudWatch può restituire pagine vuote prima di quelle con i
-     * risultati.
+     * Scorre tutte le pagine: CloudWatch può restituire pagine vuote prima di quelle con i risultati.
      */
     private List<FilteredLogEvent> events(String filterPattern, Instant from) {
         FilterLogEventsRequest request = FilterLogEventsRequest.builder()

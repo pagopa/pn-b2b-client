@@ -3,9 +3,8 @@ package it.pagopa.pn.cucumber.steps.ingestionPagamenti.dto;
 import java.util.Arrays;
 
 /**
- * Canali da cui SEND riceve la notizia di un pagamento di una comunicazione bonaria.
- * Il paymentSourceChannel del PAYMENT non li distingue: App IO scrive "IO" (SRS §3.3) e pagoPA copia
- * paymentInfo.paymentChannel dell'evento (WI-5.7), che il mock del Nodo pagoPA fissa anch'esso a "IO".
+ * Canali da cui SEND riceve il pagamento di una comunicazione bonaria. Il paymentSourceChannel del PAYMENT non li
+ * distingue: il mock del Nodo pagoPA pubblica anch'esso il canale "IO".
  */
 public enum PaymentChannel {
     APP_IO("App IO"),
@@ -17,6 +16,9 @@ public enum PaymentChannel {
         this.label = label;
     }
 
+    /**
+     * Canale corrispondente all'etichetta usata negli scenari.
+     */
     public static PaymentChannel fromLabel(String label) {
         return Arrays.stream(values())
                 .filter(channel -> channel.label.equalsIgnoreCase(label))

@@ -13,7 +13,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @ScenarioScope
-public class IngestionPagamentiScenarioContext {
+public class PaymentEventsScenarioContext {
 
     /**
      * Avviso pagoPA della notifica (legale o bonaria) oggetto dello scenario.
@@ -36,8 +36,7 @@ public class IngestionPagamentiScenarioContext {
     private boolean paidAlsoOnAppIo;
 
     /**
-     * Indica che il destinatario è raggiungibile su App IO ma il mock non segnala mai il pagamento: il canale IO resta
-     * in attesa e il pagamento può arrivare solo da pagoPA.
+     * Indica che il destinatario è raggiungibile su App IO ma il mock non segnala mai il pagamento.
      */
     private boolean reachableOnAppIoWithoutPayment;
 
@@ -59,13 +58,12 @@ public class IngestionPagamentiScenarioContext {
     private String legalStatusBeforePayment;
 
     /**
-     * Durata del primo canale della campagna della comunicazione bonaria: allo scadere il workflow passa al canale successivo.
+     * Durata del primo canale della campagna della comunicazione bonaria.
      */
     private Duration firstChannelTimeout;
 
     /**
-     * Data di pagamento dell'ultimo pagamento pagoPA pubblicato: il flusso pagoPA la copia nell'eventTimestamp del
-     * PAYMENT delle bonarie (WI-5.7), quindi indica se il PAYMENT è stato scritto da pagoPA.
+     * Data dell'ultimo pagamento pagoPA pubblicato: indica se il PAYMENT di una bonaria è stato scritto da pagoPA.
      */
     private Instant pagoPaPaymentDateTime;
 }
