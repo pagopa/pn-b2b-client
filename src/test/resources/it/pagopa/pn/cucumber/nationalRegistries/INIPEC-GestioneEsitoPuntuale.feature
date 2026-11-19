@@ -352,6 +352,11 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
   #   "risulta INVIATA al primo tentativo"        -> sendStatus = SENT,     retry = 0
   #   "risulta RIMESSA in retry"                  -> sendStatus = NOT_SENT,  retry > 0
   #   "non risulta alcuna richiesta INIPEC"       -> nessun record (né SENT né NOT_SENT)
+  #   "risulta in ERROR e inviata in DLQ"         -> sendStatus = SENT_TO_DLQ, status = ERROR
+  #                                                  + messaggio su pn-national_registry_gateway_inputs-DLQ
+  #   "risulta con polling in ERROR e inviata in DLQ" -> campo batchId del record su pn-batchRequests,
+  #                                                  pn-batchPolling (per batchId) con status = ERROR, retry = 3
+  #                                                  + messaggio su pn-national_registry_gateway_inputs-DLQ
   #
 
   @inipecGestionePuntuale @inipecParallel @mockNR
@@ -435,3 +440,35 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then risulta una richiesta INAD per il cf "28223913097"
+
+
+  @inipecDlq
+  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_01] Notifica verso PG con errore sulla creazione del batch INIPEC (richiestaElencoPec): le request vengono rimesse in retry fino a 3 tentativi, poi vanno in ERROR e in DLQ
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    # 10762910015 -> fallimento sulla creazione del batch: retry delle request fino a 3, poi ERROR e invio in DLQ
+    And destinatario
+      | taxId           | 10762910015 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    And salvo il timestamp corrente
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la richiesta INIPEC per il cf "10762910015" risulta in ERROR e inviata in DLQ
+
+
+  @inipecDlq
+  Scenario: [INIPEC_GESTIONE_ESITO_PUNTUALE_DLQ_02] Notifica verso PG con errore sul polling dell'esito INIPEC: il polling viene ripetuto fino a 3 tentativi, poi tutte le request vanno in ERROR e in DLQ
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    # 10433218194 -> fallimento sul polling: retry del polling fino a 3, allo scadere dei retry tutte le request vanno in ERROR e in DLQ
+    And destinatario
+      | taxId           | 10433218194 |
+      | digitalDomicile | NULL        |
+      | recipientType   | PG          |
+    And salvo il timestamp corrente
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    Then la richiesta INIPEC per il cf "10433218194" risulta con polling in ERROR e inviata in DLQ
