@@ -1,25 +1,25 @@
 package it.pagopa.pn.cucumber.steps.delayer.service;
 
+import it.pagopa.common.polling.PollingConfig;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerProbeAwaiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DelayerMockService {
+
+    private static final PollingConfig MOCK_TABLES_POLLING = PollingConfig.of(Duration.ofMinutes(5), Duration.ofSeconds(10));
 
     private final DelayerLambdaClient lambdaClient;
 
@@ -38,27 +38,7 @@ public class DelayerMockService {
         probes.put(DelayerTable.PaperDeliveryDriverCapacitiesMock, () -> lambdaClient.getDeclaredCapacity(DelayerTable.PaperDeliveryDriverCapacitiesMock, province, deliveryDate));
         probes.put(DelayerTable.DelayerPaperDeliveryMock, () -> lambdaClient.getPaperDelivery(DelayerTable.DelayerPaperDeliveryMock, deliveryDate, WorkflowSteps.EVALUATE_SENDER_LIMIT, null));
 
-        Set<DelayerTable> notReady = new LinkedHashSet<>(probes.keySet());
-        try {
-            Awaitility.await()
-                    .atMost(Duration.ofMinutes(5))
-                    .pollInterval(Duration.ofSeconds(10))
-                    .pollDelay(Duration.ZERO)
-                    .until(() -> {
-                        notReady.removeIf(table -> {
-                            try {
-                                probes.get(table).run();
-                                return true;
-                            } catch (Exception e) {
-                                log.info("[DELETE_MOCK_TABLES] Tabella {} non ancora disponibile: {}", table, e.getMessage());
-                                return false;
-                            }
-                        });
-                        return notReady.isEmpty();
-                    });
-        } catch (ConditionTimeoutException e) {
-            throw new IllegalStateException("Tabelle mock non disponibili dopo DELETE_MOCK_TABLES: " + notReady, e);
-        }
+        DelayerProbeAwaiter.awaitAllSucceed("DELETE_MOCK_TABLES", probes, MOCK_TABLES_POLLING);
     }
 
     public void deleteMockTables(String table) {
