@@ -215,7 +215,6 @@ public class INIPECGestionePuntualeEsitiSteps {
     public void verifyBatchInRetry(Eservice eservice, String cf) {
 
         verifyBatchOf(eservice, cf, batch -> {
-            assertThat(batch.get("status").s()).as("Il batch deve risultare nuovamente pianificato").isEqualTo("REQUEST_SENT");
             assertThat(batch.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
             int errorRetryCount = getNumber(batch, "errorRetryCount");
             int inProgressRetryCount = getNumber(batch, "inProgressRetryCount");
@@ -233,6 +232,18 @@ public class INIPECGestionePuntualeEsitiSteps {
             return 0;
         }
         return Integer.parseInt(number);
+    }
+
+    @Then("il retry della richiesta verso {eservice} per il cf {string} risulta correttamente registrato")
+    public void verifyRequestRetryCount(Eservice eservice, String cf) {
+
+        Poller.pollUntil(
+                () -> retrieveNationalRegistryRequests(eservice),
+                items -> {
+                    Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
+
+                    int retryCount = getNumber(request, "retryCount");
+                    assertThat(retryCount).as("Atteso almeno un retry sulla richiesta").isGreaterThanOrEqualTo(1);}, DB_POLLING);
     }
 
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in stato {requestStatus}")

@@ -15,48 +15,47 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INIPEC per il cf "19854070638" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INIPEC per il cf "19854070638" risulta in stato WORKED
+    And la richiesta verso il servizio INIPEC per il cf "19854070638" risulta in stato WORKED
+    And il batch associato alla richiesta verso INIPEC per il cf "19854070638" risulta in stato WORKED
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
+  @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false liberi-professionisti:on
   Scenario: [INIPEC_GESTIONE_ESITO_01_1_B] Come PA invio una notifica verso una PF per il quale si ha una chiamata al registro INIPEC,
   quindi la richiesta è tracciata nella tabella dedicata.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | CTNMCP34B16H501T |
+      | taxId           | PRPMGG80A41H501W |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INAD per il cf "CTNMCP34B16H501T" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "CTNMCP34B16H501T" risulta in stato WORKED
-    Then la richiesta verso il servizio INIPEC per il cf "CTNMCP34B16H501T" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INIPEC per il cf "CTNMCP34B16H501T" risulta in stato WORKED
+    And la richiesta verso il servizio INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And il batch associato alla richiesta verso INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And la richiesta verso il servizio INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And il batch associato alla richiesta verso INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_2_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale,
-  quindi viene fatta una chiamata verso INIPEC per recuperarlo,
+  quindi viene fatta una chiamata verso INAD per recuperarlo,
   la richiesta verso i registri è tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | GNFRSS80A01G203W |
+      | taxId           | MLTMRA80A01H501Z |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INIPEC per il cf "GNFRSS80A01G203W" non contiene recapiti
-    Then il batch associato alla richiesta verso INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-    Then la richiesta verso il servizio INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "MLTMRA80A01H501Z" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "MLTMRA80A01H501Z" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
-  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
+  Scenario: [INIPEC_GESTIONE_ESITO_01_2_B] Come PA invio una notifica verso una PF senza specificare un recapito digitale,
   quindi viene fatta una chiamata verso INIPEC per recuperarlo,
   non viene trovato nessun recapito per il destinatario,
   la richiesta e l'esito verso i registri sono tracciata nelle tabelle dedicate al monitoraggio.
@@ -64,14 +63,14 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | MRGVPC67R10H501Y |
+      | taxId           | PRPMGG80A41H501W |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INIPEC per il cf "MRGVPC67R10H501Y" non contiene recapiti
-    Then il batch associato alla richiesta verso INIPEC per il cf "MRGVPC67R10H501Y" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "PRPMGG80A41H501W" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_2_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
@@ -82,20 +81,19 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | 39274018561 |
+      | taxId           | 11109120292 |
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INIPEC per il cf "39274018561" non contiene recapiti
-    Then il batch associato alla richiesta verso INIPEC per il cf "39274018561" risulta in stato WORKED
-    Then la risposta sul registro INIPEC per il cf "39274018561" non contiene recapiti
+    And la risposta sul registro INIPEC per il cf "11109120292" non contiene recapiti
+    And il batch associato alla richiesta verso INIPEC per il cf "11109120292" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_2_B2] Come PA invio una notifica verso una PG senza specificare un recapito digitale,
   quindi viene fatta una chiamata verso INIPEC per recuperarlo,
-  non viene trovato nessun recapito per il destinatario,
+  non viene trovato nessun recapito per il destinatario,NF
   la richiesta e l'esito verso i registri sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -107,13 +105,12 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INIPEC per il cf "83016259471" non contiene recapiti
-    Then il batch associato alla richiesta verso INIPEC per il cf "83016259471" risulta in stato WORKED
+    And la risposta sul registro INIPEC per il cf "83016259471" non contiene recapiti
+    And il batch associato alla richiesta verso INIPEC per il cf "83016259471" risulta in stato WORKED
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_3_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
-  in risposta dal mock si avrà un errore tecnico, la richiesta viene predisposta per un ulteriore tentativo,
-  la richiesta e l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
+  in risposta dal mock si avrà come risposta una pec professionale l'esito sono tracciata nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -124,9 +121,8 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
-    Then il ritentativo della chiamata verso INIPEC per il cf "TSTGNN80A01F839X" risulta correttamente registrato
+    And la richiesta verso il servizio INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
+    And il batch associato alla richiesta verso INAD per il cf "TSTGNN80A01F839X" risulta in stato WORKED
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableOldInipecFlow:false
   Scenario: [INIPEC_GESTIONE_ESITO_01_3_A2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
@@ -142,7 +138,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then il ritentativo della chiamata verso INIPEC per il cf "17492068394" risulta correttamente registrato
+    And il retry della richiesta verso INIPEC per il cf "17492068394" risulta correttamente registrato
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
@@ -151,14 +147,14 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | PPPPLT80A01H501V |
+      | taxId           | RSSJLN04B01D086S |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INAD per il cf "PPPPLT80A01H501V" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "PPPPLT80A01H501V" risulta in stato WORKED
+    And la richiesta verso il servizio INAD per il cf "RSSJLN04B01D086S" risulta in stato WORKED
+    And il batch associato alla richiesta verso INAD per il cf "RSSJLN04B01D086S" risulta in stato WORKED
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_02_1_B] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INIPEC per recuperarlo,
@@ -172,68 +168,71 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INIPEC per il cf "28223913097" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INIPEC per il cf "28223913097" risulta in stato WORKED
-    Then la richiesta verso il servizio INAD per il cf "28223913097" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "28223913097" risulta in stato WORKED
+    And la richiesta verso il servizio INIPEC per il cf "28223913097" risulta in stato WORKED
+    And il batch associato alla richiesta verso INIPEC per il cf "28223913097" risulta in stato WORKED
+    And la richiesta verso il servizio INAD per il cf "28223913097" risulta in stato WORKED
+    And il batch associato alla richiesta verso INAD per il cf "28223913097" risulta in stato WORKED
+
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi viene fatta una chiamata verso INAD per recuperarlo,
-  in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo verso INAD,
+  in risposta il mock restituisce un errore 500 sul polling, viene predisposto un ulteriore tentativo verso INAD,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | CIACIA80A01H501X |
+      | taxId           | UBHXPB21T15M096C |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then il ritentativo della chiamata verso INAD per il cf "CIACIA80A01H501X" risulta correttamente registrato
+    And la richiesta verso il servizio INAD per il cf "UBHXPB21T15M096C" risulta in errore
+
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
-  Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
+   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC con esito negativo e poi verso INAD per recuperarlo,
-  in risposta il mock restituisce un errore 500, viene predisposto un ulteriore tentativo,
+  in risposta il mock restituisce un errore 500 sul batc, viene predisposto un ulteriore tentativo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | 62583510995 |
-      | digitalDomicile | NULL        |
-      | recipientType   | PG          |
+      | taxId           | TYXYHK14A01A001Q |
+      | digitalDomicile | NULL             |
+      | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INIPEC per il cf "62583510995" risulta in stato WORKED
-    Then il ritentativo della chiamata verso INAD per il cf "62583510995" risulta correttamente registrato
+    And il ritentativo della chiamata verso INAD per il cf "TYXYHK14A01A001Q" risulta correttamente registrato
+    And il batch associato alla richiesta verso INAD per il cf "TYXYHK14A01A001Q" risulta in stato ERROR
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD per recuperarlo,
-  in risposta il mock restituisce un errore lista non trovata, viene predisposto un ulteriore tentativo,
+  in risposta il mock restituisce un errore 400 sul polling, viene predisposto un ulteriore tentativo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | VDADGI80A01F839E |
+      | taxId           | BQMRRJ02E05P052P |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then il ritentativo della chiamata verso INAD per il cf "VDADGI80A01F839E" risulta correttamente registrato
+    And il ritentativo della chiamata verso INAD per il cf "BQMRRJ02E05P052P" risulta correttamente registrato
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A3] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD per recuperarlo,
-  in risposta il mock restituisce un errore 400, la richiesta risulterà con stato: in errore.,
+  in risposta il mock restituisce un errore 400 sul batch, la richiesta risulterà con stato: in errore.,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -243,9 +242,12 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INAD per il cf "MTTBNN14A01A001N" risulta in errore
+    And la richiesta verso il servizio INAD per il cf "MTTBNN14A01A001N" risulta in errore
+
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_A] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
@@ -261,10 +263,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INAD per il cf "CLMCST42R12D969Z" non contiene recapiti
-    Then il batch associato alla richiesta verso INAD per il cf "CLMCST42R12D969Z" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "CLMCST42R12D969Z" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "CLMCST42R12D969Z" risulta in stato WORKED
 
-  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
+  @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false liberi-professionisti:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_04_1_B] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   non viene recuperato nessun recapito,
@@ -277,39 +279,42 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | digitalDomicile | NULL        |
       | recipientType   | PG          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INIPEC per il cf "85385800199" non contiene recapiti
-    Then il batch associato alla richiesta verso INIPEC per il cf "85385800199" risulta in stato WORKED
-    Then la risposta sul registro INAD per il cf "85385800199" non contiene recapiti
-    Then il batch associato alla richiesta verso INAD per il cf "85385800199" risulta in stato WORKED
+    And la risposta sul registro INIPEC per il cf "85385800199" non contiene recapiti
+    And il batch associato alla richiesta verso INIPEC per il cf "85385800199" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "85385800199" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "85385800199" risulta in stato WORKED
+
 
   @inadMassive @mockNR @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:false
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_05_1] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD e successivamente verso INIPEC per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
-  | subject            | invio notifica con cucumber |
-  | senderDenomination | Comune di palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | PRPMGG80A41H501W |
+      | taxId           | GNFRSS80A01G203W |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la risposta sul registro INAD per il cf "PRPMGG80A41H501W" non contiene recapiti
-    Then il batch associato alla richiesta verso INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
-    Then la richiesta verso il servizio INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "GNFRSS80A01G203W" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
+    And la richiesta verso il servizio INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
+    And il batch associato alla richiesta verso INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
+
 
   @inadMassive @mockNR @ignoreUAT @inadMassiveTrueInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC e successivamente verso INAD per recuperarlo,
   le richieste e gli esiti delle chiamate verso i registri sono tracciate nelle tabelle dedicate al monitoraggio.
     Given viene generata una nuova notifica
-  | subject            | invio notifica con cucumber |
-  | senderDenomination | Comune di palermo           |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
     And destinatario
       | taxId           | 39274018561 |
       | digitalDomicile | NULL        |
@@ -318,10 +323,10 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
-    Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta verso il servizio INAD per il cf "39274018561" risulta in stato WORKED
-    Then il batch associato alla richiesta verso INAD per il cf "39274018561" risulta in stato WORKED
+    And la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
+    And recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
+    And la richiesta verso il servizio INAD per il cf "39274018561" risulta in stato WORKED
+    And il batch associato alla richiesta verso INAD per il cf "39274018561" risulta in stato WORKED
 
   @inadMassive @mockNR @ignoreUAT @inadMassiveFalseInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:false;EnableOldInipecFlow:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_06_2] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
@@ -338,9 +343,9 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
-    Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    Then risulta una richiesta INAD per il cf "39274018561"
+    And la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
+    And recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
+    And risulta una richiesta INAD per il cf "39274018561"
 
 
   # COSA VERIFICHIAMO
