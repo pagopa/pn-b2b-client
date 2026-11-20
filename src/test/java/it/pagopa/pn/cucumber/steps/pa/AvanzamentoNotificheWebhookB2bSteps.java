@@ -19,6 +19,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
@@ -39,7 +41,6 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
@@ -66,7 +67,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private final Set<String> paStreamOwner = new HashSet<>();
     @Getter
     @Setter
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
     private Integer requestNumber;
 
     private final Map<StreamVersion, WebhookStepsInterface> mapOfWebhookVersionSteps = new HashMap<>();
@@ -202,12 +203,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         webhookClientForClean.setApiKeys(pa);
         Arrays.stream(StreamVersion.values()).forEach(version -> {
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
-            try {
-                webhookStepsInterface.cleanWebHookDelete();
-            } catch (HttpStatusCodeException statusCodeException) {
-                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
+            ApiResult<Void> result = ApiCallHelper.run(webhookStepsInterface::cleanWebHookDelete);
+            if (result.isError()) {
+                log.error("HTTP Error: statusCode {} message {}", result.statusCode(), result.problem());
             }
         });
+    }
+
+    /** Registra il risultato (solo se errore, non-2xx) sia in {@link #notificationError} sia in SharedSteps. */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            notificationError = result;
+            sharedSteps.setNotificationError(result);
+        }
     }
 
     private enum WebhookExtraField {
@@ -381,14 +389,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             case COMUNE_1 -> groupOfPa ? COMUNE_1 : COMUNE_MULTI;
             default -> COMUNE_MULTI;
         };
-        try {
+        recordError(ApiCallHelper.run(() -> {
             List<String> groupIdByPa = List.of(sharedSteps.getGroupIdByPa(groupToUse, GroupPosition.FIRST));
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
             webhookStepsInterface.createStreamRequestWithGroupsPA(groupIdByPa);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        }));
         updateStream(streamVersion.toString());
     }
 
@@ -400,24 +405,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         StreamVersion streamVersion = getStreamVersion(rightVersion);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
         UUID streamId = webhookStepsInterface.getStreamId();
-        try {
+        recordError(ApiCallHelper.run(() -> {
             StreamVersion wrongStreamVersion = getStreamVersion(wrongVersion);
             WebhookStepsInterface wrongInterface = getWebhookStep(wrongStreamVersion);
             wrongInterface.updateStreamCreatingNewRequest(streamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        }));
     }
 
     @And("si aggiorna(no) (lo)(gli) stream creat(o)(i) con versione {string}")
     public void updateStream(String version) {
-        try {
-            getWebhookStep(version).updateStreams();
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> getWebhookStep(version).updateStreams()));
     }
 
     //Usato da tutte le versioni
@@ -449,12 +446,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 .as("Test Skipped: disabilitazione stream prevista solo dalla versione 23 in poi")
                 .isGreaterThanOrEqualTo(23);
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-        try {
-            webhookStepsInterface.disableStream(notExistingStreamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterface.disableStream(notExistingStreamId)));
     }
 
     //Usato da tutte le versioni
@@ -462,12 +454,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void deleteStreamThatNotExist(String version) {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
-        try {
-            getWebhookStep(version).deleteStream(notExistingStreamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> getWebhookStep(version).deleteStream(notExistingStreamId)));
     }
 
     //Usato da tutte le versioni
@@ -475,12 +462,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void consumeStreamThatNotExist(String version) {
         updateApiKeyForStream();
         UUID notExistingStreamId = UUID.randomUUID();
-        try {
-            getWebhookStep(version).consumeEventStream(notExistingStreamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> getWebhookStep(version).consumeEventStream(notExistingStreamId)));
     }
 
     //Usato da tutte le versioni, tranne V26
@@ -492,19 +474,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         //TODO: qua lo stream risulta inesistente perché è stato cancellato in precedenza in un altro step
         // Per una maggiore consistenza sarebbe meglio -> UUID notExistingStreamId = UUID.randomUUID();
         UUID notExistingStreamId = webhookStepsInterface.getStreamId();
-        try {
-            webhookStepsInterface.retrieveStreamEvent(notExistingStreamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterface.retrieveStreamEvent(notExistingStreamId)));
     }
 
     //Usato da tutte le versioni
     @And("si aggiorna(no) (lo)(gli) stream che non esist(e)(ono) e apiKey aggiornata con versione {string}")
     public void updateStreamNotExist(String version) {
         updateApiKeyForStream();
-        try {
+        recordError(ApiCallHelper.run(() -> {
             StreamVersion streamVersion = getStreamVersion(version);
             WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
             //TODO: qua lo stream risulta inesistente perché è stato cancellato in precedenza in un altro step
@@ -513,10 +490,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Object streamRequest = webhookStepsInterface.getStreamRequest();
             webhookStepsInterface.initStreamRequest(streamRequest);
             webhookStepsInterface.updateStreamWithExistingRequest(notExistingStreamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        }));
     }
 
     @And("viene verificata la corretta cancellazione con versione {string}")
@@ -545,12 +519,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
         UUID streamId = webhookStepsInterface.getStreamId();
-        try {
-            webhookStepsInterface.getStreamById(streamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterface.getStreamById(streamId)));
     }
 
     @And("vengono letti gli eventi dello stream versione {string}")
@@ -563,12 +532,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
         UUID streamId = webhookStepsInterface.getStreamId();
-        try {
-            webhookStepsInterface.consumeEventStreamWithHttpInfo(streamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterface.consumeEventStreamWithHttpInfo(streamId)));
     }
 
     @Then("l'header della response della consume con versione {string} {contains} il parametro {string} con valore pari a {string}")
@@ -588,12 +552,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WebhookStepsInterface webhookStepsInterfaceCreate = getWebhookStep(versionCreate);
         UUID streamId = webhookStepsInterfaceCreate.getStreamId();
         WebhookStepsInterface webhookStepsInterfaceRead = getWebhookStep(versionRead);
-        try {
-            webhookStepsInterfaceRead.consumeEventStream(streamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterfaceRead.consumeEventStream(streamId)));
     }
 
     //23 only
@@ -924,10 +883,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         System.out.println("streamListElements: " + streamListElements.size());
         System.out.println("eventStreamList: " + webhookStepsV10.getEventStreamList().size());
         System.out.println("requestNumber: " + requestNumber);
-        Assertions.assertTrue(
-                (notificationError != null)
-                        && (notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode))
-                        && (webhookStepsV10.getEventStreamList().size() == (requestNumber - 1)));
+        Assertions.assertNotNull(notificationError, "L'ultima creazione non ha prodotto errori");
+        Assertions.assertEquals(statusCode, String.valueOf(notificationError.statusCode()), "Dettaglio errore: " + notificationError.problem());
+        Assertions.assertEquals(requestNumber - 1, webhookStepsV10.getEventStreamList().size());
     }
 
     @Given("vengono cancellati tutti gli stream presenti del {string} con versione {string}")
@@ -1010,12 +968,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         WebhookStepsInterface webhookStepsInterfaceCreate = getWebhookStep(versionCreate);
         UUID streamId = webhookStepsInterfaceCreate.getStreamId();
         WebhookStepsInterface webhookStepsInterfaceRead = getWebhookStep(versionRead);
-        try {
-            webhookStepsInterfaceRead.consumeEventStream(streamId);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(() -> webhookStepsInterfaceRead.consumeEventStream(streamId)));
     }
 
     /*********************************************************************
@@ -1077,40 +1030,34 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     // if (!forced) acquireStreamCreationSlotInternal(pa,streamCreationRequestList.size());
     // A che doveva servire? Rimuovere una volta appurata la sua inutilità
     private void createStream(String pa, StreamVersion streamVersion, List<String> listGroups, boolean replaceId, List<String> filteredValues, boolean forced, StreamVersion crossVersion) {
-        try {
-            UUID streamIdToReplace = null;
-            WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
-            if (replaceId) {
-                streamIdToReplace = crossVersion == null ? webhookStepsInterface.getStreamId() : getWebhookStep(crossVersion).getStreamId();
+        WebhookStepsInterface webhookStepsInterface = getWebhookStep(streamVersion);
+        // fase 1 (ex try esterno): recupero dello stream da sostituire; un errore qui interrompe la creazione
+        ApiResult<UUID> streamIdResult = ApiCallHelper.callBody(() -> !replaceId ? null
+                : crossVersion == null ? webhookStepsInterface.getStreamId() : getWebhookStep(crossVersion).getStreamId());
+        if (streamIdResult.isError()) {
+            log.error("Error {} in create Stream version {}, group {}, replaceID {}, filteredValues {}",
+                    streamIdResult.statusCode(), streamVersion, listGroups, replaceId, filteredValues);
+            recordError(streamIdResult);
+            if (!forced) {
+                throw new AssertionError("Errore HTTP " + streamIdResult.statusCode() + " in create Stream: " + streamIdResult.problem());
             }
-            try {
+        } else {
+            // fase 2 (ex try interno): creazione e verifiche finali; l'errore viene solo registrato
+            UUID streamIdToReplace = streamIdResult.body();
+            recordError(ApiCallHelper.run(() -> {
                 webhookStepsInterface.createEventStream(pa, listGroups, streamIdToReplace, filteredValues, forced);
                 if (replaceId) {
                     WebhookStepsInterface webhookStepsInterfaceForFinalChecks = crossVersion == null ? webhookStepsInterface : getWebhookStep(crossVersion);
                     webhookStepsInterfaceForFinalChecks.checkCorrectDisabling(streamIdToReplace);
                 }
-            } catch (HttpStatusCodeException e) {
-                notificationError = e;
-                sharedSteps.setNotificationError(e);
-            }
-        } catch (HttpStatusCodeException e) {
-            log.error("Error {} in create Stream version {}, group {}, replaceID {}, filteredValues {}",
-                    e.getStatusCode(), streamVersion, listGroups, replaceId, filteredValues);
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-            if (!forced) throw e;
+            }));
         }
         if (!webhookTestLaunch) webhookTestLaunch = true;
     }
 
     private void disableStreams(StreamVersion version) {
         WebhookStepsInterface webhookStepsInterface = getWebhookStep(version);
-        try {
-            webhookStepsInterface.disableStreams();
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
+        recordError(ApiCallHelper.run(webhookStepsInterface::disableStreams));
     }
 
     private List<String> getGroupForStream(String position, String pa) {
@@ -1150,7 +1097,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     //V23 and V24 only (VisualizzazioneTimeStampTecniciSLA.feature)
     @Then("la chiamata restituisce correttamente lo stream di elementi timeline versione {string}")
     public void checkForNoError(String version) {
-        Assertions.assertNull(sharedSteps.getNotificationError());
+        Assertions.assertNull(sharedSteps.getNotificationErrorResult());
         checkTimelineElementVersionWebhook(version);
     }
 
@@ -1206,9 +1153,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("la chiamata restituisce un errore {int} riportante la dicitura {string}")
     public void checkForError(Integer errorCode, String errorMessage) {
         Assertions.assertNotNull(notificationError);
-        Assertions.assertEquals(errorCode, notificationError.getRawStatusCode());
-        Assertions.assertNotNull(notificationError.getMessage());
-        Assertions.assertTrue(notificationError.getMessage().contains(errorMessage));
+        Assertions.assertEquals(errorCode, notificationError.statusCode());
+        Assertions.assertNotNull(notificationError.problem());
+        Assertions.assertTrue(notificationError.problem().contains(errorMessage), "Body dell'errore: " + notificationError.problem());
     }
 
     @When("si invoca l'api Webhook versione {string} per ottenere gli elementi di timeline di tale notifica")

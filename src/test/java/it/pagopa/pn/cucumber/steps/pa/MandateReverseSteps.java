@@ -12,6 +12,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffMandate;
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto;
@@ -20,7 +22,6 @@ import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -35,7 +36,7 @@ public class MandateReverseSteps {
     private final IBffMandateServiceApi bffMandateServiceApi;
     private final SharedSteps sharedSteps;
     private String reverseMandateResponse;
-    private HttpStatusCodeException reverseMandateStatusCodeException;
+    private ApiResult<?> reverseMandateError;
     private final List<String> groups = new ArrayList<>();
 
     public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps,
@@ -54,16 +55,18 @@ public class MandateReverseSteps {
         request.setDatefrom(getDate(data.getOrDefault("dateFrom", "TODAY")));
         request.setDateto(getDate(data.getOrDefault("dateTo", "TOMORROW")));
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
-        try {
-            reverseMandateResponse = mandateReverseServiceClient.createReverseMandate(request);
-        } catch (HttpStatusCodeException statusCodeException) {
-            reverseMandateStatusCodeException = statusCodeException;
+        ApiResult<String> result = ApiCallHelper.callBody(() -> mandateReverseServiceClient.createReverseMandate(request));
+        if (result.is2xx()) {
+            reverseMandateResponse = result.body();
+        } else {
+            reverseMandateError = result;
         }
     }
 
     @Then("si verifica che la chiamata sia fallita con status code: {int}")
     public void checkStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, reverseMandateStatusCodeException.getStatusCode().value());
+        Assertions.assertNotNull(reverseMandateError, "La chiamata non ha prodotto errori");
+        Assertions.assertEquals(statusCode, reverseMandateError.statusCode(), "Dettaglio errore: " + reverseMandateError.problem());
     }
 
     @And("si verifica che la delega a nome di {string} è stata creata con stato pending")
