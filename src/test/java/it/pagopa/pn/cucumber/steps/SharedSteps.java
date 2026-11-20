@@ -60,15 +60,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -1025,46 +1022,6 @@ public class SharedSteps {
     /** Restituisce l'ultimo errore registrato senza azzerarlo ({@code null} se non presente). */
     public ApiResult<?> getNotificationErrorResult() {
         return this.notificationErrorResult;
-    }
-
-    /**
-     * @deprecated adapter per gli step non ancora migrati: usare {@link #setNotificationError(ApiResult)}
-     * con {@link ApiCallHelper#callBody}. Da rimuovere a migrazione completata.
-     */
-    @Deprecated
-    public void setNotificationError(HttpStatusCodeException exception) {
-        setNotificationError(exception == null ? null : ApiCallHelper.fromHttpError(exception));
-    }
-
-    /**
-     * @deprecated adapter per gli step non ancora migrati: usare {@link #getNotificationErrorResult()}.
-     * Da rimuovere a migrazione completata.
-     */
-    @Deprecated
-    public HttpStatusCodeException getNotificationError() {
-        return toHttpStatusCodeException(this.notificationErrorResult);
-    }
-
-    /**
-     * @deprecated adapter per gli step non ancora migrati: usare {@link #consumeNotificationErrorResult()}.
-     * Da rimuovere a migrazione completata.
-     */
-    @Deprecated
-    public HttpStatusCodeException consumeNotificationError() {
-        return toHttpStatusCodeException(consumeNotificationErrorResult());
-    }
-
-    private static HttpStatusCodeException toHttpStatusCodeException(ApiResult<?> result) {
-        if (result == null) {
-            return null;
-        }
-        byte[] body = result.problem() == null ? new byte[0] : result.problem().getBytes(StandardCharsets.UTF_8);
-        if (result.status().is4xxClientError()) {
-            return HttpClientErrorException.create(result.status(), result.status().getReasonPhrase(),
-                    result.headers(), body, StandardCharsets.UTF_8);
-        }
-        return HttpServerErrorException.create(result.status(), result.status().getReasonPhrase(),
-                result.headers(), body, StandardCharsets.UTF_8);
     }
 
     @FunctionalInterface
