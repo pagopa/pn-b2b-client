@@ -6,20 +6,22 @@ import io.jsonwebtoken.lang.Assert;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-import it.pagopa.interop.utils.delay_service.DelayService;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.assertj.core.api.Assertions;
+
+import java.util.List;
+import java.util.UUID;
 
 public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain, UUID> {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -29,11 +31,13 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
 
     protected ProducerKeychainSteps(SharedStepsContext context,
         ClientTokenConfigurator clientTokenConfigurator,
-        DelayService delayService) {
+        DelayService delayService
+    ) {
         super("producerKeychain", clientTokenConfigurator.getProducerKeychainClient(), context);
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = context.getIdentityService();
         this.producerKeychainClient = clientTokenConfigurator.getProducerKeychainClient();
+        this.producerKeychainClient.setHttpCallExecutor(context.getHttpCallExecutor());
         this.delayService = delayService;
     }
 
@@ -69,10 +73,55 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
 
     @And("l'utente {string} di {string} associa il portachiavi erogatore all'e-service")
     public void linkProducerKeychainToEService(String ruolo, String tenant) {
+        UUID eServiceId = getContext().getEServicesCommonContext().getEserviceId();
+        linkProducerKeychainToEservice(ruolo, tenant, eServiceId);
+    }
+
+    @And("l'utente {string} di {string} associa il portachiavi erogatore all'e-service con id {string}")
+    public void linkProducerKeychainToEServiceById(String ruolo, String tenant, String rawEserviceId) {
+        UUID eServiceId = UUID.fromString(rawEserviceId);
+        getContext().getEServicesCommonContext().setEserviceId(eServiceId);
+        linkProducerKeychainToEservice(ruolo, tenant, eServiceId);
+    }
+
+    @And("all'utente {string} di {string} risulta che il portachiavi erogatore sia associato all'e-service")
+    public void verifyProducerKeychainLinkedToEService(String ruolo, String tenant) {
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
         UUID eServiceId = getContext().getEServicesCommonContext().getEserviceId();
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
-        producerKeychainClient.linkEService(
+        getContext().getPollingService().makePolling(
+            () -> producerKeychainClient.getProducerKeychain(producerKeychainId),
+            res -> res != null
+                && res.getEservices() != null
+                && res.getEservices().stream().map(CompactEService::getId).anyMatch(eServiceId::equals),
+            "Il portachiavi erogatore non risulta associato all'e-service"
+        );
+        clientTokenConfigurator.setBearerToken(getContext().getUserToken());
+    }
+
+    @And("all'utente {string} di {string} risulta che il portachiavi erogatore non sia associato all'e-service")
+    public void verifyProducerKeychainNotLinkedToEService(String ruolo, String tenant) {
+        delayService.delay();
+        UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
+        UUID eServiceId = getContext().getEServicesCommonContext().getEserviceId();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
+        ProducerKeychain producerKeychain = producerKeychainClient.getProducerKeychain(producerKeychainId);
+        clientTokenConfigurator.setBearerToken(getContext().getUserToken());
+        Assertions.assertThat(producerKeychain)
+            .as("Il portachiavi erogatore non deve essere null")
+            .isNotNull();
+        Assertions.assertThat(producerKeychain.getEservices())
+            .as("La lista degli e-service del portachiavi erogatore non deve essere null")
+            .isNotNull()
+            .extracting(CompactEService::getId)
+            .as("L'e-service non deve risultare associato al portachiavi erogatore")
+            .doesNotContain(eServiceId);
+    }
+
+    private void linkProducerKeychainToEservice(String ruolo, String tenant, UUID eServiceId) {
+        UUID producerKeychainId = getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId();
+        clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
+        this.producerKeychainClient.linkEService(
             producerKeychainId,
             new EServiceAdditionDetailsSeed().eserviceId(eServiceId));
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());

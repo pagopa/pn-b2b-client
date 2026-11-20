@@ -19,6 +19,7 @@ import it.pagopa.interop.purpose.domain.RiskAnalysisDataFromJson;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.interop.purpose.service.IPurposeApiClient;
 import it.pagopa.interop.tenant.service.ITenantsApi;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.Document;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
@@ -26,11 +27,11 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.*;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
-import it.pagopa.interop.utils.delay_service.DelayService;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -455,17 +456,30 @@ public class BFFDataPreparationService {
 
     public EServiceDescriptor createEServiceInState(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed, @Nonnull EServiceState eServiceState) {
         if(EServiceState.ARCHIVED.equals(eServiceState)) {
-            /* NOTE 09/03/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
-             * in stato ARCHIVED non è al momento supportato (rif. https://pagopaspa.slack.com/archives/C06D24MANNN/p1772816415479329).
-             * Quando sarà supportato, si prevede di sostituire il lancio dell'eccezione con l'implementazione effettiva.  */
-            throw new UnsupportedOperationException("L'archiviazione di un e-service nella sua interezza non è al momento supportata dalla piattaforma Interop");
+            /* NOTE 11/11/2026: il passaggio dell'e-service (non di un suo descriptor, dell'intero e-service)
+             * in stato ARCHIVED non è al momento fattibile programmaticamente; per avere un e-service in stato
+             * ARCHIVED bisogna considerare esclusivamente quelli creati durante il workflow di data-preparation.  */
+            throw new UnsupportedOperationException("Al momento non è possibile portare un e-service in stato " +
+                    "ARCHIVED programmaticamente; per avere un e-service in stato ARCHIVED bisogna considerare " +
+                    "esclusivamente quelli creati durante il workflow di data-preparation.");
+        }
+        EServiceDescriptor eServiceDescriptor = this.createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed);
+        if(EServiceState.ARCHIVING.equals(eServiceState)) {
+            this.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
+                            EServiceState.PUBLISHED.toString()), false);
+            this.archiveActiveEService(eServiceDescriptor.getEServiceId());
+        } else if(EServiceState.ARCHIVING_SUSPENDED.equals(eServiceState)) {
+            this.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
+                    eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
+                            EServiceState.SUSPENDED.toString()), false);
+            this.archiveSuspendedEService(eServiceDescriptor.getEServiceId());
         } else {
-            EServiceDescriptor eServiceDescriptor = this.createEServiceAndDraftDescriptor(partialEserviceSeed, partialDescriptorSeed);
             this.bringDescriptorToGivenState(eServiceDescriptor.getEServiceId(),
                     eServiceDescriptor.getDescriptorId(), EServiceDescriptorState.valueOf(
                             eServiceState.toString()), false);
-            return eServiceDescriptor;
         }
+        return eServiceDescriptor;
     }
 
     public EServiceDescriptor createEServiceAndDraftDescriptor(EServiceSeed partialEserviceSeed, UpdateEServiceDescriptorSeed partialDescriptorSeed) {
@@ -966,6 +980,39 @@ public class BFFDataPreparationService {
                 ERROR_RETRIEVING_PRODUCER_DESCRIPTOR
         );
         return descriptorId;
+    }
+
+    public void archiveActiveEService(UUID eServiceId) {
+        EServiceDescriptorState expectedFinalDescriptorState = EServiceDescriptorState.ARCHIVING;
+        archiveEService(eServiceId, expectedFinalDescriptorState);
+    }
+
+    public void archiveSuspendedEService(UUID eServiceId) {
+        EServiceDescriptorState expectedFinalDescriptorState = EServiceDescriptorState.ARCHIVING_SUSPENDED;
+        archiveEService(eServiceId, expectedFinalDescriptorState);
+    }
+
+    private void archiveEService(UUID eServiceId, EServiceDescriptorState expectedFinalDescriptorState) {
+        EServiceArchivingSeed archivingSeed = new EServiceArchivingSeed()
+                .archivingReason("archiving reason - " + RandomStringUtils.insecure().nextAlphanumeric(3))
+                .gracePeriodDays(GracePeriodDays.NUMBER_30);
+        httpCallExecutor.performCall(
+                () -> eServiceClient.scheduleArchiveEService(
+                        eServiceId,
+                        archivingSeed),
+                ResponseEntity::getStatusCode
+        );
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> eServiceClient.getProducerEServiceDetailsWithHttpInfo(eServiceId).getBody().getLatestActiveDescriptorId()),
+                HttpStatus::is2xxSuccessful,
+                "Non è stato possibile recuperare l'ID del descriptor più recente dell'e-service"
+        );
+        UUID descriptorId = ((UUID) httpCallExecutor.getResponse());
+        pollingService.makePolling(
+                () -> httpCallExecutor.performCall(() -> producerClient.getProducerEServiceDescriptor(eServiceId, descriptorId)),
+                res -> res.is2xxSuccessful() && ((ProducerEServiceDescriptor) httpCallExecutor.getResponse()).getState() == expectedFinalDescriptorState,
+                "Non è stato possibile recuperare lo stato del descriptor più recente dell'e-service, oppure questo non è in stato " + expectedFinalDescriptorState
+        );
     }
 
     public RiskAnalysis getRiskAnalysis(String tenantType, boolean completed) {

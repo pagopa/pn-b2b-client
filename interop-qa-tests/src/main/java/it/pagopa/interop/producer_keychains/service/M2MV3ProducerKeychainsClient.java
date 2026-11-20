@@ -1,8 +1,10 @@
 package it.pagopa.interop.producer_keychains.service;
 
+import it.pagopa.interop.M2MVersionsMapper;
 import it.pagopa.interop.common.client.AbstractDPoPClient;
 import it.pagopa.interop.common.rest_template.DpopRestTemplate;
 import it.pagopa.interop.conf.InteropClientConfigs;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.ProducerKeychainAddEService;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.KeysApi;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.ProducerKeychainsApi;
@@ -17,6 +19,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import static it.pagopa.interop.utils.ApiClientUtils.V3_UNSUPPORTED_BEARER_MSG;
+
 @ToString
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -25,12 +29,18 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
     private final ProducerKeychainsApi producerKeychainsApi;
     private final KeysApi keysApi;
     private final String basePath;
+    private final M2MVersionsMapper vMapper;
 
-    public M2MV3ProducerKeychainsClient(DpopRestTemplate dpopRestTemplate, InteropClientConfigs interopClientConfigs, HttpCallExecutor httpCallExecutor) {
+    public M2MV3ProducerKeychainsClient(
+            DpopRestTemplate dpopRestTemplate,
+            InteropClientConfigs interopClientConfigs,
+            HttpCallExecutor httpCallExecutor,
+            M2MVersionsMapper vMapper) {
         super(dpopRestTemplate);
 
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         super.httpCallExecutor = httpCallExecutor;
+        this.vMapper = vMapper;
 
         this.producerKeychainsApi = new ProducerKeychainsApi(createProducerKeychainsApiClient());
         this.keysApi = new KeysApi(createKeysApiClient());
@@ -109,5 +119,15 @@ public class M2MV3ProducerKeychainsClient extends AbstractDPoPClient implements 
         ).orElseThrow(
                 () -> new IllegalStateException("Errore nel recupero della chiave del producer keychain (response non 2xx o body nullo)")
         );
+    }
+
+    @Override
+    public void linkEservice(UUID producerKeychainId, ProducerKeychainAddEService seed) {
+        httpCallExecutor.performCall(() -> producerKeychainsApi.addProducerKeychainEService(producerKeychainId, vMapper.mapToV3(seed)));
+    }
+
+    @Override
+    public void setBearerToken(String bearerToken) {
+        throw new UnsupportedOperationException(V3_UNSUPPORTED_BEARER_MSG);
     }
 }

@@ -97,6 +97,8 @@ public interface M2MVersionsMapper {
 
     it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.DelegationRef mapToV3(DelegationRef bean);
 
+    it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.ProducerKeychainAddEService mapToV3(ProducerKeychainAddEService bean);
+
     @Mapping(target = "_file", ignore = true) // correttamente mappato attraverso getFile
     FileDownloadMultipart mapToV2(it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.FileDownloadMultipart bean);
 

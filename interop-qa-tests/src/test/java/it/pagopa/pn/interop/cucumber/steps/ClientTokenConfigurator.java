@@ -18,6 +18,7 @@ import it.pagopa.interop.event.service.IM2MEventClient;
 import it.pagopa.interop.event.service.IM2MV3EventClient;
 import it.pagopa.interop.notification.INotificationClient;
 import it.pagopa.interop.notification.INotificationConfigClient;
+import it.pagopa.interop.producer_keychains.IM2MProducerKeychainsClient;
 import it.pagopa.interop.producer_keychains.IM2MV3ProducerKeychainsClient;
 import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.interop.purpose.service.*;
@@ -77,6 +78,7 @@ public class ClientTokenConfigurator {
     private final IM2MEServiceTemplateAttributeClient m2mEServiceTemplateAttributeClient;
     private final IM2MEventClient m2mEventClient;
     private final IM2MPurposeTemplateClient m2mPurposeTemplateClient;
+    private final IM2MProducerKeychainsClient m2mProducerKeychainsClient;
     private final ISelfcareClient iSelfcareClient;
     private final IPurposeTemplateClient purposeTemplateClient;
     private final INotificationClient notificationClient;
@@ -129,6 +131,7 @@ public class ClientTokenConfigurator {
         registerProxy(IM2MPurposeTemplateClient.class, m2mPurposeTemplateClient, m2mV3PurposeTemplateClient);
         registerProxy(IM2MClientsClient.class, m2MClientsClient, m2mV3ClientsClient);
         registerProxy(IM2MEventClient.class, m2mEventClient, m2mV3EventClient);
+        registerProxy(IM2MProducerKeychainsClient.class, m2mProducerKeychainsClient, m2mV3ProducerKeychainsClient);
     }
 
     public IM2MAgreementClient getM2mAgreementClient() {
@@ -191,6 +194,10 @@ public class ClientTokenConfigurator {
         return getProxy(IM2MEventClient.class);
     }
 
+    public IM2MProducerKeychainsClient getM2mProducerKeychainsClient() {
+        return getProxy(IM2MProducerKeychainsClient.class);
+    }
+
     public void setBearerToken(String token) {
         this.lastToken = token;
 
@@ -223,6 +230,7 @@ public class ClientTokenConfigurator {
         iSelfcareClient.setBearerToken(token);
         purposeTemplateClient.setBearerToken(token);
         m2mPurposeTemplateClient.setBearerToken(token);
+        m2mProducerKeychainsClient.setBearerToken(token);
         notificationClient.setBearerToken(token);
         notificationConfigClient.setBearerToken(token);
         producerKeychainClient.setBearerToken(token);

@@ -46,7 +46,7 @@ public class ParameterTypes {
         return out;
     }
 
-    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|WAITING_FOR_APPROVAL")
+    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED|ARCHIVED|ARCHIVING|ARCHIVING_SUSPENDED|WAITING_FOR_APPROVAL")
     public static EServiceState eServiceState(String value) {
         return EServiceState.fromValue(value);
     }
