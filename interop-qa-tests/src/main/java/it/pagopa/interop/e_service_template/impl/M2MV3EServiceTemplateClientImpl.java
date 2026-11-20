@@ -7,8 +7,16 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.e_service_template.IM2MV3EServiceTemplateClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.api.EserviceTemplatesApi;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EService;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptor;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceDescriptorSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDescriptionUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceTemplateDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceDescriptorQuotasSeed;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.utils.ApiClientUtils;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -34,26 +42,26 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     private final M2MVersionsMapper vMapper;
 
     public M2MV3EServiceTemplateClientImpl(
-        DpopRestTemplate restTemplate,
-        InteropClientConfigs interopClientConfigs,
-        EServiceTemplateMainMapper mapper,
-        M2MVersionsMapper vMapper
+            DpopRestTemplate restTemplate,
+            InteropClientConfigs interopClientConfigs,
+            EServiceTemplateMainMapper mapper,
+            M2MVersionsMapper vMapper
     ) {
         super(restTemplate);
         this.basePath = interopClientConfigs.getM2mV3BaseUrl();
         this.eserviceTemplatesApi = new EserviceTemplatesApi(
-            ApiClientUtils.createApiClient(restTemplate, basePath,
-                Collections.emptyMap()));
+                ApiClientUtils.createApiClient(restTemplate, basePath,
+                        Collections.emptyMap()));
         this.bffEserviceTemplatesApi = new it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi(
-            createBffApiClient("dummyBearer"));
+                createBffApiClient("dummyBearer"));
         this.mapper = mapper;
         this.vMapper = vMapper;
     }
 
     private it.pagopa.interop.generated.openapi.clients.bff.ApiClient createBffApiClient(
-        String bearerToken) {
+            String bearerToken) {
         it.pagopa.interop.generated.openapi.clients.bff.ApiClient apiClient = new it.pagopa.interop.generated.openapi.clients.bff.ApiClient(
-            super.getRestTemplate());
+                super.getRestTemplate());
         apiClient.setBasePath(basePath);
 
         apiClient.setBearerToken(bearerToken);
@@ -68,28 +76,28 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
 
     @Override
     public EServiceTemplateVersions getEserviceTemplateVersions(
-        EserviceTemplateListRequest request) {
+            EserviceTemplateListRequest request) {
         return vMapper.mapToV2(eserviceTemplatesApi.getEServiceTemplateVersions(
-            request.getTemplateId(),
-            request.getOffset(),
-            request.getLimit(),
-            vMapper.mapToV3(request.getState()))
+                request.getTemplateId(),
+                request.getOffset(),
+                request.getLimit(),
+                vMapper.mapToV3(request.getState()))
         );
     }
 
     @Override
     public EServiceTemplateVersions getEserviceTemplateVersions(UUID templateId) {
         return this.getEserviceTemplateVersions(EserviceTemplateListRequest.builder()
-            .templateId(templateId)
-            .offset(0)
-            .limit(30)
-            .build());
+                .templateId(templateId)
+                .offset(0)
+                .limit(30)
+                .build());
     }
 
     @Override
     public EServiceTemplateVersion getEserviceTemplateVersion(UUID templateId, UUID versionId) {
         return vMapper.mapToV2(
-            eserviceTemplatesApi.getEServiceTemplateVersion(templateId, versionId));
+                eserviceTemplatesApi.getEServiceTemplateVersion(templateId, versionId));
     }
 
     @Override
@@ -99,32 +107,82 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     }
 
     @Override
+    public ResponseEntity<EService> createEServiceInstanceFromTemplate(
+            UUID templateId,
+            InstanceEServiceSeed seed
+    ) {
+        return eserviceTemplatesApi.createEServiceInstanceFromTemplateWithHttpInfo(templateId, seed);
+    }
+
+    @Override
+    public ResponseEntity<EService> updateEServiceTemplateInstance(
+            UUID eserviceId,
+            UpdateEServiceTemplateInstanceSeed seed
+    ) {
+        return eserviceTemplatesApi.updateEServiceTemplateInstanceWithHttpInfo(eserviceId, seed);
+    }
+
+    @Override
+    public ResponseEntity<EService> updateEServiceTemplateInstanceLabel(
+            UUID eserviceId,
+            EServiceInstanceLabelUpdateSeed seed
+    ) {
+        return eserviceTemplatesApi.updateEServiceTemplateInstanceLabelWithHttpInfo(eserviceId, seed);
+    }
+
+    @Override
+    public ResponseEntity<EServiceDescriptor> createTemplateInstanceDescriptor(
+            UUID eserviceId,
+            EServiceInstanceDescriptorSeed seed
+    ) {
+        return eserviceTemplatesApi.createTemplateInstanceDescriptorWithHttpInfo(eserviceId, seed);
+    }
+
+    @Override
+    public ResponseEntity<EServiceDescriptor> updateDraftDescriptorTemplateInstance(
+            UUID eserviceId,
+            UUID descriptorId,
+            UpdateEServiceDescriptorTemplateInstanceSeed seed
+    ) {
+        return eserviceTemplatesApi.updateDraftDescriptorTemplateInstanceWithHttpInfo(eserviceId, descriptorId, seed);
+    }
+    
+    @Override
+    public ResponseEntity<EServiceDescriptor> updateTemplateInstanceDescriptorQuotas(
+            UUID eserviceId,
+            UUID descriptorId,
+            UpdateEServiceTemplateInstanceDescriptorQuotasSeed seed
+    ) {
+        return eserviceTemplatesApi.updateTemplateInstanceDescriptorQuotasWithHttpInfo(eserviceId, descriptorId, seed);
+    }
+
+    @Override
     public ResponseEntity<EServiceTemplateVersion> createEserviceTemplateVersion(
-        UUID templateId,
-        EServiceTemplateVersionCreationRequest request) {
+            UUID templateId,
+            EServiceTemplateVersionCreationRequest request) {
         EServiceTemplateVersionSeed v2Seed = this.mapper.mapCreationRequestToSeed(
-            request);
+                request);
         return vMapper.map(
-            eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(templateId,
-                vMapper.mapToV3(v2Seed)),
-            vMapper::mapToV2);
+                eserviceTemplatesApi.createEServiceTemplateVersionWithHttpInfo(templateId,
+                        vMapper.mapToV3(v2Seed)),
+                vMapper::mapToV2);
     }
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document uploadDocument(
-        UUID templateId,
-        UUID versionId,
-        Resource file,
-        String prettyName
+            UUID templateId,
+            UUID versionId,
+            Resource file,
+            String prettyName
     ) {
         return vMapper.mapToV2(eserviceTemplatesApi.uploadEServiceTemplateVersionDocument(templateId, versionId, file, prettyName));
     }
 
     @Override
     public it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart downloadDocument(
-        UUID templateId,
-        UUID versionId,
-        UUID documentId
+            UUID templateId,
+            UUID versionId,
+            UUID documentId
     ) {
         return vMapper.mapToV2(eserviceTemplatesApi.downloadEServiceTemplateVersionDocument(templateId, versionId, documentId));
     }
@@ -132,7 +190,7 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     @Override
     public Documents getDocuments(UUID templateId, UUID versionId) {
         return vMapper.mapToV2(
-            eserviceTemplatesApi.getEServiceTemplateVersionDocuments(templateId, versionId, 0, 30));
+                eserviceTemplatesApi.getEServiceTemplateVersionDocuments(templateId, versionId, 0, 30));
     }
 
     @Override
@@ -142,22 +200,22 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
 
     @Override
     public EServiceTemplate patchEServiceTemplate(UUID templateId,
-        EServiceTemplatePatchRequest patchRequest) {
+                                                  EServiceTemplatePatchRequest patchRequest) {
         return vMapper.mapToV2(eserviceTemplatesApi.updateDraftEServiceTemplate(templateId,
-            new EServiceTemplateDraftUpdateSeed()
-                .description(patchRequest.getDescription())
-                .name(patchRequest.getName())
-                .technology(vMapper.mapToV3(patchRequest.getTechnology()))
-                .mode(vMapper.mapToV3(patchRequest.getMode()))
-                .intendedTarget(patchRequest.getIntendedTarget())
-                .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
-                .personalData(patchRequest.getPersonalData())
+                new EServiceTemplateDraftUpdateSeed()
+                        .description(patchRequest.getDescription())
+                        .name(patchRequest.getName())
+                        .technology(vMapper.mapToV3(patchRequest.getTechnology()))
+                        .mode(vMapper.mapToV3(patchRequest.getMode()))
+                        .intendedTarget(patchRequest.getIntendedTarget())
+                        .isSignalHubEnabled(patchRequest.getIsSignalHubEnabled())
+                        .personalData(patchRequest.getPersonalData())
         ));
     }
 
     @Override
     public EServiceTemplate patchEServiceTemplateDescription(UUID templateId,
-        EServiceTemplateDescriptionPatchRequest patchRequest) {
+                                                             EServiceTemplateDescriptionPatchRequest patchRequest) {
         return vMapper.mapToV2(eserviceTemplatesApi.updatePublishedEServiceTemplateDescription(templateId,
                 new EServiceTemplateDescriptionUpdateSeed()
                         .description(patchRequest.getDescription())
@@ -166,24 +224,24 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
 
     @Override
     public EServiceTemplateVersion patchEServiceTemplateVersion(UUID templateId, UUID versionId,
-        EServiceTemplateVersionPatchRequest patchRequest) {
+                                                                EServiceTemplateVersionPatchRequest patchRequest) {
         return vMapper.mapToV2(eserviceTemplatesApi.updateDraftEServiceTemplateVersion(
-            templateId,
-            versionId,
-            vMapper.mapToV3(this.mapper.mapPatchRequestToSeed(patchRequest))
+                templateId,
+                versionId,
+                vMapper.mapToV3(this.mapper.mapPatchRequestToSeed(patchRequest))
         ));
     }
 
     @Override
     public EServiceTemplateVersion patchEServiceTemplateVersionQuotas(UUID templateId,
-        UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest) {
+                                                                      UUID versionId, EServiceTemplateVersionQuotasPatchRequest patchRequest) {
         return vMapper.mapToV2(eserviceTemplatesApi.updatePublishedEServiceTemplateVersionQuotas(
-            templateId,
-            versionId,
-            vMapper.mapToV3(new EServiceTemplateVersionQuotasUpdateSeed()
-                .dailyCallsPerConsumer(patchRequest.getDailyCallsPerConsumer())
-                .voucherLifespan(patchRequest.getVoucherLifespan())
-                .dailyCallsTotal(patchRequest.getDailyCallsTotal()))
+                templateId,
+                versionId,
+                vMapper.mapToV3(new EServiceTemplateVersionQuotasUpdateSeed()
+                        .dailyCallsPerConsumer(patchRequest.getDailyCallsPerConsumer())
+                        .voucherLifespan(patchRequest.getVoucherLifespan())
+                        .dailyCallsTotal(patchRequest.getDailyCallsTotal()))
         ));
     }
 
@@ -200,6 +258,6 @@ public class M2MV3EServiceTemplateClientImpl extends AbstractDPoPClient implemen
     @Override
     public void setHeaders(Map<String, String> headers) {
         this.eserviceTemplatesApi.setApiClient(
-            ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
+                ApiClientUtils.createApiClient(super.getRestTemplate(), basePath, headers));
     }
 }
