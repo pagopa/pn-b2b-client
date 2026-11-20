@@ -268,7 +268,29 @@ file estranei agli scenari invalida il confronto: la storia Git può influenzare
 autori e risoluzione dei conflitti.
 
 Se impronta e file coincidono, l'Epic è `invariata` e il PST conserva la data
-dell'ultima generazione. Se cambiano o manca un file, l'Epic viene rigenerata.
+dell'ultima generazione. Se l'impronta cambia, il generatore raccoglie gli
+scenari associati alla QA Epic e ne confronta il contenuto con quello salvato
+nello stato. Se gli scenari, la configurazione, gli ID dei work-item e i file
+prodotti sono invariati, conserva il PST
+e la sua data e aggiorna solo l'impronta degli input. Se gli scenari, la
+configurazione o gli ID cambiano, manca lo stato degli scenari o un file
+prodotto è stato alterato, rigenera.
+Le generazioni precedenti all'introduzione dello stato degli scenari vengono
+aggiornate una volta per registrarlo. Un branch sorgente mancante conserva il
+PST esistente e viene indicato nel riepilogo.
+
+```mermaid
+flowchart TD
+    A["QA Epic della release"] --> B["Calcola l'impronta degli input"]
+    B --> C{"Branch mancante?"}
+    C -- "Sì" --> D["Conserva il PST e segnala"]
+    C -- "No" --> E{"Impronta uguale e file integri?"}
+    E -- "Sì" --> F["PST invariato"]
+    E -- "No" --> G["Raccoglie gli scenari della QA Epic"]
+    G --> H{"Scenari e dati del PST invariati?"}
+    H -- "Sì" --> I["Conserva il PST e aggiorna l'impronta"]
+    H -- "No" --> J["Rigenera il PST e salva lo stato"]
+```
 Il branch viene aggiornato con un solo commit per esecuzione, se necessario.
 I conflitti lasciano intatti i PST validi precedenti e non bloccano le altre Epic.
 Le Epic non più attive non vengono ancora eliminate automaticamente dal branch.
