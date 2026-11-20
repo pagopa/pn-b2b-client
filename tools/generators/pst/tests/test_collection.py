@@ -17,6 +17,23 @@ from pst_generator.markdown import render_document
 
 
 class CollectionTest(unittest.TestCase):
+    def test_missing_branch_preserves_pst_and_reports_skip(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: removed\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        output.mkdir()
+        existing = output / 'pst_QA-123.md'
+        existing.write_text('previously approved')
+        with contextlib.redirect_stdout(io.StringIO()) as log:
+            self.assertEqual(generate_active(self.repo, config, output_dir=output,
+                                             use_state=True), 0)
+        self.assertEqual(existing.read_text(), 'previously approved')
+        self.assertIn('PST esistente conservato, branch mancante', log.getvalue())
+
     def test_persistent_state_skips_unchanged_sources_and_repairs_output(self):
         release = self.repo / 'releases/product/1.yaml'
         release.parent.mkdir(parents=True)
