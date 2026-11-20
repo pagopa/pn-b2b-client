@@ -108,7 +108,7 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_amount      | NULL              |
       | payment_due_date    | 2026-12-31        |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio 'allowed: ["integer","number"]'
 
 
   @informalNotificationsValidation @informalSyncValidation     #validazione ripresa dalle legal + obbligo di rispettarer la firma del API
@@ -524,7 +524,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_province | NULL              |
       | messageId                 | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "not found in enum"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -575,15 +575,16 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | document             | DOC_1_PG          |
-      | campaignId           | FattOrd           |
-      | recipientType        | PF                |
-      | taxId                | NULL              |
-      | denomination         | Ettore Fieramosca |
-      | payment_multy_number | 1                 |
-      | messageId            | ${NEW-IT}         |
-    Then viene inviata una nuova notifica bonaria con sha non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+      | campaignId             | FattOrd           |
+      | recipientType          | PF                |
+      | taxId                  | FRMTTR76M06B715E  |
+      | denomination           | Ettore Fieramosca |
+      | payment_multy_number   | 1                 |
+      | attachment_key         | NULL              |
+      | attachment_contentType | NULL              |
+      | messageId              | ${NEW-IT}         |
+    When l'invio della notifica bonaria fallisce
+    Then si riceve errore 400
 
 
   @informalSyncValidation @informalComboRefactor #bug validation
@@ -657,7 +658,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR, IT            |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "array is too long"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -680,8 +681,9 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
       | messageId     | ${NEW-IT}         |
+    # Unica violazione nel body: contentType "application/txt" fuori schema (detail generico del validatore OpenAPI)
     When viene inviata una nuova notifica bonaria con content type non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "failed to match all required schemas"
 
 
    #@informalNotificationsValidation @informalSyncValidation errore dato nella prepare non oggetto delle bonarie

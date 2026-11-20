@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -38,6 +41,7 @@ import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +59,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class PresaInCaricoNoticaBonariaSteps {
+
+    private static final ObjectMapper ERROR_BODY_MAPPER = new ObjectMapper();
 
     @Getter
     private final SharedSteps sharedSteps;
@@ -668,6 +674,31 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         assertNotNull(responseBody, "Response body nullo");
         assertTrue(responseBody.contains(expectedErrorCode), "Codice errore atteso non trovato: " + expectedErrorCode + "\nResponse body: " + responseBody);
+    }
+
+    /**
+     * Come {@link #verifyErrorAndMessage} ma verifica anche che l'errore con il codice atteso riporti nel campo
+     * {@code detail} il testo indicato: serve a distinguere la violazione voluta dallo scenario da altre violazioni
+     * che producono lo stesso codice (es. PN_INVALID_BODY della validazione OpenAPI).
+     */
+    @And("si riceve errore {int} {string} con dettaglio {string}")
+    public void verifyErrorCodeAndDetail(int expectedStatus, String expectedErrorCode, String expectedDetail) {
+        verifyErrorAndMessage(expectedStatus, expectedErrorCode);
+
+        String responseBody = ((HttpClientErrorException) lastException).getResponseBodyAsString();
+        List<String> details = new ArrayList<>();
+        try {
+            JsonNode errors = ERROR_BODY_MAPPER.readTree(responseBody).path("errors");
+            for (JsonNode error : errors) {
+                if (expectedErrorCode.equals(error.path("code").asText())) {
+                    details.add(error.path("detail").asText());
+                }
+            }
+        } catch (JsonProcessingException e) {
+            fail("Response body non è un JSON valido: " + responseBody, e);
+        }
+        assertTrue(details.stream().anyMatch(detail -> detail.contains(expectedDetail)),
+                "Dettaglio atteso non trovato per il codice " + expectedErrorCode + ": " + expectedDetail + "\nDettagli ricevuti: " + details);
     }
 
     @When("il recupero del messaggio per le comunicazioni bonarie fallisce")

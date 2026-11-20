@@ -27,7 +27,8 @@ public class InformalCommunicationV1Adapter implements InformalCommunicationAdap
     @Override
     public InformalSendResult send(InformalSendContext context, InformalCommunication communication) {
         InformalNotificationRequestV1 requestV1 = InformalCommunicationV1Mapper.INSTANCE.toV1(communication);
-        log.info("Sending InformalNotification V1 payload for cxId={} apiKeyType={}: {}", context.getCxId(), context.getApiKeyType(), requestV1);
+        // il body JSON effettivamente inviato è loggato dal client (PnPaB2bExternalInformalClientImpl)
+        log.info("Sending InformalNotification V1 for cxId={} apiKeyType={}", context.getCxId(), context.getApiKeyType());
         NewInformalNotificationResponse response = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(requestV1, context.getApiKeyType());
 
         return InformalSendResult.builder()
