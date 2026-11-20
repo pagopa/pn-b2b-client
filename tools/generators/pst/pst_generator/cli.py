@@ -218,6 +218,11 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 save_state(destination, epic, fingerprint, include_html)
             results.append(f"- {epic}: generato ({count} scenari)")
         except CollectionError as exc:
+            if "not found (local or origin)" in str(exc):
+                existing = (destination / f"pst_{epic}.md").is_file()
+                outcome = "PST esistente conservato" if existing else "PST non generato"
+                results.append(f"- {epic}: {outcome}, branch mancante: {exc}")
+                continue
             failed = True
             results.append(f"- {epic}: ERRORE\n\n```text\n{exc}\n```\n")
             print(str(exc), file=sys.stderr)
