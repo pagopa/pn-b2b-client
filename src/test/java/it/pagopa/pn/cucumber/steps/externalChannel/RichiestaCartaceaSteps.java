@@ -3,14 +3,14 @@ package it.pagopa.pn.cucumber.steps.externalChannel;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.externalchannels.v1.model.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalChannelsInternalClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.externalChannel.builders.PaperEngageRequestBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -34,14 +34,14 @@ public class RichiestaCartaceaSteps {
         PaperEngageRequest paperEngageRequest = paperEngageRequestBuilder.buildWithoutRequestPaId();
         String requestIdx = paperEngageRequest.getRequestId();
 
-        try {
-            ResponseEntity<Void> response = externalChannelsInternalClient.sendPaperEngageRequest(requestIdx, clientId, paperEngageRequest);
+        ApiResult<Void> result = ApiCallHelper.call(() -> externalChannelsInternalClient.sendPaperEngageRequest(requestIdx, clientId, paperEngageRequest));
+        if (result.is2xx()) {
             log.warn("Richiesta di postalizzazione senza requestPaId accettata da external-channel: requestIdx={}, client={}, status={}",
-                    requestIdx, clientId, response.getStatusCode());
-        } catch (HttpStatusCodeException e) {
+                    requestIdx, clientId, result.status());
+        } else {
             log.info("Richiesta di postalizzazione senza requestPaId rifiutata: requestIdx={}, client={}, status={}",
-                    requestIdx, clientId, e.getStatusCode());
-            sharedSteps.setNotificationError(e);
+                    requestIdx, clientId, result.status());
+            sharedSteps.setNotificationError(result);
         }
     }
 }

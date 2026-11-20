@@ -21,6 +21,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.CxTypeAuthFleet;
@@ -43,7 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class RicezioneNotificheWebDelegheSteps {
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
 
     private UserDto userDtoCustom;
     @Value("${pn.external.senderId}")
@@ -219,12 +220,34 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
+        Assertions.assertNotNull(this.notificationError, "L'operazione non ha prodotto errori");
+        Assertions.assertEquals(statusCode, this.notificationError.statusCode(), "Dettaglio errore: " + this.notificationError.problem());
     }
 
     @Then("si verifica che venga ritornato un errore di tipo {string}")
     public void checkErrorType(String errorType) {
-        Assertions.assertTrue(this.notificationError.getStatusCode().getReasonPhrase().toUpperCase().contains(errorType.toUpperCase()));
+        Assertions.assertNotNull(this.notificationError, "L'operazione non ha prodotto errori");
+        Assertions.assertTrue(this.notificationError.status().getReasonPhrase().toUpperCase().contains(errorType.toUpperCase()),
+                "Errore atteso di tipo " + errorType + ", ottenuto " + this.notificationError.status() + ": " + this.notificationError.problem());
+    }
+
+    /** Registra in {@link #notificationError} il risultato solo se è un errore (non-2xx). */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            this.notificationError = result;
+        }
+    }
+
+    /**
+     * Equivalente del precedente catch su HttpClientErrorException: registra solo gli errori 4xx;
+     * ogni altro errore (5xx, errore di rete) fa fallire lo step.
+     */
+    private void recordClientError(ApiResult<?> result) {
+        if (result.status().is4xxClientError()) {
+            this.notificationError = result;
+        } else if (result.isError()) {
+            throw new AssertionError("Errore HTTP inatteso " + result.statusCode() + ": " + result.problem());
+        }
     }
 
     @And("{string} viene delegato da {string}")
@@ -241,14 +264,14 @@ public class RicezioneNotificheWebDelegheSteps {
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1)));
 
         System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
+        ApiResult<Void> result = ApiCallHelper.run(() -> webMandateClient.createMandate(mandate));
+        if (result.is2xx()) {
             MandateContext mandateContext = new MandateContext();
             mandateContext.setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(delegate));
             mandateContext.setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(delegator));
             sendSharedContext.setMandateContext(mandateContext);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+        } else {
+            this.notificationError = result;
         }
     }
 
@@ -290,11 +313,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
         System.out.println("MANDATE: " + mandate);
 
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> webMandateClient.createMandate(mandate)));
     }
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
@@ -381,12 +400,10 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("la notifica {canBe} essere correttamente letta da {string} con delega")
     public void notificationCanBeCorrectlyReadFromWithMandate(boolean canBeRetrieved, String recipient) {
         sharedSteps.selectUser(recipient);
-        BundleFullReceivedNotification receivedNotification = null;
-        try {
-            receivedNotification = webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId());
-        } catch (HttpClientErrorException e) {
-            notificationError = e;
-        }
+        ApiResult<BundleFullReceivedNotification> result = ApiCallHelper.callBody(() ->
+                webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), mandateToSearch.getMandateId()));
+        recordClientError(result);
+        BundleFullReceivedNotification receivedNotification = result.body();
         if (canBeRetrieved) {
             assertThat(receivedNotification).as("La notifica recuperata non dev'essere null").isNotNull();
         } else {
@@ -493,21 +510,20 @@ public class RicezioneNotificheWebDelegheSteps {
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, boolean canBeRetrieved, String recipient) {
         //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = null;
-        try {
-            downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+        ApiResult<NotificationAttachmentDownloadMetadataResponse> result = ApiCallHelper.callBody(() -> {
+            NotificationAttachmentDownloadMetadataResponse response = webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getNotificationIun(),
                     attachmentName,
                     UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
-            if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
+            if (response != null && response.getRetryAfter() != null && response.getRetryAfter() > 0) {
                 try {
-                    await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
-                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                    await().atMost(response.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
+                    response = webRecipientClient.getReceivedNotificationAttachment(
                             sharedSteps.getNotificationIun(),
                             attachmentName,
                             UUID.fromString(mandateToSearch.getMandateId()), 0);
-                    verifyRetrievedDocument(downloadResponse);
+                    verifyRetrievedDocument(response);
                 } catch (RuntimeException exc) {
                     log.error("Await error exception: {}", exc.getMessage());
                     throw exc;
@@ -516,9 +532,10 @@ public class RicezioneNotificheWebDelegheSteps {
 //        if (!"F24".equalsIgnoreCase(attachmentName)) {
 //            verifySha256(downloadResponse);
 //        }
-        } catch (HttpClientErrorException e) {
-            notificationError = e;
-        }
+            return response;
+        });
+        recordClientError(result);
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = result.body();
         if (canBeRetrieved) {
             assertThat(downloadResponse).as("L'allegato recuperato non dev'essere null").isNotNull();
         } else {
@@ -588,8 +605,9 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'operazione di delega ha prodotto un errore con status code {string}")
     public void operationProducedAnErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue((notificationError != null) &&
-                (notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        Assertions.assertNotNull(notificationError, "L'operazione di delega non ha prodotto errori");
+        Assertions.assertEquals(statusCode, String.valueOf(notificationError.statusCode()),
+                "Dettaglio errore: " + notificationError.problem());
     }
 
     @And("la notifica può essere correttamente letta da {string}")
@@ -678,13 +696,14 @@ public class RicezioneNotificheWebDelegheSteps {
         notificationSearchResponseLegal = null;
         lastDestinatarioSearchParam = searchParam;
         lastDestinatarioSearched = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
-        try {
-            this.notificationSearchResponseFull = webRecipientClient.searchReceivedNotification(
-                    lastDestinatarioSearched, searchParam);
+        ApiResult<FullNotificationSearchResponse> result = ApiCallHelper.callBody(() ->
+                webRecipientClient.searchReceivedNotification(lastDestinatarioSearched, searchParam));
+        if (result.is2xx()) {
+            this.notificationSearchResponseFull = result.body();
             this.notificationSearchResponseCount = notificationSearchResponseFull.getResultsPage().size();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-            this.notificationError = e;
+        } else {
+            this.sharedSteps.setNotificationError(result);
+            this.notificationError = result;
         }
     }
 
@@ -696,17 +715,18 @@ public class RicezioneNotificheWebDelegheSteps {
         NotificationStatusV26 notificationStatus = searchParam.status != null ? NotificationStatusV26.valueOf(searchParam.status) : null;
         notificationSearchResponseFull = null;
         lastDestinatarioSearchParam = searchParam;
-        try {
-            sendSharedContext.getMandateContext().setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(user));
-            sendSharedContext.getMandateContext().setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(recipient));
-            lastDestinatarioSearched = sendSharedContext.getMandateContext().getDelegate();
+        sendSharedContext.getMandateContext().setDelegate(sharedSteps.getDestinatarioRegistry().destinatario(user));
+        sendSharedContext.getMandateContext().setDelegator(sharedSteps.getDestinatarioRegistry().destinatario(recipient));
+        lastDestinatarioSearched = sendSharedContext.getMandateContext().getDelegate();
 
-            this.notificationSearchResponseLegal = webRecipientClient.searchReceivedDelegatedNotification(
-                    lastDestinatarioSearched, searchParam);
+        ApiResult<LegalNotificationSearchResponse> result = ApiCallHelper.callBody(() ->
+                webRecipientClient.searchReceivedDelegatedNotification(lastDestinatarioSearched, searchParam));
+        if (result.is2xx()) {
+            this.notificationSearchResponseLegal = result.body();
             this.notificationSearchResponseCount = notificationSearchResponseLegal.getResultsPage().size();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-            this.notificationError = e;
+        } else {
+            this.sharedSteps.setNotificationError(result);
+            this.notificationError = result;
         }
     }
 
@@ -787,54 +807,44 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("il delegato {string} visualizza le deleghe a suo carico con stato {string}")
     public void delegateViewsAssignedMandatesWithStatus(String user, String status) {
-        try {
-            delegateViewMandate(user, status);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        delegateViewMandate(user, status);
     }
 
     private void delegateViewMandate(String user, String statusFilter) {
         setBearerToken(user);
-        try {
-            List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(statusFilter);
-            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+        verifyMandateListNotEmpty(ApiCallHelper.callBody(() -> webMandateClient.listMandatesByDelegate1(statusFilter)));
+    }
+
+    /** In caso di errore lo registra senza verificare la lista (comportamento invariato); altrimenti la lista dev'essere non vuota. */
+    private void verifyMandateListNotEmpty(ApiResult<List<MandateDto>> result) {
+        if (result.isError()) {
+            this.notificationError = result;
+            return;
         }
+        List<MandateDto> mandateList = result.body();
+        Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+        Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
     }
 
 
     @Then("il delegato {string} visualizza le deleghe da parte di un delegante con CF: {string}")
     public void delegateViewsAssignedMandates(String user, String fiscalCode) {
         setBearerToken(user);
-        try {
-            List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(fiscalCode, null);
-            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        verifyMandateListNotEmpty(ApiCallHelper.callBody(() -> webMandateClient.searchMandatesByDelegate(fiscalCode, null)));
     }
 
     @Then("il delegato {string} visualizza le deleghe da parte di {string} in stato {string}")
     public void delegateViewsAssignedMandatesWithStatus(String delegate, String delegator, String status) {
         setBearerToken(delegate);
-        try {
-            List<MandateDto> mandateList;
+        verifyMandateListNotEmpty(ApiCallHelper.callBody(() -> {
             if (status.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
+                return webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
             } else if (delegator.trim().equals("")) {
-                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
+                return webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
             } else {
-                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
+                return webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
             }
-            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
-            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        }));
     }
 
     @And("viene creata una delega con i seguenti parametri errati:")
@@ -851,11 +861,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 .dateto(data.getOrDefault("dateTo", sdf.format(DateUtils.addDays(new Date(), 1))));
 
         System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        recordError(ApiCallHelper.run(() -> webMandateClient.createMandate(mandate)));
     }
 
     private UserDto getInvalidUserDto(String delegator) {

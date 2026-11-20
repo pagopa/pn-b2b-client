@@ -10,6 +10,8 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.io.connector.model.*;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnIOConnectorClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +21,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
 import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
@@ -132,21 +133,21 @@ public class IOConnectorSteps {
     @When("come orchestratore SEND richiedo l'invio del messaggio verso IO")
     public void invokeMessageAPI() {
 
-        try {
-            MessageResponse resp = pnIOConnectorClient.sendIOMessage(CLIENT_ID,
-                    messageRequest);
+        ApiResult<MessageResponse> result = ApiCallHelper.callBody(() -> pnIOConnectorClient.sendIOMessage(CLIENT_ID, messageRequest));
+        if (result.is2xx()) {
+            MessageResponse resp = result.body();
             log.info("message response: {}", resp);
             messageResponse = resp;
-            // If no exception is thrown, assume 200 OK
-            actualResponseHttpStatus = HttpStatus.OK;
-            // If no exception is thrown, and body is null, assume 204 NO_CONTENT
-            if (resp == null)
-                actualResponseHttpStatus = HttpStatus.NO_CONTENT;
-
-        } catch (HttpStatusCodeException e) {
-            log.info("HttpStatusException: {}", e.getMessage());
-            actualResponseHttpStatus = e.getStatusCode();
+            // Il client restituisce solo il body: si assume 200 OK, oppure 204 NO_CONTENT se il body è null
+            actualResponseHttpStatus = resp == null ? HttpStatus.NO_CONTENT : HttpStatus.OK;
+        } else {
+            logHttpError(result);
+            actualResponseHttpStatus = result.status();
         }
+    }
+
+    private static void logHttpError(ApiResult<?> result) {
+        log.info("Errore HTTP: {} {}", result.statusCode(), result.problem());
     }
 
     @Then("verifico che in tabella pn-IOConnectorRequests esista un record per requestId")
@@ -200,19 +201,18 @@ public class IOConnectorSteps {
         getProfileRequest.setRecipientTaxId(resolvedTaxId != null && !resolvedTaxId.isBlank() ? resolvedTaxId : this.recipientTaxId);
         getProfileRequest.setSenderServiceId(this.senderServiceId);
 
-        try {
-            GetProfileResponse resp = pnIOConnectorClient.getIOProfile(CLIENT_ID,
-                    getProfileRequest);
-            log.info("profile response: {}", resp);
-            getProfileResponse = resp;
+        handleProfileResult(ApiCallHelper.callBody(() -> pnIOConnectorClient.getIOProfile(CLIENT_ID, getProfileRequest)));
+    }
 
-            // If no exception is thrown, assume 200 OK (or 2xx)
-            actualResponseHttpStatus = HttpStatus.OK;
-
-        } catch (HttpStatusCodeException e) {
-            log.info("HttpStatusException: {}", e.getMessage());
-            actualResponseHttpStatus = e.getStatusCode();
+    private void handleProfileResult(ApiResult<GetProfileResponse> result) {
+        if (result.is2xx()) {
+            log.info("profile response: {}", result.body());
+            getProfileResponse = result.body();
+        } else {
+            logHttpError(result);
         }
+        // In caso di successo lo status è un 200 sintetico (il client restituisce solo il body)
+        actualResponseHttpStatus = result.status();
     }
 
     @Given("come orchestratore SEND tento la verifica raggiungibilità profilo con senderServiceId: {string} e recipientTaxId: {string}")
@@ -222,19 +222,7 @@ public class IOConnectorSteps {
         getProfileRequest.setRecipientTaxId(StringUtils.resolveValue(recipientTaxId));
         getProfileRequest.setSenderServiceId(StringUtils.resolveValue(senderServiceId));
 
-        try {
-            GetProfileResponse resp = pnIOConnectorClient.getIOProfile(StringUtils.resolveValue(senderServiceId),
-                    getProfileRequest);
-            log.info("profile response: {}", resp);
-            getProfileResponse = resp;
-
-            // If no exception is thrown, assume 200 OK (or 2xx)
-            actualResponseHttpStatus = HttpStatus.OK;
-
-        } catch (HttpStatusCodeException e) {
-            log.info("HttpStatusException: {}", e.getMessage());
-            actualResponseHttpStatus = e.getStatusCode();
-        }
+        handleProfileResult(ApiCallHelper.callBody(() -> pnIOConnectorClient.getIOProfile(StringUtils.resolveValue(senderServiceId), getProfileRequest)));
     }
 
     @Then("verifico che la response contenga l'informazione sulla raggiungibilità del profilo")
@@ -306,15 +294,15 @@ public class IOConnectorSteps {
         String resolvedReqId = StringUtils.resolveValue(requestId);
         String resolvedRecipient = StringUtils.resolveValue(recipientTaxId);
 
-        try {
-            GetMessageResponse resp = pnIOConnectorClient.getMessage(resolvedReqId, resolvedRecipient);
-            log.info("message details response: {}", resp);
-            getMessageResponse = resp;
-            actualResponseHttpStatus = HttpStatus.OK;
-        } catch (HttpStatusCodeException e) {
-            log.info("HttpStatusException: {}", e.getMessage());
-            actualResponseHttpStatus = e.getStatusCode();
+        ApiResult<GetMessageResponse> result = ApiCallHelper.callBody(() -> pnIOConnectorClient.getMessage(resolvedReqId, resolvedRecipient));
+        if (result.is2xx()) {
+            log.info("message details response: {}", result.body());
+            getMessageResponse = result.body();
+        } else {
+            logHttpError(result);
         }
+        // In caso di successo lo status è un 200 sintetico (il client restituisce solo il body)
+        actualResponseHttpStatus = result.status();
     }
 
     //--------- COMMON:

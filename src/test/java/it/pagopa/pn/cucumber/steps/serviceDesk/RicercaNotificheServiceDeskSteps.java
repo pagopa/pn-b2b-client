@@ -5,6 +5,8 @@ import io.cucumber.java.en.Then;
 import it.pagopa.common.util.DateUtils;
 import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.LegalNotificationSearchResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDelivery.model.NotificationStatusV26;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
@@ -13,7 +15,6 @@ import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteria
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAssertions;
 import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -39,7 +40,7 @@ public class RicercaNotificheServiceDeskSteps {
     private final SendSharedContext sendSharedContext;
 
     private LegalNotificationSearchResponse notificationSearchResponse;
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
     private OffsetDateTime lastStartDate;
     private OffsetDateTime lastEndDate;
     private String lastRecipientUid;
@@ -73,12 +74,13 @@ public class RicercaNotificheServiceDeskSteps {
         lastMandateId = resolve(tokenResolver, data.get("mandateId"));
         lastCxType = StringUtils.resolveValue(data.get("cxType"));
         lastSize = parseInteger(data.get("size"));
-        try {
-            notificationSearchResponse = pnPaB2bInternalInformalClientImpl.searchNotificationsPrivate(
-                    lastStartDate, lastEndDate, lastRecipientUid, lastRecipientIdOpaque, lastSenderId,
-                    lastStatus, lastMandateId, lastCxType, lastSize, StringUtils.resolveValue(data.get("nextPagesKey")));
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
+        ApiResult<LegalNotificationSearchResponse> result = ApiCallHelper.callBody(() -> pnPaB2bInternalInformalClientImpl.searchNotificationsPrivate(
+                lastStartDate, lastEndDate, lastRecipientUid, lastRecipientIdOpaque, lastSenderId,
+                lastStatus, lastMandateId, lastCxType, lastSize, StringUtils.resolveValue(data.get("nextPagesKey"))));
+        if (result.is2xx()) {
+            notificationSearchResponse = result.body();
+        } else {
+            notificationError = result;
         }
     }
 
@@ -108,8 +110,8 @@ public class RicercaNotificheServiceDeskSteps {
         assertThat(notificationError)
                 .as("La ricerca notifiche da servicedesk non ha prodotto l'errore atteso")
                 .isNotNull();
-        assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
-                .as("Il tipo di errore non coincide con quanto atteso")
+        assertThat(notificationError.status().getReasonPhrase().toUpperCase())
+                .as("Il tipo di errore non coincide con quanto atteso. Dettaglio errore: %s", notificationError.problem())
                 .contains(errorType.toUpperCase());
     }
 

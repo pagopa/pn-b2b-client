@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,7 +74,13 @@ public class IOMockCommonSteps {
 
         try {
             log.info("Sending {} request to IO Mock", method);
-            ResponseEntity<String> response = restTemplate.exchange(url, method, entity, String.class);
+            HttpEntity<?> requestEntity = entity;
+            ApiResult<ResponseEntity<String>> result = ApiCallHelper.callBody(() -> restTemplate.exchange(url, method, requestEntity, String.class));
+            if (result.isError()) {
+                handleErrorResponse(result);
+                return;
+            }
+            ResponseEntity<String> response = result.body();
             context.setResponseEntity(response);
             context.setActualStatusCode(response.getStatusCodeValue());
             context.setResponseBody(response.getBody());
@@ -95,31 +102,34 @@ public class IOMockCommonSteps {
                     log.warn("Response body is not JSON");
                 }
             }
-        } catch (HttpStatusCodeException e) {
-            log.info("HTTP exception: {}", e.getStatusCode());
-            context.setActualStatusCode(e.getRawStatusCode());
-            context.setResponseBody(e.getResponseBodyAsString());
-
-            boolean isTransparent = e.getResponseHeaders() != null && (
-                    e.getResponseHeaders().containsKey("x-routed-to-real-io")
-                    || "real-io".equalsIgnoreCase(e.getResponseHeaders().getFirst("x-routed-to"))
-                    || (e.getResponseHeaders().getFirst("www-authenticate") != null && e.getResponseHeaders().getFirst("www-authenticate").contains("io.pagopa.it"))
-                    || (e.getResponseBodyAsString() != null && (e.getResponseBodyAsString().contains("real_io") || e.getResponseBodyAsString().contains("subscription key")))
-            );
-            if (isTransparent) {
-                context.setTransparentRouting(true);
-            }
-
-            if (e.getResponseBodyAsString() != null && !e.getResponseBodyAsString().isBlank()) {
-                try {
-                    context.setResponseJson(objectMapper.readTree(e.getResponseBodyAsString()));
-                } catch (Exception ex) {
-                    log.warn("Error parsing error response JSON");
-                }
-            }
         } catch (Exception e) {
             log.error("Unexpected error invoking endpoint: {}", e.getMessage(), e);
             Assertions.fail("Invocazione endpoint fallita con eccezione inattesa: " + e.getMessage());
+        }
+    }
+
+    private void handleErrorResponse(ApiResult<?> result) {
+        log.info("HTTP error: {} {}", result.statusCode(), result.problem());
+        String errorBody = result.problem() == null ? "" : result.problem();
+        HttpHeaders errorHeaders = result.headers();
+        context.setActualStatusCode(result.statusCode());
+        context.setResponseBody(errorBody);
+
+        String wwwAuthenticate = errorHeaders.getFirst("www-authenticate");
+        boolean isTransparent = errorHeaders.containsKey("x-routed-to-real-io")
+                || "real-io".equalsIgnoreCase(errorHeaders.getFirst("x-routed-to"))
+                || (wwwAuthenticate != null && wwwAuthenticate.contains("io.pagopa.it"))
+                || errorBody.contains("real_io") || errorBody.contains("subscription key");
+        if (isTransparent) {
+            context.setTransparentRouting(true);
+        }
+
+        if (!errorBody.isBlank()) {
+            try {
+                context.setResponseJson(objectMapper.readTree(errorBody));
+            } catch (Exception ex) {
+                log.warn("Error parsing error response JSON");
+            }
         }
     }
 

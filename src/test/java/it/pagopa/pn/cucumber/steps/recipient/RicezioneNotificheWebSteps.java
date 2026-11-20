@@ -55,6 +55,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.pa.wrapper.BundleFullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.web.generated.openapi.clients.informal.web.pa.model.InformalNotificationSearchResponse;
@@ -75,7 +77,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -131,7 +132,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer WAIT_DEFAULT = 10000;
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
     private BundleFullReceivedNotification fullReceivedNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private OtpCodeService otpCodeService;
@@ -218,10 +219,14 @@ public class RicezioneNotificheWebSteps {
     @And("{string} tenta il recupero della notifica")
     public void notificationCanBeCorrectlyReadBy(String recipient) {
         sharedSteps.selectUser(recipient);
-        try {
-            webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+        recordError(ApiCallHelper.callBody(() -> webRecipientClient.getFullReceivedNotification(sharedSteps.getNotificationIun(), null)));
+    }
+
+    /** Registra in {@link #notificationError} il risultato solo se è un errore (non-2xx). */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            log.info("Errore HTTP {}: {}", result.statusCode(), result.problem());
+            this.notificationError = result;
         }
     }
 
@@ -328,10 +333,11 @@ public class RicezioneNotificheWebSteps {
         selectPa(sender);
         informalNotificationSearchResponse = null;
         lastMittenteSearchParam = searchParam;
-        try {
-            notificationSearchResponse = b2BSenderReadClient.searchSentNotification(searchParam);
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
+        ApiResult<LegalNotificationSearchResponse> result = ApiCallHelper.callBody(() -> b2BSenderReadClient.searchSentNotification(searchParam));
+        if (result.is2xx()) {
+            notificationSearchResponse = result.body();
+        } else {
+            recordError(result);
         }
     }
 
@@ -347,12 +353,17 @@ public class RicezioneNotificheWebSteps {
                     .atMost(1, TimeUnit.MINUTES)
                     .pollInterval(10, TimeUnit.SECONDS)
                     .until(() -> {
-                        informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
+                        ApiResult<InformalNotificationSearchResponse> result =
+                                ApiCallHelper.callBody(() -> b2BSenderReadClient.searchInformalSentNotification(searchParam));
+                        if (result.isError()) {
+                            // come in precedenza, un errore HTTP interrompe il retry e viene registrato
+                            recordError(result);
+                            return true;
+                        }
+                        informalNotificationSearchResponse = result.body();
                         return informalNotificationSearchResponse.getResultsPage() != null
                                 && !informalNotificationSearchResponse.getResultsPage().isEmpty();
                     });
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
         } catch (ConditionTimeoutException e) {
             log.warn("resultsPage ancora vuota dopo il retry per il mittente '{}'", sender);
         }
@@ -470,20 +481,15 @@ public class RicezioneNotificheWebSteps {
     @Then("{string} prova a recuperare senza successo un documento passando un index non valido")
     public void theRetrievalOfANonPresentDocumentCannotBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
-        HttpStatusCodeException e = Assertions.assertThrows(
-                HttpStatusCodeException.class,
-                () -> getReceivedNotificationDocument(1000));
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, e.getStatusCode());
+        ApiResult<NotificationAttachmentDownloadMetadataResponse> result = ApiCallHelper.callBody(() -> getReceivedNotificationDocument(1000));
+        Assertions.assertTrue(result.isError(), "Il recupero di un documento con index non valido doveva produrre un errore HTTP");
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, result.status(), "Dettaglio errore: " + result.problem());
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string}")
     public void theDocumentCanNotBeProperlyRetrievedBy(String recipient) {
-        try {
-            sharedSteps.selectUser(recipient);
-            getReceivedNotificationDocument(0);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        sharedSteps.selectUser(recipient);
+        recordError(ApiCallHelper.callBody(() -> getReceivedNotificationDocument(0)));
     }
 
     private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(int documentIndex) {
@@ -569,7 +575,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     private void retrieveAttachment(String attachmentName) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 
             if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
@@ -581,9 +587,7 @@ public class RicezioneNotificheWebSteps {
                     throw exc;
                 }
             }
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        }));
     }
 
     @Then("(il download)(il recupero) ha prodotto un errore con status code {string}")
@@ -593,8 +597,8 @@ public class RicezioneNotificheWebSteps {
                 assertThat(notificationError)
                         .as("L'operazione non ha prodotto l'errore atteso")
                         .isNotNull();
-                assertThat(notificationError.getStatusCode().toString().substring(0, 3))
-                        .as("Il codice di errore non coincide con quanto atteso")
+                assertThat(String.valueOf(notificationError.statusCode()))
+                        .as("Il codice di errore non coincide con quanto atteso. Dettaglio errore: %s", notificationError.problem())
                         .isEqualTo(statusCode);
             });
         } catch (AssertionFailedError e) {
@@ -609,7 +613,7 @@ public class RicezioneNotificheWebSteps {
                     .as("L'operazione non dovrebbe aver prodotto errori")
                     .isNull();
             //TODO: se abbiamo appurato che è null la consume è del tutto inutile
-            Assertions.assertNull(sharedSteps.consumeNotificationError());
+            Assertions.assertNull(sharedSteps.consumeNotificationErrorResult());
         } catch (AssertionFailedError e) {
             sharedSteps.throwAssertionErrorWithIUN(e);
         }
@@ -617,8 +621,9 @@ public class RicezioneNotificheWebSteps {
 
     @Then("si verifica che sia stato restituito un errore di tipo {string}")
     public void verifyApiErrorType(String errorType) {
-        assertThat(notificationError.getStatusCode().getReasonPhrase().toUpperCase())
-                .as("Il tipo di errore non coincide con quanto atteso")
+        assertThat(notificationError).as("L'operazione non ha prodotto l'errore atteso").isNotNull();
+        assertThat(notificationError.status().getReasonPhrase().toUpperCase())
+                .as("Il tipo di errore non coincide con quanto atteso. Dettaglio errore: %s", notificationError.problem())
                 .contains(errorType.toUpperCase());
     }
 
@@ -653,11 +658,7 @@ public class RicezioneNotificheWebSteps {
             }
 
             String finalKeySearch = "safestorage://" + keySearch;
-            try {
-                this.webRecipientClient.getDocumentsWeb(sharedSteps.getNotificationIun(), finalKeySearch, null);
-            } catch (HttpStatusCodeException e) {
-                this.notificationError = e;
-            }
+            recordError(ApiCallHelper.callBody(() -> this.webRecipientClient.getDocumentsWeb(sharedSteps.getNotificationIun(), finalKeySearch, null)));
         }
     }
 
@@ -666,11 +667,12 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
         Destinatario recipientObj = sharedSteps.getDestinatarioRegistry().destinatario(recipient);
-        try {
-            Assertions.assertTrue(searchNotification(recipientObj, searchParam));
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-            log.info("Errore durante la ricerca della notifica: {}", e.getMessage());
+        ApiResult<Boolean> result = ApiCallHelper.callBody(() -> searchNotification(recipientObj, searchParam));
+        if (result.is2xx()) {
+            Assertions.assertTrue(result.body());
+        } else {
+            log.info("Errore durante la ricerca della notifica");
+            recordError(result);
         }
     }
 
@@ -897,13 +899,14 @@ public class RicezioneNotificheWebSteps {
 
     @When("viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:")
     public void vieneInvocataLApiDiFiltroRootPassandoLeSeguentiPA(List<String> paList) {
-        try {
-            List<String> paIds = paList.stream()
-                    .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
-                    .collect(Collectors.toList());
-            this.filteredPaIdsResponse = this.aooUoIdsClient.getFilteredAooUoIdV2Private(paIds);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
+        List<String> paIds = paList.stream()
+                .map(pa -> getSenderIdPa(pa.replace("\"", "").trim()))
+                .collect(Collectors.toList());
+        ApiResult<FilteredPaIdsResponse> result = ApiCallHelper.callBody(() -> this.aooUoIdsClient.getFilteredAooUoIdV2Private(paIds));
+        if (result.is2xx()) {
+            this.filteredPaIdsResponse = result.body();
+        } else {
+            sharedSteps.setNotificationError(result);
         }
     }
 
@@ -943,31 +946,29 @@ public class RicezioneNotificheWebSteps {
     }
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, LegalCourtesyAddressWrapper.ChannelType type, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguageCxLanguage) {
-        try {
+        sharedSteps.setNotificationError(ApiCallHelper.run(() -> {
+            String code = verificationCode;
             if (inserimento) {
                 Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
                 // il service tiene traccia dell'ultimo OTP già restituito per questa pk+canale
                 // e attende su Dynamo finché non ne compare uno nuovo dopo la POST
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification)), xPagopaPnLanguageCxLanguage);
-                verificationCode = otpCodeService.getNewOtp(destinatario, type);
+                code = otpCodeService.getNewOtp(destinatario, type);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguageCxLanguage);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(code)), xPagopaPnLanguageCxLanguage);
+        }));
     }
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento, CxLanguage xPagopaPnLanguage) {
-        try {
+        sharedSteps.setNotificationError(ApiCallHelper.run(() -> {
+            String code = verificationCode;
             if (inserimento) {
                 Destinatario destinatario = sharedSteps.getDestinatariList().get(0);
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification)), xPagopaPnLanguage);
-                verificationCode = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
+                code = otpCodeService.getNewOtp(destinatario, LegalCourtesyAddressWrapper.ChannelType.PEC);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)), xPagopaPnLanguage);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(code)), xPagopaPnLanguage);
+        }));
     }
 
     private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode, CxLanguage xPagopaPnLanguage) {
@@ -976,19 +977,16 @@ public class RicezioneNotificheWebSteps {
                 .value(addressVerification)
                 .verificationCode(code[0]);
 
-        Assertions.assertThrows(HttpStatusCodeException.class,
+        ApiResult<Void> result = ApiCallHelper.run(
                 () -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.PEC, verification, xPagopaPnLanguage));
+        Assertions.assertTrue(result.isError(), "L'inserimento della PEC con codice errato doveva produrre un errore HTTP");
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
     public void vieneCancellataEmailDiCortesiaDalComune(String pa) {
         String senderIdPa = getSenderIdPa(pa);
-
-        try {
-            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.EMAIL);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.run(() ->
+                this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, LegalCourtesyAddressWrapper.ChannelType.EMAIL)));
     }
 
     private String getSenderIdPa(String pa) {
@@ -1005,15 +1003,15 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'inserimento ha prodotto un errore con status code {string}")
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
+        Assertions.assertNotNull(error, "L'inserimento non ha prodotto errori");
+        Assertions.assertEquals(statusCode, String.valueOf(error.statusCode()), "Dettaglio errore: " + error.problem());
     }
 
     @Then("l'inserimento va a buon fine e NON ha prodotto un errore")
     public void lInserimentoNonHaProdottoErrore() {
-        HttpStatusCodeException codeException = sharedSteps.consumeNotificationError();
-        Assertions.assertNull(codeException);
+        ApiResult<?> error = sharedSteps.consumeNotificationErrorResult();
+        Assertions.assertNull(error, () -> "L'inserimento ha prodotto l'errore HTTP " + error.statusCode() + ": " + error.problem());
     }
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
@@ -1110,16 +1108,16 @@ public class RicezioneNotificheWebSteps {
 
     private void postRecipientLegalAddressSercqError(String senderIdPa, String address, CxLanguage xPagopaPnLanguage) {
         Assertions.assertDoesNotThrow(() -> {
-            try {
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(
-                        senderIdPa,
-                        LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
-                        (new AddressVerification().value(address)), xPagopaPnLanguage
-                );
+            ApiResult<Void> result = ApiCallHelper.run(() -> this.iPnWebUserAttributesClient.postRecipientLegalAddress(
+                    senderIdPa,
+                    LegalCourtesyAddressWrapper.ChannelType.SERCQ_SEND,
+                    (new AddressVerification().value(address)), xPagopaPnLanguage
+            ));
+            if (result.is2xx()) {
                 log.info("Chiamata SERCQ SEND completata con successo. Grazie.");
-            } catch (HttpStatusCodeException e) {
-                log.error("Errore durante la chiamata SERCQ SEND", e);
-                sharedSteps.setNotificationError(e);
+            } else {
+                log.error("Errore durante la chiamata SERCQ SEND: {} {}", result.statusCode(), result.problem());
+                sharedSteps.setNotificationError(result);
             }
         });
     }
