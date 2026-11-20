@@ -89,6 +89,11 @@ public class DelayerSteps {
         service.importData(csvName, context.expectedDeliveryDate);
     }
 
+    @Given("il CSV {string} è importato da S3 nella pn-DelayerPaperDelivery tramite lambda di test con deliveryWeek {string}")
+    public void populateTargetTable(String csvName, String deliveryWeek) {
+        service.importData(csvName, deliveryWeek);
+    }
+
     @Given("vengono puliti i dati dalle tabelle target")
     public void deleteDataFormTargetTable() {
         service.deleteDataAll();

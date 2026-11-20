@@ -5,15 +5,18 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
+import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
 
@@ -26,24 +29,31 @@ public class DelayerMockSteps {
     private final DelayerMockService mockService;
     private final DelayerSevice service;
 
-    @When("vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES per la deliveryDate {string} e la provincia {string}")
-    public void deleteMockTables(String deliveryDate, String province) {
-        mockService.deleteMockTables(deliveryDate, province);
+    private Map<DelayerTable, Integer> realTablesSnapshot;
+
+    @When("vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES")
+    public void deleteMockTables() {
+        mockService.deleteMockTables();
     }
 
+    // Verifica sull'intera tabella, non su una singola deliveryDate/provincia: DELETE_MOCK_TABLES deve svuotarla completamente.
     // La disponibilità delle tabelle mock è garantita dallo step DELETE_MOCK_TABLES: qui un errore di lettura fa fallire il test
-    @Then("non devono esistere limiti mittente mock per la deliveryDate {string} e la provincia {string}")
-    public void verifyNoMockSenderLimits(String deliveryDate, String province) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockSenderLimitsSize(deliveryDate, province),
-                "pn-PaperDeliverySenderLimitMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
-    }
-
-    @Then("non devono esistere contatori mock per la deliveryDate {string}, la provincia {string} e il prodotto {string}")
-    public void verifyNoMockCounters(String deliveryDate, String province, String product) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockCountersSumEstimatesSize(deliveryDate, province, product),
-                "pn-PaperDeliveryCountersMock contiene ancora record per deliveryDate '%s', provincia '%s' e prodotto '%s'".formatted(deliveryDate, province, product));
+    @Then("la tabella {string} non contiene alcun record")
+    public void verifyMockTableEmpty(String tableName) {
+        DelayerTable table = DelayerMockService.MOCK_TABLES.stream()
+                .filter(mockTable -> mockTable.tableName.equals(tableName))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "'%s' non è una delle tabelle mock gestite da DELETE_MOCK_TABLES: %s".formatted(tableName, DelayerMockService.MOCK_TABLES)));
+        try {
+            Awaitility.await()
+                    .atMost(Duration.ofMinutes(5))
+                    .pollInterval(Duration.ofSeconds(10))
+                    .pollDelay(Duration.ZERO)
+                    .until(() -> mockService.isMockTableEmpty(table));
+        } catch (ConditionTimeoutException e) {
+            Assertions.fail("%s contiene ancora record".formatted(tableName));
+        }
     }
 
     @Given("vengono caricate le capacità dei recapitisti mock tramite il file {string}")
@@ -70,25 +80,11 @@ public class DelayerMockSteps {
                 "pn-DelayerPaperDeliveryMock non contiene record per deliveryDate '%s'".formatted(deliveryDate));
     }
 
-    @Then("non devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate {string}")
-    public void verifyNoMockPaperDeliveries(String deliveryDate) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockPaperDeliverySize(deliveryDate),
-                "pn-DelayerPaperDeliveryMock contiene ancora record per deliveryDate '%s'".formatted(deliveryDate));
-    }
-
     @Then("devono esistere capacità dichiarate mock per la deliveryDate {string} e la provincia {string}")
     public void verifyMockDeclaredCapacities(String deliveryDate, String province) {
         awaitNotEmptyMockTable(
                 () -> mockService.getMockDeclaredCapacitySize(province, deliveryDate),
                 "pn-PaperDeliveryDriverCapacitiesMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
-    }
-
-    @Then("non devono esistere capacità dichiarate mock per la deliveryDate {string} e la provincia {string}")
-    public void verifyNoMockDeclaredCapacities(String deliveryDate, String province) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockDeclaredCapacitySize(province, deliveryDate),
-                "pn-PaperDeliveryDriverCapacitiesMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
     }
 
     @Then("devono esistere capacità utilizzate mock per la deliveryDate {string}, il recapitista {string} e la geokey {string}")
@@ -98,13 +94,6 @@ public class DelayerMockSteps {
                 "pn-PaperDeliveryDriverUsedCapacitiesMock non contiene record per deliveryDate '%s', recapitista '%s' e geokey '%s'".formatted(deliveryDate, driver, geoKey));
     }
 
-    @Then("non devono esistere capacità utilizzate mock per la deliveryDate {string}, il recapitista {string} e la geokey {string}")
-    public void verifyNoMockUsedCapacities(String deliveryDate, String driver, String geoKey) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockUsedCapacitySize(driver, geoKey, deliveryDate),
-                "pn-PaperDeliveryDriverUsedCapacitiesMock contiene ancora record per deliveryDate '%s', recapitista '%s' e geokey '%s'".formatted(deliveryDate, driver, geoKey));
-    }
-
     @Then("devono esistere limiti mittente utilizzati mock per la deliveryDate {string} e la provincia {string}")
     public void verifyMockUsedSenderLimits(String deliveryDate, String province) {
         awaitNotEmptyMockTable(
@@ -112,15 +101,27 @@ public class DelayerMockSteps {
                 "pn-PaperDeliveryUsedSenderLimitMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
     }
 
-    @Then("non devono esistere limiti mittente utilizzati mock per la deliveryDate {string} e la provincia {string}")
-    public void verifyNoMockUsedSenderLimits(String deliveryDate, String province) {
-        awaitEmptyMockTable(
-                () -> mockService.getMockUsedSenderLimitSize(deliveryDate, province),
-                "pn-PaperDeliveryUsedSenderLimitMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    @Given("vengono conteggiati i record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string}")
+    public void countRealTables(String deliveryDate, String province, String product, String driver) {
+        realTablesSnapshot = mockService.countRealTables(deliveryDate, province, product, driver);
+        log.info("Conteggio record tabelle reali prima di DELETE_MOCK_TABLES: {}", realTablesSnapshot);
     }
 
-    private void awaitEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
-        awaitMockTableSize(sizeSupplier, size -> size == 0, failMessage);
+    @Then("il numero di record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string} è uguale o maggiore a quello conteggiato prima di DELETE_MOCK_TABLES")
+    public void verifyRealTablesNotReduced(String deliveryDate, String province, String product, String driver) {
+        Assertions.assertThat(realTablesSnapshot)
+                .as("Conteggio delle tabelle reali non effettuato prima di DELETE_MOCK_TABLES")
+                .isNotNull();
+
+        Map<DelayerTable, Integer> actual = mockService.countRealTables(deliveryDate, province, product, driver);
+        log.info("Conteggio record tabelle reali dopo DELETE_MOCK_TABLES: {}", actual);
+
+        SoftAssertions softly = new SoftAssertions();
+        realTablesSnapshot.forEach((table, before) ->
+                softly.assertThat(actual.get(table))
+                        .as("%s: record prima di DELETE_MOCK_TABLES %d, dopo %d", table.tableName, before, actual.get(table))
+                        .isGreaterThanOrEqualTo(before));
+        softly.assertAll();
     }
 
     private void awaitNotEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {

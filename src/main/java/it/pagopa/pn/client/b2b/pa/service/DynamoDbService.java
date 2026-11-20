@@ -8,6 +8,7 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +114,20 @@ public class DynamoDbService {
                 .items()
                 .stream()
                 .toList();
+    }
+
+    /**
+     * Verifica se la tabella non contiene alcun record tramite una Scan con Limit=1 e senza filtri.
+     * Il costo e' fisso (~0,5 RCU per chiamata) e indipendente dalla dimensione della tabella:
+     * una COUNT completa (Select.COUNT) addebiterebbe invece la lettura dell'intera tabella.
+     * In assenza di filter expression, nessun item restituito con Limit=1 significa tabella vuota.
+     */
+    public boolean isEmpty(String tableName) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(1)
+                .build();
+        return dynamoDbClient.scan(request).count() == 0;
     }
 
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {

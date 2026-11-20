@@ -44,6 +44,7 @@ import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
@@ -273,6 +274,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperTrackerSchemaValidatorProxy.class,
         DelayerLambdaClient.class,
         DelayerSevice.class,
+        DelayerMockService.class,
         DelayerValidator.class,
         DelayerContext.class,
         DelayerSuiteContext.class,
