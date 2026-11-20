@@ -84,8 +84,9 @@ public class RaddAltSteps {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
     private static final Map<String, String> DOCUMENT_TYPE_ALIASES = Map.of(
-            "documentiFrontespizio", "COVER_FILE",
-            "documentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI"
+            "numeroDocumentiFrontespizio", "COVER_FILE",
+            "numeroDocumentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI",
+            "numeroDocumentiAtto", "ATTO_NOTIFICATO"
     );
 
     @Autowired
@@ -339,18 +340,20 @@ public class RaddAltSteps {
 
         Assertions.assertFalse(data.isEmpty(), "La tabella dei risultati non deve essere vuota");
 
-        int expectedCode = Integer.parseInt(data.get("codiceErrore"));
-        String expectedMessage = data.get("descrizioneErrore");
+        if (data.containsKey("codiceErrore") && data.containsKey("descrizioneErrore")) {
+            int expectedCode = Integer.parseInt(data.get("codiceErrore"));
+            String expectedMessage = data.get("descrizioneErrore");
 
-        StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
-        Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
-        Assertions.assertEquals(expectedStatusCode, this.startTransactionResponse.getStatus().getCode(),
-                "Codice errore non coerente");
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage(), "Messaggio di errore non presente");
-        Assertions.assertEquals(expectedMessage.trim().toLowerCase(),
-                this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
-                "Descrizione errore non coerente");
+            StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
+            Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
+            Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
+            Assertions.assertEquals(expectedStatusCode, this.startTransactionResponse.getStatus().getCode(),
+                    "Codice errore non coerente");
+            Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage(), "Messaggio di errore non presente");
+            Assertions.assertEquals(expectedMessage.trim().toLowerCase(),
+                    this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
+                    "Descrizione errore non coerente");
+        }
 
         Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList(),
                 "La lista degli atti non deve essere null");
