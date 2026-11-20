@@ -4,6 +4,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.DelayerTable;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
@@ -12,10 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.function.IntPredicate;
 import java.util.function.Supplier;
@@ -24,6 +26,8 @@ import java.util.function.Supplier;
 @RequiredArgsConstructor
 @ScenarioScope
 public class DelayerMockSteps {
+
+    private static final PollingConfig TABLES_POLLING = PollingConfig.of(Duration.ofMinutes(5), Duration.ofSeconds(10));
 
     private final DelayerContext context;
     private final DelayerMockService mockService;
@@ -46,12 +50,8 @@ public class DelayerMockSteps {
                 .orElseThrow(() -> new IllegalArgumentException(
                         "'%s' non è una delle tabelle mock gestite da DELETE_MOCK_TABLES: %s".formatted(tableName, DelayerMockService.MOCK_TABLES)));
         try {
-            Awaitility.await()
-                    .atMost(Duration.ofMinutes(5))
-                    .pollInterval(Duration.ofSeconds(10))
-                    .pollDelay(Duration.ZERO)
-                    .until(() -> mockService.isMockTableEmpty(table));
-        } catch (ConditionTimeoutException e) {
+            Poller.pollUntil(() -> mockService.isMockTableEmpty(table), Boolean::booleanValue, TABLES_POLLING);
+        } catch (PollingTimeoutException e) {
             Assertions.fail("%s contiene ancora record".formatted(tableName));
         }
     }
@@ -101,10 +101,29 @@ public class DelayerMockSteps {
                 "pn-PaperDeliveryUsedSenderLimitMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
     }
 
-    @Given("vengono conteggiati i record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string}")
+    // Ogni tabella reale deve contenere almeno un record: altrimenti il confronto "uguale o maggiore" dopo DELETE_MOCK_TABLES passerebbe banalmente (0 >= 0)
+    @Given("vengono conteggiati i record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string} e ciascuna contiene almeno un record")
     public void countRealTables(String deliveryDate, String province, String product, String driver) {
-        realTablesSnapshot = mockService.countRealTables(deliveryDate, province, product, driver);
+        try {
+            realTablesSnapshot = Poller.pollUntil(() -> {
+                        realTablesSnapshot = mockService.countRealTables(deliveryDate, province, product, driver);
+                        return realTablesSnapshot;
+                    },
+                    counts -> counts.values().stream().allMatch(count -> count > 0),
+                    TABLES_POLLING);
+        } catch (PollingTimeoutException e) {
+            Assertions.fail("Tabelle reali senza record per deliveryDate '%s', provincia '%s', prodotto '%s' e recapitista '%s': %s"
+                    .formatted(deliveryDate, province, product, driver, emptyTables(realTablesSnapshot)));
+        }
         log.info("Conteggio record tabelle reali prima di DELETE_MOCK_TABLES: {}", realTablesSnapshot);
+    }
+
+    private static List<String> emptyTables(Map<DelayerTable, Integer> counts) {
+        if (counts == null) return List.of();
+        return counts.entrySet().stream()
+                .filter(entry -> entry.getValue() == null || entry.getValue() <= 0)
+                .map(entry -> entry.getKey().tableName)
+                .toList();
     }
 
     @Then("il numero di record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string} è uguale o maggiore a quello conteggiato prima di DELETE_MOCK_TABLES")
@@ -130,12 +149,8 @@ public class DelayerMockSteps {
 
     private void awaitMockTableSize(Supplier<Integer> sizeSupplier, IntPredicate condition, String failMessage) {
         try {
-            Awaitility.await()
-                    .atMost(Duration.ofMinutes(5))
-                    .pollInterval(Duration.ofSeconds(10))
-                    .pollDelay(Duration.ZERO)
-                    .until(() -> condition.test(sizeSupplier.get()));
-        } catch (ConditionTimeoutException e) {
+            Poller.pollUntil(sizeSupplier::get, condition::test, TABLES_POLLING);
+        } catch (PollingTimeoutException e) {
             Assertions.fail(failMessage);
         }
     }
