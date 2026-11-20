@@ -16,6 +16,18 @@ public final class ApiCallHelper {
         ResponseEntity<T> execute() throws Exception;
     }
 
+    /** Chiamata che restituisce direttamente il body (es. metodi dei client wrapper). */
+    @FunctionalInterface
+    public interface BodyCall<T> {
+        T execute();
+    }
+
+    /** Chiamata senza valore di ritorno. */
+    @FunctionalInterface
+    public interface VoidCall {
+        void execute();
+    }
+
     /** Chiamata generica che cattura errori e ritorna ApiResult<T>. */
     public static <T> ApiResult<T> call(RestCall<T> call) {
         try {
@@ -23,11 +35,7 @@ public final class ApiCallHelper {
             return new ApiResult<>(resp.getStatusCode(), resp.getBody(), null, resp.getHeaders());
 
         } catch (RestClientResponseException httpEx) {
-            HttpHeaders h = safeHeaders(httpEx);
-            String problem = extractProblemAsString(httpEx);
-            HttpStatus status = HttpStatus.resolve(httpEx.getRawStatusCode());
-            if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
-            return new ApiResult<>(status, null, problem, h);
+            return fromHttpError(httpEx);
 
         } catch (ResourceAccessException ioEx) {
             return new ApiResult<>(
@@ -47,12 +55,53 @@ public final class ApiCallHelper {
         }
     }
 
+    /**
+     * Esegue una chiamata che restituisce il solo body e la converte in ApiResult<T>.
+     * <p>
+     * In caso di successo lo status è un 200 <b>sintetico</b>: il client wrapper non espone lo status reale.
+     * Gli errori HTTP ({@link RestClientResponseException}) e di rete ({@link ResourceAccessException},
+     * mappati a 503) diventano ApiResult; qualsiasi altra eccezione viene propagata al chiamante.
+     */
+    public static <T> ApiResult<T> callBody(BodyCall<T> call) {
+        try {
+            T body = call.execute();
+            return new ApiResult<>(HttpStatus.OK, body, null, new HttpHeaders());
+        } catch (RestClientResponseException httpEx) {
+            return fromHttpError(httpEx);
+        } catch (ResourceAccessException ioEx) {
+            return fromNetworkError(ioEx);
+        }
+    }
+
+    /** Come {@link #callBody(BodyCall)} per chiamate senza valore di ritorno. */
+    public static ApiResult<Void> run(VoidCall call) {
+        return callBody(() -> {
+            call.execute();
+            return null;
+        });
+    }
+
+    /** Converte un errore HTTP (risposta non-2xx) in ApiResult. */
+    public static <T> ApiResult<T> fromHttpError(RestClientResponseException httpEx) {
+        HttpHeaders h = safeHeaders(httpEx);
+        String problem = extractProblemAsString(httpEx);
+        HttpStatus status = HttpStatus.resolve(httpEx.getRawStatusCode());
+        if (status == null) status = HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ApiResult<>(status, null, problem, h);
+    }
+
     /** Ritorna un ApiResult 400 già pronto. */
     public static <T> ApiResult<T> badRequest(String detail) {
         return new ApiResult<>(HttpStatus.BAD_REQUEST, null, detail, new HttpHeaders());
     }
 
     /* ===================== Helpers interni ===================== */
+
+    private static <T> ApiResult<T> fromNetworkError(ResourceAccessException ioEx) {
+        String detail = "Upstream unavailable: " + ioEx.getClass().getSimpleName();
+        if (ioEx.getMessage() != null) detail += " - " + ioEx.getMessage();
+        return new ApiResult<>(HttpStatus.SERVICE_UNAVAILABLE, null, truncate(detail, 4000), new HttpHeaders());
+    }
 
     private static HttpHeaders safeHeaders(RestClientResponseException ex) {
         HttpHeaders h = ex.getResponseHeaders();
