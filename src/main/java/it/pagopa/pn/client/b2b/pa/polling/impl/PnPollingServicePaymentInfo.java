@@ -1,8 +1,9 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.BffPaymentInfoItem;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPaymentInfo;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponsePaymentInfo;
@@ -20,7 +21,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.PAYMENT_INFO)
+@Service
+@PnPollingService(PnPollingType.PAYMENT_INFO)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServicePaymentInfo extends PnPollingTemplate<PnPollingResponsePaymentInfo> {

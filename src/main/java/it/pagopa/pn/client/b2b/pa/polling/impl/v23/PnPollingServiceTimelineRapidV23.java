@@ -2,8 +2,9 @@ package it.pagopa.pn.client.b2b.pa.polling.impl.v23;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
@@ -19,7 +20,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_RAPID_V23)
+@Service
+@PnPollingService(PnPollingType.TIMELINE_RAPID_V23)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollingResponseV23> {

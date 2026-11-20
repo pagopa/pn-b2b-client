@@ -2,8 +2,9 @@ package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV29;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
@@ -18,7 +19,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.STATUS_RAPID_V29)
+@Service
+@PnPollingService(PnPollingType.STATUS_RAPID_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServiceStatusRapidV29 extends PnPollingTemplate<PnPollingResponseV29> {

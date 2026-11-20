@@ -4,7 +4,6 @@ import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -17,48 +16,31 @@ import java.util.Objects;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingFactory implements SettableApiKey {
     private final ApplicationContext context;
+    private final PnPollingServiceRegistry registry;
     private String apiKey;
     private ApiKeyType apiKeyType;
 
 
-    public PnPollingFactory(ApplicationContext context) {
+    public PnPollingFactory(ApplicationContext context, PnPollingServiceRegistry registry) {
         this.context = context;
+        this.registry = registry;
     }
 
     public IPnPollingService<?> getPollingService(PnPollingType pollingType) {
         Objects.requireNonNull(pollingType, "pollingType is required");
-        return resolve(pollingType.getServiceName());
-    }
-
-    /** @deprecated usare {@link #getPollingService(PnPollingType)} */
-    @Deprecated
-    public IPnPollingService<?> getPollingService(String pollingType) {
-        return resolve(pollingType);
+        String beanName = registry.getBeanName(pollingType)
+                .orElseThrow(() -> new PnPollingException("Unsupported IPnPollingService type: " + pollingType));
+        IPnPollingService<?> iPnPollingService = context.getBean(beanName, IPnPollingService.class);
+        if(apiKeyType != null){
+            iPnPollingService.setApiKeys(apiKeyType);
+        }else if(apiKey != null){
+            iPnPollingService.setApiKey(apiKey);
+        }
+        return iPnPollingService;
     }
 
     public void execute(PnPollingType pollingType, String iun, PnPollingParameter pnPollingParameter) {
         getPollingService(pollingType).waitForEvent(iun, pnPollingParameter);
-    }
-
-    /** @deprecated usare {@link #execute(PnPollingType, String, PnPollingParameter)} */
-    @Deprecated
-    public void execute(String pollingType, String iun, PnPollingParameter pnPollingParameter) {
-        resolve(pollingType).waitForEvent(iun, pnPollingParameter);
-    }
-
-    private IPnPollingService<?> resolve(String serviceName) {
-        try{
-            IPnPollingService<?> iPnPollingService = context.getBean(serviceName, IPnPollingService.class);
-            if(apiKeyType != null){
-                iPnPollingService.setApiKeys(apiKeyType);
-            }else if(apiKey != null){
-                iPnPollingService.setApiKey(apiKey);
-            }
-
-            return iPnPollingService;
-        }catch (NoSuchBeanDefinitionException noSuchBeanDefinitionException){
-            throw new PnPollingException("Unsupported IPnPollingService type: " + serviceName);
-        }
     }
 
 

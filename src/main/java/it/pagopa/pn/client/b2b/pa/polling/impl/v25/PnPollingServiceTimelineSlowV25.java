@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v25;
 
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -8,7 +9,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.TIMELINE_SLOW_V25)
+@Service
+@PnPollingService(PnPollingType.TIMELINE_SLOW_V25)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceTimelineSlowV25 extends PnPollingServiceTimelineRapidV25 {
     public PnPollingServiceTimelineSlowV25(TimingForPolling timingForPolling, IPnPaB2bClient b2bClient) {

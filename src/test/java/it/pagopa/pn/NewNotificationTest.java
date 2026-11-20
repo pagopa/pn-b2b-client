@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingServiceRegistry;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
@@ -63,6 +64,7 @@ import static org.awaitility.Awaitility.await;
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
+        PnPollingServiceRegistry.class,
         //TODO: al variare della versione di notifica utilizzata nel test, aggiornare questi due valori
         NotificationUtilsV24.class,
         PnPollingServiceValidationStatusV26.class,

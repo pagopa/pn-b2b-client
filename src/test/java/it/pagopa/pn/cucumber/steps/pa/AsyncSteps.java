@@ -164,9 +164,9 @@ public class AsyncSteps {
         PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
                 .getPollingService(PnPollingType.PAYMENT_INFO);
         PnPollingResponsePaymentInfo pollingResponse = pollingService.waitForEvent(
-                PnPollingType.PAYMENT_INFO.getServiceName(),
+                PnPollingType.PAYMENT_INFO.name(),
                 PnPollingParameter.builder()
-                        .value(PnPollingType.PAYMENT_INFO.getServiceName())
+                        .value(PnPollingType.PAYMENT_INFO.name())
                         .pnPollingPaymentInfo(pollingPaymentInfo)
                         .build());
 

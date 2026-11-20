@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v29;
 
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -8,7 +9,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.STATUS_SLOW_V29)
+@Service
+@PnPollingService(PnPollingType.STATUS_SLOW_V29)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPollingServiceStatusSlowV29 extends PnPollingServiceStatusRapidV29 {
 

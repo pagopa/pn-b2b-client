@@ -14,6 +14,7 @@ import it.pagopa.pn.client.b2b.pa.parsing.config.PnLegalFactTokens;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.impl.PnParser;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingServiceRegistry;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServicePaymentInfo;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v1.*;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v20.*;
@@ -119,6 +120,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnB2bClientTimingConfigs.class,
         PnIOConnectorClientImpl.class,
         PnPollingFactory.class,
+        PnPollingServiceRegistry.class,
         PnPollingServicePaymentInfo.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,

@@ -2,7 +2,8 @@ package it.pagopa.pn.client.b2b.pa.polling.impl.v25;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
@@ -18,7 +19,8 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_SLOW_E2E_V25)
+@Service
+@PnPollingService(PnPollingType.TIMELINE_SLOW_E2E_V25)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingServiceTimelineSlowE2eV25 extends PnPollingServiceTimelineRapidV25 {
