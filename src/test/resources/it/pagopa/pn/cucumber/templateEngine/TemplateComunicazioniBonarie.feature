@@ -304,7 +304,7 @@ Feature: Comunicazioni bonarie
     And il corpo del messaggio contiene il testo "<message>"
     Examples:
       | hasAttachment | message                                                                                                                                                                                                       |
-      | true          | All&#39;attenzione di recipient_denomination, body_primaryContent Per avere maggiori informazioni si consiglia di prendere visione degli allegati , che possono fornire dettagli importanti                   |
+      | true          | All&#39;attenzione di recipient_denomination, body_primaryContent Per avere maggiori informazioni &egrave; necessario prendere visione degli allegati , che possono fornire dettagli importanti                |
       | false         | All&#39;attenzione di recipient_denomination, body_primaryContent In ogni caso, qualora si avesse bisogno di assistenza, &egrave; possibile contattare sender_denomination attraverso i suoi canali ufficiali |
 
   @templateEngine # /templates-engine-private/v1/templates/informal/pec-communication-body
