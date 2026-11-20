@@ -1,5 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.InformalNotificationTerminationApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.MessagesApi;
@@ -13,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -42,7 +46,7 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
 
     public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url.pagopa}") String basePath, @Value("${pn.interop.enable}") String enableInterop, InteropTokenSingleton interopTokenSingleton, @Value("${pn.external.api-key}") String apiKeyMvp1, @Value("${pn.external.api-key-2}") String apiKeyMvp2, @Value("${pn.external.api-key-GA}") String apiKeyGa, @Value("${pn.external.api-key-SON}") String apiKeySon, @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
 
-        this.restTemplate = restTemplate;
+        this.restTemplate = withIsoDateSerialization(restTemplate);
         this.basePath = basePath;
         this.enableInterop = enableInterop;
         this.interopTokenSingleton = interopTokenSingleton;
@@ -51,6 +55,40 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
         this.apiKeyRoot = apiKeyRoot;
+    }
+
+    /**
+     * Il RestTemplate condiviso serializza le date (es. PagoPaPaymentBase.dueDate) come timestamp numerici, rifiutati
+     * dalla validazione OpenAPI dell'API esterna (string date-time): questa copia le serializza in ISO-8601 e mantiene
+     * request factory ed error handler.
+     */
+    private static RestTemplate withIsoDateSerialization(RestTemplate sharedRestTemplate) {
+        List<HttpMessageConverter<?>> messageConverters = sharedRestTemplate.getMessageConverters().stream()
+                .<HttpMessageConverter<?>>map(converter -> converter instanceof MappingJackson2HttpMessageConverter jacksonConverter
+                        ? new MappingJackson2HttpMessageConverter(jacksonConverter.getObjectMapper().copy()
+                                .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS))
+                        : converter)
+                .toList();
+        RestTemplate informalRestTemplate = new RestTemplate(sharedRestTemplate.getRequestFactory());
+        informalRestTemplate.setMessageConverters(messageConverters);
+        informalRestTemplate.setErrorHandler(sharedRestTemplate.getErrorHandler());
+        return informalRestTemplate;
+    }
+
+    // Body JSON effettivamente inviato, serializzato con lo stesso ObjectMapper del converter (utile per il debug)
+    private String toJsonBody(Object body) {
+        return restTemplate.getMessageConverters().stream()
+                .filter(MappingJackson2HttpMessageConverter.class::isInstance)
+                .map(converter -> ((MappingJackson2HttpMessageConverter) converter).getObjectMapper())
+                .findFirst()
+                .map(mapper -> {
+                    try {
+                        return mapper.writeValueAsString(body);
+                    } catch (JsonProcessingException e) {
+                        return "<serializzazione fallita: " + e.getMessage() + ">";
+                    }
+                })
+                .orElseGet(() -> String.valueOf(body));
     }
 
     private MessagesApi messagesApi(SettableApiKey.ApiKeyType apiKeyType) {
@@ -109,6 +147,7 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
 
     @Override
     public NewInformalNotificationResponse sendNewInformalNotificationV1(InformalNotificationRequestV1 request, SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
+        log.info("sendNewInformalNotificationV1 apiKeyType={} body={}", apiKeyType, toJsonBody(request));
         return notificationApi(apiKeyType).sendNewInformalNotificationV1(request);
     }
 
