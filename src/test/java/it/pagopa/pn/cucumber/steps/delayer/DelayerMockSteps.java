@@ -20,6 +20,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.IntPredicate;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -104,12 +105,13 @@ public class DelayerMockSteps {
     // Ogni tabella reale deve contenere almeno un record: altrimenti il confronto "uguale o maggiore" dopo DELETE_MOCK_TABLES passerebbe banalmente (0 >= 0)
     @Given("vengono conteggiati i record delle tabelle reali per la deliveryDate {string}, la provincia {string}, il prodotto {string} e il recapitista {string} e ciascuna contiene almeno un record")
     public void countRealTables(String deliveryDate, String province, String product, String driver) {
+        Predicate<Map<DelayerTable, Integer>> allTablesNotEmpty = counts -> counts.values().stream().allMatch(count -> count > 0);
         try {
             realTablesSnapshot = Poller.pollUntil(() -> {
                         realTablesSnapshot = mockService.countRealTables(deliveryDate, province, product, driver);
                         return realTablesSnapshot;
                     },
-                    counts -> counts.values().stream().allMatch(count -> count > 0),
+                    allTablesNotEmpty,
                     TABLES_POLLING);
         } catch (PollingTimeoutException e) {
             Assertions.fail("Tabelle reali senza record per deliveryDate '%s', provincia '%s', prodotto '%s' e recapitista '%s': %s"
