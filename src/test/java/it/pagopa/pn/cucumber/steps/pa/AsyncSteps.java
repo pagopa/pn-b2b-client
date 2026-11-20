@@ -7,7 +7,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.payment.PaymentInfoRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPaymentInfo;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponsePaymentInfo;
@@ -162,11 +162,11 @@ public class AsyncSteps {
                 sharedSteps.getNotificationIun(), notices, previousAmount, expectedAmount);
 
         PnPollingServicePaymentInfo pollingService = (PnPollingServicePaymentInfo) sharedSteps.getPollingFactory()
-                .getPollingService(PnPollingStrategy.PAYMENT_INFO);
+                .getPollingService(PnPollingType.PAYMENT_INFO);
         PnPollingResponsePaymentInfo pollingResponse = pollingService.waitForEvent(
-                PnPollingStrategy.PAYMENT_INFO,
+                PnPollingType.PAYMENT_INFO.getServiceName(),
                 PnPollingParameter.builder()
-                        .value(PnPollingStrategy.PAYMENT_INFO)
+                        .value(PnPollingType.PAYMENT_INFO.getServiceName())
                         .pnPollingPaymentInfo(pollingPaymentInfo)
                         .build());
 

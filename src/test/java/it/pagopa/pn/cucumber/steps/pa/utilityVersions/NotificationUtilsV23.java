@@ -4,7 +4,7 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -466,26 +466,26 @@ public class NotificationUtilsV23 extends B2bUtils {
     }
 
     public PnPollingResponseV23 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
-        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingStrategy(pollingStrategy));
+        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingType(pollingStrategy));
         return (PnPollingResponseV23) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
     }
 
-    public static String getPollingStrategy(String pollingStrategy) {
+    public static PnPollingType getPollingType(String pollingStrategy) {
         return switch (pollingStrategy) {
-            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V23;
-            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V23;
-            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V23;
-            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V23;
-            case TIMELINE_SLOW_E2E -> PnPollingStrategy.TIMELINE_SLOW_E2E_V23;
-            case TIMELINE_EXTRA_RAPID -> PnPollingStrategy.TIMELINE_EXTRA_RAPID_V23;
-            case STATUS_EXTRA_RAPID -> PnPollingStrategy.STATUS_EXTRA_RAPID_V23;
-            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V23;
-            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V23;
-            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V23;
-            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V23;
-            case WEBHOOK -> PnPollingStrategy.WEBHOOK_V23;
+            case TIMELINE_RAPID -> PnPollingType.TIMELINE_RAPID_V23;
+            case TIMELINE_SLOW -> PnPollingType.TIMELINE_SLOW_V23;
+            case STATUS_RAPID -> PnPollingType.STATUS_RAPID_V23;
+            case STATUS_SLOW -> PnPollingType.STATUS_SLOW_V23;
+            case TIMELINE_SLOW_E2E -> PnPollingType.TIMELINE_SLOW_E2E_V23;
+            case TIMELINE_EXTRA_RAPID -> PnPollingType.TIMELINE_EXTRA_RAPID_V23;
+            case STATUS_EXTRA_RAPID -> PnPollingType.STATUS_EXTRA_RAPID_V23;
+            case VALIDATION_STATUS -> PnPollingType.VALIDATION_STATUS_V23;
+            case VALIDATION_STATUS_ACCEPTATION_SHORT -> PnPollingType.VALIDATION_STATUS_ACCEPTATION_SHORT_V23;
+            case VALIDATION_STATUS_EXTRA_RAPID -> PnPollingType.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V23;
+            case VALIDATION_STATUS_NO_ACCEPTATION -> PnPollingType.VALIDATION_STATUS_NO_ACCEPTATION_V23;
+            case WEBHOOK -> PnPollingType.WEBHOOK_V23;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 23: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingType non riconosciuto per la versione 23: " + pollingStrategy);
         };
     }
 

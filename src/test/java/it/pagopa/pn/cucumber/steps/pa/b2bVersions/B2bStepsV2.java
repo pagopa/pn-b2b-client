@@ -361,8 +361,7 @@ public class B2bStepsV2 implements B2bStepsInterface {
         if (timelineEventCategory.equals(SEND_ANALOG_FEEDBACK)) {
             pollingStrategy = TIMELINE_SLOW;
         }
-        String strategy = NotificationUtilsV2.getPollingStrategy(pollingStrategy);
-        IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(strategy);
+        IPnPollingService<?> pollingService = sharedSteps.getPollingFactory().getPollingService(NotificationUtilsV2.getPollingType(pollingStrategy));
         PnPollingPredicate pollingPredicate = getPnPollingPredicateForTimeline(timelineEventCategory, filters);
         pollingResponse = (PnPollingResponseV20) pollingService.waitForEvent(
                 sharedSteps.getNotificationIun(),

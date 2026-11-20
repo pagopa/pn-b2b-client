@@ -5,7 +5,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationStatusHistoryElementV1;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV30;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
@@ -367,7 +367,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     private Object searchTimelineElementInWebhookLegal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV28 timeLineOrStatus = ((TimelineElementCategoryV28) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
@@ -389,7 +389,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     private Object searchTimelineElementInWebhookInformal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         InformalTimelineElementCategoryV1 timeLineOrStatus = ((InformalTimelineElementCategoryV1) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
@@ -418,7 +418,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     private Object searchStatusElementInWebhookLegal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         NotificationStatusV26 status = ((NotificationStatusV26) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
-        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
@@ -440,7 +440,7 @@ public class WebhookStepsV30 implements WebhookStepsInterface {
     private Object searchStatusElementInWebhookInformal(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         InformalNotificationStatusV1 status = ((InformalNotificationStatusV1) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
-        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V30);
+        PnPollingServiceWebhookV30 webhook = (PnPollingServiceWebhookV30) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V30);
         PnPollingResponseV30 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")

@@ -4,7 +4,7 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -336,19 +336,19 @@ public class NotificationUtilsV21 extends B2bUtils {
     }
 
     public PnPollingResponseV21 waitForEvent(NewNotificationResponse response, String pollingStrategy, String notificationStatus) {
-        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingStrategy(pollingStrategy));
+        IPnPollingService pollingService = pollingFactory.getPollingService(getPollingType(pollingStrategy));
         return (PnPollingResponseV21) pollingService.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(notificationStatus).build());
     }
 
-    public static String getPollingStrategy(String pollingStrategy) {
+    public static PnPollingType getPollingType(String pollingStrategy) {
         return switch (pollingStrategy) {
-            case TIMELINE_RAPID -> PnPollingStrategy.TIMELINE_RAPID_V21;
-            case STATUS_RAPID -> PnPollingStrategy.STATUS_RAPID_V21;
-            case TIMELINE_SLOW -> PnPollingStrategy.TIMELINE_SLOW_V21;
-            case STATUS_SLOW -> PnPollingStrategy.STATUS_SLOW_V21;
-            case VALIDATION_STATUS -> PnPollingStrategy.VALIDATION_STATUS_V21;
+            case TIMELINE_RAPID -> PnPollingType.TIMELINE_RAPID_V21;
+            case STATUS_RAPID -> PnPollingType.STATUS_RAPID_V21;
+            case TIMELINE_SLOW -> PnPollingType.TIMELINE_SLOW_V21;
+            case STATUS_SLOW -> PnPollingType.STATUS_SLOW_V21;
+            case VALIDATION_STATUS -> PnPollingType.VALIDATION_STATUS_V21;
             default ->
-                    throw new RuntimeException("PnPollingStrategy non riconosciuta per la versione 21: " + pollingStrategy);
+                    throw new RuntimeException("PnPollingType non riconosciuto per la versione 21: " + pollingStrategy);
         };
     }
 

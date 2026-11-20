@@ -2,7 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV26;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElementV26;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingType;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV26;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
@@ -342,7 +342,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     public Object searchTimelineElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream) {
         TimelineElementCategoryV26 timeLineOrStatus = ((TimelineElementCategoryV26) timelineForStream.getTimelineElementCategory());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(timeLineOrStatus);
-        PnPollingServiceWebhookV26 webhook = (PnPollingServiceWebhookV26) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V26);
+        PnPollingServiceWebhookV26 webhook = (PnPollingServiceWebhookV26) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V26);
         PnPollingResponseV26 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
@@ -365,7 +365,7 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     public Object searchStatusElementInWebhook(String lastEventId, int deepCount, int position, AvanzamentoNotificheWebhookB2bSteps.StatusElementSearchResult<?> statusForStream) {
         NotificationStatusV26 status = ((NotificationStatusV26) statusForStream.getNotificationStatus());
         PnPollingWebhook pnPollingWebhook = getPnPollingWebhook(status);
-        PnPollingServiceWebhookV26 webhook = (PnPollingServiceWebhookV26) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V26);
+        PnPollingServiceWebhookV26 webhook = (PnPollingServiceWebhookV26) sharedSteps.getPollingFactory().getPollingService(PnPollingType.WEBHOOK_V26);
         PnPollingResponseV26 pnPollingResponse = webhook.waitForEvent(sharedSteps.getNotificationIun(),
                 PnPollingParameter.builder()
                         .value("WEBHOOK")
