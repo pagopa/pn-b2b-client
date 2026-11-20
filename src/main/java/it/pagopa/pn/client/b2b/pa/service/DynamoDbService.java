@@ -137,6 +137,20 @@ public class DynamoDbService {
                 .toList();
     }
 
+    /**
+     * Verifica se la tabella non contiene alcun record tramite una Scan con Limit=1 e senza filtri.
+     * Il costo e' fisso (~0,5 RCU per chiamata) e indipendente dalla dimensione della tabella:
+     * una COUNT completa (Select.COUNT) addebiterebbe invece la lettura dell'intera tabella.
+     * In assenza di filter expression, nessun item restituito con Limit=1 significa tabella vuota.
+     */
+    public boolean isEmpty(String tableName) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(1)
+                .build();
+        return dynamoDbClient.scan(request).count() == 0;
+    }
+
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {
         return DynamoQueryBuilder.withIndex(
                 DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS.getValue(),
