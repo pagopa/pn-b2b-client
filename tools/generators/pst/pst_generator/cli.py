@@ -1,6 +1,7 @@
 import argparse
 from datetime import date
 import html
+import json
 import os
 import re
 import subprocess
@@ -12,7 +13,7 @@ import yaml
 from .core import parse_test_cases
 from .collection import ScenarioCollector, CollectionError, active_source_specs, collect_from_sources, validate_qa_epic
 from .markdown import _group_steps, render_document, replace_quoted_values
-from .state import input_fingerprint, is_current, save_state
+from .state import digest, document_fingerprint, input_fingerprint, is_current, matches_state, save_state
 
 
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
@@ -213,9 +214,19 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 results.append(f"- {epic}: invariato")
                 continue
             cases = collect_from_sources(repo, epic, specs, collector.pattern, repo_paths)
+            scenarios = digest(json.dumps(
+                [(case.test_id, case.semantic_content) for case in cases],
+                sort_keys=True, ensure_ascii=False).encode('utf-8'))
+            document = document_fingerprint(repo, config, epic)
+            if (fingerprint and
+                    matches_state(destination, epic, 'scenarios', scenarios, include_html) and
+                    matches_state(destination, epic, 'document', document, include_html)):
+                save_state(destination, epic, fingerprint, include_html, scenarios, document)
+                results.append(f"- {epic}: invariato (scenari invariati)")
+                continue
             count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases)
             if fingerprint:
-                save_state(destination, epic, fingerprint, include_html)
+                save_state(destination, epic, fingerprint, include_html, scenarios, document)
             results.append(f"- {epic}: generato ({count} scenari)")
         except CollectionError as exc:
             if "not found (local or origin)" in str(exc):
