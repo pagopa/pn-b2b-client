@@ -45,6 +45,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientIm
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.web.generated.openapi.clients.safeStorage.model.FileDownloadResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.domain.DocumentTransformation;
@@ -67,7 +69,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayInputStream;
@@ -211,20 +212,12 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20 generando un errore")
     public void notificationCanBeRetrievedWithIUNV2Error() {
-        try {
-            b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun());
-        } catch (HttpStatusCodeException e) {
-            sharedSteps.setNotificationError(e);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> b2bClient.getSentNotificationV2(sharedSteps.getNotificationIun())));
     }
 
     @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10 generando un errore")
     public void notificationCanBeRetrievedWithIUNV1Error() {
-        try {
-            b2bClient.getSentNotificationV1(sharedSteps.getNotificationIun());
-        } catch (HttpStatusCodeException e) {
-            sharedSteps.setNotificationError(e);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> b2bClient.getSentNotificationV1(sharedSteps.getNotificationIun())));
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
@@ -402,11 +395,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        try {
-            sharedSteps.getSentNotificationLastVersion();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(sharedSteps::getSentNotificationLastVersion));
     }
 
     @Given("viene effettuato il pre-caricamento di un documento")
@@ -568,11 +557,7 @@ public class InvioNotificheB2bSteps {
 
     @When("si tenta il recupero della notifica dal sistema")
     public void retrievalAttemptedIUN() {
-        try {
-            sharedSteps.getSentNotificationLastVersion();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(sharedSteps::getSentNotificationLastVersion));
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
@@ -591,7 +576,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private void getNotificationByIunVersioning(String iun, String version) {
-        try {
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> {
             if (version.equalsIgnoreCase("V1")) {
                 b2bClient.getSentNotificationV1(iun);
             } else if (version.equalsIgnoreCase("V2")) {
@@ -599,9 +584,7 @@ public class InvioNotificheB2bSteps {
             } else {
                 b2bClient.getSentNotificationV26(iun);
             }
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        }));
     }
 
     @When("viene richiesto il download del documento {string}")
@@ -625,8 +608,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private void getDownloadFile(String type, String iun, int destinatario) {
-        try {
-
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> {
             if (type.equalsIgnoreCase("NOTIFICA")) {
                 List<NotificationDocument> documents = sharedSteps.getSentNotificationLastVersion().getDocuments();
                 this.downloadResponse = b2bClient
@@ -648,9 +630,7 @@ public class InvioNotificheB2bSteps {
             }
             byte[] bytes = B2bUtils.downloadFile(this.downloadResponse.getUrl());
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        }));
     }
 
     @Then("il download si conclude correttamente")
@@ -662,33 +642,32 @@ public class InvioNotificheB2bSteps {
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        assertThat(httpStatusCodeException)
-                .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla")
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
+        assertThat(error)
+                .as("Atteso un errore HTTP ma l'operazione non ha prodotto errori")
                 .isNotNull();
 
-        assertThat(httpStatusCodeException.getStatusCode().toString().substring(0, 3))
-                .as("Il codice di stato HTTP non corrisponde a quello atteso", statusCode, httpStatusCodeException.getStatusCode().toString().substring(0, 3))
+        assertThat(String.valueOf(error.statusCode()))
+                .as("Il codice di stato HTTP non corrisponde a quello atteso. Dettaglio errore: %s", error.problem())
                 .isEqualTo(statusCode);
     }
 
     @Then("l'operazione ha prodotto un errore con status code {string} con messaggio di errore {string}")
     public void operationProducedAnErrorWithMessage(String statusCode, String errore) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
 
         assertSoftly(softly -> {
 
-            softly.assertThat(httpStatusCodeException)
-                    .as("Verifica che l' http status code dell'eccezione in SharedSteps non sia nulla")
+            softly.assertThat(error)
+                    .as("Verifica che l'errore HTTP registrato in SharedSteps non sia nullo")
                     .isNotNull();
 
-            if (httpStatusCodeException != null) {
-                softly.assertThat(httpStatusCodeException.getStatusCode().toString().substring(0, 3))
+            if (error != null) {
+                softly.assertThat(String.valueOf(error.statusCode()))
                         .as("Verifica che lo status code sia '%s'", statusCode)
                         .isEqualTo(statusCode);
 
-                byte[] responseBody = httpStatusCodeException.getResponseBodyAsByteArray();
-                String responseBodyText = new String(responseBody, StandardCharsets.UTF_8);
+                String responseBodyText = error.problem() == null ? "" : error.problem();
 
                 softly.assertThat(responseBodyText)
                         .as("Verifica che il messaggio di errore contenga: '%s'", errore)
@@ -699,9 +678,10 @@ public class InvioNotificheB2bSteps {
 
     @Then("l'operazione non ha prodotto errori")
     public void operationProducedNotAnError() {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        assertThat(httpStatusCodeException)
-                .as("Verifica che non siano stati generati errori HTTP")
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
+        assertThat(error)
+                .as("Verifica che non siano stati generati errori HTTP. Errore: %s",
+                        error == null ? null : error.statusCode() + " " + error.problem())
                 .isNull();
     }
 
@@ -763,10 +743,12 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica non può essere annullata dal sistema tramite codice IUN")
     public void notificationCaNotBeCanceledWithIUN() {
-        try {
-            cancellationResponse = sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun());
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+        ApiResult<RequestStatus> result = ApiCallHelper.callBody(() ->
+                sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getNotificationIun()));
+        if (result.is2xx()) {
+            cancellationResponse = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
         }
     }
 
@@ -1578,11 +1560,7 @@ public class InvioNotificheB2bSteps {
     @Given("si richiama checkout con restituzione errore")
     public void siRichiamaCheckoutConDatiConErrore(Map<String, String> dataCheckout) {
         BffPaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
-        try {
-            pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> pnPaymentInfoClientImpl.checkoutCart(requestCheckout)));
     }
 
     public BffPaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {

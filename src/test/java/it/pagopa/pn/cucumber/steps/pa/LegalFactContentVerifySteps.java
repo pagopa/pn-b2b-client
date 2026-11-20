@@ -20,6 +20,8 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.LegalFactDownloadUtility;
@@ -30,7 +32,6 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -402,21 +403,13 @@ public class LegalFactContentVerifySteps {
     @Then("l'ente {string} richiede l'attestazione opponibile {string}")
     public void paRequiresLegalFact(String paName, String legalFactCategory) {
         sharedSteps.setPA(paName);
-        try {
-            takeLegalFact(legalFactCategory, null);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> takeLegalFact(legalFactCategory, null)));
     }
 
     @Then("l'ente {string} richiede l'attestazione opponibile {string} con deliveryDetailCode {string}")
     public void paRequiresLegalFactConDeliveryDetailCode(String paName, String legalFactCategory, String deliveryDetailCode) {
         sharedSteps.setPA(paName);
-        try {
-            takeLegalFact(legalFactCategory, deliveryDetailCode);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> takeLegalFact(legalFactCategory, deliveryDetailCode)));
     }
 
     @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
@@ -731,17 +724,18 @@ public class LegalFactContentVerifySteps {
     public void checkLegalFactRemovedFromSafeStorage() {
         sharedSteps.setPA("Comune_Multi");
         String recipientInternalId = "PF-a6c1350d-1d69-4209-8bf8-31de58c79d6e";
-        try {
-            sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years);
-        } catch (HttpStatusCodeException excApiPubblica) {
-            log.info(excApiPubblica.getMessage());
-            assertThat(excApiPubblica.getRawStatusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
+        // come in precedenza, le verifiche sullo status vengono eseguite solo se la chiamata produce un errore
+        ApiResult<Void> apiPubblica = ApiCallHelper.run(() ->
+                sharedSteps.getB2bClient().getLegalFact(notificationIun10years, LegalFactCategory.DIGITAL_DELIVERY, legalFactId10years));
+        if (apiPubblica.isError()) {
+            log.info("Errore HTTP api pubblica {}: {}", apiPubblica.statusCode(), apiPubblica.problem());
+            assertThat(apiPubblica.statusCode()).as("La chiamata ad api pubblica deve restituire un 500").isEqualTo(500);
         }
-        try {
-            sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, notificationIun10years, legalFactId10years, null, null, null);
-        } catch (HttpStatusCodeException excApiPrivata) {
-            log.info(excApiPrivata.getMessage());
-            assertThat(excApiPrivata.getRawStatusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
+        ApiResult<Void> apiPrivata = ApiCallHelper.run(() ->
+                sharedSteps.getB2bClient().getLegalFactByIdPrivate(recipientInternalId, notificationIun10years, legalFactId10years, null, null, null));
+        if (apiPrivata.isError()) {
+            log.info("Errore HTTP api privata {}: {}", apiPrivata.statusCode(), apiPrivata.problem());
+            assertThat(apiPrivata.statusCode()).as("La chiamata ad api privata deve restituire un 410").isEqualTo(410);
         }
     }
 

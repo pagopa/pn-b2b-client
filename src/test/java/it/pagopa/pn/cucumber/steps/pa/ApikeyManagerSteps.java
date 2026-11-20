@@ -11,11 +11,12 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ApikeyManagerSteps {
     private BffApiKeysResponse apiKeys;
     private BffRequestNewApiKey requestNewApiKey;
     private BffResponseNewApiKey responseNewApiKey;
-    private HttpStatusCodeException httpStatusCodeException;
+    private ApiResult<?> httpError;
     private String firstGroupUsed;
     private String responseNewApiKeyTaxId;
 
@@ -86,17 +87,24 @@ public class ApikeyManagerSteps {
 
     @Then("l'operazione ha sollevato un errore con status code {string}")
     public void lOperazioneHaSollevatoUnErroreConStatusCode(String statusCode) {
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        assertHttpError(httpError, statusCode);
+    }
+
+    private static void assertHttpError(ApiResult<?> error, String expectedStatusCode) {
+        Assertions.assertNotNull(error, "L'operazione non ha prodotto errori");
+        Assertions.assertEquals(expectedStatusCode, String.valueOf(error.statusCode()), "Dettaglio errore: " + error.problem());
+    }
+
+    /** Registra in {@link #httpError} il risultato solo se è un errore (non-2xx). */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            this.httpError = result;
+        }
     }
 
     @And("si tenta la cancellazione dell'apiKey")
     public void siTentaLaCancellazioneDellApiKey() {
-        try {
-            apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId());
-        } catch (HttpStatusCodeException codeException) {
-            this.httpStatusCodeException = codeException;
-        }
+        recordError(ApiCallHelper.run(() -> apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId())));
     }
 
     @Then("si verifica lo stato dell'apiKey {string}")
@@ -134,33 +142,29 @@ public class ApikeyManagerSteps {
 
     @Then("l'invio della notifica non ha prodotto errori")
     public void lInvioDellaNotificaNonHaProdottoErrori() {
-        HttpStatusCodeException codeException = sharedSteps.consumeNotificationError();
-        Assertions.assertNull(codeException);
+        ApiResult<?> error = sharedSteps.consumeNotificationErrorResult();
+        Assertions.assertNull(error, () -> "L'invio della notifica ha prodotto l'errore HTTP " + error.statusCode() + ": " + error.problem());
     }
 
     @Then("l'invio della notifica ha sollevato un errore di autenticazione {string}")
     public void lInvioDellaNotificaHaSollevatoUnErroreDiAutenticazione(String statusCode) {
-        HttpStatusCodeException codeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((codeException != null) &&
-                (codeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        assertHttpError(this.sharedSteps.consumeNotificationErrorResult(), statusCode);
     }
 
     @Then("(l'invio)(il recupero) della notifica ha sollevato un errore {string}")
     public void lInvioDellaNotificaHaSollevatoUnErrore(String statusCode) {
-        HttpStatusCodeException codeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((codeException != null) &&
-                (codeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        assertHttpError(this.sharedSteps.consumeNotificationErrorResult(), statusCode);
     }
 
     @Given("Viene generata una nuova apiKey con il gruppo {string}")
     public void vieneGenerataUnaNuovaApiKeyConIlGruppo(String group) {
         requestNewApiKey = new BffRequestNewApiKey().name("CUCUMBER GROUP TEST");
         requestNewApiKey.setGroups(List.of(group));
-        try {
-            this.apiKeyManagerClient.newApiKey(requestNewApiKey);
+        ApiResult<BffResponseNewApiKey> result = ApiCallHelper.callBody(() -> this.apiKeyManagerClient.newApiKey(requestNewApiKey));
+        if (result.is2xx()) {
             sharedSteps.setRequestNewApiKey(requestNewApiKey);
-        } catch (HttpStatusCodeException codeException) {
-            this.httpStatusCodeException = codeException;
+        } else {
+            recordError(result);
         }
     }
 
@@ -291,20 +295,13 @@ public class ApikeyManagerSteps {
 
     @Then("si tenta il recupero dal sistema tramite codice IUN")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUN() {
-        try {
-            sharedSteps.getSentNotificationLastVersion();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(sharedSteps::getSentNotificationLastVersion));
     }
 
     @Then("si tenta il recupero dal sistema tramite codice IUN con api v1")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNV1() {
-        try {
-            sharedSteps.getB2bClient().getSentNotificationV1(sharedSteps.getNotificationIun());
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() ->
+                sharedSteps.getB2bClient().getSentNotificationV1(sharedSteps.getNotificationIun())));
     }
 
     @And("Si cambia al comune {string}")

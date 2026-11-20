@@ -13,6 +13,8 @@ import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.mod
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
@@ -21,8 +23,6 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class AppIOB2bSteps {
     private final IPnAppIOB2bClient iPnAppIOB2bClient;
     private final SharedSteps sharedSteps;
-    private HttpStatusCodeException notificationServerError;
+    private ApiResult<?> notificationServerError;
     private String sha256DocumentDownload;
     private ResponseCheckQrMandateDto responseCheckAarMandateDto;
 
@@ -100,23 +100,32 @@ public class AppIOB2bSteps {
                 : qrCodeBodyUrl;
 
         RequestCheckQrMandateDto requestCheckAarMandateDto = new RequestCheckQrMandateDto().aarQrCodeValue(qrCodeBodyUrlTmp + qrCode);
-        try {
-            responseCheckAarMandateDto = iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), xPagopaLollipopUserId, requestCheckAarMandateDto);
-        } catch (HttpStatusCodeException ex) {
-            notificationServerError = ex;
+        ApiResult<ResponseCheckQrMandateDto> result = ApiCallHelper.callBody(() ->
+                iPnAppIOB2bClient.checkAarQrCodeIO(user.getTaxId(), xPagopaLollipopUserId, requestCheckAarMandateDto));
+        if (result.is2xx()) {
+            responseCheckAarMandateDto = result.body();
+        } else {
+            notificationServerError = result;
+        }
+    }
+
+    /** Registra in {@link #notificationServerError} il risultato solo se è un errore (non-2xx). */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            this.notificationServerError = result;
         }
     }
 
     @When("l'operazione non ha prodotti errori")
     public void checkExeption() {
-        assertNull(notificationServerError,
-                "notificationServerError non deve essere valorizzato, ma vale: " + notificationServerError);
+        assertNull(notificationServerError, () ->
+                "notificationServerError non deve essere valorizzato, ma vale: " + notificationServerError.statusCode() + " " + notificationServerError.problem());
     }
 
     @When("viene chiamato l'endpoint {string} con i seguenti params:")
     public void callScanQRCodeWithParams(String endpoint, DataTable dataTable) {
         Map<String, String> inputParams = dataTable.asMap();
-        try {
+        recordError(ApiCallHelper.run(() -> {
             switch (endpoint) {
                 case "checkQRCode" ->
                         iPnAppIOB2bClient.checkAarQrCodeIO(inputParams.get("taxId"), new RequestCheckQrMandateDto().aarQrCodeValue(inputParams.get("aarQrCodeValue")));
@@ -129,23 +138,19 @@ public class AppIOB2bSteps {
                         iPnAppIOB2bClient.getReceivedNotificationAttachment(inputParams.get("iun"), inputParams.get("attachmentName"),
                                 inputParams.get("taxId"), Integer.parseInt(inputParams.get("attachmentIdx")), null);
             }
-        } catch (HttpStatusCodeException ex) {
-            notificationServerError = ex;
-        }
+        }));
     }
 
     @Then("si verifica che la chiamata abbia ritornato uno status code: {int}")
     public void verifyStatusCodeResponse(int statusCode) {
-        Assertions.assertEquals(statusCode, notificationServerError.getStatusCode().value());
+        Assertions.assertNotNull(notificationServerError, "La chiamata non ha prodotto errori");
+        Assertions.assertEquals(statusCode, notificationServerError.statusCode(), "Dettaglio errore: " + notificationServerError.problem());
     }
 
     @And("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO passando un header src non valido")
     public void attemptsNotificationRetrievalAppIOWithInvalidHeader(Destinatario user) {
-        try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), user.getTaxId(), null, "TEST");
-        } catch (HttpStatusCodeException e) {
-            this.notificationServerError = e;
-        }
+        recordError(ApiCallHelper.callBody(() ->
+                this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), user.getTaxId(), null, "TEST")));
     }
 
     @Then("a seguito della scansione del QR Code, la notifica può essere recuperata da: {destinatario} tramite AppIO")
@@ -257,7 +262,7 @@ public class AppIOB2bSteps {
 
 
     private void downloadAndVerifyAttachment(Supplier<NotificationAttachmentDownloadMetadataResponse> downloadSupplier, boolean verifySha256) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             NotificationAttachmentDownloadMetadataResponse downloadResponse = downloadSupplier.get();
             if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
                 try {
@@ -280,9 +285,7 @@ public class AppIOB2bSteps {
 
             if (verifySha256)
                 assertThat(this.sha256DocumentDownload).as("SHA256 scaricato deve combaciare con quello dichiarato").isEqualTo(downloadResponse.getSha256());
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            this.notificationServerError = e;
-        }
+        }));
     }
 
     public void downloadPAGOPAAppIo(String iun, String taxId, String typeDocument, String docIdx, UUID mandateId) {
@@ -317,7 +320,7 @@ public class AppIOB2bSteps {
 
     @Then("il documento notificato può essere recuperata tramite AppIO da {string}")
     public void notifiedDocumentCanBeRetrievedAppIO(String recipient) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             FullSentNotificationV29 fullSentNotification = sharedSteps.getSentNotificationLastVersion();
             List<NotificationDocument> documents = fullSentNotification.getDocuments();
             NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
@@ -327,24 +330,20 @@ public class AppIOB2bSteps {
             this.sha256DocumentDownload = B2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
             Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            this.notificationServerError = e;
-        }
+        }));
     }
 
     @And("{string} tenta il recupero della notifica tramite AppIO")
     public void attemptsNotificationRetrievalAppIO(String recipient) {
-        try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null);
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            this.notificationServerError = e;
-        }
+        recordError(ApiCallHelper.callBody(() ->
+                this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), selectTaxIdUser(recipient), null)));
     }
 
     @Then("il tentativo di recupero con appIO ha prodotto un errore con status code {string}")
     public void retrievalAttemptWithAppIOProducedAnErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue((this.notificationServerError != null) &&
-                (this.notificationServerError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        Assertions.assertNotNull(this.notificationServerError, "Il recupero con appIO non ha prodotto errori");
+        Assertions.assertEquals(statusCode, String.valueOf(this.notificationServerError.statusCode()),
+                "Dettaglio errore: " + this.notificationServerError.problem());
     }
 
     private String selectTaxIdUser(String recipient) {

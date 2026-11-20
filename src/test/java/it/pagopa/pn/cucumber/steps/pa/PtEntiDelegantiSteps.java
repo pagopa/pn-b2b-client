@@ -8,11 +8,12 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtDelegationStatus;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitution;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitutionsResponse;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.service.PtDelegationRecord;
 import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -367,21 +368,18 @@ public class PtEntiDelegantiSteps {
         this.lastSearch = search;
         this.lastStatus = status;
         this.lastLimit = limit;
-        try {
-            this.lastResponse = ptEntiDelegantiService.getInstitutions(ptName, search, status, limit, lastKey);
+        ApiResult<PtInstitutionsResponse> result = ApiCallHelper.callBody(() -> ptEntiDelegantiService.getInstitutions(ptName, search, status, limit, lastKey));
+        if (result.is2xx()) {
+            this.lastResponse = result.body();
             allReadInstitutions.addAll(lastResponse.getItems());
-        } catch (HttpStatusCodeException httpStatusCodeException) {
+        } else {
             this.lastResponse = null;
-            sharedSteps.setNotificationError(httpStatusCodeException);
+            sharedSteps.setNotificationError(result);
         }
     }
 
     private void requestPtInstitutionsRaw(String ptName, Map<String, String> queryParams) {
-        try {
-            ptEntiDelegantiService.getInstitutionsRaw(ptName, queryParams);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.run(() -> ptEntiDelegantiService.getInstitutionsRaw(ptName, queryParams)));
     }
 
     private String resolveValue(String value) {

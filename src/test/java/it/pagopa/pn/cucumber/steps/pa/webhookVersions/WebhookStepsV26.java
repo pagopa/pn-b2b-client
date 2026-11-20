@@ -10,6 +10,8 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceWebhookV26;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
@@ -17,7 +19,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -114,10 +115,10 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     public void cleanWebHookDelete() {
         List<StreamListElement> streamList = AvanzamentoNotificheWebhookB2bSteps.getWebhookClientForClean().listEventStreamsV26();
         for (StreamListElement stream : streamList) {
-            try {
-                AvanzamentoNotificheWebhookB2bSteps.getWebhookClientForClean().deleteEventStreamV26(stream.getStreamId());
-            } catch (HttpStatusCodeException statusCodeException) {
-                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
+            ApiResult<Void> result = ApiCallHelper.run(() ->
+                    AvanzamentoNotificheWebhookB2bSteps.getWebhookClientForClean().deleteEventStreamV26(stream.getStreamId()));
+            if (result.isError()) {
+                log.error("HTTP Error: statusCode {} message {}", result.statusCode(), result.problem());
             }
         }
     }
@@ -131,25 +132,20 @@ public class WebhookStepsV26 implements WebhookStepsInterface {
     }
 
     private boolean deleteStream(UUID streamId, String pa) {
-        try {
-            webhookClient.deleteEventStreamV26(streamId);
-            return true;
-        } catch (HttpStatusCodeException e) {
-            return handleException(e, pa, streamId);
-        }
+        ApiResult<Void> deleteResult = ApiCallHelper.run(() -> webhookClient.deleteEventStreamV26(streamId));
+        return deleteResult.is2xx() || handleDeleteError(deleteResult, pa, streamId);
     }
 
-    private boolean handleException(HttpStatusCodeException e, String pa, UUID streamID) {
-        try {
-            webhookClient.retrieveEventStreamV26(streamID);
-            webhookSteps.setNotificationError(e);
-            sharedSteps.setNotificationError(e);
-            log.error("ERROR IN DELETE STREAM id {} streamVersion " + streamVersion + " pa {}", streamID, pa);
-            return false;
-        } catch (HttpStatusCodeException ex) {
+    private boolean handleDeleteError(ApiResult<?> deleteError, String pa, UUID streamID) {
+        ApiResult<Void> retrieveResult = ApiCallHelper.run(() -> webhookClient.retrieveEventStreamV26(streamID));
+        if (retrieveResult.isError()) {
             log.info("Not needed to remove since stream found has different version!");
             return true;
         }
+        webhookSteps.setNotificationError(deleteError);
+        sharedSteps.setNotificationError(deleteError);
+        log.error("ERROR IN DELETE STREAM id {} streamVersion " + streamVersion + " pa {}", streamID, pa);
+        return false;
     }
 
     @Override

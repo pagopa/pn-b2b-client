@@ -1,13 +1,14 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -35,25 +36,25 @@ public class ConsolidatoreSteps {
                 Instant.now().plusSeconds(B2bUtils.convertToSeconds(pnEcConsAllowedFutureOffsetDuration)).plusSeconds(60)
                 : Instant.now();
         Map<String, String> mapInfo = populateConsolidatoreMap(now);
-        try {
-            sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo)));
     }
 
     @Then("viene invocato due volte il consolidatore utilizzando la stessa request")
     public void vieneInvocatoIlConsolidatoreDueVolte() throws InterruptedException {
         Map<String, String> mapInfo = populateConsolidatoreMap(Instant.now());
-        try {
-            String response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
-            Assertions.assertTrue(response.contains("200.00"));
-            Thread.sleep(2000);
-            response = sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo);
-            Assertions.assertTrue(response.contains("400.02"));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+        ApiResult<String> firstCall = ApiCallHelper.callBody(() -> sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo));
+        if (firstCall.isError()) {
+            this.sharedSteps.setNotificationError(firstCall);
+            return;
         }
+        Assertions.assertTrue(firstCall.body().contains("200.00"));
+        Thread.sleep(2000);
+        ApiResult<String> secondCall = ApiCallHelper.callBody(() -> sharedSteps.getPnExternalServiceClient().pushConsolidatoreNotificationAttach(mapInfo));
+        if (secondCall.isError()) {
+            this.sharedSteps.setNotificationError(secondCall);
+            return;
+        }
+        Assertions.assertTrue(secondCall.body().contains("400.02"));
     }
 
     private Map<String, String> populateConsolidatoreMap(Instant date) {
