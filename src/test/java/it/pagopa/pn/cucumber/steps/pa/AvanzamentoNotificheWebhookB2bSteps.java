@@ -151,6 +151,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         return getWebhookStep(getStreamVersion(version));
     }
 
+    public UUID getStreamId(String version) {
+        return getWebhookStep(version).getStreamId();
+    }
+
     private WebhookStepsInterface getWebhookStep(StreamVersion streamVersion) {
         if (mapOfWebhookVersionSteps.get(streamVersion) == null) {
             mapOfWebhookVersionSteps.put(streamVersion, StreamVersion.createWebhookStep(streamVersion, this));

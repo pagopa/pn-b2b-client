@@ -1,6 +1,7 @@
 import argparse
 from datetime import date
 import html
+import json
 import os
 import re
 import subprocess
@@ -12,7 +13,7 @@ import yaml
 from .core import parse_test_cases
 from .collection import ScenarioCollector, CollectionError, active_source_specs, collect_from_sources, validate_qa_epic
 from .markdown import _group_steps, render_document, replace_quoted_values
-from .state import input_fingerprint, is_current, save_state
+from .state import digest, document_fingerprint, input_fingerprint, is_current, matches_state, save_state
 
 
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
@@ -39,6 +40,9 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
         output_config.get("technical_details", "none"),
         qa_epic=qa_epic,
         work_item_ids=work_item_ids_for_qa_epic(repo, qa_epic),
+        excluded_fields=output_config.get("exclude_fields", []),
+        field_value_phrases=config.get("field_value_phrases", {}),
+        step_phrases=config.get("step_phrases", []),
     )
     source_count = sum(len(case.sources) for case in cases)
     document += f"\n<details>\n<summary>Fonti ({source_count})</summary>\n\n"
@@ -210,11 +214,26 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 results.append(f"- {epic}: invariato")
                 continue
             cases = collect_from_sources(repo, epic, specs, collector.pattern, repo_paths)
+            scenarios = digest(json.dumps(
+                [(case.test_id, case.semantic_content) for case in cases],
+                sort_keys=True, ensure_ascii=False).encode('utf-8'))
+            document = document_fingerprint(repo, config, epic)
+            if (fingerprint and
+                    matches_state(destination, epic, 'scenarios', scenarios, include_html) and
+                    matches_state(destination, epic, 'document', document, include_html)):
+                save_state(destination, epic, fingerprint, include_html, scenarios, document)
+                results.append(f"- {epic}: invariato (scenari invariati)")
+                continue
             count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases)
             if fingerprint:
-                save_state(destination, epic, fingerprint, include_html)
+                save_state(destination, epic, fingerprint, include_html, scenarios, document)
             results.append(f"- {epic}: generato ({count} scenari)")
         except CollectionError as exc:
+            if "not found (local or origin)" in str(exc):
+                existing = (destination / f"pst_{epic}.md").is_file()
+                outcome = "PST esistente conservato" if existing else "PST non generato"
+                results.append(f"- {epic}: {outcome}, branch mancante: {exc}")
+                continue
             failed = True
             results.append(f"- {epic}: ERRORE\n\n```text\n{exc}\n```\n")
             print(str(exc), file=sys.stderr)
@@ -308,6 +327,9 @@ def main() -> int:
             include_technical_codes,
             layout,
             technical_details,
+            excluded_fields=output_config.get("exclude_fields", []),
+            field_value_phrases=config.get("field_value_phrases", {}),
+            step_phrases=config.get("step_phrases", []),
         ),
         encoding="utf-8",
     )

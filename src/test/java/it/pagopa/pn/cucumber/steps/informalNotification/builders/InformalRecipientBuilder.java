@@ -7,25 +7,23 @@ import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.RecipientTy
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue.*;
-
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class InformalRecipientBuilder {
 
     private final InformalMessageProvider messageProvider;
+    private final DestinatarioRegistry destinatarioRegistry;
 
     public InformalRecipient build(Map<String, String> data, String currentCxId) {
 
@@ -38,8 +36,8 @@ public class InformalRecipientBuilder {
         if (recipientType != null) {
             recipient.setRecipientType(RecipientType.fromValue(recipientType));
         }
-        recipient.setMessageId(resolveMessageId(data, currentCxId));
-        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
+        recipient.setMessageId(resolveMessageId(data, currentCxId, apiKeyType));
+        recipient.setTaxId(resolveTaxId(getValue(data, RECIPIENT_TAX_ID.key)));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
         recipient.setAdditionalLanguages(buildAdditionalLanguages(data));
@@ -137,9 +135,28 @@ public class InformalRecipientBuilder {
     }
 
     // =========================================================
+    // TAX ID
+    // =========================================================
+
+    /**
+     * ${nome destinatario} diventa il codice fiscale configurato per l'ambiente, es. ${Mario Cucumber}.
+     */
+    private String resolveTaxId(String value) {
+        if (value == null || !value.startsWith("${") || !value.endsWith("}")) {
+            return value;
+        }
+        String name = value.substring(2, value.length() - 1);
+        Destinatario destinatario = destinatarioRegistry.destinatario(name);
+        if (destinatario == null) {
+            throw new IllegalArgumentException("Nessun destinatario configurato con nome: " + name);
+        }
+        return destinatario.getTaxId();
+    }
+
+    // =========================================================
     // MESSAGE ID
     // =========================================================
-    private UUID resolveMessageId(Map<String, String> data, String currentCxId) {
+    private UUID resolveMessageId(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType) {
 
         String value = getValue(data, MESSAGE_ID.key);
 
@@ -148,15 +165,14 @@ public class InformalRecipientBuilder {
         }
         return switch (value) {
 
-            case "${IT}" -> UUID.fromString(messageProvider.getOrCreateMessageIT(currentCxId));
-            case "${IT-FR}" -> UUID.fromString(messageProvider.getOrCreateMessageITFR(currentCxId));
-            case "${NEW-IT}" -> UUID.fromString(messageProvider.createAndSaveMessageIT(currentCxId));
-            case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createAndSaveMessageITFR(currentCxId));
-            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createAndSaveMessageITDE(currentCxId));
-            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createAndSaveMessageITSL(currentCxId));
-            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createAndSaveMessageITEN(currentCxId));
-            case "${SAVED-IT}" -> UUID.fromString(messageProvider.getSavedMessageIT());
-            case "${SAVED-IT-FR}" -> UUID.fromString(messageProvider.getSavedMessageITFR());
+            case "${IT}" -> UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
+            case "${IT-FR}" -> UUID.fromString(messageProvider.createMessageITFR(currentCxId, apiKeyType));
+            case "${NEW-IT}" ->    UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
+            case "${NEW-IT-FR}" -> UUID.fromString(messageProvider.createMessageITFR(currentCxId, apiKeyType));
+            case "${NEW-IT-DE}" -> UUID.fromString(messageProvider.createMessageITDE(currentCxId, apiKeyType));
+            case "${NEW-IT-SL}" -> UUID.fromString(messageProvider.createMessageITSL(currentCxId, apiKeyType));
+            case "${NEW-IT-EN}" -> UUID.fromString(messageProvider.createMessageITEN(currentCxId, apiKeyType));
+            case "${SAVED-IT}" -> UUID.fromString(messageProvider.createMessageIT(currentCxId, apiKeyType));
 
             default -> UUID.fromString(value);
         };

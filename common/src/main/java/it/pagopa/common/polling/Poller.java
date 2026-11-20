@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -23,6 +24,8 @@ import java.util.function.Supplier;
  * <ul>
  *     <li>condizione mai soddisfatta: {@link PollingTimeoutException} con l'ultimo valore letto;</li>
  *     <li>eccezione della chiamata o della condizione, thread interrotto: {@link PollingExecutionException}.</li>
+ *     <li>variante con {@link Consumer} di asserzioni, asserzioni mai soddisfatte: l'{@link AssertionError} originale,
+ *     con la {@link PollingTimeoutException} fra le eccezioni soppresse.</li>
  * </ul>
  * Le chiamate mantengono i propri timeout di I/O; l'interruzione viene verificata a ogni tentativo.
  */
@@ -42,6 +45,45 @@ public final class Poller {
 
     public static <T> T pollUntil(Supplier<T> call, Predicate<T> stopCondition, PollingConfig config) {
         return pollUntil(call, stopCondition, config, lastValue -> DEFAULT_TIMEOUT_MESSAGE);
+    }
+
+    /**
+     * Ripete {@code call} finche' {@code verify} non termina senza {@link AssertionError}, oppure scade {@code config}.
+     * <p>
+     * Allo scadere {@code verify} viene rieseguito sull'ultimo valore letto: viene rilanciato l'{@link AssertionError}
+     * originale (es. il messaggio AssertJ), con la {@link PollingTimeoutException} (tentativi, elapsed) come soppressa.
+     * Le altre eccezioni di {@code verify} producono una {@link PollingExecutionException}, senza retry.
+     * <p>
+     * Nota: una lambda con parametro implicito il cui corpo e' una chiamata di metodo (es. {@code v -> foo(v)})
+     * e' compatibile sia con {@link Predicate} sia con {@link Consumer} e rende ambigua la chiamata:
+     * passare il {@code Consumer} come blocco ({@code v -> { foo(v); }}) o come variabile tipizzata.
+     *
+     * @return l'ultimo valore letto, quello che ha soddisfatto le asserzioni
+     */
+    public static <T> T pollUntil(Supplier<T> call, Consumer<T> verify, PollingConfig config) {
+        Objects.requireNonNull(verify, "verify");
+        Predicate<T> verified = value -> {
+            try {
+                verify.accept(value);
+                return true;
+            } catch (AssertionError e) {
+                return false;
+            }
+        };
+
+        try {
+            return pollUntil(call, verified, config);
+        } catch (PollingTimeoutException e) {
+            @SuppressWarnings("unchecked")
+            T lastValue = (T) e.getLastValue();
+            try {
+                verify.accept(lastValue);
+            } catch (AssertionError assertionError) {
+                assertionError.addSuppressed(e);
+                throw assertionError;
+            }
+            return lastValue;
+        }
     }
 
     public static <T> T pollUntil(Supplier<T> call, Predicate<T> stopCondition, PollingConfig config,

@@ -11,6 +11,7 @@ import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCom
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalDocument;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPayment;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +45,11 @@ public class NotificationInformalUtilsV1 extends B2bUtils {
 
     private Pair<String, String> preloadInformal(String resourceName, String contentType, String paName) throws IOException {
 
-        String apiKey = senderInfoProvider.getApiKey(paName);
+        SettableApiKey.ApiKeyType apiKeyType = senderInfoProvider.getApiKeyType(paName);
         String sha256 = computeSha256(context, resourceName);
 
         InformalPreLoadRequest request = new InformalPreLoadRequest().preloadIdx("0").contentType(contentType).sha256(sha256);
-        InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(apiKey, List.of(request)).get(0);
+        InformalPreLoadResponse response = externalInformalClient.informalPresignedUploadRequest(List.of(request), apiKeyType).get(0);
         log.info("Informal preload resource={} sha256={} url={}", resourceName, sha256, response.getUrl());
 
         loadToPresigned(context, response.getUrl(), response.getSecret(), sha256, resourceName, contentType);
