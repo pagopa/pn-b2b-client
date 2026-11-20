@@ -16,11 +16,13 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.cucumber.steps.SendSharedContext;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationAdapterResolver;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendContext;
 import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendResult;
 import it.pagopa.pn.cucumber.steps.informalNotification.builders.InformalRecipientBuilder;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalDataTestV1;
 import it.pagopa.pn.cucumber.steps.informalNotification.datatest.InformalStatusPollingConfig;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPayment;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
 import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
@@ -91,6 +93,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     @Autowired
     public PresaInCaricoNoticaBonariaSteps(NotificationInformalUtilsV1 notificationInformalUtilsV1, InformalNotificationRequestMapper informalNotificationRequestMapper,
                                            InformalRecipientBuilder recipientBuilder, PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
+                                           PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl,
                                            SharedSteps sharedSteps, SendSharedContext sendSharedContext, DestinatarioRegistry destinatarioRegistry,
                                            InformalCommunicationAdapterResolver informalCommunicationAdapterResolver) {
         this.sharedSteps = sharedSteps;
@@ -106,7 +109,8 @@ public class PresaInCaricoNoticaBonariaSteps {
 
     // Converte il domain model nella versione API configurata e invia la comunicazione
     private InformalSendResult sendInformalCommunication(InformalCommunication communication) {
-        return informalCommunicationAdapterResolver.current().send(currentCxId, communication);
+        InformalSendContext context = InformalSendContext.builder().cxId(currentCxId).apiKeyType(apiKeyType).build();
+        return informalCommunicationAdapterResolver.current().send(context, communication);
     }
 
     // STEP CREAZIONE E INVIO NOTIFICA
@@ -145,7 +149,7 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         assertNotNull(informalCommunication, "Creare prima la notifica bonaria");
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
-        InformalRecipient recipient = recipientBuilder.build(cleanedData, currentCxId);
+        InformalRecipient recipient = recipientBuilder.build(cleanedData, currentCxId, apiKeyType);
         informalCommunication.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
     }
@@ -767,15 +771,13 @@ public class PresaInCaricoNoticaBonariaSteps {
 
         // STEP 3 - addInformalRecipientLight
         Map<String, String> cleanedData = data.entrySet().stream().collect(Collectors.toMap(e -> e.getKey().trim(), e -> e.getValue() != null ? e.getValue().trim() : null));
-        InformalRecipient recipient = recipientBuilder.build(cleanedData, currentCxId);
+        InformalRecipient recipient = recipientBuilder.build(cleanedData, currentCxId, apiKeyType);
         informalCommunication.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
         if (recipient.getPayments() != null && !recipient.getPayments().isEmpty()) {
-            var payItem = recipient.getPayments().get(0);
-            if (payItem.getPagoPa() != null) {
-                sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentCreditorTaxId(payItem.getPagoPa().getCreditorTaxId());
-                sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentNoticeCode(payItem.getPagoPa().getNoticeCode());
-            }
+            InformalPayment payItem = recipient.getPayments().get(0);
+            sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentCreditorTaxId(payItem.getCreditorTaxId());
+            sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentNoticeCode(payItem.getNoticeCode());
         }
     }
 

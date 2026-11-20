@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.adapter.v1;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.*;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.RecipientType;
 import org.mapstruct.Mapper;

@@ -1,10 +1,11 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.adapter.v1;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalNotificationRequestV1;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.NewInformalNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.InformalNotificationRequestV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.NewInformalNotificationResponse;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalInformalClientImpl;
 import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalApiVersion;
 import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalCommunicationAdapter;
+import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendContext;
 import it.pagopa.pn.cucumber.steps.informalNotification.adapter.InformalSendResult;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InformalCommunicationV1Adapter implements InformalCommunicationAdapter {
 
-    private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
+    private final PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl;
 
     @Override
     public InformalApiVersion version() {
@@ -24,10 +25,10 @@ public class InformalCommunicationV1Adapter implements InformalCommunicationAdap
     }
 
     @Override
-    public InformalSendResult send(String cxId, InformalCommunication communication) {
+    public InformalSendResult send(InformalSendContext context, InformalCommunication communication) {
         InformalNotificationRequestV1 requestV1 = InformalCommunicationV1Mapper.INSTANCE.toV1(communication);
-        log.info("Sending InformalNotification V1 payload for cxId={}: {}", cxId, requestV1);
-        NewInformalNotificationResponse response = pnPaB2bInternalInformalClientImpl.sendNewInformalNotificationV1(cxId, requestV1);
+        log.info("Sending InformalNotification V1 payload for cxId={} apiKeyType={}: {}", context.getCxId(), context.getApiKeyType(), requestV1);
+        NewInformalNotificationResponse response = pnPaB2bExternalInformalClientImpl.sendNewInformalNotificationV1(requestV1, context.getApiKeyType());
 
         return InformalSendResult.builder()
                 .notificationRequestId(response != null ? response.getNotificationRequestId() : null)

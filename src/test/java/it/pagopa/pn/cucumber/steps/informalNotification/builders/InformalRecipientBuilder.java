@@ -1,5 +1,8 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPayment;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPhysicalAddress;
 import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
@@ -25,7 +28,7 @@ public class InformalRecipientBuilder {
     private final InformalMessageProvider messageProvider;
     private final DestinatarioRegistry destinatarioRegistry;
 
-    public InformalRecipient build(Map<String, String> data, String currentCxId) {
+    public InformalRecipient build(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType) {
 
         InformalRecipient recipient = new InformalRecipient();
 
