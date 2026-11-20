@@ -27,6 +27,8 @@ import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.ReworkTimelineClientImpl;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
@@ -36,7 +38,6 @@ import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -123,10 +124,14 @@ public class TimelineReworkSteps {
     @And("viene aggiornata la richiesta di {timelineInvalidation} con i seguenti dati:")
     public void updateRequestReworkWithError(String requestType, DataTable params) {
         ResolvedUpdate update = resolveUpdateRework(requestType, params);
-        try {
-            reworkTimelineClient.updateNotificationRework(update.iun(), update.reworkId(), update.request());
-        } catch (HttpStatusCodeException exception) {
-            httpStatusCode = exception.getStatusCode();
+        recordHttpError(ApiCallHelper.run(() -> reworkTimelineClient.updateNotificationRework(update.iun(), update.reworkId(), update.request())));
+    }
+
+    /** In caso di errore (non-2xx) registra lo status in {@link #httpStatusCode}; un esito positivo lo lascia invariato. */
+    private void recordHttpError(ApiResult<?> result) {
+        if (result.isError()) {
+            log.info("Errore HTTP {}: {}", result.statusCode(), result.problem());
+            httpStatusCode = result.status();
         }
     }
 
@@ -176,46 +181,56 @@ public class TimelineReworkSteps {
 
     @And("viene invocata una richiesta di rework per la notifica appena creata")
     public void callReworkTimeline() {
-        try {
-            reworkResponse = reworkTimelineClient.notificationRework(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultReworkRequest());
+        ApiResult<ReworkResponse> result = ApiCallHelper.callBody(() ->
+                reworkTimelineClient.notificationRework(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultReworkRequest()));
+        if (result.is2xx()) {
+            reworkResponse = result.body();
             log.info("Successfully reworked. Rework response: {}", reworkResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatusCode = e.getStatusCode();
+        } else {
+            recordHttpError(result);
         }
     }
 
     @And("viene invocata una richiesta di restart per la notifica appena creata")
     public void callRestartTimeline() {
-        try {
-            restartAttemptResponse = reworkTimelineClient.restartAttempt(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultRestartRequest());
+        handleRestartResult(ApiCallHelper.callBody(() ->
+                reworkTimelineClient.restartAttempt(sharedSteps.getNotificationIun(), ReworkRequestFactory.defaultRestartRequest())));
+    }
+
+    private void handleRestartResult(ApiResult<RestartAttemptResponse> result) {
+        if (result.is2xx()) {
+            restartAttemptResponse = result.body();
             log.info("Successfully restarted. Restart attempt response: {}", restartAttemptResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatusCode = e.getStatusCode();
+        } else {
+            recordHttpError(result);
         }
     }
 
     @And("viene invocata una richiesta di correzione puntuale per la notifica appena creata con i seguenti parametri")
     public void callInvalidateTimelineElementsFromData(Map<String, String> inputData) {
-        try {
+        // La preparazione resta nella stessa chiamata: anche un suo errore HTTP (es. recupero notifica) viene registrato
+        handleInvalidationResult(ApiCallHelper.callBody(() -> {
             String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
             String recIndex = getDataTableParams(inputData, "recIndex", "RECINDEX_0");
             FullSentNotificationV29 fsn = sharedSteps.getSentNotificationLastVersion();
             punctualCorrectionRequest = ReworkRequestFactory.invalidationRequest(inputData, recIndex, fsn);
-            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(iun, punctualCorrectionRequest);
-            log.info("Successfully invalidated. Invalidation response: {}", removeElementsResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatusCode = e.getStatusCode();
-        }
+            return reworkTimelineClient.invalidateTimelineElements(iun, punctualCorrectionRequest);
+        }));
     }
 
     @And("viene ripetuta la richiesta di invalidazione precedente")
     public void repeatInvalidateTimelineElements() {
         assertThat(punctualCorrectionRequest).as("La richiesta di invalidazione precedente non è stata inizializzata").isNotNull();
-        try {
-            removeElementsResponse = reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), punctualCorrectionRequest);
+        handleInvalidationResult(ApiCallHelper.callBody(() ->
+                reworkTimelineClient.invalidateTimelineElements(sharedSteps.getNotificationIun(), punctualCorrectionRequest)));
+    }
+
+    private void handleInvalidationResult(ApiResult<InvalidateTimelineElementsResponse> result) {
+        if (result.is2xx()) {
+            removeElementsResponse = result.body();
             log.info("Successfully invalidated. Invalidation response: {}", removeElementsResponse);
-        } catch (HttpStatusCodeException e) {
-            httpStatusCode = e.getStatusCode();
+        } else {
+            recordHttpError(result);
         }
     }
 
@@ -274,11 +289,11 @@ public class TimelineReworkSteps {
     public void callReworkWithParamsWithError(DataTable params) {
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        try {
-            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData));
-        } catch (HttpStatusCodeException exception) {
-            log.info("Error caught: {}", exception.getMessage());
-            httpStatusCode = exception.getStatusCode();
+        ApiResult<ReworkResponse> result = ApiCallHelper.callBody(() -> reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData)));
+        if (result.is2xx()) {
+            reworkResponse = result.body();
+        } else {
+            recordHttpError(result);
         }
     }
 
@@ -286,19 +301,18 @@ public class TimelineReworkSteps {
     public void callReworkWithParams(DataTable params) {
         Map<String, String> inputData = params.asMaps().get(0);
         String iun = getDataTableParams(inputData, "iun", sharedSteps.getNotificationIun());
-        try {
-            reworkResponse = reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData));
-        } catch (HttpStatusCodeException exception) {
+        ApiResult<ReworkResponse> result = ApiCallHelper.callBody(() -> reworkTimelineClient.notificationRework(iun, reworkRequestFromDataTable(inputData)));
+        if (result.isError()) {
             throw new AssertionError(
                     String.format(
                             "Errore chiamata rework | IUN=%s | HTTP=%s | body=%s",
                             sharedSteps.getNotificationIun(),
-                            exception.getStatusCode(),
-                            exception.getResponseBodyAsString()
-                    ),
-                    exception
+                            result.status(),
+                            result.problem()
+                    )
             );
         }
+        reworkResponse = result.body();
     }
 
     @And("viene invocata una richiesta di restart per la notifica appena creata con i seguenti parametri:")
@@ -308,11 +322,11 @@ public class TimelineReworkSteps {
         RestartAttemptRequest.AttemptIdEnum attemptId = inputData.get("attemptId") != null ? RestartAttemptRequest.AttemptIdEnum.fromValue(inputData.get("attemptId")) : null;
         RestartAttemptRequest restartAttemptRequest = ReworkRequestFactory.restartRequest(
                 attemptId, inputData.get("recIndex"), inputData.get("reason"), inputData.get("task"), inputData.get("canInvalidateViewed"));
-        try {
-            restartAttemptResponse = reworkTimelineClient.restartAttempt(iun, restartAttemptRequest);
-        } catch (HttpStatusCodeException exception) {
-            log.info("Error caught: {}", exception.getMessage());
-            httpStatusCode = exception.getStatusCode();
+        ApiResult<RestartAttemptResponse> result = ApiCallHelper.callBody(() -> reworkTimelineClient.restartAttempt(iun, restartAttemptRequest));
+        if (result.is2xx()) {
+            restartAttemptResponse = result.body();
+        } else {
+            recordHttpError(result);
         }
     }
 
@@ -651,11 +665,8 @@ public class TimelineReworkSteps {
             case "paymentsInfo null" -> request.setPaymentsInfo(null);
         }
         log.info("external-registry invalidatePaperCost request: IUN: {}, request-body: {}", iun, request);
-        try {
-            externalRegistryPrivateUserApi.invalidatePaperCost(iun, request);
-        } catch (HttpStatusCodeException exception) {
-            httpStatusCode = exception.getStatusCode();
-        }
+        String requestIun = iun;
+        recordHttpError(ApiCallHelper.run(() -> externalRegistryPrivateUserApi.invalidatePaperCost(requestIun, request)));
     }
 
     @When("invoco l'api di notification-cost per l'invalidazione dei costi con {string}")
@@ -675,11 +686,8 @@ public class TimelineReworkSteps {
             case "costPhases null" -> request.setCostPhases(null);
         }
         log.info("notification-cost invalidatePaperCost request: IUN: {}, request-body: {}", iun, request);
-        try {
-            notificationCostClient.invalidatePaperCost(iun, request);
-        } catch (HttpStatusCodeException exception) {
-            httpStatusCode = exception.getStatusCode();
-        }
+        String requestIun = iun;
+        recordHttpError(ApiCallHelper.run(() -> notificationCostClient.invalidatePaperCost(requestIun, request)));
     }
 
     @Then("si controlla che il timestamp dell'elemento NOTIFICATION_TIMELINE_REWORKED coincida con quello presente su DynamoDb, basato sulla SEND_ANALOG_DOMICILE all'attempt {int}")

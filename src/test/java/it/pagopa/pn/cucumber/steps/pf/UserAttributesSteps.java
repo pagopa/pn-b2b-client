@@ -7,15 +7,16 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.Consent;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaluserconsents.model.ConsentType;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
 
     private final IPnWebUserAttributesClient webUserAttributesClient;//B2B
     private Consent consent;
-    private HttpStatusCodeException consentError;
+    private ApiResult<?> consentError;
 
 
     @Autowired
@@ -37,17 +38,20 @@ public class UserAttributesSteps {
                 throw new IllegalArgumentException();
         }
 
-        try {
-            consent = this.webUserAttributesClient.getConsentByType(consentType, null);
+        ConsentType requestedType = consentType;
+        ApiResult<Consent> result = ApiCallHelper.callBody(() -> this.webUserAttributesClient.getConsentByType(requestedType, null));
+        if (result.is2xx()) {
+            consent = result.body();
             System.out.println("CONSENT: " + consent);
-        } catch (HttpStatusCodeException e) {
-            this.consentError = e;
+        } else {
+            this.consentError = result;
         }
     }
 
     @Then("Il recupero del consenso non ha prodotto errori")
     public void recuperoDelConsensoNonHaProdottoErrori() {
-        Assertions.assertNull(consentError);
+        Assertions.assertNull(consentError, () -> "Il recupero del consenso ha prodotto l'errore HTTP "
+                + consentError.statusCode() + ": " + consentError.problem());
     }
 
     @And("Il consenso è accettato")

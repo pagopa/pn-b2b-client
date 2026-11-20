@@ -16,12 +16,13 @@ import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.client.b2b.pa.service.IPnNotificationCostClient;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -68,8 +69,10 @@ public class CostiNotificaSteps {
             });
             //se il record non è eliminato logicamente (isDeleted=true), recupera tramite API l'oggetto corrispondente al record per i check sui campi relativi ai costi;
             //in caso contrario, verifica che la get puntuale produca un errore 404
-            try {
-                notificationCostRecipientResponse = notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex);
+            ApiResult<NotificationCostRecipientResponse> costResult =
+                    ApiCallHelper.callBody(() -> notificationCostClient.getNotificationCost(sharedSteps.getNotificationIun(), recIndex));
+            if (costResult.is2xx()) {
+                notificationCostRecipientResponse = costResult.body();
                 log.info("NotificationCostRecipientResponse:\n {}", notificationCostRecipientResponse);
                 String costoValorizzato = expectedData.get("costoValorizzato");
                 if (costoValorizzato != null) {
@@ -82,17 +85,18 @@ public class CostiNotificaSteps {
                                 assertThat(record.get("simpleRegisteredLetterCost")).as("Il record salvato su Pn-NotificationDeliveryCost dovrebbe avere il campo %s valorizzato", costoValorizzato).isNotNull();
                     }
                 }
-            } catch (HttpStatusCodeException httpStatusCodeException) {
+            } else {
                 if (record.get("isDeleted").bool()) {
                     assertSoftly(softly -> {
-                        softly.assertThat(httpStatusCodeException.getRawStatusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404").isEqualTo(404);
+                        softly.assertThat(costResult.statusCode()).as("In caso di record eliminato logicamente, la get deve produrre un 404. Dettaglio errore: %s", costResult.problem()).isEqualTo(404);
                         softly.assertThat(expectedData.get("isDeleted")).as("In caso di errore 404, il flag isDeleted del record dev'essere impostato a true").isEqualToIgnoringCase("true");
                         softly.assertThat(record.get("firstAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo firstAnalogCost dovrebbe essere stato riportato a null").isNull();
                         softly.assertThat(record.get("secondAnalogCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo secondAnalogCost dovrebbe essere stato riportato a null").isNull();
                         softly.assertThat(record.get("simpleRegisteredLetterCost").n()).as("Sulla tabella Pn-NotificationDeliveryCost, post annullamento notifica, il campo simpleRegisteredLetterCost dovrebbe essere stato riportato a null").isNull();
                     });
                 } else {
-                    throw httpStatusCodeException;
+                    org.junit.jupiter.api.Assertions.fail("Recupero costi fallito con errore HTTP " + costResult.statusCode()
+                            + " su un record non eliminato logicamente: " + costResult.problem());
                 }
             }
         } catch (AssertionError assertionError) {
@@ -186,27 +190,29 @@ public class CostiNotificaSteps {
                     String creditorTaxId = payment.getPagoPa().getCreditorTaxId();
                     String noticeCode = payment.getPagoPa().getNoticeCode();
                     int expectedError = 404;
-                    try {
-                        switch (inputParameterType) {
-                            case "creditorTaxId errato" -> {
-                                creditorTaxId = "invalid";
-                                expectedError = 400;
-                            }
-                            case "noticeCode errato" -> {
-                                noticeCode = "invalid";
-                                expectedError = 400;
-                            }
-                            case "creditorTaxId inesistente" -> creditorTaxId = creditorTaxId.replaceFirst("7", "0");
-                            case "noticeCode inesistente" ->
-                                    noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
+                    switch (inputParameterType) {
+                        case "creditorTaxId errato" -> {
+                            creditorTaxId = "invalid";
+                            expectedError = 400;
                         }
-                        log.info("Start invocazione API recupero costi con creditorTaxId={} noticeCode={}", creditorTaxId, noticeCode);
-                        notificationCostClient.getNotificationCostByPayment(creditorTaxId, noticeCode);
-                    } catch (HttpStatusCodeException expectedException) {
+                        case "noticeCode errato" -> {
+                            noticeCode = "invalid";
+                            expectedError = 400;
+                        }
+                        case "creditorTaxId inesistente" -> creditorTaxId = creditorTaxId.replaceFirst("7", "0");
+                        case "noticeCode inesistente" ->
+                                noticeCode = noticeCode.startsWith("0") ? "1" + noticeCode.substring(1) : "0" + noticeCode.substring(1);
+                    }
+                    log.info("Start invocazione API recupero costi con creditorTaxId={} noticeCode={}", creditorTaxId, noticeCode);
+                    String requestCreditorTaxId = creditorTaxId;
+                    String requestNoticeCode = noticeCode;
+                    ApiResult<NotificationCostPaymentResponse> result =
+                            ApiCallHelper.callBody(() -> notificationCostClient.getNotificationCostByPayment(requestCreditorTaxId, requestNoticeCode));
+                    if (result.isError()) {
                         apiInvocationHasFailed.set(true);
-                        log.info(expectedException.getMessage());
-                        assertThat(expectedException.getRawStatusCode())
-                                .as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un %s", inputParameterType, expectedError)
+                        log.info("Errore HTTP {}: {}", result.statusCode(), result.problem());
+                        assertThat(result.statusCode())
+                                .as("L'invocazione dell'api di recupero costi con %s dovrebbe produrre un %s. Dettaglio errore: %s", inputParameterType, expectedError, result.problem())
                                 .isEqualTo(expectedError);
                     }
                 }
@@ -234,13 +240,15 @@ public class CostiNotificaSteps {
             case "iun inesistente" -> iun = INEXISTENT_IUN;
             case "pagamenti vuoti" -> request.getCostRecipients().get(0).setPayments(new ArrayList<>());
         }
-        try {
-            notificationCostClient.initializeNotificationCost(iun, request);
+        String requestIun = iun;
+        NewNotificationCostRequest costRequest = request;
+        ApiResult<String> result = ApiCallHelper.callBody(() -> notificationCostClient.initializeNotificationCost(requestIun, costRequest));
+        if (result.is2xx()) {
             assertThat(Arrays.asList("iun inesistente", "pagamenti vuoti"))
                     .as("La casistica %s dovrebbe produrre un errore", inputParamsType)
                     .contains(inputParamsType);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            assertThat(httpStatusCodeException.getRawStatusCode()).as("La request con %s dovrebbe generare un errore 400", inputParamsType).isEqualTo(400);
+        } else {
+            assertThat(result.statusCode()).as("La request con %s dovrebbe generare un errore 400. Dettaglio errore: %s", inputParamsType, result.problem()).isEqualTo(400);
             assertThat(Arrays.asList("iun inesistente", "pagamenti vuoti"))
                     .as("La casistica %s non dovrebbe produrre alcun errore", inputParamsType)
                     .doesNotContain(inputParamsType);

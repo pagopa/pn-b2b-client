@@ -18,6 +18,8 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnMandateAppIoClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnMandateAppIoClientImpl;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -29,7 +31,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -65,7 +66,7 @@ public class DelegheTemporaneeSteps {
 
     private List<it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto> mandatesByDelegator;
 
-    private HttpStatusCodeException error;
+    private ApiResult<?> error;
 
     //qrCode valido, ma relativo a hotfix, per dare errore quando la suite gira in DEV/TEST/UAT
     private static final String VALID_QRCODE_404 = "?aar=S05EQS1OUEFHLVZBTkEtMjAyNTAyLUotMV9QRi00MmQ5ODJlZi0yNTc4LTQ3ODUtOTg0Yy04YzE5ZjM3NTZlNzlfMWY2NzVlNWQtYjcyNi00NzNkLWJlZTQtZDIxZjk5ZGQwN2Jm";
@@ -111,12 +112,10 @@ public class DelegheTemporaneeSteps {
             }
         }
         if (mandateDto != null) {
-            try {
-                ricezioneNotificheWebDelegheSteps.getWebMandateClient().rejectMandate(mandateDto.getMandateId());
-            } catch (HttpStatusCodeException exception) {
-                if (exception.getRawStatusCode() == 404) {
-                    log.info("L'esecuzione in parallelo di altri test ha causato il 404, niente di grave");
-                }
+            String mandateId = mandateDto.getMandateId();
+            ApiResult<Void> result = ApiCallHelper.run(() -> ricezioneNotificheWebDelegheSteps.getWebMandateClient().rejectMandate(mandateId));
+            if (result.statusCode() == 404) {
+                log.info("L'esecuzione in parallelo di altri test ha causato il 404, niente di grave");
             }
         }
     }
@@ -135,14 +134,17 @@ public class DelegheTemporaneeSteps {
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
                     taxId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
-        try {
-            mandateCreationResponse = mandateAppIoClient.createIOMandate(
-                    taxId, null, null, "PublicKey", null,
-                    null, "AuthJwt", lollipopUserId, null, null,
-                    mandateCreationRequest);
+        String requestTaxId = taxId;
+        MandateCreationRequest request = mandateCreationRequest;
+        ApiResult<MandateCreationResponse> result = ApiCallHelper.callBody(() -> mandateAppIoClient.createIOMandate(
+                requestTaxId, null, null, "PublicKey", null,
+                null, "AuthJwt", lollipopUserId, null, null,
+                request));
+        if (result.is2xx()) {
+            mandateCreationResponse = result.body();
             checkMandateCreation();
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
+        } else {
+            this.error = result;
         }
     }
 
@@ -213,22 +215,28 @@ public class DelegheTemporaneeSteps {
             case "CX TAX ID E LOLLIPOP USER ID NON COINCIDENTI" ->
                     lollipopUserId = sharedSteps.getDestinatarioRegistry().DESTINATARIO_GALILEO_GALILEI.getTaxId();
         }
-        try {
-            mandateAppIoClient.acceptIOMandate(
-                    taxId,
-                    mandateId,
-                    null,
-                    null,
-                    "PublicKey",
-                    null,
-                    null,
-                    "AuthJwt",
-                    lollipopUserId,
-                    null,
-                    null,
-                    cieValidationData);
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
+        String requestMandateId = mandateId;
+        String requestLollipopUserId = lollipopUserId;
+        CIEValidationData requestCieValidationData = cieValidationData;
+        recordError(ApiCallHelper.run(() -> mandateAppIoClient.acceptIOMandate(
+                taxId,
+                requestMandateId,
+                null,
+                null,
+                "PublicKey",
+                null,
+                null,
+                "AuthJwt",
+                requestLollipopUserId,
+                null,
+                null,
+                requestCieValidationData)));
+    }
+
+    /** Registra il risultato in {@link #error} solo se è un errore (non-2xx). */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            this.error = result;
         }
     }
 
@@ -264,7 +272,8 @@ public class DelegheTemporaneeSteps {
     //Step importante in quanto va anche a settare il mandateId nella classe RicezioneNotificheWebDelegheSteps
     @Then("l'operazione non ha prodotto alcun errore")
     public void checkErrorIsNull() {
-        assertThat(error).as("L'operazione non dovrebbe aver prodotto errori").isNull();
+        assertThat(error).as("L'operazione non dovrebbe aver prodotto errori. Errore: %s",
+                error == null ? null : error.statusCode() + " " + error.problem()).isNull();
         //converto il mandate creato nel corrispettivo di mandateWeb e lo setto alla classe RicezioneNotificheWebDelegheSteps
         //in questo modo posso riciclare i metodi utilizzati per le deleghe permanenti, senza dover duplicare codice
         it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandateWeb = deepCopy(mandateDtoB2b, it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto.class);
@@ -274,45 +283,47 @@ public class DelegheTemporaneeSteps {
     @When("{string} tenta di accettare la delega temporanea richiamando l'api b2b")
     public void acceptTemporaryMandateViaB2b(String user) {
         ricezioneNotificheWebDelegheSteps.setBearerToken(user);
-        try {
-            ricezioneNotificheWebDelegheSteps.getWebMandateClient().acceptMandate(
-                    mandateDtoB2b.getMandateId(), new AcceptRequestDto().verificationCode(mandateDtoB2b.getVerificationCode()));
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
-        }
+        recordError(ApiCallHelper.run(() -> ricezioneNotificheWebDelegheSteps.getWebMandateClient().acceptMandate(
+                mandateDtoB2b.getMandateId(), new AcceptRequestDto().verificationCode(mandateDtoB2b.getVerificationCode()))));
     }
 
     @Then("l'operazione restituisce codice {int}")
     public void checkErrorCode(Integer errorCode) {
-        assertThat(error.getStatusCode().value()).as("Il codice di errore non coincide con quanto atteso").isEqualTo(errorCode);
+        assertThat(error).as("L'operazione non ha prodotto l'errore atteso %s", errorCode).isNotNull();
+        assertThat(error.statusCode()).as("Il codice di errore non coincide con quanto atteso. Dettaglio errore: %s", error.problem()).isEqualTo(errorCode);
         error = null; //una volta verificato l'ottenimento dell'errore atteso, resettarlo
     }
 
     @Then("la lista di deleghe del {isDelegate} {string} {contains} la delega temporanea creata")
     public void checkPresenceTemporaryMandateInList(boolean isDelegate, String user, boolean contains) {
         ricezioneNotificheWebDelegheSteps.setBearerToken(user);
+        ApiResult<List<it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto>> result = isDelegate
+                ? ApiCallHelper.callBody(() -> ricezioneNotificheWebDelegheSteps.getWebMandateClient().listMandatesByDelegate1(null))
+                : ApiCallHelper.callBody(() -> ricezioneNotificheWebDelegheSteps.getWebMandateClient().listMandatesByDelegator1());
+        if (result.isError()) {
+            // comportamento invariato: l'errore viene registrato e le verifiche sulla lista non vengono eseguite
+            this.error = result;
+            return;
+        }
+
         it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto mandateFound;
-        try {
-            if (isDelegate) {
-                mandatesByDelegate = ricezioneNotificheWebDelegheSteps.getWebMandateClient().listMandatesByDelegate1(null);
-                assertThat(mandatesByDelegate).as("La lista di deleghe del delegato non dev'essere null").isNotNull();
-                mandateFound = mandatesByDelegate.stream().filter(m -> m.getMandateId().equals(mandateDtoB2b.getMandateId())).findFirst().orElse(null);
-            } else {
-                mandatesByDelegator = ricezioneNotificheWebDelegheSteps.getWebMandateClient().listMandatesByDelegator1();
-                assertThat(mandatesByDelegator).as("La lista di deleghe del delegante non dev'essere null").isNotNull();
-                mandateFound = mandatesByDelegator.stream().filter(m -> m.getMandateId().equals(mandateDtoB2b.getMandateId())).findFirst().orElse(null);
-            }
-            if (contains) {
-                assertThat(mandateFound)
-                        .as("La lista di deleghe del " + (isDelegate ? "delegato" : "delegante") + " deve contenere la delega temporanea")
-                        .isNotNull();
-            } else {
-                assertThat(mandateFound)
-                        .as("La lista di deleghe del " + (isDelegate ? "delegato" : "delegante") + "non deve contenere la delega temporanea")
-                        .isNull();
-            }
-        } catch (HttpStatusCodeException e) {
-            this.error = e;
+        if (isDelegate) {
+            mandatesByDelegate = result.body();
+            assertThat(mandatesByDelegate).as("La lista di deleghe del delegato non dev'essere null").isNotNull();
+            mandateFound = mandatesByDelegate.stream().filter(m -> m.getMandateId().equals(mandateDtoB2b.getMandateId())).findFirst().orElse(null);
+        } else {
+            mandatesByDelegator = result.body();
+            assertThat(mandatesByDelegator).as("La lista di deleghe del delegante non dev'essere null").isNotNull();
+            mandateFound = mandatesByDelegator.stream().filter(m -> m.getMandateId().equals(mandateDtoB2b.getMandateId())).findFirst().orElse(null);
+        }
+        if (contains) {
+            assertThat(mandateFound)
+                    .as("La lista di deleghe del " + (isDelegate ? "delegato" : "delegante") + " deve contenere la delega temporanea")
+                    .isNotNull();
+        } else {
+            assertThat(mandateFound)
+                    .as("La lista di deleghe del " + (isDelegate ? "delegato" : "delegante") + "non deve contenere la delega temporanea")
+                    .isNull();
         }
     }
 
@@ -338,18 +349,17 @@ public class DelegheTemporaneeSteps {
 
     @Then("la notifica {canBe} essere correttamente letta tramite appIo dal delegato {destinatario}")
     public void delegateReadsNotificationWithAppIO(boolean canBeRead, Destinatario delegate) {
-        ThirdPartyMessage thirdPartyMessage = null;
-        try {
-            thirdPartyMessage = appIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), delegate.getTaxId(), UUID.fromString(mandateDtoB2b.getMandateId()));
-        } catch (HttpStatusCodeException exception) {
-            error = exception;
-        }
+        ApiResult<ThirdPartyMessage> result = ApiCallHelper.callBody(() ->
+                appIOB2bClient.getReceivedNotification(sharedSteps.getNotificationIun(), delegate.getTaxId(), UUID.fromString(mandateDtoB2b.getMandateId())));
+        recordError(result);
+        ThirdPartyMessage thirdPartyMessage = result.body();
         if (canBeRead) {
-            Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata non dev'essere null").isNotNull();
+            Assertions.assertThat(thirdPartyMessage).as("La notifica recuperata non dev'essere null. Errore: %s",
+                    result.isError() ? result.statusCode() + " " + result.problem() : null).isNotNull();
             log.info("Notifica visualizzata con successo tramite appIO: \n" + thirdPartyMessage);
         } else {
             Assertions.assertThat(error).as("Il recupero della notifica deve produrre un errore").isNotNull();
-            log.info("Errore in fase di visualizzazione notifica tramite appIO: \n" + error.getMessage());
+            log.info("Errore in fase di visualizzazione notifica tramite appIO: \n" + error.statusCode() + " " + error.problem());
         }
     }
 }
