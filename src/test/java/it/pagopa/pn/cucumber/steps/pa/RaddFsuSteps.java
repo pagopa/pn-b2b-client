@@ -7,6 +7,8 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AORInquiryResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AbortTransactionRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.AbortTransactionResponse;
@@ -27,7 +29,6 @@ import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -59,7 +60,7 @@ public class RaddFsuSteps {
     private CompleteTransactionResponse completeTransactionResponse;
     private B2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
-    private HttpStatusCodeException documentUploadError;
+    private ApiResult<?> documentUploadError;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 
@@ -412,19 +413,22 @@ public class RaddFsuSteps {
         documentUploadRequest = without.equalsIgnoreCase("contentType") ? documentUploadRequest : documentUploadRequest.checksum(sha256);
         documentUploadRequest = without.equalsIgnoreCase("checksum") ? documentUploadRequest : documentUploadRequest.contentType("application/pdf");
 
-        try {
-            DocumentUploadResponse documentUploadResponse = raddFsuClient.documentUpload("1234556", documentUploadRequest);
-            log.debug("DocumentUploadResponse: {}", documentUploadResponse);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            log.debug("HttpStatusCodeException {}", httpStatusCodeException);
-            documentUploadError = httpStatusCodeException;
+        DocumentUploadRequest request = documentUploadRequest;
+        ApiResult<DocumentUploadResponse> result = ApiCallHelper.callBody(() -> raddFsuClient.documentUpload("1234556", request));
+        if (result.is2xx()) {
+            log.debug("DocumentUploadResponse: {}", result.body());
+        } else {
+            log.debug("Errore HTTP {}: {}", result.statusCode(), result.problem());
+            documentUploadError = result;
         }
     }
 
     @Then("il caricamento ha prodotto une errore http {int}")
     public void ilCaricamentoHaProdottoUnErroreHttp(int httpError) {
         assertThat(documentUploadError).as("Il caricamento non ha prodotto l'errore atteso").isNotNull();
-        assertThat(documentUploadError.getStatusCode().value()).as("Il codice d'errore non coincide col valore atteso").isEqualTo(httpError);
+        assertThat(documentUploadError.statusCode())
+                .as("Il codice d'errore non coincide col valore atteso. Dettaglio errore: %s", documentUploadError.problem())
+                .isEqualTo(httpError);
     }
 
     @Then("la transazione viene abortita")
