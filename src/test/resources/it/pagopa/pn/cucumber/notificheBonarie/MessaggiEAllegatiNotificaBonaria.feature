@@ -8,7 +8,6 @@ Feature: Messaggi e allegati di una notifica bonaria.
 #  CASO DI TEST 1.1  Invio dei documenti allegati al destinatario.
 
   #il preload dei documento è testato nella maggior parte degli scenari
-  @informalComboRefactor
   Scenario:[NOTIFICHE_BONARIE_PRELOAD_1] Come ente mittente effettuo il preload dei documenti.
   Includo nella notifica allegati di pagamento e documenti.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -226,7 +225,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
 #  CASO DI TEST 5.1 Corretto Download dei documenti notificati.
 
-  @informalNotificationsMessageAttachment @informalComboRefactor
+  @informalNotificationsMessageAttachment
   Scenario: [NOTIFICHE_BONARIE_05_1] Come ente mittente Recupero i documenti di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId    | FattOrd           |
