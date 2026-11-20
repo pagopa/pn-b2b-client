@@ -24,6 +24,10 @@ public enum DynamoTableName {
     PAPER_TRACKER_ERROR("pn-paperTrackerError"),
     PAPER_TRACKINGS("pn-PaperTrackings"),
     NOTIFICATIONS("pn-Notifications"),
+    NATIONAL_REGISTRIES_REQUESTS("pn-NationalRegistriesRequests"),
+    NATIONAL_REGISTRIES_BATCHES("pn-NationalRegistriesBatches"),
+    NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS("pn-NationalRegistriesRequests"),
+    NATIONAL_REGISTRIES_BATCHES_WITH_INDEX_STATUS("pn-NationalRegistriesBatches"),
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata"),
     PT_DELEGATIONS("pn-PtDelegations"),
     CAMPAIGNS("pn-Campaigns");
