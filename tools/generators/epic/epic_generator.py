@@ -73,6 +73,8 @@ def preview(path: Path) -> list[dict]:
             if pair in seen:
                 raise ValueError(f"Duplicate (id, qa_epic) pair: {key}, {epic}")
             seen.add(pair)
+        if not epic and item.get("branch") not in (None, ""):
+            raise ValueError(f"Work item {index} must leave branch empty until qa_epic is assigned")
         for field in ("qa_epic", "branch"):
             if field not in item:
                 raise ValueError(f"Work item {index} must include {field}, even if empty")
@@ -167,13 +169,25 @@ def apply(requests: list[dict], client: JiraClient) -> list[dict]:
             if not isinstance(summary, str) or not summary.strip():
                 raise ValueError(f"Missing Jira summary for {item['work_item']}")
             summaries[item["work_item"]] = summary.strip()
+        summary = f"QA validation for {item['work_item']} - " \
+                  f"{item['title'] or summaries[item['work_item']]}"
+        if len(summary) > 255:
+            raise ValueError(f"QA Epic summary exceeds 255 characters for {item['work_item']}")
     existing = {}
     for item in requests:
         search = client.call("POST", "/rest/api/3/search/jql", {
             "jql": f'project = QA AND labels = "{item["label"]}"',
-            "fields": ["key", "issuetype", "labels"], "maxResults": 2,
+            "fields": ["key", "issuetype", "labels", "customfield_10648"], "maxResults": 100,
         })
-        matches = search.get("issues", [])
+        issues = search.get("issues", [])
+        if search.get("nextPageToken") or search.get("total", len(issues)) > len(issues):
+            raise RuntimeError(f"Too many QA issues for {item['label']} to reconcile safely")
+        product = item["calls"][0]["body"]["fields"]["customfield_10648"]["value"]
+        if any(not isinstance(issue.get("fields", {}).get("customfield_10648"), dict)
+               for issue in issues):
+            raise RuntimeError(f"Cannot verify Product for QA issues with {item['label']}")
+        matches = [issue for issue in issues
+                   if issue["fields"]["customfield_10648"].get("value") == product]
         if len(matches) > 1:
             raise RuntimeError(f"Multiple QA issues for {item['label']}: "
                                + ", ".join(issue["key"] for issue in matches))
@@ -190,11 +204,13 @@ def apply(requests: list[dict], client: JiraClient) -> list[dict]:
         key = existing.get(item["position"])
         if key:
             issue = client.call("GET", "/rest/api/3/issue/" + parse.quote(key)
-                                + "?fields=project,issuetype,labels,issuelinks")
+                                + "?fields=project,issuetype,labels,issuelinks,customfield_10648")
             issue_fields = issue.get("fields", {})
             if (issue.get("key") != key
                     or issue_fields.get("project", {}).get("key") != "QA"
                     or issue_fields.get("issuetype", {}).get("name") != "QA Epic"
+                    or issue_fields.get("customfield_10648", {}).get("value")
+                    != create["body"]["fields"]["customfield_10648"]["value"]
                     or item["label"] not in issue_fields.get("labels", [])):
                 raise RuntimeError(f"Existing issue {key} does not match {item['label']}")
             links = [entry for entry in issue_fields.get("issuelinks", [])
@@ -266,7 +282,8 @@ def fill_manifest_field(path: Path, results: list[dict], field: str) -> bool:
         fields = {key.value: (key, value) for key, value in node.value}
         if field in fields:
             key_node, value_node = fields[field]
-            if not isinstance(value_node, yaml.ScalarNode) or value_node.value not in ("", "null", "~"):
+            if (not isinstance(value_node, yaml.ScalarNode)
+                    or value_node.tag != "tag:yaml.org,2002:null"):
                 raise ValueError(f"Cannot safely edit {field} for {identity}")
             prefix = " " if value_node.start_mark.index == value_node.end_mark.index else ""
             edits.append((value_node.start_mark.index, value_node.end_mark.index,

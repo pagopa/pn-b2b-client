@@ -47,6 +47,7 @@ jobs:
       - name: Check cross-repository access
         if: ${{ inputs.apply }}
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           QE_SUIT_TOKEN: ${{ secrets.QE_SUIT_TOKEN }}
         run: |
           python tools/generators/epic/epic_generator.py "$RELEASE_MANIFEST" > /dev/null
@@ -54,11 +55,19 @@ jobs:
           import os
           import yaml
           from pathlib import Path
+          import sys
+          sys.path.insert(0, 'tools/generators/epic')
+          from create_branches import github_call
           manifest = yaml.safe_load(Path(os.environ['RELEASE_MANIFEST']).read_text())
-          if any(item['repo'] == 'qe_suit' and not item.get('qa_epic')
-                 for item in manifest['release']['work-items']):
-              if not os.environ.get('QE_SUIT_TOKEN'):
-                  raise SystemExit('QE_SUIT_TOKEN is required for qe_suit branches')
+          repos = {item['repo'] for item in manifest['release']['work-items']
+                   if not item.get('qa_epic')}
+          for repo in repos:
+              token = os.environ['QE_SUIT_TOKEN'] if repo == 'qe_suit' else os.environ['GITHUB_TOKEN']
+              if not token:
+                  raise SystemExit(f'Missing GitHub token for {repo}')
+              ref = github_call(token, 'GET', f'/repos/pagopa/{repo}/git/ref/heads/develop')
+              if not ref.get('object', {}).get('sha'):
+                  raise SystemExit(f'Cannot access develop in pagopa/{repo}')
           PY
       - name: Create QA Epics in Jira
         if: ${{ inputs.apply }}

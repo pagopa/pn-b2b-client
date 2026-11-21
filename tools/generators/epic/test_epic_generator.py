@@ -200,10 +200,12 @@ class PreviewTest(unittest.TestCase):
                 if method == "GET" and "?fields=summary" in path:
                     return {"fields": {"summary": "Service update"}}
                 if path.endswith("search/jql"):
-                    return {"issues": [{"key": "QA-123"}]}
+                    return {"issues": [{"key": "QA-123", "fields": {
+                        "customfield_10648": {"value": "INTEROP"}}}]}
                 if "?fields=project,issuetype,labels,issuelinks" in path:
                     return {"key": "QA-123", "fields": {
                         "project": {"key": "QA"}, "issuetype": {"name": "QA Epic"},
+                        "customfield_10648": {"value": "INTEROP"},
                         "labels": ["release-2.26.0-PIN-1-1"],
                         "issuelinks": [{"type": {"name": "Test"},
                                         "outwardIssue": {"key": "PIN-1"}}]}}
@@ -225,6 +227,73 @@ class PreviewTest(unittest.TestCase):
                              for method, path, _ in client.calls))
         self.assertTrue(any(path.endswith("/QA-123/comment") and method == "POST"
                             for method, path, _ in client.calls))
+
+    def test_same_label_from_another_product_is_not_reused(self):
+        class FakeClient:
+            def __init__(self):
+                self.calls = []
+
+            def call(self, method, path, body=None):
+                self.calls.append((method, path, body))
+                if path.endswith("issueLinkType"):
+                    return {"issueLinkTypes": [{"name": "Test", "outward": "tests",
+                                                "inward": "is tested by"}]}
+                if path.endswith("/project/QA/versions"):
+                    return [{"id": "1", "name": "2.26.0"}]
+                if path.endswith("search/jql"):
+                    return {"issues": [{"key": "QA-100", "fields": {
+                        "customfield_10648": {"value": "INTEROP"}}}]}
+                if method == "POST" and path.endswith("/issue"):
+                    return {"key": "QA-200"}
+                return {}
+
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory, "send")
+            manifest.write_text("release:\n  version: 2.26.0\n  status: in-progress\n"
+                                "  work-items:\n    - id: PN-1\n      repo: qe_suit\n"
+                                "      sequence: 1\n      title: Scope\n      qa_epic:\n"
+                                "      branch:\n", encoding="utf-8")
+            client = FakeClient()
+            self.assertEqual(apply(preview(manifest), client)[0]["qa_epic"], "QA-200")
+            self.assertTrue(any(method == "POST" and path.endswith("/issue")
+                                for method, path, _ in client.calls))
+
+    def test_pending_epic_rejects_populated_branch_before_jira(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            manifest.write_text("release:\n  version: test\n  status: in-progress\n"
+                                "  work-items:\n    - id: PN-1\n      repo: qe_suit\n"
+                                "      sequence: 1\n      qa_epic:\n"
+                                "      branch: feature/old\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "leave branch empty"):
+                preview(manifest)
+
+    def test_long_summary_stops_before_creating_any_issue(self):
+        class FakeClient:
+            def __init__(self):
+                self.calls = []
+
+            def call(self, method, path, body=None):
+                self.calls.append((method, path))
+                if path.endswith("issueLinkType"):
+                    return {"issueLinkTypes": [{"name": "Test", "outward": "tests",
+                                                "inward": "is tested by"}]}
+                if path.endswith("/project/QA/versions"):
+                    return [{"id": "1", "name": "test"}]
+                return {}
+
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            manifest.write_text("release:\n  version: test\n  status: in-progress\n"
+                                "  work-items:\n    - id: PIN-1\n      repo: qe_suit\n"
+                                "      sequence: 1\n      title: Short\n      qa_epic:\n"
+                                "      branch:\n    - id: PIN-2\n      repo: qe_suit\n"
+                                "      sequence: 2\n      title: " + "X" * 255 + "\n"
+                                "      qa_epic:\n      branch:\n", encoding="utf-8")
+            client = FakeClient()
+            with self.assertRaisesRegex(ValueError, "summary exceeds 255 characters for PIN-2"):
+                apply(preview(manifest), client)
+            self.assertFalse(any(path.endswith("/issue") for method, path in client.calls))
 
     def test_manifest_update_preserves_other_text(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -262,6 +331,20 @@ class PreviewTest(unittest.TestCase):
                                               "      branch: feature/QA-124\n"
                                               "      qa_epic: QA-124\n"))
 
+    def test_manifest_update_accepts_uppercase_yaml_null(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            manifest.write_text("release:\n  work-items:\n    - id: PIN-1\n"
+                                "      sequence: 1\n      qa_epic: NULL\n"
+                                "      branch: Null\n", encoding="utf-8")
+            self.assertTrue(update_manifest(manifest, [{"work_item": "PIN-1",
+                                                        "sequence": 1, "qa_epic": "QA-123"}]))
+            self.assertIn("qa_epic: QA-123", manifest.read_text())
+            from epic_generator import fill_manifest_field
+            self.assertTrue(fill_manifest_field(manifest, [{"work_item": "PIN-1",
+                                                            "sequence": 1,
+                                                            "branch": "feature/QA-123"}], "branch"))
+
     def test_reconciliation_rejects_wrong_link_direction(self):
         class FakeClient:
             def call(self, method, path, body=None):
@@ -271,10 +354,12 @@ class PreviewTest(unittest.TestCase):
                 if path.endswith("/project/QA/versions"):
                     return [{"id": "20001", "name": "test"}]
                 if path.endswith("search/jql"):
-                    return {"issues": [{"key": "QA-123"}]}
+                    return {"issues": [{"key": "QA-123", "fields": {
+                        "customfield_10648": {"value": "INTEROP"}}}]}
                 if "?fields=project,issuetype,labels,issuelinks" in path:
                     return {"key": "QA-123", "fields": {
                         "project": {"key": "QA"}, "issuetype": {"name": "QA Epic"},
+                        "customfield_10648": {"value": "INTEROP"},
                         "labels": ["release-test-PIN-1-1"],
                         "issuelinks": [{"type": {"name": "Test"},
                                         "inwardIssue": {"key": "PIN-1"}}]}}

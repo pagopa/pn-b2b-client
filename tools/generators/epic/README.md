@@ -54,8 +54,10 @@ Il campo Jira Product (`customfield_10648`) vale `INTEROP` per i manifest in
 Jira QA. In modalità `apply`, il generatore ne cerca l'ID prima di creare le
 Epic e si ferma se la versione non esiste; non crea versioni Jira.
 L'issue riceve le label `<version>` e `release-<version>-<id>-<sequence>`;
-la seconda è usata dalla modalità `apply` per cercare Epic già create. Se ne
-trova una sola, verifica progetto, tipo, label e direzione del link `tests`,
+la seconda è usata dalla modalità `apply` per cercare Epic già create. La
+ricerca confronta anche il campo Product, così release di prodotti diversi
+con la stessa versione, issue e sequence non riusano la stessa QA Epic. Se ne
+trova una sola per il prodotto, verifica progetto, tipo, label e direzione del link `tests`,
 completa link e commento se mancanti e usa la chiave nella stessa PR. In caso
 di più risultati o dati incoerenti, si ferma. Il workflow serializza gli avvii
 sullo stesso manifest.
