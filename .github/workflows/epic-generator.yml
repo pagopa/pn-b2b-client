@@ -1,0 +1,104 @@
+name: epic_generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: "Product folder under releases/, for example interop or send"
+        required: true
+        type: string
+      release:
+        description: "Release name, for example 2.26.0 (without .yaml)"
+        required: true
+        type: string
+      apply:
+        description: "Create QA Epics in Jira (default: preview only)"
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: epic-generator-${{ inputs.product }}-${{ inputs.release }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: develop
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install PyYAML==6.0.3
+      - name: Resolve release manifest
+        env:
+          RELEASE_PRODUCT: ${{ inputs.product }}
+          RELEASE_NAME: ${{ inputs.release }}
+        run: python tools/generators/epic/resolve_release.py "$RELEASE_PRODUCT" "$RELEASE_NAME"
+      - name: Preview Jira requests
+        if: ${{ !inputs.apply }}
+        run: python tools/generators/epic/epic_generator.py "$RELEASE_MANIFEST"
+      - name: Check cross-repository access
+        if: ${{ inputs.apply }}
+        env:
+          QE_SUIT_TOKEN: ${{ secrets.QE_SUIT_TOKEN }}
+        run: |
+          python tools/generators/epic/epic_generator.py "$RELEASE_MANIFEST" > /dev/null
+          python - <<'PY'
+          import os
+          import yaml
+          from pathlib import Path
+          manifest = yaml.safe_load(Path(os.environ['RELEASE_MANIFEST']).read_text())
+          if any(item['repo'] == 'qe_suit' and not item.get('qa_epic')
+                 for item in manifest['release']['work-items']):
+              if not os.environ.get('QE_SUIT_TOKEN'):
+                  raise SystemExit('QE_SUIT_TOKEN is required for qe_suit branches')
+          PY
+      - name: Create QA Epics in Jira
+        if: ${{ inputs.apply }}
+        env:
+          EPIC_RESULTS: ${{ runner.temp }}/epic-results.json
+          JIRA_CLOUD_ID: ${{ vars.JIRA_CLOUD_ID }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: python tools/generators/epic/epic_generator.py "$RELEASE_MANIFEST" --apply --result-file "$EPIC_RESULTS"
+      - name: Create QA feature branches
+        if: ${{ inputs.apply }}
+        env:
+          EPIC_RESULTS: ${{ runner.temp }}/epic-results.json
+          GITHUB_TOKEN: ${{ github.token }}
+          QE_SUIT_TOKEN: ${{ secrets.QE_SUIT_TOKEN }}
+        run: python tools/generators/epic/create_branches.py "$RELEASE_MANIFEST" "$EPIC_RESULTS"
+      - name: Open manifest reconciliation PR
+        if: ${{ inputs.apply }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- "$RELEASE_MANIFEST"; then
+            echo "No manifest changes to propose"
+            exit 0
+          fi
+          branch_hash=$(printf '%s' "$RELEASE_MANIFEST" | sha256sum | cut -c1-12)
+          branch="automation/epic-${branch_hash}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add -- "$RELEASE_MANIFEST"
+          git commit -m "chore: record QA Epic keys and branches for $RELEASE_MANIFEST"
+          if git ls-remote --exit-code --heads origin "$branch" > /dev/null; then
+            git fetch origin "refs/heads/$branch:refs/remotes/origin/$branch"
+          fi
+          git push --force-with-lease origin "HEAD:refs/heads/$branch"
+          existing_pr=$(gh pr list --head "$branch" --base develop --state open --json number --jq '.[0].number // empty')
+          if [[ -n "$existing_pr" ]]; then
+            echo "Updated PR #$existing_pr"
+          else
+            gh pr create --base develop --head "$branch" \
+              --title "Record QA Epic keys for $RELEASE_MANIFEST" \
+              --body "Proposes the QA Epic keys created or reconciled by epic_generator. Principal Lead review required."
+          fi
