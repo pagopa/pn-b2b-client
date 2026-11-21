@@ -283,7 +283,9 @@ def fill_manifest_field(path: Path, results: list[dict], field: str) -> bool:
         if field in fields:
             key_node, value_node = fields[field]
             if (not isinstance(value_node, yaml.ScalarNode)
-                    or value_node.tag != "tag:yaml.org,2002:null"):
+                    or not (value_node.tag == "tag:yaml.org,2002:null"
+                            or value_node.tag == "tag:yaml.org,2002:str"
+                            and value_node.value == "")):
                 raise ValueError(f"Cannot safely edit {field} for {identity}")
             prefix = " " if value_node.start_mark.index == value_node.end_mark.index else ""
             edits.append((value_node.start_mark.index, value_node.end_mark.index,

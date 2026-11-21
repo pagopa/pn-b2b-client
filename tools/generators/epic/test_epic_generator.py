@@ -345,6 +345,22 @@ class PreviewTest(unittest.TestCase):
                                                             "sequence": 1,
                                                             "branch": "feature/QA-123"}], "branch"))
 
+    def test_manifest_update_accepts_quoted_empty_fields(self):
+        from epic_generator import fill_manifest_field
+
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            manifest.write_text("release:\n  work-items:\n    - id: PIN-1\n"
+                                "      sequence: 1\n      qa_epic: \"\"\n"
+                                "      branch: ''\n", encoding="utf-8")
+            self.assertTrue(update_manifest(manifest, [{"work_item": "PIN-1",
+                                                        "sequence": 1, "qa_epic": "QA-123"}]))
+            self.assertTrue(fill_manifest_field(manifest, [{"work_item": "PIN-1",
+                                                            "sequence": 1,
+                                                            "branch": "feature/QA-123"}], "branch"))
+            self.assertIn("qa_epic: QA-123", manifest.read_text())
+            self.assertIn("branch: feature/QA-123", manifest.read_text())
+
     def test_reconciliation_rejects_wrong_link_direction(self):
         class FakeClient:
             def call(self, method, path, body=None):
