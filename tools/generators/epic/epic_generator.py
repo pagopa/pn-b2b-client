@@ -73,6 +73,9 @@ def preview(path: Path) -> list[dict]:
             if pair in seen:
                 raise ValueError(f"Duplicate (id, qa_epic) pair: {key}, {epic}")
             seen.add(pair)
+        for field in ("qa_epic", "branch"):
+            if field not in item:
+                raise ValueError(f"Work item {index} must include {field}, even if empty")
 
     requests = []
     for index, item in enumerate(items, start=1):
@@ -248,10 +251,11 @@ def fill_manifest_field(path: Path, results: list[dict], field: str) -> bool:
     items_node = next(value for key, value in release_node.value
                       if key.value == "work-items")
     items = document["release"]["work-items"]
-    wanted = {(result["work_item"], result["sequence"]): result[field]
-              for result in results}
-    if len(wanted) != len(results):
+    replacements = {(result["work_item"], result["sequence"]): result[field]
+                    for result in results}
+    if len(replacements) != len(results):
         raise ValueError("Duplicate result for a work item")
+    wanted = replacements.copy()
     edits = []
     for item, node in zip(items, items_node.value, strict=True):
         identity = (item["id"], item["sequence"])
@@ -280,10 +284,8 @@ def fill_manifest_field(path: Path, results: list[dict], field: str) -> bool:
         updated = updated[:start] + replacement + updated[end:]
     parsed = yaml.safe_load(updated)
     for old, new in zip(items, parsed["release"]["work-items"], strict=True):
-        expected = {**old, field: next((result[field] for result in results
-                                            if (result["work_item"], result["sequence"])
-                                            == (old["id"], old["sequence"])),
-                                            old.get(field))}
+        identity = (old["id"], old["sequence"])
+        expected = {**old, field: replacements[identity]} if identity in replacements else old
         if new != expected:
             raise ValueError(f"Manifest edit changed fields other than {field}")
     path.write_text(updated, encoding="utf-8")

@@ -1,8 +1,11 @@
 import tempfile
+from io import BytesIO
 from pathlib import Path
 import unittest
+from unittest.mock import patch
+from urllib.error import HTTPError
 
-from create_branches import create_branches
+from create_branches import create_branches, github_call
 
 
 class CreateBranchesTest(unittest.TestCase):
@@ -66,6 +69,28 @@ class CreateBranchesTest(unittest.TestCase):
                             fake_call)
             self.assertEqual([method for method, _ in calls], ["GET"])
             self.assertIn("branch: feature/QA-123", manifest.read_text())
+
+    def test_branch_creation_404_stops_before_manifest_update(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = Path(directory) / "release.yaml"
+            original = ("release:\n  work-items:\n    - id: PN-1\n"
+                        "      sequence: 1\n      repo: qe_suit\n      qa_epic: QA-123\n")
+            manifest.write_text(original, encoding="utf-8")
+
+            def fake_call(token, method, path, body=None):
+                if method == "POST":
+                    return github_call(token, method, path, body)
+                if path.endswith("/heads/develop"):
+                    return {"object": {"sha": "abc123"}}
+                return {"missing": True}
+
+            failure = HTTPError("https://api.github.com", 404, "Not Found", {}, BytesIO(b"missing"))
+            with patch("create_branches.request.urlopen", side_effect=failure):
+                with self.assertRaisesRegex(RuntimeError, "failed \\(404\\)"):
+                    create_branches(manifest, [{"work_item": "PN-1", "sequence": 1,
+                                                "qa_epic": "QA-123"}],
+                                    {"qe_suit": "token"}, fake_call)
+            self.assertEqual(manifest.read_text(encoding="utf-8"), original)
 
 
 if __name__ == "__main__":

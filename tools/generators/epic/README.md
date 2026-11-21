@@ -25,8 +25,11 @@ Il manifest deve avere `release.status: in-progress`, una versione e almeno un
 work item. Ogni work item deve avere `id` come chiave Jira e `sequence` come
 intero positivo stabile. La coppia `(id, sequence)` deve essere unica nella
 release. Ogni work item deve indicare `repo: pn-b2b-client` oppure
-`repo: qe_suit`, cioè il repository fisico degli scenari QA. La validazione
-avviene prima di qualsiasi chiamata Jira. Una `qa_epic` già
+`repo: qe_suit`, cioè il repository fisico degli scenari QA. Le righe
+`qa_epic:` e `branch:` devono sempre essere presenti, anche quando sono vuote
+prima della generazione. Questa regola si applica ai manifest usati con
+`epic_generator` per le nuove release; i manifest già avviati restano intatti.
+La validazione avviene prima di qualsiasi chiamata Jira. Una `qa_epic` già
 valorizzata viene saltata. La coppia `(id, qa_epic)` valorizzata deve essere
 unica nel file. Il campo `branch` non serve alla creazione della QA Epic.
 

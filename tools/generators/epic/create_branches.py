@@ -21,7 +21,7 @@ def github_call(token: str, method: str, path: str, body: dict | None = None) ->
         with request.urlopen(req, timeout=30) as response:
             return json.loads(response.read())
     except error.HTTPError as exc:
-        if exc.code == 404:
+        if method == "GET" and exc.code == 404:
             return {"missing": True}
         raise RuntimeError(f"GitHub {method} {path} failed ({exc.code}): "
                            f"{exc.read().decode('utf-8', errors='replace')[:400]}") from exc

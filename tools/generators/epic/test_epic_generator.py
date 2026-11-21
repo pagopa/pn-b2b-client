@@ -17,7 +17,7 @@ class PreviewTest(unittest.TestCase):
             manifest.write_text(
                 "release:\n  version: 2.26.0\n  status: in-progress\n  work-items:\n"
                 "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      title: Service update\n      size: 2.5\n      qa_epic:\n      branch:\n"
-                "    - id: PIN-2\n      repo: pn-b2b-client\n      sequence: 2\n      qa_epic: QA-123\n", encoding="utf-8")
+                "    - id: PIN-2\n      repo: pn-b2b-client\n      sequence: 2\n      qa_epic: QA-123\n      branch:\n", encoding="utf-8")
             requests = preview(manifest)
         self.assertEqual(len(requests), 1)
         create, link, comment = requests[0]["calls"]
@@ -39,7 +39,7 @@ class PreviewTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             manifest = self.manifest_path(directory, "send")
             manifest.write_text("release:\n  version: test\n  status: in-progress\n"
-                                "  work-items:\n    - id: PN-1\n      repo: pn-b2b-client\n      sequence: 1\n", encoding="utf-8")
+                                "  work-items:\n    - id: PN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n", encoding="utf-8")
             self.assertEqual(preview(manifest)[0]["calls"][0]["body"]["fields"]
                              ["customfield_10648"], {"value": "SEND"})
             self.assertEqual(preview(manifest)[0]["calls"][0]["body"]["fields"]
@@ -53,7 +53,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text(
                 "release:\n  version: 2.26.0\n  status: in-progress\n  work-items:\n"
-                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n"
+                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n"
                 "    - sequence: 2\n      qa_epic:\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Work item 2"):
                 preview(manifest)
@@ -63,7 +63,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text("release:\n  version: test\n  status: in-progress\n"
                                 "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n"
-                                "      title: '  '\n", encoding="utf-8")
+                                "      title: '  '\n      qa_epic:\n      branch:\n", encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "title must be a non-empty string"):
                 preview(manifest)
 
@@ -76,22 +76,36 @@ class PreviewTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "repo must be qe_suit or pn-b2b-client"):
                 preview(manifest)
 
+    def test_qa_epic_and_branch_lines_are_required_even_when_empty(self):
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            base = ("release:\n  version: test\n  status: in-progress\n"
+                    "  work-items:\n    - id: PIN-1\n      repo: qe_suit\n"
+                    "      sequence: 1\n")
+            for fields, missing in (("", "qa_epic"), ("      qa_epic:\n", "branch")):
+                with self.subTest(missing=missing):
+                    manifest.write_text(base + fields, encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, f"must include {missing}"):
+                        preview(manifest)
+            manifest.write_text(base + "      qa_epic:\n      branch:\n", encoding="utf-8")
+            self.assertEqual(len(preview(manifest)), 1)
+
     def test_size_must_be_positive_days(self):
         for value in ("S", "0", "-1", "true"):
             with self.subTest(value=value), tempfile.TemporaryDirectory() as directory:
                 manifest = self.manifest_path(directory)
                 manifest.write_text("release:\n  version: test\n  status: in-progress\n"
                                     "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n"
-                                    f"      size: {value}\n", encoding="utf-8")
+                                    f"      size: {value}\n      qa_epic:\n      branch:\n", encoding="utf-8")
                 with self.assertRaisesRegex(ValueError, "positive number of days"):
                     preview(manifest)
 
     def test_sequence_required_and_pair_unique_before_preview(self):
         for items, message in [
             ("    - id: PIN-1\n      repo: pn-b2b-client\n      qa_epic:\n", "positive integer sequence"),
-            ("    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: true\n", "positive integer sequence"),
-            ("    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n"
-             "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n", "Duplicate \\(id, sequence\\)"),
+            ("    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: true\n      qa_epic:\n      branch:\n", "positive integer sequence"),
+            ("    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n"
+             "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n", "Duplicate \\(id, sequence\\)"),
         ]:
             with self.subTest(items=items), tempfile.TemporaryDirectory() as directory:
                 manifest = self.manifest_path(directory)
@@ -123,7 +137,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text(
                 "release:\n  version: 2.26.0\n  status: in-progress\n  work-items:\n"
-                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n", encoding="utf-8")
+                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n", encoding="utf-8")
             requests = preview(manifest)
         client = FakeClient()
         self.assertEqual(apply(requests, client),
@@ -161,7 +175,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text("release:\n  version: test\n  status: in-progress\n"
                                 "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n"
-                                "      title: Specific QA scope\n", encoding="utf-8")
+                                "      title: Specific QA scope\n      qa_epic:\n      branch:\n", encoding="utf-8")
             requests = preview(manifest)
         client = FakeClient()
         apply(requests, client)
@@ -201,7 +215,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text(
                 "release:\n  version: 2.26.0\n  status: in-progress\n  work-items:\n"
-                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n", encoding="utf-8")
+                "    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n", encoding="utf-8")
             requests = preview(manifest)
         client = FakeClient()
         self.assertEqual(apply(requests, client),
@@ -231,6 +245,23 @@ class PreviewTest(unittest.TestCase):
                              "    - id: PIN-2\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic: QA-124\n"
                              "      branch: feature/bar\n")
 
+    def test_branch_update_preserves_existing_epic_without_branch(self):
+        from epic_generator import fill_manifest_field
+
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = self.manifest_path(directory)
+            original = ("release:\n  work-items:\n"
+                        "    - id: PIN-1\n      sequence: 1\n      qa_epic: QA-123\n"
+                        "    - id: PIN-2\n      sequence: 1\n      qa_epic: QA-124\n")
+            manifest.write_text(original, encoding="utf-8")
+            self.assertTrue(fill_manifest_field(manifest, [
+                {"work_item": "PIN-2", "sequence": 1, "branch": "feature/QA-124"}
+            ], "branch"))
+            self.assertEqual(manifest.read_text(encoding="utf-8"),
+                             original.replace("      qa_epic: QA-124\n",
+                                              "      branch: feature/QA-124\n"
+                                              "      qa_epic: QA-124\n"))
+
     def test_reconciliation_rejects_wrong_link_direction(self):
         class FakeClient:
             def call(self, method, path, body=None):
@@ -253,7 +284,7 @@ class PreviewTest(unittest.TestCase):
             manifest = self.manifest_path(directory)
             manifest.write_text("release:\n  version: test\n  status: in-progress\n"
                                 "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n"
-                                "      title: Scope\n", encoding="utf-8")
+                                "      title: Scope\n      qa_epic:\n      branch:\n", encoding="utf-8")
             with self.assertRaisesRegex(RuntimeError, "wrong way"):
                 apply(preview(manifest), FakeClient())
 
@@ -285,7 +316,7 @@ class PreviewTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             manifest = self.manifest_path(directory)
             manifest.write_text("release:\n  version: 2.26.0\n  status: in-progress\n"
-                                "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n",
+                                "  work-items:\n    - id: PIN-1\n      repo: pn-b2b-client\n      sequence: 1\n      qa_epic:\n      branch:\n",
                                 encoding="utf-8")
             requests = preview(manifest)
         client = FakeClient()
