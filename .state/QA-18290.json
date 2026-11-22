@@ -1,9 +1,16 @@
 {
-  "document": "3d215b1269ec19b889af8b1267e22048d9e4ac2c055f66a2af2b8f5263d778b5",
-  "input": "4a9cd0aebbc0738fbb3a417baef7a53dd38f9c35ff3557337034b6df9fd03cf5",
+  "document": "4b0e63ab57b4993a9f41b4c0b610aa7d67616792aae04166362f1932657104e6",
+  "input": "4181dfd4f0dec63c77cf5848eb417e4ba8e85d2062ebf27746601a354651ac97",
   "outputs": {
-    "pst_QA-18290.md": "deaac4cc168b1856e11c617c297a0b762b3f877681be7c5e6ba552dc556173db"
+    "pst_QA-18290.md": "11e64d3079aea565e1f1a6e3d41bc2fe2fd18ac1f3110995a4d05817b1c76ea6"
   },
   "scenarios": "5c3abadd7c412e44ec69a2149f8f6ddce7a9ad05dbfa13a8b174b7dfa9e106e9",
-  "schema": 1
+  "schema": 1,
+  "versions": [
+    {
+      "date": "22/11/2026",
+      "description": "Prima generazione",
+      "version": 1
+    }
+  ]
 }
