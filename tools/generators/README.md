@@ -7,7 +7,7 @@ configurazione, dipendenze, test e istruzioni di esecuzione.
 | Generatore | Quando utilizzarlo | Input | Output |
 | --- | --- | --- | --- |
 | [Epic](epic/README.md) | Preparazione manuale del lavoro QA per una release | Manifest in `releases/` | QA Epic Jira, branch QA e PR di aggiornamento del manifest |
-| [PST](pst/README.md) | Preparazione e aggiornamento dei casi di test delle release in corso | `releases/`, branch Git e scenari Gherkin | `pst_<qa_epic>.md` nel branch `pst-output`, HTML opzionale |
+| [PST](pst/README.md) | Preparazione e aggiornamento dei casi di test delle release in corso | `releases/`, branch Git e scenari Gherkin | `pst_<qa_epic>.md` nel branch `pst-output` |
 
 I percorsi di input e output della tabella sono relativi alla radice del repository.
 
