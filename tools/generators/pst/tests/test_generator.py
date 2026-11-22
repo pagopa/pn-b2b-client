@@ -1,9 +1,6 @@
 import unittest
 from datetime import date
-from pathlib import Path
-from tempfile import TemporaryDirectory
 
-from pst_generator.cli import generate_structured_html, render_inline
 from pst_generator.core import parse_test_cases
 from pst_generator.markdown import render_document
 
@@ -15,7 +12,8 @@ def parse_test_case(source: str, pattern: str):
 
 
 class GeneratorTest(unittest.TestCase):
-    def test_markdown_includes_html_report_information(self):
+
+    def test_markdown_includes_report_information(self):
         source = """Feature: Example
   Scenario: [CASE_1] Rejected request
     Given a ready service
@@ -32,7 +30,7 @@ class GeneratorTest(unittest.TestCase):
         self.assertIn("🔴 **Negativo**", markdown)
         self.assertIn("| Precondizioni<br><small>(Given)</small> | Esito atteso<br><small>(Then)</small> |", markdown)
 
-    def test_jira_links_statuses_and_collapsed_versions(self):
+    def test_jira_links_statuses_and_collapsed_versions_in_markdown(self):
         cases = parse_test_cases("Feature: Example\n  Scenario: [CASE_1] Check\n    Then done\n",
                                  r"\[([^\]]+)\]")
         versions = [{'version': 1, 'date': '22/11/2026', 'description': 'Prima generazione'}]
@@ -47,12 +45,6 @@ class GeneratorTest(unittest.TestCase):
         unavailable = render_document(cases, qa_epic='QA-123', work_item_ids=['PN-456'],
                                       jira_statuses={})
         self.assertIn('| QA Epic | QA-123 — Non disponibile |', unavailable)
-        with TemporaryDirectory() as directory:
-            path = Path(directory) / 'pst.html'
-            generate_structured_html(path, 'QA-123', ['PN-456'], cases, **kwargs)
-            html = path.read_text()
-            self.assertIn('href="https://example.atlassian.net/browse/PN-456"', html)
-            self.assertIn('<details><summary>Storico versioni</summary>', html)
 
     def test_existing_dictionaries_cover_quoted_values_and_example_headers(self):
         source = """Feature: Example
@@ -73,48 +65,6 @@ class GeneratorTest(unittest.TestCase):
         self.assertIn('**Variante:** A', markdown)
         self.assertIn('• operazione non consentita', markdown)
         self.assertIn('"Comune_Multi"', cases[0].steps[0].text)
-        with TemporaryDirectory() as directory:
-            output = Path(directory) / "pst.html"
-            generate_structured_html(output, "QA-123", [], cases,
-                                     business_terms, value_terms, status_terms)
-            html = output.read_text(encoding="utf-8")
-            self.assertIn("<th>Variante</th>", html)
-            self.assertIn("<span class='quoted-value'>&quot;Mittente&quot;</span>", html)
-            self.assertIn("<li>operazione non consentita</li>", html)
-
-    def test_placeholder_in_case_id_does_not_break_html_attribute(self):
-        source = """Feature: Example
-  Scenario Outline: [PAYMENT_EVENTS_RACE_02_1_<variante>] Payment order
-    When <primo> pays
-    Then one payment is recorded
-    Examples:
-      | variante | primo  | secondo |
-      | A        | pagoPA | App IO  |
-      | B        | App IO | pagoPA  |
-"""
-        cases = parse_test_cases(source, r"\[([^\]]+)\]")
-        with TemporaryDirectory() as directory:
-            output = Path(directory) / "pst.html"
-            generate_structured_html(output, "QA-123", [], cases,
-                {"variante": "Variante", "primo": "Prima comunicazione",
-                 "secondo": "Seconda comunicazione"})
-            html = output.read_text(encoding="utf-8")
-            self.assertIn("id='PAYMENT_EVENTS_RACE_02_1_&lt;variante&gt;'", html)
-            self.assertIn("<code>PAYMENT_EVENTS_RACE_02_1_&lt;variante&gt;</code>", html)
-            self.assertNotIn("id='PAYMENT_EVENTS_RACE_02_1_<span", html)
-            self.assertIn("<table class='examples-table'><thead><tr><th>Variante</th>"
-                          "<th>Prima comunicazione</th><th>Seconda comunicazione</th>", html)
-            self.assertIn("<tr><td>A</td><td>pagoPA</td><td>App IO</td></tr>", html)
-            self.assertIn("<tr><td>B</td><td>App IO</td><td>pagoPA</td></tr>", html)
-
-    def test_quoted_values_are_highlighted_without_changing_the_text(self):
-        rendered = render_inline('Il "Comune_Multi" usa “V30” e "v10"; l\'ente resta invariato')
-        self.assertIn("<span class='quoted-value'>&quot;Comune_Multi&quot;</span>", rendered)
-        self.assertIn("<span class='version-value'>“V30”</span>", rendered)
-        self.assertIn("<span class='version-value'>&quot;v10&quot;</span>", rendered)
-        self.assertIn("l&#x27;ente resta invariato", rendered)
-        self.assertEqual(rendered.count("quoted-value"), 1)
-        self.assertEqual(rendered.count("version-value"), 2)
 
     def test_partial_scenarios_show_only_their_present_columns(self):
         source = """Feature: Example
@@ -131,18 +81,6 @@ class GeneratorTest(unittest.TestCase):
         self.assertNotIn("Precondizioni<br>", first)
         self.assertNotIn("Azione<br>", first)
         self.assertIn("Esito atteso<br>", first)
-        with TemporaryDirectory() as directory:
-            output = Path(directory) / "pst.html"
-            generate_structured_html(output, "QA-123", [], cases)
-            html = output.read_text(encoding="utf-8")
-            first = html.split("id='CASE_1'", 1)[1].split("</table>", 1)[0]
-            second = html.split("id='CASE_2'", 1)[1].split("</table>", 1)[0]
-            self.assertEqual(first.count("<th>"), 1)
-            self.assertEqual(first.count("<td"), 1)
-            self.assertEqual(second.count("<th>"), 2)
-            self.assertEqual(second.count("<td>"), 2)
-            self.assertNotIn("<ul></ul>", html)
-            self.assertIn(".test-table > tbody > tr > td{font-size:14px;line-height:1.28;overflow-wrap:anywhere}", html)
 
     def test_optional_scenario_description_is_shown_without_replacing_steps(self):
         source = """Feature: Example
@@ -163,11 +101,6 @@ class GeneratorTest(unittest.TestCase):
         self.assertNotIn("**Descrizione dello scenario**", markdown)
         self.assertIn("> Receive service\n>\n> Dato un servizio pubblicato", markdown)
         self.assertIn("• a published service", markdown)
-        with TemporaryDirectory() as directory:
-            output = Path(directory) / "pst.html"
-            generate_structured_html(output, "QA-123", [], cases)
-            html = output.read_text(encoding="utf-8")
-            self.assertIn("<div class='objective'><b>Receive service</b><p>Dato un servizio pubblicato<br>", html)
 
     def test_multiple_scenarios_are_rendered_in_compact_document(self):
         source = """Feature: Example

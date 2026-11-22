@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 from pst_generator.collection import (ScenarioCollector, CollectionError,
                                       active_source_specs, collect_from_sources)
-from pst_generator.cli import generate_active, generate_pst, generate_structured_html
+from pst_generator.cli import generate_active, generate_pst
 from pst_generator.core import parse_test_cases
 from pst_generator.markdown import render_document
 from pst_generator.state import version_history
@@ -92,20 +92,20 @@ class CollectionTest(unittest.TestCase):
         config = self.repo / 'config.yaml'
         config.write_text('{}')
         output = self.repo / 'pst'
-        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertEqual(generate_active(self.repo, config, output, use_state=True), 0)
         self.assertTrue((output / '.state/QA-123.json').exists())
         with patch('pst_generator.cli.collect_from_sources', side_effect=AssertionError('recollected')):
-            self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+            self.assertEqual(generate_active(self.repo, config, output, use_state=True), 0)
         (self.repo / 'unrelated.txt').write_text('unrelated change')
         self.commit('unrelated change')
-        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertEqual(generate_active(self.repo, config, output, use_state=True), 0)
         (output / 'pst_QA-123.md').write_text('damaged')
-        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertEqual(generate_active(self.repo, config, output, use_state=True), 0)
         self.assertNotEqual((output / 'pst_QA-123.md').read_text(), 'damaged')
         self.assertIn('CASE_1', (output / 'pst_QA-123.md').read_text())
         self.write_scenario('case.feature', 'CASE_1', 'changed')
         self.commit('changed scenario')
-        self.assertEqual(generate_active(self.repo, config, True, output, use_state=True), 0)
+        self.assertEqual(generate_active(self.repo, config, output, use_state=True), 0)
         self.assertIn('changed', (output / 'pst_QA-123.md').read_text())
 
     def test_changed_branch_revision_with_same_scenarios_preserves_pst(self):
@@ -144,7 +144,7 @@ class CollectionTest(unittest.TestCase):
         config = self.repo / 'config.yaml'
         config.write_text('{}', encoding='utf-8')
         with self.assertRaisesRegex(CollectionError, '@work-item:QA-999'):
-            generate_pst(self.repo, 'QA-999', ['base'], config, include_html=True)
+            generate_pst(self.repo, 'QA-999', ['base'], config)
         self.assertFalse((self.repo / 'pst' / 'pst_QA-999.md').exists())
 
     def test_invalid_epic_cannot_escape_output_directory(self):
@@ -260,20 +260,19 @@ class CollectionTest(unittest.TestCase):
         output.mkdir()
         previous = output / 'pst_QA-123.md'
         previous.write_text('previous valid document')
-        previous.with_suffix('.html').write_text('previous valid HTML')
+        previous.with_suffix('.html').write_text('legacy HTML')
         config = self.repo / 'config.yaml'
         config.write_text('{}')
         summary = self.repo / 'summary.md'
         with patch.dict('os.environ', {'GITHUB_STEP_SUMMARY': str(summary)}):
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-                status = generate_active(self.repo, config, include_html=True)
+                status = generate_active(self.repo, config)
         self.assertEqual(status, 1)
         self.assertEqual(previous.read_text(), 'previous valid document')
-        self.assertEqual(previous.with_suffix('.html').read_text(), 'previous valid HTML')
+        self.assertFalse(previous.with_suffix('.html').exists())
         self.assertIn('CASE_2', (output / 'pst_QA-456.md').read_text())
         self.assertIn('<summary>Fonti (1)</summary>', (output / 'pst_QA-456.md').read_text())
         self.assertIn(self.git('rev-parse', 'feature/luca'), (output / 'pst_QA-456.md').read_text())
-        self.assertIn(self.git('rev-parse', 'feature/luca'), (output / 'pst_QA-456.html').read_text())
         self.assertIn('QA-123: ERRORE', summary.read_text())
         self.assertIn('QA-456: generato', summary.read_text())
 
@@ -302,12 +301,12 @@ class CollectionTest(unittest.TestCase):
         result = subprocess.run([
             sys.executable, '-m', 'pst_generator.cli', 'generate-all',
             '--repo', str(self.repo), '--config', str(config),
-            '--output-dir', str(artifacts), '--html',
+            '--output-dir', str(artifacts),
         ], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
            env={**os.environ, 'GITHUB_STEP_SUMMARY': str(summary)})
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertEqual(sorted(path.name for path in artifacts.iterdir()),
-                         ['.state', 'pst_QA-456.html', 'pst_QA-456.md'])
+                         ['.state', 'pst_QA-456.md'])
         self.assertEqual([path.name for path in (artifacts / '.state').iterdir()],
                          ['QA-456.json'])
         self.assertEqual((old / 'pst_QA-123.md').read_text(), 'old document')
@@ -449,10 +448,6 @@ class CollectionTest(unittest.TestCase):
         cases = collector.with_last_change_authors(collector.collect('QA-123', ['feature/merged']))
         self.assertEqual(cases[0].last_change_authors, ['Anna Example'])
         self.assertIn('**Autori dell’ultima modifica:** Anna Example', render_document(cases))
-        output = self.repo / 'authors.html'
-        with contextlib.redirect_stdout(io.StringIO()):
-            generate_structured_html(output, 'QA-123', [], cases)
-        self.assertIn('<b>Autori dell’ultima modifica:</b> Anna Example', output.read_text())
         with patch.object(collector, 'git', wraps=collector.git) as git_calls:
             collector.with_last_change_authors(cases)
         self.assertEqual(git_calls.call_count, 0)
