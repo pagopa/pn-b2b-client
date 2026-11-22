@@ -69,12 +69,15 @@ class CollectionTest(unittest.TestCase):
         self.assertEqual(generate_active(self.repo, config, output_dir=output, use_state=True), 0)
         pst = output / 'pst_QA-123.md'
         original = pst.read_bytes()
+        self.assertIn('Storico versioni', original.decode())
+        self.assertIn('| 1 |', original.decode())
         (self.repo / 'unrelated.txt').write_text('new implementation')
         self.commit('implementation only')
         with contextlib.redirect_stdout(io.StringIO()) as log:
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
                                              use_state=True), 0)
         self.assertEqual(pst.read_bytes(), original)
+        self.assertEqual(pst.read_text().count('Prima generazione'), 1)
         self.assertIn('invariato (scenari invariati)', log.getvalue())
         with patch('pst_generator.cli.collect_from_sources', side_effect=AssertionError('recollected')):
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
@@ -84,6 +87,8 @@ class CollectionTest(unittest.TestCase):
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
                                              use_state=True), 0)
         self.assertIn('generato (1 scenari)', log.getvalue())
+        self.assertIn('| 2 |', pst.read_text())
+        self.assertIn('Aggiornamento del PST', pst.read_text())
 
     def test_no_tagged_scenarios_do_not_create_empty_pst(self):
         config = self.repo / 'config.yaml'

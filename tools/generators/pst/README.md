@@ -294,3 +294,19 @@ flowchart TD
 Il branch viene aggiornato con un solo commit per esecuzione, se necessario.
 I conflitti lasciano intatti i PST validi precedenti e non bloccano le altre Epic.
 Le Epic non più attive non vengono ancora eliminate automaticamente dal branch.
+
+## Collegamenti Jira e versioni del PST
+
+Durante una rigenerazione, la Action usa `JIRA_CLOUD_ID` e `JIRA_API_TOKEN`, già
+usati da `epic_generator`, per leggere gli stati Jira della QA Epic e dei suoi
+work-item. L'URL per i collegamenti viene ricavato da Jira; la variabile
+facoltativa `JIRA_BASE_URL` può indicarlo esplicitamente. Se Jira non è
+disponibile, la generazione prosegue, mostra lo stato come non disponibile e
+segnala il problema nel riepilogo. Jira non avvia il workflow e i suoi stati
+non partecipano al confronto degli input: restano quelli letti all'ultima
+rigenerazione del documento.
+
+La data del PST e la riga nello «Storico versioni» cambiano solo quando il
+documento viene rigenerato. Lo storico è collassato in Markdown e HTML e viene
+conservato nello stato della QA Epic su `pst-output`. Per i PST preesistenti,
+la prima rigenerazione con questo formato avvia lo storico dalla versione 1.

@@ -45,12 +45,20 @@ def input_fingerprint(repo: Path, config: Path, epic: str, specs: list[tuple[str
 
 def document_fingerprint(repo: Path, config: Path, epic: str) -> str:
     from .cli import work_item_ids_for_qa_epic
-    value = (digest(config.read_bytes()), work_item_ids_for_qa_epic(repo, epic))
+    value = (2, digest(config.read_bytes()), work_item_ids_for_qa_epic(repo, epic))
     return digest(json.dumps(value, sort_keys=True).encode())
 
 
 def state_path(output: Path, epic: str) -> Path:
     return output / '.state' / f'{epic}.json'
+
+
+def version_history(output: Path, epic: str) -> list[dict]:
+    try:
+        history = json.loads(state_path(output, epic).read_text(encoding='utf-8')).get('versions', [])
+        return history if isinstance(history, list) else []
+    except (OSError, ValueError, TypeError):
+        return []
 
 
 def is_current(output: Path, epic: str, fingerprint: str, include_html: bool) -> bool:
@@ -71,7 +79,8 @@ def matches_state(output: Path, epic: str, field: str, fingerprint: str,
 
 
 def save_state(output: Path, epic: str, fingerprint: str, include_html: bool,
-               scenarios: str | None = None, document: str | None = None) -> None:
+               scenarios: str | None = None, document: str | None = None,
+               versions: list[dict] | None = None) -> None:
     if not include_html:
         (output / f'pst_{epic}.html').unlink(missing_ok=True)
     files = [f'pst_{epic}.md'] + ([f'pst_{epic}.html'] if include_html else [])
@@ -81,6 +90,8 @@ def save_state(output: Path, epic: str, fingerprint: str, include_html: bool,
         state['scenarios'] = scenarios
     if document is not None:
         state['document'] = document
+    if versions is not None:
+        state['versions'] = versions
     path = state_path(output, epic)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n', encoding='utf-8')

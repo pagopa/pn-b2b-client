@@ -32,6 +32,28 @@ class GeneratorTest(unittest.TestCase):
         self.assertIn("🔴 **Negativo**", markdown)
         self.assertIn("| Precondizioni<br><small>(Given)</small> | Esito atteso<br><small>(Then)</small> |", markdown)
 
+    def test_jira_links_statuses_and_collapsed_versions(self):
+        cases = parse_test_cases("Feature: Example\n  Scenario: [CASE_1] Check\n    Then done\n",
+                                 r"\[([^\]]+)\]")
+        versions = [{'version': 1, 'date': '22/11/2026', 'description': 'Prima generazione'}]
+        kwargs = dict(jira_base_url='https://example.atlassian.net',
+                      jira_statuses={'PN-456': 'In Progress', 'QA-123': 'Done'},
+                      versions=versions)
+        markdown = render_document(cases, qa_epic='QA-123', work_item_ids=['PN-456'], **kwargs)
+        self.assertIn('[PN-456](https://example.atlassian.net/browse/PN-456) — In Progress', markdown)
+        self.assertIn('[QA-123](https://example.atlassian.net/browse/QA-123) — Done', markdown)
+        self.assertIn('<details>\n<summary>Storico versioni</summary>', markdown)
+        self.assertIn('| 1 | 22/11/2026 | Prima generazione |', markdown)
+        unavailable = render_document(cases, qa_epic='QA-123', work_item_ids=['PN-456'],
+                                      jira_statuses={})
+        self.assertIn('| QA Epic | QA-123 — Non disponibile |', unavailable)
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / 'pst.html'
+            generate_structured_html(path, 'QA-123', ['PN-456'], cases, **kwargs)
+            html = path.read_text()
+            self.assertIn('href="https://example.atlassian.net/browse/PN-456"', html)
+            self.assertIn('<details><summary>Storico versioni</summary>', html)
+
     def test_existing_dictionaries_cover_quoted_values_and_example_headers(self):
         source = """Feature: Example
   Scenario Outline: [CASE_<variante>] Payment
