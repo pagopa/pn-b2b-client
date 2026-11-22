@@ -254,7 +254,8 @@ pst/pst_QA-<numero>.html  # con --html
 
 La cartella `pst/` viene creata se non esiste, salvo uso di `--output-dir`.
 In locale i documenti vengono scritti solo se il contenuto cambia, ma senza
-`--use-state` vengono comunque ricostruiti. La Action usa `--use-state` e legge
+`--use-state` vengono comunque ricostruiti e lo storico delle versioni viene
+aggiornato. La Action usa `--use-state` e legge
 lo stato persistente nel branch `pst-output`.
 
 ## Stato persistente

@@ -14,9 +14,26 @@ from pst_generator.collection import (ScenarioCollector, CollectionError,
 from pst_generator.cli import generate_active, generate_pst, generate_structured_html
 from pst_generator.core import parse_test_cases
 from pst_generator.markdown import render_document
+from pst_generator.state import version_history
 
 
 class CollectionTest(unittest.TestCase):
+    def test_generate_without_state_reuse_persists_each_version(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: base\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        self.assertEqual(generate_active(self.repo, config, output_dir=output), 0)
+        self.assertEqual(generate_active(self.repo, config, output_dir=output), 0)
+        document = (output / 'pst_QA-123.md').read_text()
+        self.assertIn('| 1 |', document)
+        self.assertIn('| 2 |', document)
+        self.assertIn('Aggiornamento del PST', document)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+
     def test_missing_branch_preserves_pst_and_reports_skip(self):
         release = self.repo / 'releases/product/1.yaml'
         release.parent.mkdir(parents=True)
@@ -257,7 +274,9 @@ class CollectionTest(unittest.TestCase):
            env={**os.environ, 'GITHUB_STEP_SUMMARY': str(summary)})
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertEqual(sorted(path.name for path in artifacts.iterdir()),
-                         ['pst_QA-456.html', 'pst_QA-456.md'])
+                         ['.state', 'pst_QA-456.html', 'pst_QA-456.md'])
+        self.assertEqual([path.name for path in (artifacts / '.state').iterdir()],
+                         ['QA-456.json'])
         self.assertEqual((old / 'pst_QA-123.md').read_text(), 'old document')
         self.assertIn('QA-123: ERRORE', summary.read_text())
         self.assertIn('QA-456: generato', summary.read_text())

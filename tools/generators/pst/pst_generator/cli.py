@@ -229,9 +229,8 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
     destination = output_dir if output_dir is not None else repo / 'pst'
     for epic, specs in active_source_specs(repo).items():
         try:
-            fingerprint = (input_fingerprint(repo, config, epic, specs, repo_paths, include_html)
-                           if use_state else None)
-            if fingerprint and is_current(destination, epic, fingerprint, include_html):
+            fingerprint = input_fingerprint(repo, config, epic, specs, repo_paths, include_html)
+            if use_state and is_current(destination, epic, fingerprint, include_html):
                 results.append(f"- {epic}: invariato")
                 continue
             cases = collect_from_sources(repo, epic, specs, collector.pattern, repo_paths)
@@ -239,7 +238,7 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 [(case.test_id, case.semantic_content) for case in cases],
                 sort_keys=True, ensure_ascii=False).encode('utf-8'))
             document = document_fingerprint(repo, config, epic)
-            if (fingerprint and
+            if (use_state and
                     matches_state(destination, epic, 'scenarios', scenarios, include_html) and
                     matches_state(destination, epic, 'document', document, include_html)):
                 save_state(destination, epic, fingerprint, include_html, scenarios, document,
@@ -254,8 +253,7 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 [epic, *work_item_ids_for_qa_epic(repo, epic)])
             count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases,
                                  jira_base_url, jira_statuses, versions)
-            if fingerprint:
-                save_state(destination, epic, fingerprint, include_html, scenarios, document, versions)
+            save_state(destination, epic, fingerprint, include_html, scenarios, document, versions)
             results.append(f"- {epic}: generato ({count} scenari)" +
                            (f"; {jira_warning}" if jira_warning else ""))
         except CollectionError as exc:
