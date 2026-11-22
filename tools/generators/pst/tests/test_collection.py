@@ -34,6 +34,39 @@ class CollectionTest(unittest.TestCase):
         self.assertIn('Aggiornamento del PST', document)
         self.assertEqual(len(version_history(output, 'QA-123')), 2)
 
+    def test_single_epic_command_preserves_jira_links_and_history(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: base\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        jira_env = {'JIRA_BASE_URL': 'https://example.atlassian.net',
+                    'JIRA_CLOUD_ID': '', 'JIRA_API_TOKEN': ''}
+        with patch.dict(os.environ, jira_env):
+            self.assertEqual(generate_active(self.repo, config, output_dir=output,
+                                             use_state=True), 0)
+        result = subprocess.run([
+            sys.executable, '-m', 'pst_generator.cli', 'generate',
+            '--repo', str(self.repo), '--qa-epic', 'QA-123', '--config', str(config),
+            '--output-dir', str(output),
+        ], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+           env={**os.environ, **jira_env})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        document = (output / 'pst_QA-123.md').read_text()
+        self.assertIn('[QA-123](https://example.atlassian.net/browse/QA-123)', document)
+        self.assertIn('Storico versioni', document)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+        missing = subprocess.run([
+            sys.executable, '-m', 'pst_generator.cli', 'generate',
+            '--repo', str(self.repo), '--qa-epic', 'QA-123', '--branch', 'removed',
+            '--config', str(config), '--output-dir', str(output),
+        ], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+           env={**os.environ, **jira_env})
+        self.assertEqual(missing.returncode, 1)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+
     def test_missing_branch_preserves_pst_and_reports_skip(self):
         release = self.repo / 'releases/product/1.yaml'
         release.parent.mkdir(parents=True)

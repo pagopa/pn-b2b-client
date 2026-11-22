@@ -3,6 +3,7 @@
 import json
 import os
 import re
+from http.client import HTTPException
 from urllib import request
 
 
@@ -17,8 +18,11 @@ def issue_metadata(keys: list[str]) -> tuple[str, dict[str, str], str | None]:
     def get(path: str) -> dict:
         req = request.Request(api + path, headers={
             'Authorization': f'Bearer {token}', 'Accept': 'application/json'})
-        with request.urlopen(req, timeout=15) as response:
-            return json.load(response)
+        try:
+            with request.urlopen(req, timeout=15) as response:
+                return json.load(response)
+        except HTTPException as exc:
+            raise OSError(f'Risposta HTTP Jira incompleta: {exc}') from exc
 
     errors = []
     if not base_url:

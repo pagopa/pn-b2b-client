@@ -61,3 +61,14 @@ class JiraTest(unittest.TestCase):
         self.assertEqual(base, 'https://example.atlassian.net')
         self.assertEqual(statuses, {'QA-123': 'Done'})
         self.assertIn('PN-456', warning)
+
+    def test_truncated_response_becomes_warning(self):
+        from http.client import IncompleteRead
+
+        with patch.dict('os.environ', {'JIRA_CLOUD_ID': 'cloud', 'JIRA_API_TOKEN': 'token',
+                                      'JIRA_BASE_URL': 'https://example.atlassian.net'}, clear=True), \
+             patch('pst_generator.jira.request.urlopen', side_effect=IncompleteRead(b'partial')):
+            base, statuses, warning = issue_metadata(['QA-123'])
+        self.assertEqual(base, 'https://example.atlassian.net')
+        self.assertEqual(statuses, {})
+        self.assertIn('QA-123', warning)
