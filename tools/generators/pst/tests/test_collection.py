@@ -14,9 +14,59 @@ from pst_generator.collection import (ScenarioCollector, CollectionError,
 from pst_generator.cli import generate_active, generate_pst, generate_structured_html
 from pst_generator.core import parse_test_cases
 from pst_generator.markdown import render_document
+from pst_generator.state import version_history
 
 
 class CollectionTest(unittest.TestCase):
+    def test_generate_without_state_reuse_persists_each_version(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: base\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        self.assertEqual(generate_active(self.repo, config, output_dir=output), 0)
+        self.assertEqual(generate_active(self.repo, config, output_dir=output), 0)
+        document = (output / 'pst_QA-123.md').read_text()
+        self.assertIn('| 1 |', document)
+        self.assertIn('| 2 |', document)
+        self.assertIn('Aggiornamento del PST', document)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+
+    def test_single_epic_command_preserves_jira_links_and_history(self):
+        release = self.repo / 'releases/product/1.yaml'
+        release.parent.mkdir(parents=True)
+        release.write_text('release:\n  status: in-progress\n  work-items:\n'
+                           '    - id: PN-1\n      qa_epic: QA-123\n      branch: base\n')
+        config = self.repo / 'config.yaml'
+        config.write_text('{}')
+        output = self.repo / 'pst'
+        jira_env = {'JIRA_BASE_URL': 'https://example.atlassian.net',
+                    'JIRA_CLOUD_ID': '', 'JIRA_API_TOKEN': ''}
+        with patch.dict(os.environ, jira_env):
+            self.assertEqual(generate_active(self.repo, config, output_dir=output,
+                                             use_state=True), 0)
+        result = subprocess.run([
+            sys.executable, '-m', 'pst_generator.cli', 'generate',
+            '--repo', str(self.repo), '--qa-epic', 'QA-123', '--config', str(config),
+            '--output-dir', str(output),
+        ], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+           env={**os.environ, **jira_env})
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        document = (output / 'pst_QA-123.md').read_text()
+        self.assertIn('[QA-123](https://example.atlassian.net/browse/QA-123)', document)
+        self.assertIn('Storico versioni', document)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+        missing = subprocess.run([
+            sys.executable, '-m', 'pst_generator.cli', 'generate',
+            '--repo', str(self.repo), '--qa-epic', 'QA-123', '--branch', 'removed',
+            '--config', str(config), '--output-dir', str(output),
+        ], cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True,
+           env={**os.environ, **jira_env})
+        self.assertEqual(missing.returncode, 1)
+        self.assertEqual(len(version_history(output, 'QA-123')), 2)
+
     def test_missing_branch_preserves_pst_and_reports_skip(self):
         release = self.repo / 'releases/product/1.yaml'
         release.parent.mkdir(parents=True)
@@ -69,12 +119,15 @@ class CollectionTest(unittest.TestCase):
         self.assertEqual(generate_active(self.repo, config, output_dir=output, use_state=True), 0)
         pst = output / 'pst_QA-123.md'
         original = pst.read_bytes()
+        self.assertIn('Storico versioni', original.decode())
+        self.assertIn('| 1 |', original.decode())
         (self.repo / 'unrelated.txt').write_text('new implementation')
         self.commit('implementation only')
         with contextlib.redirect_stdout(io.StringIO()) as log:
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
                                              use_state=True), 0)
         self.assertEqual(pst.read_bytes(), original)
+        self.assertEqual(pst.read_text().count('Prima generazione'), 1)
         self.assertIn('invariato (scenari invariati)', log.getvalue())
         with patch('pst_generator.cli.collect_from_sources', side_effect=AssertionError('recollected')):
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
@@ -84,6 +137,8 @@ class CollectionTest(unittest.TestCase):
             self.assertEqual(generate_active(self.repo, config, output_dir=output,
                                              use_state=True), 0)
         self.assertIn('generato (1 scenari)', log.getvalue())
+        self.assertIn('| 2 |', pst.read_text())
+        self.assertIn('Aggiornamento del PST', pst.read_text())
 
     def test_no_tagged_scenarios_do_not_create_empty_pst(self):
         config = self.repo / 'config.yaml'
@@ -252,7 +307,9 @@ class CollectionTest(unittest.TestCase):
            env={**os.environ, 'GITHUB_STEP_SUMMARY': str(summary)})
         self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
         self.assertEqual(sorted(path.name for path in artifacts.iterdir()),
-                         ['pst_QA-456.html', 'pst_QA-456.md'])
+                         ['.state', 'pst_QA-456.html', 'pst_QA-456.md'])
+        self.assertEqual([path.name for path in (artifacts / '.state').iterdir()],
+                         ['QA-456.json'])
         self.assertEqual((old / 'pst_QA-123.md').read_text(), 'old document')
         self.assertIn('QA-123: ERRORE', summary.read_text())
         self.assertIn('QA-456: generato', summary.read_text())

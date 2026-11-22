@@ -12,13 +12,16 @@ import yaml
 
 from .core import parse_test_cases
 from .collection import ScenarioCollector, CollectionError, active_source_specs, collect_from_sources, validate_qa_epic
-from .markdown import _group_steps, render_document, replace_quoted_values
-from .state import digest, document_fingerprint, input_fingerprint, is_current, matches_state, save_state
+from .markdown import _group_steps, issue_label, render_document, replace_quoted_values
+from .jira import issue_metadata
+from .state import digest, document_fingerprint, input_fingerprint, is_current, matches_state, save_state, version_history
 
 
 def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path: Path,
                  collector: ScenarioCollector | None = None, include_html: bool = False,
-                 output_dir: Path | None = None, cases: list | None = None) -> int:
+                 output_dir: Path | None = None, cases: list | None = None,
+                 jira_base_url: str = '', jira_statuses: dict[str, str] | None = None,
+                 versions: list[dict] | None = None) -> int:
     validate_qa_epic(qa_epic)
     config = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     input_config = config.get("input", {})
@@ -43,6 +46,7 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
         excluded_fields=output_config.get("exclude_fields", []),
         field_value_phrases=config.get("field_value_phrases", {}),
         step_phrases=config.get("step_phrases", []),
+        jira_base_url=jira_base_url, jira_statuses=jira_statuses, versions=versions,
     )
     source_count = sum(len(case.sources) for case in cases)
     document += f"\n<details>\n<summary>Fonti ({source_count})</summary>\n\n"
@@ -60,7 +64,9 @@ def generate_pst(repo: Path, qa_epic: str, branch: str | list[str], config_path:
                                  work_item_ids_for_qa_epic(repo, qa_epic), cases,
                                  config.get("business_terms", {}), config.get("value_terms", {}),
                                  config.get("status_terms", {}),
-                                 output_config.get("include_technical_codes", False))
+                                 output_config.get("include_technical_codes", False),
+                                 jira_base_url=jira_base_url, jira_statuses=jira_statuses,
+                                 versions=versions)
     print(f"Generated {output} with {len(cases)} scenario(s)")
     return len(cases)
 
@@ -80,7 +86,9 @@ def generate_structured_html(html_path: Path, qa_epic: str, work_item_ids: list[
                              cases: list, business_terms: dict[str, str] | None = None,
                              value_terms: dict[str, str] | None = None,
                              status_terms: dict[str, str] | None = None,
-                             include_technical_codes: bool = False) -> None:
+                             include_technical_codes: bool = False,
+                             jira_base_url: str = '', jira_statuses: dict[str, str] | None = None,
+                             versions: list[dict] | None = None) -> None:
     def text(value: str) -> str:
         return render_inline(value, value_terms)
 
@@ -118,6 +126,19 @@ def generate_structured_html(html_path: Path, qa_epic: str, work_item_ids: list[
     parts[0] = parts[0].replace('<title>PST</title>', f'<title>PST — {html.escape(qa_epic)}</title>')
     parts[2] = parts[2].replace('<h1>PST - QA Validation Report</h1>',
                                 f'<h1>PST — {html.escape(qa_epic)}</h1>')
+    if jira_statuses is not None:
+        parts[5] = parts[5].replace(
+            f"<td>{text(', '.join(work_item_ids) or 'Da definire')}</td><td>Work-item associati</td>",
+            '<td>' + ', '.join(issue_label(key, jira_base_url, jira_statuses or {}, True)
+                             for key in work_item_ids) + '</td><td>Work-item associati</td>')
+        parts[5] = parts[5].replace(
+            f'<td>{text(qa_epic)}</td><td>Release attiva</td>',
+            f'<td>{issue_label(qa_epic, jira_base_url, jira_statuses or {}, True)}</td><td>Release attiva</td>')
+    if versions:
+        history_rows = ''.join(
+            f"<tr><td>{row['version']}</td><td>{html.escape(row['date'])}</td><td>{html.escape(row['description'])}</td></tr>"
+            for row in reversed(versions))
+        parts.insert(-3, "<details><summary>Storico versioni</summary><table><thead><tr><th>Versione</th><th>Data</th><th>Modifica</th></tr></thead><tbody>" + history_rows + "</tbody></table></details>")
     for case in cases:
         groups = _group_steps(case.steps)
         expected = steps(groups['Then'])
@@ -199,18 +220,19 @@ def discover_active_releases(repo: Path, ref: str | None) -> int:
 def generate_active(repo: Path, config: Path, include_html: bool = False,
                     output_dir: Path | None = None,
                     repo_paths: dict[str, Path] | None = None,
-                    use_state: bool = False) -> int:
+                    use_state: bool = False,
+                    selected_sources: dict[str, list[tuple[str, str]]] | None = None,
+                    missing_branch_is_error: bool = False) -> int:
     """Generate independent PSTs, preserving the existing output on conflicts."""
     settings = yaml.safe_load(config.read_text(encoding="utf-8")) or {}
     collector = ScenarioCollector(repo, settings.get("input", {}).get("id_pattern", r"\[([^\]]+)\]"))
     results = []
     failed = False
     destination = output_dir if output_dir is not None else repo / 'pst'
-    for epic, specs in active_source_specs(repo).items():
+    for epic, specs in (selected_sources if selected_sources is not None else active_source_specs(repo)).items():
         try:
-            fingerprint = (input_fingerprint(repo, config, epic, specs, repo_paths, include_html)
-                           if use_state else None)
-            if fingerprint and is_current(destination, epic, fingerprint, include_html):
+            fingerprint = input_fingerprint(repo, config, epic, specs, repo_paths, include_html)
+            if use_state and is_current(destination, epic, fingerprint, include_html):
                 results.append(f"- {epic}: invariato")
                 continue
             cases = collect_from_sources(repo, epic, specs, collector.pattern, repo_paths)
@@ -218,18 +240,28 @@ def generate_active(repo: Path, config: Path, include_html: bool = False,
                 [(case.test_id, case.semantic_content) for case in cases],
                 sort_keys=True, ensure_ascii=False).encode('utf-8'))
             document = document_fingerprint(repo, config, epic)
-            if (fingerprint and
+            if (use_state and
                     matches_state(destination, epic, 'scenarios', scenarios, include_html) and
                     matches_state(destination, epic, 'document', document, include_html)):
-                save_state(destination, epic, fingerprint, include_html, scenarios, document)
+                save_state(destination, epic, fingerprint, include_html, scenarios, document,
+                           version_history(destination, epic))
                 results.append(f"- {epic}: invariato (scenari invariati)")
                 continue
-            count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases)
-            if fingerprint:
-                save_state(destination, epic, fingerprint, include_html, scenarios, document)
-            results.append(f"- {epic}: generato ({count} scenari)")
+            versions = version_history(destination, epic)
+            description = 'Prima generazione' if not versions else 'Aggiornamento del PST'
+            versions.append({'version': len(versions) + 1, 'date': date.today().strftime('%d/%m/%Y'),
+                             'description': description})
+            jira_base_url, jira_statuses, jira_warning = issue_metadata(
+                [epic, *work_item_ids_for_qa_epic(repo, epic)])
+            count = generate_pst(repo, epic, [], config, collector, include_html, output_dir, cases,
+                                 jira_base_url, jira_statuses, versions)
+            save_state(destination, epic, fingerprint, include_html, scenarios, document, versions)
+            results.append(f"- {epic}: generato ({count} scenari)" +
+                           (f"; {jira_warning}" if jira_warning else ""))
         except CollectionError as exc:
             if "not found (local or origin)" in str(exc):
+                if missing_branch_is_error:
+                    failed = True
                 existing = (destination / f"pst_{epic}.md").is_file()
                 outcome = "PST esistente conservato" if existing else "PST non generato"
                 results.append(f"- {epic}: {outcome}, branch mancante: {exc}")
@@ -294,13 +326,9 @@ def main() -> int:
             if not separator or not name or not path:
                 parser.error("--source-repo requires NAME=PATH")
             paths[name] = Path(path)
-        settings = yaml.safe_load(args.config.read_text(encoding='utf-8')) or {}
-        pattern = settings.get('input', {}).get('id_pattern', r'\[([^\]]+)\]')
         print(f"Fonti configurate per {args.qa_epic}: {specs}")
-        cases = collect_from_sources(args.repo, args.qa_epic, specs, pattern, paths)
-        count = generate_pst(args.repo, args.qa_epic, [], args.config,
-                             include_html=args.html, output_dir=args.output_dir, cases=cases)
-        return 0 if count else 1
+        return generate_active(args.repo, args.config, args.html, args.output_dir, paths,
+                               selected_sources={args.qa_epic: specs}, missing_branch_is_error=True)
 
     parser = argparse.ArgumentParser(description="Generate a PST Markdown document from a Gherkin scenario")
     parser.add_argument("feature", type=Path)
