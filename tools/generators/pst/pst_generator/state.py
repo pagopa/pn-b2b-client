@@ -20,7 +20,7 @@ def source_path(repo: Path, name: str, overrides: dict[str, Path] | None) -> Pat
 
 
 def input_fingerprint(repo: Path, config: Path, epic: str, specs: list[tuple[str, str]],
-                      overrides: dict[str, Path] | None, include_html: bool) -> str:
+                      overrides: dict[str, Path] | None) -> str:
     generator_dir = Path(__file__).resolve().parent
     tool_dir = generator_dir.parent
     code = {path.name: digest(path.read_bytes()) for path in sorted(generator_dir.glob('*.py'))}
@@ -39,13 +39,13 @@ def input_fingerprint(repo: Path, config: Path, epic: str, specs: list[tuple[str
     from .cli import work_item_ids_for_qa_epic
     value = {'schema': 1, 'epic': epic, 'sources': sources,
              'work_items': work_item_ids_for_qa_epic(repo, epic),
-             'config': digest(config.read_bytes()), 'generator': code, 'html': include_html}
+             'config': digest(config.read_bytes()), 'generator': code}
     return digest(json.dumps(value, sort_keys=True).encode())
 
 
 def document_fingerprint(repo: Path, config: Path, epic: str) -> str:
     from .cli import work_item_ids_for_qa_epic
-    value = (digest(config.read_bytes()), work_item_ids_for_qa_epic(repo, epic))
+    value = (2, digest(config.read_bytes()), work_item_ids_for_qa_epic(repo, epic))
     return digest(json.dumps(value, sort_keys=True).encode())
 
 
@@ -53,34 +53,42 @@ def state_path(output: Path, epic: str) -> Path:
     return output / '.state' / f'{epic}.json'
 
 
-def is_current(output: Path, epic: str, fingerprint: str, include_html: bool) -> bool:
-    return matches_state(output, epic, 'input', fingerprint, include_html)
+def version_history(output: Path, epic: str) -> list[dict]:
+    try:
+        history = json.loads(state_path(output, epic).read_text(encoding='utf-8')).get('versions', [])
+        return history if isinstance(history, list) else []
+    except (OSError, ValueError, TypeError):
+        return []
 
 
-def matches_state(output: Path, epic: str, field: str, fingerprint: str,
-                  include_html: bool) -> bool:
+def is_current(output: Path, epic: str, fingerprint: str) -> bool:
+    return matches_state(output, epic, 'input', fingerprint)
+
+
+def matches_state(output: Path, epic: str, field: str, fingerprint: str) -> bool:
     path = state_path(output, epic)
     try:
         state = json.loads(path.read_text(encoding='utf-8'))
         expected = state['outputs']
-        files = [f'pst_{epic}.md'] + ([f'pst_{epic}.html'] if include_html else [])
-        return (include_html or not (output / f'pst_{epic}.html').exists()) and state.get(field) == fingerprint and all(
+        files = [f'pst_{epic}.md']
+        return state.get(field) == fingerprint and all(
             digest((output / file).read_bytes()) == expected[file] for file in files)
     except (OSError, KeyError, TypeError, ValueError):
         return False
 
 
-def save_state(output: Path, epic: str, fingerprint: str, include_html: bool,
-               scenarios: str | None = None, document: str | None = None) -> None:
-    if not include_html:
-        (output / f'pst_{epic}.html').unlink(missing_ok=True)
-    files = [f'pst_{epic}.md'] + ([f'pst_{epic}.html'] if include_html else [])
+def save_state(output: Path, epic: str, fingerprint: str,
+               scenarios: str | None = None, document: str | None = None,
+               versions: list[dict] | None = None) -> None:
+    files = [f'pst_{epic}.md']
     state = {'schema': 1, 'input': fingerprint,
              'outputs': {file: digest((output / file).read_bytes()) for file in files}}
     if scenarios is not None:
         state['scenarios'] = scenarios
     if document is not None:
         state['document'] = document
+    if versions is not None:
+        state['versions'] = versions
     path = state_path(output, epic)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, indent=2, sort_keys=True) + '\n', encoding='utf-8')
