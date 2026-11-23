@@ -11,12 +11,12 @@ import it.pagopa.common.pdf.visualtest.PdfTextExtractor;
 import it.pagopa.common.pdf.visualtest.TextFragment;
 import it.pagopa.common.polling.PollingProfile;
 import it.pagopa.common.polling.Poller;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactsIdV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
-import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnSafeStoragePrivateClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bInternalInformalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.InformalTimelineElementV1;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
 
 /**
  * Visual regression of the PDFs produced by SEND: the document of the scenario is compared with its golden master
- * (repo, otherwise rendered by the Template Engine from the same fixture that built the notification).
+ * committed in the repo; a scenario whose document has no golden master is skipped (see {@link GoldenMasterProvider}).
  */
 @Slf4j
 public class PdfVisualRegressionSteps {
@@ -63,7 +63,6 @@ public class PdfVisualRegressionSteps {
     private final DestinatarioRegistry destinatarioRegistry;
     private final IPnDowntimeLogsClient downtimeLogsClient;
     private final TimelineDetailsReader timelineDetails;
-    private final GoldenMasterProvider goldenMasters;
     private final int downtimeMonthsBack;
     private final String downtimeOperatorUid;
     private final PnPaB2bInternalInformalClientImpl informalClient;
@@ -80,7 +79,6 @@ public class PdfVisualRegressionSteps {
     public PdfVisualRegressionSteps(SharedSteps sharedSteps,
                                     DestinatarioRegistry destinatarioRegistry,
                                     IPnDowntimeLogsClient downtimeLogsClient,
-                                    ITemplateEngineClient templateEngineClient,
                                     TimelineDetailsReader timelineDetails,
                                     PnPaB2bInternalInformalClientImpl informalClient,
                                     IPnSafeStoragePrivateClient safeStorageClient,
@@ -91,7 +89,6 @@ public class PdfVisualRegressionSteps {
         this.destinatarioRegistry = destinatarioRegistry;
         this.downtimeLogsClient = downtimeLogsClient;
         this.timelineDetails = timelineDetails;
-        this.goldenMasters = new GoldenMasterProvider(new TemplateEngineGoldenRenderer(templateEngineClient));
         this.downtimeMonthsBack = downtimeMonthsBack;
         this.downtimeOperatorUid = downtimeOperatorUid;
         this.informalClient = informalClient;
@@ -101,7 +98,9 @@ public class PdfVisualRegressionSteps {
 
     @Given("viene generata la notifica di riferimento del documento {string}")
     public void vieneGenerataLaNotificaDiRiferimento(String documentKey) {
-        VisualFixture fixture = VisualFixture.load(VisualDocument.of(documentKey));
+        VisualDocument visualDocument = VisualDocument.of(documentKey);
+        GoldenMasterProvider.assumeGoldenMasterInRepo(visualDocument);
+        VisualFixture fixture = VisualFixture.load(visualDocument);
         sharedSteps.prepareNotificationRequest(fixture.notificationData());
         sharedSteps.addDestinatarioWithParams(destinatarioRegistry.destinatario(fixture.recipientName()),
                 fixture.recipientData());
@@ -111,6 +110,7 @@ public class PdfVisualRegressionSteps {
     @When("si recupera il documento {string} della notifica")
     public void siRecuperaIlDocumentoDellaNotifica(String documentKey) {
         document = VisualDocument.of(documentKey);
+        GoldenMasterProvider.assumeGoldenMasterInRepo(document);
         String key = switch (document.source().kind()) {
             case TIMELINE_LEGAL_FACT -> legalFactKey(document.source());
             case HIDDEN_LEGAL_FACT -> hiddenLegalFactKey(document.source());
@@ -136,6 +136,7 @@ public class PdfVisualRegressionSteps {
     @When("si recupera il documento {string} della notifica bonaria")
     public void siRecuperaIlDocumentoDellaNotificaBonaria(String documentKey) {
         document = VisualDocument.of(documentKey);
+        GoldenMasterProvider.assumeGoldenMasterInRepo(document);
         Assertions.assertEquals(VisualDocument.Source.Kind.INFORMAL_COVERPAGE, document.source().kind(),
                 documentKey + " non si recupera dalla notifica bonaria");
         String iun = informalIun();
@@ -183,6 +184,7 @@ public class PdfVisualRegressionSteps {
      */
     @Given("viene aperto e chiuso un disservizio della funzionalità {string}")
     public void vieneApertoEChiusoUnDisservizio(String functionality) {
+        GoldenMasterProvider.assumeGoldenMasterInRepo(VisualDocument.MALFUNCTION);
         createdDowntimeFunctionality = PnFunctionality.valueOf(functionality);
         createdDowntimeStart = OffsetDateTime.now().minusMinutes(2).withNano(0);
         downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid, List.of(downtimeEvent(PnFunctionalityStatus.KO,
@@ -195,6 +197,7 @@ public class PdfVisualRegressionSteps {
     @When("si recupera il documento {string} del disservizio creato")
     public void siRecuperaIlDocumentoDelDisservizioCreato(String documentKey) {
         document = VisualDocument.of(documentKey);
+        GoldenMasterProvider.assumeGoldenMasterInRepo(document);
         Assertions.assertNotNull(createdDowntimeStart, "Nessun disservizio creato nello scenario");
         PnDowntimeEntry downtime = Poller.pollUntil(
                 this::createdDowntimeWithLegalFact,
@@ -233,6 +236,7 @@ public class PdfVisualRegressionSteps {
     @When("si recupera il documento {string} dell'ultimo disservizio risolto")
     public void siRecuperaIlDocumentoDellUltimoDisservizio(String documentKey) {
         document = VisualDocument.of(documentKey);
+        GoldenMasterProvider.assumeGoldenMasterInRepo(document);
         OffsetDateTime notBefore = GoldenMasterProvider.repoGoldenCreation(document).orElse(OffsetDateTime.MIN);
         PnDowntimeEntry downtime = latestResolvedDowntimeWithLegalFact(notBefore);
         String url = downtimeLogsClient.getLegalFact(downtime.getLegalFactId()).getUrl();
@@ -242,7 +246,7 @@ public class PdfVisualRegressionSteps {
 
     @Then("il documento è conforme al golden master")
     public void ilDocumentoEConformeAlGoldenMaster() {
-        byte[] expected = goldenMasters.resolve(currentDocument());
+        byte[] expected = GoldenMasterProvider.fromRepoOrFail(currentDocument());
         PdfComplianceReport report = PdfComplianceChecker.check(expected, currentActual(), currentDocument().template(),
                 diffPath());
         log.info("VRT {}: {}", currentDocument().key(), report);
@@ -257,7 +261,7 @@ public class PdfVisualRegressionSteps {
         if (source.kind() == VisualDocument.Source.Kind.INFORMAL_COVERPAGE) {
             String taxId = sendSharedContext.getInformalNotificationContext().getRecipient().getDestinatario().getTaxId();
             List<String> problems = DynamicValueChecks.check(PdfTextExtractor.extract(currentActual()).allFragments(),
-                    informalIun(), taxId, null);
+                    informalIun(), taxId, null, null);
             Assertions.assertTrue(problems.isEmpty(), () -> "Valori del documento " + currentDocument().key()
                     + " non della notifica bonaria: " + problems);
             return;
@@ -267,15 +271,23 @@ public class PdfVisualRegressionSteps {
             return;
         }
         String taxId = destinatarioRegistry.destinatario(VisualFixture.load(currentDocument()).recipientName()).getTaxId();
-        OffsetDateTime eventTime = source.kind() == VisualDocument.Source.Kind.TIMELINE_LEGAL_FACT
-                ? timeline().stream().filter(e -> source.timelineCategory().equals(e.getCategory()))
-                .map(TimelineElementV28::getTimestamp).filter(Objects::nonNull).findFirst().orElse(null)
-                : source.kind() == VisualDocument.Source.Kind.HIDDEN_LEGAL_FACT && hiddenDetails.get("timeoutDate") != null
-                ? OffsetDateTime.parse(hiddenDetails.get("timeoutDate"))
-                : null;
+        // The printed time lies between the sending of the notification and the timeline element of the event; the
+        // decorrenza termini of the hidden legal fact is the timeoutDate itself.
+        OffsetDateTime notBefore = null;
+        OffsetDateTime notAfter = null;
+        if (source.kind() == VisualDocument.Source.Kind.TIMELINE_LEGAL_FACT) {
+            FullSentNotificationV29 notification = sharedSteps.getSentNotificationLastVersion();
+            notBefore = notification.getSentAt();
+            notAfter = notification.getTimeline().stream().filter(e -> source.timelineCategory().equals(e.getCategory()))
+                    .map(TimelineElementV28::getTimestamp).filter(Objects::nonNull).findFirst().orElse(null);
+        } else if (source.kind() == VisualDocument.Source.Kind.HIDDEN_LEGAL_FACT && hiddenDetails.get("timeoutDate") != null) {
+            notBefore = OffsetDateTime.parse(hiddenDetails.get("timeoutDate"));
+            notAfter = notBefore;
+        }
+        boolean printsTime = currentDocument().template().fieldDefinitions().stream()
+                .anyMatch(d -> d.fieldName().startsWith("Data"));
         List<String> problems = DynamicValueChecks.check(PdfTextExtractor.extract(currentActual()).allFragments(),
-                sharedSteps.getNotificationIun(), taxId, currentDocument().template().fieldDefinitions().stream()
-                        .anyMatch(d -> d.fieldName().startsWith("Data")) ? eventTime : null);
+                sharedSteps.getNotificationIun(), taxId, printsTime ? notBefore : null, printsTime ? notAfter : null);
         Assertions.assertTrue(problems.isEmpty(), () -> "Valori del documento " + currentDocument().key()
                 + " non della notifica: " + problems);
     }

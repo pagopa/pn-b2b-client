@@ -4,6 +4,8 @@ import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.font.PDFontDescriptor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.state.PDGraphicsState;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 import org.slf4j.Logger;
@@ -11,8 +13,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Utility di estrazione geometrica del testo da documenti PDF.
@@ -86,10 +92,43 @@ public final class PdfTextExtractor {
 
         private final int pageIndex;
         private final List<TextFragment> fragments = new ArrayList<>();
+        /** Rendering mode and colours in force when each glyph was drawn (not part of TextPosition). */
+        private final Map<TextPosition, String> rendering = new IdentityHashMap<>();
 
         private FragmentCollector(int pageIndex) throws IOException {
             super();
             this.pageIndex = pageIndex;
+        }
+
+        @Override
+        protected void processTextPosition(TextPosition text) {
+            super.processTextPosition(text);
+            PDGraphicsState gs = getGraphicsState();
+            if (gs == null) {
+                return;
+            }
+            int mode = gs.getTextState().getRenderingMode().intValue();
+            StringBuilder sb = new StringBuilder().append(mode).append('/').append(hex(gs.getNonStrokingColor()));
+            if (mode == 1 || mode == 2 || mode == 5 || mode == 6) {
+                sb.append('/').append(hex(gs.getStrokingColor())).append("/w")
+                        .append(String.format(Locale.ROOT, "%.2f", gs.getLineWidth()));
+            }
+            rendering.put(text, sb.toString());
+        }
+
+        private static String hex(PDColor color) {
+            try {
+                return color == null ? "?" : String.format(Locale.ROOT, "%06x", color.toRGB() & 0xFFFFFF);
+            } catch (IOException | RuntimeException e) {
+                return "?";
+            }
+        }
+
+        /** Font without the subset prefix, size, rendering mode and colours: what makes the same text look different. */
+        private String styleOf(TextPosition tp) {
+            String font = tp.getFont() != null ? tp.getFont().getName() : null;
+            font = font == null ? "?" : font.replaceFirst("^[A-Z]{6}\\+", "");
+            return font + "/" + String.format(Locale.ROOT, "%.1f", tp.getFontSizeInPt()) + "/" + rendering.getOrDefault(tp, "-");
         }
 
         List<TextFragment> getFragments() {
@@ -145,11 +184,13 @@ public final class PdfTextExtractor {
             float maxXEnd = Float.MIN_VALUE;
             float maxYTop = Float.MIN_VALUE;
 
+            Set<String> styles = new LinkedHashSet<>();
             for (TextPosition tp : wordPositions) {
                 String u = tp.getUnicode();
                 if (u != null) {
                     sb.append(u);
                 }
+                styles.add(styleOf(tp));
                 float x = tp.getXDirAdj();
                 float w = tp.getWidthDirAdj();
                 float baseline = tp.getPageHeight() - tp.getYDirAdj();
@@ -172,7 +213,8 @@ public final class PdfTextExtractor {
                     minY,
                     maxXEnd - minX,
                     maxYTop - minY,
-                    pageIndex);
+                    pageIndex,
+                    String.join("+", styles));
         }
 
         /**

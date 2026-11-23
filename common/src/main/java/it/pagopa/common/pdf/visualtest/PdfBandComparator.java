@@ -28,8 +28,9 @@ import java.util.Set;
  * an {@link MaskStrategy#INLINE_VALUE} value is only checked as text (done by {@link StaticTextComparator}) and for
  * its spacing: the distance from the neighbouring paragraphs and the line pitch must be the golden ones.
  *
- * <p>Not covered: the look of the paragraphs with a variable value, and graphics that lie between a run and the next
- * run when they do not move together.</p>
+ * <p>The static words of those paragraphs are compared one by one, pixel by pixel, each with its own offset. Not
+ * covered: the look (font, weight, colour) of the variable values themselves, which are masked, and graphics that lie
+ * between a run and the next run when they do not move together.</p>
  */
 final class PdfBandComparator {
 
@@ -122,7 +123,8 @@ final class PdfBandComparator {
                 compareWords(entries, page, expectedValues, actualValues, golden, moved, actualRenderer, pageWidth,
                         pageHeight, expectedMasks, actualMasks, pixels, problems, unverified);
                 coverage.add("pagina " + (page + 1) + ": " + pixels.summary(golden));
-                if (CoverageMap.enabled(diffOutputPath)) {
+                // Without runs only the words are compared: the page was compared pixel by pixel elsewhere.
+                if (withRuns && CoverageMap.enabled(diffOutputPath)) {
                     maps.add(pixels.map(golden));
                 }
             }
@@ -263,7 +265,13 @@ final class PdfBandComparator {
             List<TextFragment> e = words(pair.expected(), expectedValues);
             List<TextFragment> a = words(pair.actual(), actualValues);
             if (e.size() != a.size()) {
-                unverified.add("\"" + shorten(pair.expected().identity()) + "\"");
+                if (joined(e).equals(joined(a))) {
+                    // Same letters, different number of words: a space is missing or added (the text check ignores it).
+                    problems.add("pagina " + (page + 1) + ": parole unite o divise in \"" + shorten(pair.expected().identity())
+                            + "\" (" + e.size() + " → " + a.size() + " parole)");
+                } else {
+                    unverified.add("\"" + shorten(pair.expected().identity()) + "\"");
+                }
                 continue;
             }
             checkWordSpacing(pair, expectedValues, actualValues, page, problems);
@@ -314,6 +322,14 @@ final class PdfBandComparator {
                 }
             }
         }
+    }
+
+    private static String joined(List<TextFragment> words) {
+        StringBuilder sb = new StringBuilder();
+        for (TextFragment w : words) {
+            sb.append(w.text().replaceAll("[\\s ]+", ""));
+        }
+        return sb.toString();
     }
 
     private static List<TextFragment> words(LayoutModel.Paragraph paragraph, Set<TextFragment> values) {
@@ -601,9 +617,6 @@ final class PdfBandComparator {
         if (a == b) {
             return false;
         }
-        if (squiggleAgainstPaper(a, b) || squiggleAgainstPaper(b, a)) {
-            return false;
-        }
         int threshold = flat(expected, x, y) && flat(actual, x, y)
                 ? FLAT_CHANNEL_THRESHOLD : CHANNEL_THRESHOLD;
         return Math.abs(((a >> 16) & 0xFF) - ((b >> 16) & 0xFF)) > threshold
@@ -625,17 +638,6 @@ final class PdfBandComparator {
             }
         }
         return true;
-    }
-
-    /**
-     * The Template Engine draws a red wavy underline (spell check) as a pattern anchored to the page, not to the text:
-     * moving the text moves the phase of the wave. Red against white or red is not a difference.
-     */
-    private static boolean squiggleAgainstPaper(int red, int other) {
-        boolean isRed = ((red >> 16) & 0xFF) > 190 && ((red >> 8) & 0xFF) < 130 && (red & 0xFF) < 130;
-        boolean paperOrRed = (((other >> 16) & 0xFF) > 200 && ((other >> 8) & 0xFF) > 200 && (other & 0xFF) > 200)
-                || (((other >> 16) & 0xFF) > 190 && ((other >> 8) & 0xFF) < 130 && (other & 0xFF) < 130);
-        return isRed && paperOrRed;
     }
 
     /** The page rendered with its content moved down by {@code dyPt}, in vector space so that the glyphs rasterise as in the golden master. */

@@ -13,6 +13,8 @@ package it.pagopa.common.pdf.visualtest;
  * @param width    larghezza del bounding-box
  * @param height   altezza del bounding-box
  * @param pageIndex indice di pagina 0-based
+ * @param style    aspetto del testo: font (senza il prefisso del subset), corpo, modo di rendering e colori;
+ *                 vuoto per i frammenti costruiti a mano
  */
 public record TextFragment(
         String text,
@@ -20,7 +22,13 @@ public record TextFragment(
         float y,
         float width,
         float height,
-        int pageIndex) {
+        int pageIndex,
+        String style) {
+
+    /** Frammento senza informazioni di stile. */
+    public TextFragment(String text, float x, float y, float width, float height, int pageIndex) {
+        this(text, x, y, width, height, pageIndex, "");
+    }
 
     /** Coordinata X del bordo destro. */
     public float xEnd() {

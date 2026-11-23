@@ -22,6 +22,7 @@ public final class PdfComplianceReport {
     private final PdfVisualComparator.VisualDiffResult visualResult;
     private final List<String> structuralErrors;
     private final List<String> textDifferences;
+    private final List<String> styleDifferences;
     private final LayoutStability.Mode layoutMode;
     private final List<String> layoutNotes;
 
@@ -30,12 +31,14 @@ public final class PdfComplianceReport {
             PdfVisualComparator.VisualDiffResult visualResult,
             List<String> structuralErrors,
             List<String> textDifferences,
+            List<String> styleDifferences,
             LayoutStability.Mode layoutMode,
             List<String> layoutNotes) {
         this.fieldIssues       = Collections.unmodifiableList(new ArrayList<>(fieldIssues));
         this.visualResult      = visualResult;
         this.structuralErrors  = Collections.unmodifiableList(new ArrayList<>(structuralErrors));
         this.textDifferences   = Collections.unmodifiableList(new ArrayList<>(textDifferences));
+        this.styleDifferences  = Collections.unmodifiableList(new ArrayList<>(styleDifferences));
         this.layoutMode        = layoutMode;
         this.layoutNotes       = Collections.unmodifiableList(new ArrayList<>(layoutNotes));
     }
@@ -59,6 +62,11 @@ public final class PdfComplianceReport {
         return textDifferences;
     }
 
+    /** Valori variabili il cui aspetto (font, corpo, colore, grassetto simulato) è diverso da quello del golden master. */
+    public List<String> styleDifferences() {
+        return styleDifferences;
+    }
+
     /** How the page was compared: whole page (layout proved identical, or no inline values) or by bands. */
     public LayoutStability.Mode layoutMode() {
         return layoutMode;
@@ -74,7 +82,7 @@ public final class PdfComplianceReport {
         boolean fieldOk    = fieldIssues.isEmpty();
         boolean structOk   = structuralErrors.isEmpty();
         boolean visualOk   = visualResult == null || visualResult.equal();
-        return fieldOk && structOk && visualOk && textDifferences.isEmpty();
+        return fieldOk && structOk && visualOk && textDifferences.isEmpty() && styleDifferences.isEmpty();
     }
 
     /**
@@ -105,6 +113,11 @@ public final class PdfComplianceReport {
             sb.add("▸ DIFFERENZE NEL TESTO STATICO:");
             textDifferences.forEach(d -> sb.add("  • " + d));
         }
+
+        if (!styleDifferences.isEmpty()) {
+            sb.add("▸ ASPETTO DEI VALORI VARIABILI:");
+            styleDifferences.forEach(d -> sb.add("  • " + d));
+        }
         if (visualResult != null && !visualResult.equal()) {
             sb.add("▸ DIFFERENZE VISIVE:");
             sb.add("  • " + visualResult.errorMessage());
@@ -129,6 +142,7 @@ public final class PdfComplianceReport {
                 + ", fieldIssues=" + fieldIssues.size()
                 + ", structuralErrors=" + structuralErrors.size()
                 + ", textDifferences=" + textDifferences.size()
+                + ", styleDifferences=" + styleDifferences.size()
                 + ", layout=" + layoutMode
                 + ", visualEqual=" + (visualResult != null ? visualResult.equal() : "N/A")
                 + "}";

@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -18,13 +19,23 @@ final class DynamicValueChecks {
     private static final ZoneId ROME = ZoneId.of("Europe/Rome");
     private static final DateTimeFormatter DATE_TIME = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final Pattern IUN = Pattern.compile("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-[0-9]{6}-[A-Z]-[A-Z0-9]");
-    private static final Duration TOLERANCE = Duration.ofMinutes(5);
+    /** The document prints hours and minutes only. */
+    private static final Duration SLACK = Duration.ofMinutes(1);
 
     private DynamicValueChecks() {
     }
 
-    /** Problems found, empty when every value matches; null expectations are not checked. */
-    static List<String> check(List<TextFragment> fragments, String iun, String recipientTaxId, OffsetDateTime eventTime) {
+    /**
+     * Problems found, empty when every value matches; null expectations are not checked.
+     *
+     * <p>The time printed in a legal fact is the one of the event it attests (the sending of the request, the PEC
+     * delivery, the access, ...), which comes before the timeline element is written: in TEST the gap is up to three
+     * minutes. So the printed time is not compared with the timeline timestamp but must fall between {@code notBefore}
+     * (the notification was sent) and {@code notAfter} (the timeline element was written), one minute of slack each
+     * side for the missing seconds.</p>
+     */
+    static List<String> check(List<TextFragment> fragments, String iun, String recipientTaxId,
+                              OffsetDateTime notBefore, OffsetDateTime notAfter) {
         List<String> problems = new ArrayList<>();
         if (iun != null) {
             List<String> found = fragments.stream().map(f -> match(IUN, f.text())).filter(m -> m != null).toList();
@@ -35,12 +46,13 @@ final class DynamicValueChecks {
         if (recipientTaxId != null && fragments.stream().noneMatch(f -> f.text().contains(recipientTaxId))) {
             problems.add("codice fiscale del destinatario " + recipientTaxId + " assente dal documento");
         }
-        if (eventTime != null) {
+        if (notBefore != null && notAfter != null) {
             List<LocalDateTime> stamps = dateTimes(fragments);
-            LocalDateTime expected = eventTime.atZoneSameInstant(ROME).toLocalDateTime();
-            if (stamps.stream().noneMatch(s -> Duration.between(s, expected).abs().compareTo(TOLERANCE) <= 0)) {
-                problems.add("data e ora nel documento " + stamps + ", attese vicine a " + DATE_TIME.format(expected)
-                        + " (Europe/Rome, ±" + TOLERANCE.toMinutes() + " min)");
+            LocalDateTime from = notBefore.atZoneSameInstant(ROME).toLocalDateTime().minus(SLACK);
+            LocalDateTime to = notAfter.atZoneSameInstant(ROME).toLocalDateTime().plus(SLACK);
+            if (stamps.stream().noneMatch(s -> !s.isBefore(from) && !s.isAfter(to))) {
+                problems.add("data e ora nel documento " + stamps + ", attese tra " + DATE_TIME.format(from) + " e "
+                        + DATE_TIME.format(to) + " (Europe/Rome)");
             }
         }
         return problems;
@@ -57,7 +69,11 @@ final class DynamicValueChecks {
             for (int j = i + 1; j < Math.min(fragments.size(), i + 4); j++) {
                 String time = match(Pattern.compile("(?:[01][0-9]|2[0-3]):[0-5][0-9]"), fragments.get(j).text());
                 if (time != null) {
-                    stamps.add(LocalDateTime.parse(date + " " + time, DATE_TIME));
+                    try {
+                        stamps.add(LocalDateTime.parse(date + " " + time, DATE_TIME));
+                    } catch (DateTimeParseException e) {
+                        // not a calendar date (e.g. 31/02): not a timestamp of the document
+                    }
                     break;
                 }
             }

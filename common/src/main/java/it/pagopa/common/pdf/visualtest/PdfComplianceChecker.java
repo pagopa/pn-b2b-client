@@ -18,7 +18,9 @@ import java.util.List;
  *       se garantita, altrimenti per bande con {@link PdfBandComparator}</li>
  * </ol>
  *
- * <p>La classe è {@code final} e stateless: ogni invocazione di {@link #check} è indipendente.</p>
+ * <p>La classe è {@code final} e stateless: ogni invocazione di {@link #check} è indipendente. Le verifiche sono
+ * eseguite una alla volta anche quando gli scenari girano in parallelo: ogni confronto visivo rende le pagine a 300 DPI
+ * (circa 35 MB l'una, fino a circa 250 MB per documento) e più confronti contemporanei possono esaurire l'heap.</p>
  */
 public final class PdfComplianceChecker {
 
@@ -36,7 +38,7 @@ public final class PdfComplianceChecker {
      * @param diffOutputPath path dove salvare l'immagine di diff ({@code null} = non salvare)
      * @return report aggregato con tutti gli errori riscontrati
      */
-    public static PdfComplianceReport check(
+    public static synchronized PdfComplianceReport check(
             byte[] expectedPdf,
             byte[] actualPdf,
             PdfDocumentTemplate template,
@@ -44,6 +46,7 @@ public final class PdfComplianceChecker {
 
         List<String> structuralErrors = new ArrayList<>();
         List<String> textDifferences = new ArrayList<>();
+        List<String> styleDifferences = new ArrayList<>();
 
         // ── 1. Validazione numero pagine (pre-check) ──────────────────────
         if (template.expectedPageCount() > 0) {
@@ -62,7 +65,7 @@ public final class PdfComplianceChecker {
         } catch (PdfTextExtractor.PdfExtractionException e) {
             structuralErrors.add("Impossibile estrarre il testo dal PDF: " + e.getMessage());
             log.warn("PdfComplianceChecker: estrazione testo fallita", e);
-            return new PdfComplianceReport(List.of(), null, structuralErrors, List.of(), LayoutStability.Mode.NOT_APPLICABLE, List.of());
+            return new PdfComplianceReport(List.of(), null, structuralErrors, List.of(), List.of(), LayoutStability.Mode.NOT_APPLICABLE, List.of());
         }
 
         // ── 3. Analisi dinamica dei campi ─────────────────────────────────
@@ -83,6 +86,7 @@ public final class PdfComplianceChecker {
                                 StaticTextComparator.normalizedWords(expectedExtracted, template),
                                 StaticTextComparator.normalizedWords(extractedText, template))
                         .ifPresent(textDifferences::add);
+                styleDifferences.addAll(ValueStyleComparator.differences(expectedExtracted, extractedText, template));
 
                 LayoutStability.Result layout = LayoutStability.evaluate(expectedExtracted, extractedText, template);
                 layoutMode = layout.mode();
@@ -91,6 +95,9 @@ public final class PdfComplianceChecker {
                 List<ExclusionArea> expectedMasks = new ArrayList<>(expectedAnalysis.exclusions());
                 expectedMasks.addAll(template.fixedExclusions());
                 List<ExclusionArea> actualMasks = new ArrayList<>(analysis.exclusions());
+                // The fixed areas (e.g. a QR code) are anchored to the page in both documents: in bands the actual page
+                // is moved by the offset of each run, so the area must be masked where it lies on the actual page too.
+                actualMasks.addAll(template.fixedExclusions());
                 if (layoutMode == LayoutStability.Mode.NOT_GUARANTEED) {
                     visualResult = PdfBandComparator.compare(expectedPdf, actualPdf, expectedExtracted, extractedText,
                             template, expectedMasks, actualMasks, diffOutputPath);
@@ -127,7 +134,7 @@ public final class PdfComplianceChecker {
         }
 
         return new PdfComplianceReport(analysis.issues(), visualResult, structuralErrors, textDifferences,
-                layoutMode, layoutNotes);
+                styleDifferences, layoutMode, layoutNotes);
     }
 
     /**

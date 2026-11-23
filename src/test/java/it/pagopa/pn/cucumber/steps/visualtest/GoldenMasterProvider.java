@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.visualtest;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.springframework.core.io.ClassPathResource;
@@ -8,7 +7,6 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.OffsetDateTime;
@@ -16,24 +14,34 @@ import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assumptions.assumeThat;
+
 /**
- * Golden master of a document: the one committed in the repo, otherwise rendered by the Template Engine
- * from the document fixture. A PDF downloaded from an environment never becomes a golden master.
+ * Golden master of a document: only the one committed in the repo. A golden master is rendered once by the Template
+ * Engine ({@link GoldenMasterGenerationTool}), reviewed by a person and committed. There is no fallback: a scenario
+ * whose document has no committed golden master is skipped, never compared against something rendered on the fly.
+ * A PDF downloaded from an environment never becomes a golden master.
  */
-@Slf4j
-public class GoldenMasterProvider {
+public final class GoldenMasterProvider {
 
     static final String REPO_GOLDEN_ROOT = "it/pagopa/pn/cucumber/visualTest/expected-pdfs/";
     static final Path GENERATED_GOLDEN_ROOT = Paths.get("target", "vrt", "generated-golden");
 
-    private final TemplateEngineGoldenRenderer renderer;
-
-    public GoldenMasterProvider(TemplateEngineGoldenRenderer renderer) {
-        this.renderer = renderer;
+    private GoldenMasterProvider() {
     }
 
-    public byte[] resolve(VisualDocument document) {
-        return fromRepo(document).orElseGet(() -> fromTemplateEngine(document));
+    /** Skips the running scenario when the document has no golden master in the repo. Call it before touching the environment. */
+    public static void assumeGoldenMasterInRepo(VisualDocument document) {
+        assumeThat(fromRepo(document).isPresent())
+                .as("Golden master di %s assente nel repo (%s%s/expected.pdf): scenario saltato",
+                        document.key(), REPO_GOLDEN_ROOT, document.folder())
+                .isTrue();
+    }
+
+    public static byte[] fromRepoOrFail(VisualDocument document) {
+        return fromRepo(document).orElseThrow(() -> new IllegalStateException(
+                "Golden master di " + document.key() + " assente nel repo (" + REPO_GOLDEN_ROOT + document.folder()
+                        + "/expected.pdf)"));
     }
 
     public static Optional<byte[]> fromRepo(VisualDocument document) {
@@ -58,20 +66,5 @@ public class GoldenMasterProvider {
                 throw new UncheckedIOException("Golden master non leggibile per " + document.key(), e);
             }
         });
-    }
-
-    private byte[] fromTemplateEngine(VisualDocument document) {
-        byte[] pdf = renderer.render(document);
-        Path target = GENERATED_GOLDEN_ROOT.resolve(document.folder()).resolve("expected.pdf");
-        try {
-            Files.createDirectories(target.getParent());
-            Files.write(target, pdf);
-        } catch (IOException e) {
-            throw new UncheckedIOException("Impossibile salvare il golden generato in " + target, e);
-        }
-        log.warn("Golden master di {} assente nel repo: generato dal Template Engine in {}. "
-                        + "Dopo la revisione visiva copiarlo in src/test/resources/{}{}/expected.pdf",
-                document.key(), target.toAbsolutePath(), REPO_GOLDEN_ROOT, document.folder());
-        return pdf;
     }
 }
