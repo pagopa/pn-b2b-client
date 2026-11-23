@@ -372,6 +372,7 @@ public class RicezioneNotificheWebSteps {
     @And("si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno {int} notifiche")
     public void sfogliaTutteLePagineLatoMittente(int minimumExpectedCount) {
         int totalCollected;
+        String diagnostic = "";
         if (notificationSearchResponse != null) {
             totalCollected = notificationSearchResponse.getResultsPage().size();
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())
@@ -386,12 +387,41 @@ public class RicezioneNotificheWebSteps {
                     .as("IUN restituiti più volte sfogliando le pagine della ricerca bonarie (pagine duplicate)")
                     .isEmpty();
             totalCollected = browse.iuns().size();
+            if (totalCollected < minimumExpectedCount) {
+                // Distingue un problema di paginazione backend (size=50 restituisce tutto) da un filtro delivered che esclude notifiche
+                int sameFiltersNoPaging = countInformalResults(50, lastMittenteSearchParam.delivered);
+                int withoutDeliveredFilter = countInformalResults(50, null);
+                diagnostic = String.format(" (IUN raccolti=%s; stessa ricerca con size=50: %d; size=50 senza filtro delivered: %d)",
+                        browse.iuns(), sameFiltersNoPaging, withoutDeliveredFilter);
+            }
         } else {
             throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
         }
         assertThat(totalCollected)
-                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine")
+                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine" + diagnostic)
                 .isGreaterThanOrEqualTo(minimumExpectedCount);
+    }
+
+    // Singola ricerca bonarie (prima pagina) con size/delivered sovrascritti; i parametri originali vengono ripristinati
+    private int countInformalResults(Integer size, Boolean delivered) {
+        Integer originalSize = lastMittenteSearchParam.size;
+        Boolean originalDelivered = lastMittenteSearchParam.delivered;
+        String originalNextPagesKey = lastMittenteSearchParam.nextPagesKey;
+        try {
+            lastMittenteSearchParam.size = size;
+            lastMittenteSearchParam.delivered = delivered;
+            lastMittenteSearchParam.nextPagesKey = null;
+            InformalNotificationSearchResponse response = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+            Set<String> iuns = response.getResultsPage() == null ? Set.of()
+                    : response.getResultsPage().stream().map(row -> row.getIun()).collect(Collectors.toCollection(LinkedHashSet::new));
+            log.info("Ricerca bonarie diagnostica (size={}, delivered={}): iun={}, moreResult={}",
+                    size, delivered, iuns, response.getMoreResult());
+            return iuns.size();
+        } finally {
+            lastMittenteSearchParam.size = originalSize;
+            lastMittenteSearchParam.delivered = originalDelivered;
+            lastMittenteSearchParam.nextPagesKey = originalNextPagesKey;
+        }
     }
 
     private record InformalPagesBrowse(Set<String> iuns, List<String> duplicatedIuns) {

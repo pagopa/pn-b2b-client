@@ -575,15 +575,14 @@ Feature: Sottomissione di una notifica bonaria.
   @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId             | FattOrd           |
-      | recipientType          | PF                |
-      | taxId                  | FRMTTR76M06B715E  |
-      | denomination           | Ettore Fieramosca |
-      | payment_multy_number   | 1                 |
-      | attachment_key         | NULL              |
-      | attachment_contentType | NULL              |
-      | messageId              | ${NEW-IT}         |
-    When l'invio della notifica bonaria fallisce
+      | document             | DOC_1_PG          |
+      | campaignId           | FattOrd           |
+      | recipientType        | PF                |
+      | taxId                | NULL              |
+      | denomination         | Ettore Fieramosca |
+      | payment_multy_number | 1                 |
+      | messageId            | ${NEW-IT}         |
+    Then viene inviata una nuova notifica bonaria con sha non valido
     Then si riceve errore 400
 
 
