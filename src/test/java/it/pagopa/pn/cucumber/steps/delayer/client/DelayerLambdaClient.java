@@ -331,6 +331,7 @@ public class DelayerLambdaClient {
 
     public void insertMockCapacities(String filename) {
         var params = paramsOf(
+                DelayerTable.PaperDeliveryDriverCapacitiesMock,
                 mandatory("filename", filename)
         );
         invoke(DelayerOperation.INSERT_MOCK_CAPACITIES, Void.class, params);
