@@ -4,12 +4,7 @@ on:
   pull_request_target:
     types: [opened, reopened, synchronize]
     branches: [develop]
-  workflow_dispatch:
-    inputs:
-      include_html:
-        description: Generate HTML reports as well as Markdown
-        type: boolean
-        default: false
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -55,9 +50,7 @@ jobs:
         run: python -m pip install -r requirements.txt
 
       - name: Verify generator
-        env:
-          GITHUB_STEP_SUMMARY: /dev/null
-        run: python -m unittest discover -s tests -v
+        run: env -u GITHUB_STEP_SUMMARY python -m unittest discover -s tests -v
 
       - name: Prepare persistent PST branch
         run: |
@@ -74,13 +67,13 @@ jobs:
       - name: Generate PSTs for active releases
         id: generate
         continue-on-error: true
+        env:
+          JIRA_CLOUD_ID: ${{ vars.JIRA_CLOUD_ID }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ vars.JIRA_BASE_URL }}
         run: |
-          args=(generate-all --repo "$GITHUB_WORKSPACE" --config config.yaml
-                --output-dir "$PST_OUTPUT_DIR" --use-state)
-          if [[ "${{ inputs.include_html }}" == 'true' ]]; then
-            args+=(--html)
-          fi
-          python -m pst_generator.cli "${args[@]}"
+          python -m pst_generator.cli generate-all --repo "$GITHUB_WORKSPACE" \
+            --config config.yaml --output-dir "$PST_OUTPUT_DIR" --use-state
 
       - name: Commit and push changed PSTs
         if: ${{ steps.generate.outcome == 'success' || steps.generate.outcome == 'failure' }}
@@ -100,7 +93,6 @@ jobs:
           name: pst-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/pst-output/pst_*.md
-            ${{ runner.temp }}/pst-output/pst_*.html
           if-no-files-found: warn
           retention-days: 30
 
