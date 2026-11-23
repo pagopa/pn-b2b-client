@@ -1,0 +1,27 @@
+name: Probe PST Reviewer Copilot
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  copilot-requests: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+
+      - name: Verify organization access to Copilot
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          response=$(copilot -p 'Rispondi con una sola parola: OK' -s --no-ask-user --deny-tool='shell,write')
+          if [ -z "$response" ]; then
+            echo 'Copilot non ha restituito una risposta.' >&2
+            exit 1
+          fi
+          echo 'Copilot CLI ha risposto usando il token del workflow.' >> "$GITHUB_STEP_SUMMARY"
