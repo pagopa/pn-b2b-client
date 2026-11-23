@@ -81,7 +81,6 @@ jobs:
           if ! jq -e --arg repo "$SOURCE_REPO" --arg attempt "$RUN_ATTEMPT" '
             .path == ".github/workflows/qa.yaml" and
             .head_repository.full_name == $repo and
-            .head_branch == "main" and
             (.run_attempt | tostring) == $attempt and
             (.event == "schedule" or .event == "workflow_dispatch")
           ' <<< "$run" > /dev/null; then
