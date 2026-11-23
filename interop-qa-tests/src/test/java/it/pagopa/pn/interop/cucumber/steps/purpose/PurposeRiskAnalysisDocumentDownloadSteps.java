@@ -60,16 +60,21 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
         commonUtils.assertValidResponse();
         purposeVersions = getPurposeResponse.getVersions();
 
+        UUID riskAnalysisId =  Optional.ofNullable(getPurposeResponse.getCurrentVersion())
+                .map(PurposeVersion::getRiskAnalysisDocument)
+                .map(PurposeVersionDocument::getId)
+                .orElseThrow(() -> new IllegalStateException("Alla purpose non è associato alcun documento di analisi del rischio"));
+
+
         httpCallExecutor.performCall(
                 () -> purposeApiClient.getRiskAnalysisDocument(
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId()),
                         UUID.fromString(sharedStepsContext.getPurposeCommonContext().getVersionId()),
-                        Optional.ofNullable(getPurposeResponse.getCurrentVersion())
-                                .map(PurposeVersion::getRiskAnalysisDocument)
-                                .map(PurposeVersionDocument::getId)
-                                .orElseThrow(() -> new IllegalStateException("Alla purpose non è associato alcun documento di analisi del rischio"))
+                        riskAnalysisId
                 )
         );
+
+        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisId(riskAnalysisId);
     }
 
     @Given("l'utente ha già aggiornato finalità rispettando le stime di carico per quell'e-service")

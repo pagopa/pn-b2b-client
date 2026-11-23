@@ -30,7 +30,7 @@ final class AgreementDocumentUploadOps implements DocumentUploadOps {
 
     @Override
     public UploadOperationResult upload(UploadRequest request, Resource uploadResource, String prettyName) {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
 
         HttpStatus uploadStatus = sharedStepsContext.getHttpCallExecutor().performCall(
             () -> agreementClient.uploadConsumerDocument(agreementId, uploadResource, prettyName)
@@ -53,7 +53,7 @@ final class AgreementDocumentUploadOps implements DocumentUploadOps {
 
     @Override
     public void pollDocumentAvailability(UUID documentId) {
-        UUID agreementId = sharedStepsContext.getAgreementId();
+        UUID agreementId = sharedStepsContext.getAgreementCommonContext().getAgreementId();
 
         pollingService.makePolling(
             () -> sharedStepsContext.getHttpCallExecutor().performCall(
@@ -64,4 +64,3 @@ final class AgreementDocumentUploadOps implements DocumentUploadOps {
         );
     }
 }
-

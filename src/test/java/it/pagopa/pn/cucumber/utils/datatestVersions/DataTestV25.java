@@ -8,11 +8,7 @@ import lombok.Data;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -43,14 +39,31 @@ public class DataTestV25 extends AbstractDataTest {
         String parametriCalcoloCostoNotifica = getValue(data, PARAMETRI_CALCOLO_COSTO_NOTIFICA.key);
         String registry = getValue(data, DETAILS_REGISTRY.key);
         String foundAddress = getValue(data, DETAILS_FOUND_ADDRESS.key);
+        String attachmentUrlPrefix =
+                getValue(data, DETAILS_ATTACHMENTS_URL.key) != null
+                        ? getValue(data, DETAILS_ATTACHMENTS_URL.key)
+                        : getValue(data, AAR_TYPE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
         }
 
         try {
+
+            List<AttachmentDetails> attachments = getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key);
+
+            if (attachmentUrlPrefix != null) {
+                attachments = attachments == null ? new ArrayList<>() : new ArrayList<>(attachments);
+                if (attachments.isEmpty()) {
+                    attachments.add(new AttachmentDetails().url(attachmentUrlPrefix));
+                } else {
+                    attachments.set(0, attachments.get(0).url(attachmentUrlPrefix));
+                }
+            }
+
             DataTestV25 dataTest = new DataTestV25();
             dataTest.setInputData(data);
+
             TimelineElementV28 timelineElement = new TimelineElementV28()
                     .legalFactsIds(getListValue(LegalFactsIdV20.class, data, LEGAL_FACT_IDS.key))
                     .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV28()
@@ -68,7 +81,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
                             .foundAddress(foundAddress != null ? getObjValue(PhysicalAddress.class, data, DETAILS_FOUND_ADDRESS.key) : null)
                             .failureCause(getValue(data, DETAILS_FAILURE_CAUSE.key))
-                            .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
+                            .attachments(attachments)
                             .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                             .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                             .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
@@ -76,6 +89,7 @@ public class DataTestV25 extends AbstractDataTest {
                             .registry(registry != null ? getValue(data, DETAILS_REGISTRY.key) : null)
                             .recIndexes(getListValue(Integer.class, data, DETAILS_REC_INDEXES.key))
                     );
+
 
             // IMPORTANT: no empty data check; enrich with new checks if it is needed
             if (timelineElement.getDetails() != null || timelineElement.getLegalFactsIds() != null) {
@@ -120,6 +134,11 @@ public class DataTestV25 extends AbstractDataTest {
                         assertThat(actual.getRefusalReasons().get(i).getErrorCode())
                                 .as(error + EQUALITY_ERROR_CODE)
                                 .isEqualTo(expected.getRefusalReasons().get(i).getErrorCode());
+                        if (expected.getRefusalReasons().get(i).getRecIndex() != null) {
+                            assertThat(actual.getRefusalReasons().get(i).getRecIndex())
+                                    .as(error + EQUALITY_REC_INDEX)
+                                    .isEqualTo(expected.getRefusalReasons().get(i).getRecIndex());
+                        }
                     }
                     if (dataTest.getParametriCalcoloCostoNotifica() != null) {
                         expected.setNotificationCost(B2bUtils.calcolaCostoNotifica(context, dataTest.getParametriCalcoloCostoNotifica()));
@@ -137,16 +156,20 @@ public class DataTestV25 extends AbstractDataTest {
             case SEND_DIGITAL_FEEDBACK -> {
                 if (expected != null) {
                     assertThat(actual.getResponseStatus()).as(error + EQUALITY_RESPONSE_STATUS).isNotNull();
+                    Optional.ofNullable(expected.getDeliveryDetailCode()).ifPresent(
+                            t -> assertThat(actual.getDeliveryDetailCode()).as(error + EQUALITY_DELIVERY_DETAIL_CODE).isEqualTo(t));
                     Optional.ofNullable(expected.getResponseStatus()).map(ResponseStatus::getValue).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(expected.getResponseStatus().getValue()));
+                            t -> assertThat(actual.getResponseStatus().getValue()).as(error + EQUALITY_RESPONSE_STATUS_VALUE).isEqualTo(t));
                     Optional.ofNullable(expected.getDigitalAddress()).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(expected.getDigitalAddress()));
+                            t -> assertThat(actual.getDigitalAddress()).as(error + EQUALITY_DIGITAL_ADDRESS).isEqualTo(t));
                     Optional.ofNullable(expected.getSendingReceipts()).map(List::size).ifPresent(
-                            t -> assertThat(t).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(expected.getSendingReceipts().size()));
-                    for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
-                        assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
-                        assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
-                        assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
+                            t -> assertThat(actual.getSendingReceipts().size()).as(error + EQUALITY_SENDING_RECEIPTS_SIZE).isEqualTo(t));
+                    if (actual.getSendingReceipts() != null) {
+                        for (int i = 0; i < actual.getSendingReceipts().size(); i++) {
+                            assertThat(actual.getSendingReceipts().get(i)).as("Il sendingReceipt non dev'essere null").isNotNull();
+                            assertThat(actual.getSendingReceipts().get(i).getId()).as("L'ID del sendingReceipt non dev'essere null").isNotNull();
+                            assertThat(actual.getSendingReceipts().get(i).getSystem()).as("Il System del sendingReceipt non dev'essere null").isNotNull();
+                        }
                     }
                 }
             }
@@ -221,11 +244,33 @@ public class DataTestV25 extends AbstractDataTest {
                     if (Objects.nonNull(expected.getAttachments())) {
                         assertThat(actual.getAttachments()).as(error + EQUALITY_ATTACHMENTS_NULL).isNotNull();
                         assertThat(actual.getAttachments().size()).as(error + EQUALITY_ATTACHMENTS_SIZE).isEqualTo(expected.getAttachments().size());
-                        for (int i = 0; i < actual.getAttachments().size(); i++) {
-                            List<String> documentTypes = Arrays.asList(expected.getAttachments().get(i).getDocumentType().split(" "));
-                            assertThat(documentTypes).asList()
-                                    .as(error + EQUALITY_DOCUMENT_TYPE)
-                                    .contains(actual.getAttachments().get(i).getDocumentType());
+
+                        for (int i = 0; i < expected.getAttachments().size(); i++) {
+                            AttachmentDetails expectedAttachment = expected.getAttachments().get(i);
+                            AttachmentDetails actualAttachment = actual.getAttachments().get(i);
+
+                            if (expectedAttachment.getDocumentType() != null) {
+                                List<String> documentTypes = Arrays.asList(expectedAttachment.getDocumentType().split(" "));
+                                assertThat(documentTypes).asList()
+                                        .as(error + EQUALITY_DOCUMENT_TYPE)
+                                        .contains(actualAttachment.getDocumentType());
+                            }
+
+                            if (expectedAttachment.getUrl() != null) {
+                                String actualUrl = actualAttachment.getUrl();
+                                String expectedUrl = expectedAttachment.getUrl();
+
+                                if (actualUrl != null && actualUrl.startsWith("safestorage://")) {
+                                    actualUrl = actualUrl.substring("safestorage://".length());
+                                }
+                                if (expectedUrl != null && expectedUrl.startsWith("safestorage://")) {
+                                    expectedUrl = expectedUrl.substring("safestorage://".length());
+                                }
+
+                                assertThat(actualUrl)
+                                        .as(error + "L'URL dell'allegato non inizia con il prefisso atteso")
+                                        .startsWith(expectedUrl);
+                            }
                         }
                     }
 

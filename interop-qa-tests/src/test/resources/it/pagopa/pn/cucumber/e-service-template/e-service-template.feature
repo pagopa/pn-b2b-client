@@ -2217,6 +2217,13 @@ Feature: Test API of e-service template
       | 123456789   | 400       |
       | 1234567890  | 201       |
 
+  @dailyCallsThreshold
+  @e-service-template-version-create
+  Scenario: [ESERVICE_TEMPLATE_CREATE_VERSION_DAILY_CALLS] Durante la creazione di un template e-service è possibile definire i limiti giornalieri di chiamata.
+    Given l'utente è un "admin" di "PA1"
+    When l'utente effettua la creazione di un e-service template con dailyCallsPerConsumer uguale a 100 e dailyCallsTotal uguale a 1000
+    Then l'e-service template creato ha una dailyCallsPerConsumer uguale a 100 e dailyCallsTotal uguale a 1000
+
   @sad-path
   @e-service-template-version-create
   Scenario: [INTEROP-EST-139] La creazione di una nuova versione di un e-service template inesistente non può essere effettuata

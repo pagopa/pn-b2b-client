@@ -53,6 +53,17 @@ public class VoucherGenerationEServiceSteps {
                 false);
     }
 
+    @Given("{string} ha già una nuova versione in stato DRAFT per quell'e-service istanza di template")
+    public void createDraftVersionOfTemplateInstance(String tenantType) {
+        createDraftVersion(tenantType);
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceIdCreatedFromTemplate(
+                sharedStepsContext.getEServicesCommonContext().getEserviceId()
+        );
+        sharedStepsContext.getEServiceTemplateStepContext().setLastEServiceDescriptorIdCreatedFromTemplate(
+                sharedStepsContext.getEServicesCommonContext().getDescriptorId()
+        );
+    }
+
     @Given("{string} ha già attivato nuovamente quell'e-service")
     public void activateEService(String tenantType) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenantType, null));

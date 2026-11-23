@@ -116,4 +116,9 @@ public class ParameterTypes {
     public static String deliveryNotificationCost(String value) {
         return value;
     }
+
+    @ParameterType("risultino|non risultino")
+    public static boolean appear(String value) {
+        return value.equals("risultino");
+    }
 }

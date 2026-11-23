@@ -72,10 +72,23 @@ public class NotificationStore {
         }
     }
 
+    public List<Notification> getLastNotifications(int limit, NotificationUser user) {
+        String previousToken = clientTokenConfigurator.getLastToken();
+        try {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(user.getTenant(), user.getRole()));
+            return clientTokenConfigurator.getNotificationClient().getAll(0, limit);
+        } finally {
+            if (previousToken != null) {
+                clientTokenConfigurator.setBearerToken(previousToken);
+            }
+        }
+    }
+
     private void initializeNotifications(NotificationUser user) {
         String tenantName = (user == null) ? null : user.getTenant();
         this.applyTaskForEveryUser(
-            List.of("security", "api", "support", "api,security", "reviewer", "viewer"), // 14 01 2026 causa problemi tecnici lato backend si può testare solo per ADMIN https://pagopaspa.slack.com/archives/C08RZ0ATBJ6/p1768317958663119
+            //List.of("support", "viewer", "reviewer"), // Questi ruoli non ricevono notifiche in-app
+            List.of("api", "security", "api,security", "support", "reviewer", "viewer"), // Solo admin non escluso
             (role, tenant) -> {
                 int offset = 0;
                 List<Notification> currentNotif;

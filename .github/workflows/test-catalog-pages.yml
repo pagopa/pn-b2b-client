@@ -1,0 +1,83 @@
+name: Test catalog · GitHub Pages
+
+on:
+  schedule:
+    - cron: '30 18 * * *'
+      timezone: Europe/Rome
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-catalog-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout tool and complete Git history
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: test-catalog/package-lock.json
+
+      - name: Refresh configured source branch
+        run: |
+          node --input-type=module <<'JS'
+          import { readFileSync } from 'node:fs';
+          import { execFileSync } from 'node:child_process';
+          const { branch } = JSON.parse(readFileSync('test-catalog/config/source.json', 'utf8'));
+          if (typeof branch !== 'string' || !branch || branch.startsWith('-')) {
+            throw new Error('Invalid source branch in config/source.json');
+          }
+          const git = args => execFileSync('git', args, { encoding: 'utf8' });
+          git(['check-ref-format', `refs/heads/${branch}`]);
+          git(['fetch', '--no-tags', 'origin', `+refs/heads/${branch}:refs/remotes/origin/${branch}`]);
+          const revision = git(['rev-parse', '--verify', `refs/remotes/origin/${branch}^{commit}`]).trim();
+          git(['update-ref', `refs/heads/${branch}`, revision]);
+          console.log(`Source branch: ${branch}; revision: ${revision}`);
+          JS
+
+      - name: Install catalog dependencies
+        run: npm ci --prefix test-catalog --ignore-scripts
+
+      - name: Generate catalog
+        run: npm run generate --prefix test-catalog
+
+      - name: Verify catalog
+        run: npm test --prefix test-catalog
+
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: test-catalog/generated
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Publish catalog
+        id: deployment
+        uses: actions/deploy-pages@v4

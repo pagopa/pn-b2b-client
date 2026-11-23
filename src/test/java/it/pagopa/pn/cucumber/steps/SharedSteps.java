@@ -23,30 +23,14 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
-import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -85,79 +69,13 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ADDRESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALDA_MERINI;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ALLEGATO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_1;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_2;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_MULTI;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_ROOT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.COMUNE_SON;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CRISTOFORO_COLOMBO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.CUCUMBER_SPA_B2B;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DINO_SAURO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.ETTORE_FIERAMOSCA;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.EXTENSION;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_NOTFOUND;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_PDF_INVALID_ERROR;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.FILE_SHA_ERROR;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GALILEO_GALILEI;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.GHERKIN_SRL_B2B;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LEONARDO_DA_VINCI;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.LUCIO_ANNEO_SENECA;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CREDENZIALI_SCADUTE;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_CUCUMBER;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MARIO_GHERKIN;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.MOST_RECENT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_STATUS_ACCEPTED;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOTIFICATION_STATUS_CANCELLED;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_EQUAL_SHA;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_EQUAL_SHA_JSON;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_ALLEGATO_JSON;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_NO_PRELOAD;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.NOT_VALID_ADDRESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.OVERSIZE_ALLEGATO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.OVER_15_ALLEGATO;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SCHEDULING_DELTA_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_ANALOG_PROGRESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.SHA_256;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.TAXID_NOT_VALID;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_EXTRA_RAPID;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAITING_GPD;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_EXTRA_RAPID;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WAIT_UPPER_BOUND;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WORKFLOW_WAIT_DEFAULT;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.WRONG_EXTENSION;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -182,6 +100,9 @@ public class SharedSteps {
 
     @Getter
     private final IPnPaB2bClient b2bClient;
+
+    @Getter
+    private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
 
     @Getter
     private final PnPollingFactory pollingFactory;
@@ -252,14 +173,16 @@ public class SharedSteps {
     @Getter
     private final ObjectMapper objMapper;
 
-    private boolean checkAuditLogDisabled;
-
     @Getter
     private final DynamoDbService dynamoDbService;
 
     private final CacheManager<String, String> senderTaxIdCacheManager;
 
     private final SendSharedContext sendSharedContext;
+
+    @Getter
+    @Setter
+    private String informalSenderId;
 
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
@@ -319,6 +242,8 @@ public class SharedSteps {
     @Autowired
     public SharedSteps(ApplicationContext context,
                        IPnPaB2bClient b2bClient,
+                       PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
+                       PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl,
                        PnPollingFactory pollingFactory,
                        IPnWebPaClient webPaClient,
                        PnWebRecipientExternalClientImpl webRecipientClient,
@@ -337,6 +262,7 @@ public class SharedSteps {
     ) {
         this.context = context;
         this.b2bClient = b2bClient;
+        this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
         this.pollingFactory = pollingFactory;
         this.webPaClient = webPaClient;
         this.webRecipientClient = webRecipientClient;
@@ -393,11 +319,18 @@ public class SharedSteps {
     }
 
     /**
-     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * Restituisce lo FullSentNotification di una notifica legale aggiornata all'ultima versione
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
     public FullSentNotificationV29 getSentNotificationLastVersion() {
         return b2bClient.getSentNotificationV29(notificationIun);
+    }
+
+    /**
+     * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
+     */
+    public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
+        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
     }
 
     /**
@@ -408,6 +341,14 @@ public class SharedSteps {
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
     public FullSentNotificationV29 getSentNotificationLastVersionByIun(String iun) {
         return b2bClient.getSentNotificationV29(iun);
+    }
+
+
+    /**
+     * In base al notificationIun settato stabilisce se si tratta di una notifica legale o bonaria (le legali terminano con 1, le bonarie con la lettera)
+     */
+    public boolean isLegalNotification() {
+        return notificationIun != null && notificationIun.endsWith("1");
     }
 
     public NotificationVersion getNotificationVersion(String version) {
@@ -907,8 +848,11 @@ public class SharedSteps {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
             } else {
-                throw httpStatusCodeException;
+                log.warn("Errore durante la rimozione PEC di piattaforma (status: {}): {}",
+                        httpStatusCodeException.getStatusCode(), httpStatusCodeException.getMessage());
             }
+        } catch (Exception e) {
+            log.warn("Errore imprevisto durante la rimozione PEC di piattaforma: {}", e.getMessage());
         }
     }
 
