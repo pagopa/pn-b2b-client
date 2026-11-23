@@ -3,7 +3,7 @@
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto RS/RIS
 
   # ---------------- DRY RUN MODE ----------------
-  @paperTrackerRSDryRunMode
+  @paperTrackerRSDryRunMode @work-item:QA-18544
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -14,6 +14,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
@@ -32,7 +33,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-NonRendicontabile_RS            |
       | OK-CausaForzaMaggiore_RS           |
 
-  @paperTrackerRISDryRunMode
+  @paperTrackerRISDryRunMode @work-item:QA-18544
   Scenario Outline: [PAPER_TRACKER_DRY_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -48,6 +49,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
@@ -59,7 +61,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | FAIL_RIS_M05 |
 
   # ---------------- RUN MODE ----------------
-  @paperTrackerRSRunMode
+  @paperTrackerRSRunMode @work-item:QA-18544
   Scenario Outline: [PAPER_TRACKER_RUN_RS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RS
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -70,6 +72,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
@@ -90,7 +93,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | OK-NonRendicontabile_RS            |
       | OK-CausaForzaMaggiore_RS           |
 
-  @paperTrackerRISRunMode
+  @paperTrackerRISRunMode @work-item:QA-18544
   Scenario Outline: [PAPER_TRACKER_RUN_RIS_1] Verifica la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto RIS
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -106,6 +109,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     Then si controlla che non ci siano eventi duplicati
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"

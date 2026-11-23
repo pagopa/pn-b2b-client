@@ -631,6 +631,17 @@ public class PaperTrackerSteps {
         return list1.equals(list2);
     }
 
+    // Nell'RS il REFINEMENT può arrivare prima degli eventi del recapitista: si rilegge la timeline finché la sequence non è completa.
+    @And("si attende che siano presenti in timeline tutti gli eventi relativi alla sequence {string}")
+    public void waitSequenceEventsInTimeline(String sequenceName) {
+        await().atMost(Duration.ofMinutes(10))
+                .pollInterval(Duration.ofSeconds(30))
+                .untilAsserted(() -> {
+                    b2bSteps.readEventUpToTimelineElement(REFINEMENT);
+                    checkSequenceEventsOnPaperTracker(sequenceName);
+                });
+    }
+
     @Then("si controlla che siano presenti tutti gli eventi relativi alla sequence {string}")
     public void checkSequenceEventsOnPaperTracker(String sequenceName) {
         log.info("Creata notifica con " + sequenceName + "e IUN: " + sharedSteps.getNotificationIun());
