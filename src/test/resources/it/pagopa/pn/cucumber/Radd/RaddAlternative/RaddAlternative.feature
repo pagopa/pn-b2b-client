@@ -62,8 +62,10 @@ Feature: Radd Alternative
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 7 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 3 |
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-56] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
@@ -89,8 +91,10 @@ Feature: Radd Alternative
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 6 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -313,8 +317,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 6 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 3 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -340,8 +346,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 5 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -386,7 +394,6 @@ Feature: Radd Alternative
 
 # FLUSSO ACT su PG con QrCode - error cases
 
-#  cucumber spa è pn.iun.120gg.lucio.pagopa
   @raddAlt @work-item:QA-19302
   Scenario: [RADD-ALT_ACT-13] PG - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni.
     When Il cittadino CucumberSpa come destinatario 0 mostra il QRCode "dopo 120gg"
@@ -395,10 +402,10 @@ Feature: Radd Alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
-      | codiceErrore          | 4                         |
-      | descrizioneErrore     | documenti non disponibili |
-      | documentiFrontespizio | 1                         |
-      | documentiLegalFact    | 2                         |
+      | codiceRisposta              | 4                         |
+      | descrizione                 | documenti non disponibili |
+      | numeroDocumentiFrontespizio | 1                         |
+      | numeroDocumentiLegalFact    | 2                         |
 
   @raddAlt
   Scenario: [RADD-ALT_ACT-14] PG - Scansione QR code inesistente
@@ -501,8 +508,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 6 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 3 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
     Then  Il cittadino CucumberSpa come destinatario 1 mostra il QRCode "corretto"
@@ -510,8 +519,10 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 6 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 3 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
 # FLUSSO ACT su PF con IUN - successfully cases
@@ -555,8 +566,10 @@ Feature: Radd Alternative
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 6 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -583,8 +596,10 @@ Feature: Radd Alternative
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 9 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 5 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -678,8 +693,10 @@ Feature: Radd Alternative
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 5 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -704,8 +721,10 @@ Feature: Radd Alternative
     And la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 8 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 2 |
+      | numeroDocumentiAtto         | 5 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
@@ -1415,7 +1434,7 @@ Feature: Radd Alternative
     And l'operazione di download non restituisce atti, generando un errore "documenti non disponibili" con codice 4 su radd alternative
 
 
-  @raddAlt @QA-19302
+  @raddAlt @work-item:QA-19302
   Scenario: [RADD-ALT_ACT-20B] PF - Scansione QR code esistente associato al CF corretto, ma relativo a una notifica con perfezionamento > 120 giorni
     When Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "dopo 120gg"
     Then L'operatore scansione il qrCode per recuperare gli atti da radd alternative
@@ -1423,13 +1442,13 @@ Feature: Radd Alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
-      | codiceErrore          | 4                         |
-      | descrizioneErrore     | documenti non disponibili |
-      | documentiFrontespizio | 1                         |
-      | documentiLegalFact    | 3                         |
+      | codiceRisposta              | 4                         |
+      | descrizione                 | documenti non disponibili |
+      | numeroDocumentiFrontespizio | 1                         |
+      | numeroDocumentiLegalFact    | 3                         |
 
 
-  @raddAlt @QA-19302
+  @raddAlt @work-item:QA-19302
   Scenario: [RADD-DOC-SCADUTI-NRT] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -1451,12 +1470,14 @@ Feature: Radd Alternative
     And la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 5 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
-  @raddAlt @QA-19302
+  @raddAlt @work-item:QA-19302
   Scenario: [RADD-DOC-SCADUTI-NRT2] PF - Scansione QR code esistente associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -1480,7 +1501,9 @@ Feature: Radd Alternative
     Then la scansione si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
-    And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And l'operazione di download restituisce 4 documenti
+    And l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:
+      | numeroDocumentiFrontespizio | 1 |
+      | numeroDocumentiLegalFact    | 1 |
+      | numeroDocumentiAtto         | 2 |
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
