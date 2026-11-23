@@ -75,7 +75,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 00100 | Roma     | $NULL         | $NULL    |
 
 
-  @capCoverageRadd @cognito1
+  @capCoverageRadd @cognito1 @qa19093_radd
   Scenario Outline: [RADD_API_COPERTURA_CAP_CREAZIONE_3] Errore Creazione nuova copertura Radd campi inesistenti o vuoti
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     Then setto i dati per creare una nuova copertura Radd con locality random:
@@ -169,7 +169,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 80100 | /        | H501          | RM       | $NULL          | $DATE_ADD(1Y) |
       | 80100 | /        | H501          | RM       | $DATE_ADD(-1D) | $NULL         |
 
-  @capCoverageRadd @cognito2
+  @capCoverageRadd @cognito2 @qa19093_radd
   Scenario Outline: [RADD_API_COPERTURA_CAP_MODIFICA_17] Errore Modifica copertura Radd  campi obbligatori inesistenti,
     Given Effettuo l'autenticazione copertura cap per l' utente con permessi: "LETTURA_SCRITTURA"
     And setto i dati per aggiornare una copertura Radd:

@@ -10,7 +10,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateTo    | TOMORROW       |
     And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
 
-  @b2bIntermediariMassivi @deleghe1
+  @b2bIntermediariMassivi @deleghe1 @qa19093_pa
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-1] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con codice fiscale vuoto
     When viene effettuata una richiesta di creazione delega con i seguenti parametri:
       | delegate  | CucumberSpa       |

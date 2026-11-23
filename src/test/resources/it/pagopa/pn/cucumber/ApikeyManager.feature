@@ -16,6 +16,7 @@ Feature: apiKey manager
     Then l'apiKey non è più presente
 
 
+  @qa19093_pa
   Scenario: [API-KEY_3] generazione e cancellazione ApiKey_scenario negativo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -87,6 +88,7 @@ Feature: apiKey manager
     And l'apiKey viene cancellata
 
 
+  @qa19093_pa
   Scenario: [API-KEY_9] generazione e test ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti

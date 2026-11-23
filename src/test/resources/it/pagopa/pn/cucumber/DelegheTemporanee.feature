@@ -14,7 +14,7 @@ Feature: Deleghe Temporanee 15755
   Background:
     Given vengono settati i parametri per il tool CIE
 
-  @delegheTemporanee @deleghe1
+  @delegheTemporanee @deleghe1 @qa19093_dest
   #1-12-23-33-34(temp) ++ 11-30(perm)
   Scenario: [MANDATE_TEMP_HAPPY_PATH_1] Creazione e accettazione di una delega temporanea e visualizzazione notifica (scenario positivo)
     Given Mario Gherkin rifiuta l'eventuale delega permanente da parte di Mario Cucumber
@@ -71,7 +71,7 @@ Feature: Deleghe Temporanee 15755
     And la lista di deleghe del delegante "Mario Cucumber" non contiene la delega temporanea creata
 
   #3
-  @delegheTemporanee
+  @delegheTemporanee @qa19093_dest
   Scenario: [MANDATE_TEMP_CREATION_FAILED_INVALID_QR] Creazione senza successo di una delega temporanea (invalid qrCode)
     Given viene generata una nuova notifica
       | subject            | invio notifica delega temporanea |

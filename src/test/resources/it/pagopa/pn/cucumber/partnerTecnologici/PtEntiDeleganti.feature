@@ -99,7 +99,7 @@ Feature: Elenco degli Enti PA che hanno delegato un Partner Tecnologico
     When l'Ente PT "PT1" legge tutte le pagine dell'elenco degli Enti deleganti con limit 50
     Then nessuno degli Enti restituiti è presente nell'elenco dell'Ente PT "PT2"
 
-  @ptEntiDeleganti @work-item:QA-18530
+  @ptEntiDeleganti @work-item:QA-18530 @qa19093_pa
   Scenario: [PT-ENTI-DELEGANTI_13] La richiesta dell'elenco degli Enti deleganti non indica quale Ente PT la effettua.
   Il servizio rifiuta la richiesta con errore 400 Bad Request
     When viene richiesto l'elenco degli Enti deleganti senza indicare l'Ente PT

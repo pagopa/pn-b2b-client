@@ -14,7 +14,7 @@ Feature: Radd Alternative Anagrafica Sportelli
       | 0     | ACCEPTED |
       | 1     | ACCEPTED |
 
-  @raddAnagrafica @raddAlternativeCsv @puliziaSportelliCsv
+  @raddAnagrafica @raddAlternativeCsv @puliziaSportelliCsv @qa19093_radd
   Scenario: [RADD_ANAGRAFICA_CSV_2] caricamento 2 volte stesso checksum del CSV
     When viene cambiato raddista con "STANDARD"
     Then viene caricato il csv 2 volte con dati:
@@ -62,7 +62,7 @@ Feature: Radd Alternative Anagrafica Sportelli
       | 0     | ACCEPTED |
       | 1     | ACCEPTED |
 
-  @raddAnagrafica @raddAlternativeCsv
+  @raddAnagrafica @raddAlternativeCsv @qa19093_radd
   Scenario: [RADD_ANAGRAFICA_CSV_STATO_3] caricamento CSV con righa malformata verifica stato a REJECTED
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con formatto "errato" con restituzione errore con dati:

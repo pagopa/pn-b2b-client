@@ -6,6 +6,7 @@ Feature: comunicazioni bonarie
     When si richiede la prepare della comunicazione bonaria
     Then si riceve una response con codice di stato 201
 
+  @qa19093_dest
   Scenario: [PREPARE-TC2A-KO] Validazione nuovo service api prepare con parametro (required) attachmentUrls lista empty
     Given inizializzata una comunicazione bonaria con i parametri:
       | attachmentUrls |

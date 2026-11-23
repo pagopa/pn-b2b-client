@@ -1,6 +1,6 @@
 Feature: verifica feature aoo/uo con userAttributes
 
-  @AOO_UO
+  @AOO_UO @qa19093_dest
   Scenario: [USER-ATTR_10] inserimento email di cortesia per ente figlio
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento del email di cortesia "provaemail@test.it" per il comune "Comune_Son"

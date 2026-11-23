@@ -27,7 +27,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "409"
 
 
-  @B2Btest @testLite @syncValidation
+  @B2Btest @testLite @syncValidation @qa19093_step0
   Scenario: [B2B-PA-SYNC_VALIDATION_WRONG_FILEKEY]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1042,7 +1042,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-  @validation
+  @validation @qa19093_step0
   Scenario: [B2B-PA-SYNC_VALIDATION_70] Invio notifica con allegato uguale all'allegato di pagamento - PN-10162
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

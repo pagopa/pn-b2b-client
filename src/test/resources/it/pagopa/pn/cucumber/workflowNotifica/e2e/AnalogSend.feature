@@ -158,7 +158,7 @@ Feature: Analog send e2e
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @analogFutureDate
+  @analogFutureDate @qa19093_step0
   Scenario: [B2B_ANALOG_SEND_4] Verifica invio notifica consolidatore con data nel presente con esito positivo
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -189,7 +189,7 @@ Feature: Analog send e2e
     Then viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel "Futuro"
     And l'operazione ha prodotto un errore con status code "400"
 
-  @analogFutureDate
+  @analogFutureDate @qa19093_pa
   Scenario: [B2B_ANALOG_SEND_6] Verifica invio notifica chiamando due volte il consolidatore con la stessa request - Esito 400.02
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

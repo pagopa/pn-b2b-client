@@ -1,4 +1,5 @@
 Feature: avanzamento notifiche b2b persona fisica pagamento
+  @qa19093_pa
   Scenario: [B2B-PA-PAY_CHECKOUT_1] creazione posizione debitoria per pagamento da checkout con noticeCode con restituzione errore 422 - PN-9128
     Given si richiama checkout con restituzione errore
       | fiscalCode  | 77777777777                              |

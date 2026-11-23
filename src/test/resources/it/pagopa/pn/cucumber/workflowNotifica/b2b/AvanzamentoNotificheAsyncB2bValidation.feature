@@ -141,7 +141,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
 
 
-  @version @Async
+  @version @Async @qa19093_pa
   Scenario: [B2B_ASYNC_2_VERSIONAMENTO] Creazione notifica ASYNC con V2.1 e recupero tramite codice IUN V1 (p.fisica)_scenario negativo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica

@@ -210,7 +210,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
       | WITHOUT_ROLE |
 
   #UPLOAD ERROR
-  @raddTechnicalAnnex
+  @raddTechnicalAnnex @qa19093_radd
   Scenario Outline: [ADEG-RADD-TRANS_ACT-5] Operatore senza ruolo / standard - Tentativo di eseguire documentUpload - ricezione Errore
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |

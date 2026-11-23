@@ -2,7 +2,7 @@ Feature: connettore app IO per invio messaggi di cortesia per comunicazioni bona
 
   #----- SCENARIO 3 -------------------------------------
 
-  @comunicazione-orchestratore-io
+  @comunicazione-orchestratore-io @qa19093_dest
   Scenario: [IO_CONNECTOR_3.1.1] Richiesta valida presa in carico messaggio di cortesia verso app IO
     Given viene generata una richiesta valida per la presa in carico del messaggio
     When come orchestratore SEND richiedo l'invio del messaggio verso IO

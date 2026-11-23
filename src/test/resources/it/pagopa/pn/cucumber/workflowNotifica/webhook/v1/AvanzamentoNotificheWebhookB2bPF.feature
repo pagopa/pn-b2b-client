@@ -151,7 +151,7 @@ Feature: avanzamento notifiche webhook b2b
     And "Mario Gherkin" legge la notifica
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_VIEWED" con la versione "V10"
 
-  @clean @webhook1
+  @clean @webhook1 @qa19093_webhook
   Scenario: [B2B-STREAM_TIMELINE_14] Creazione multi stream notifica
     Given si predispongono 6 nuovi stream denominati "stream-test" con eventType "STATUS" con versione "V10"
     When si creano i nuovi stream per il "Comune_1" con versione "V10"

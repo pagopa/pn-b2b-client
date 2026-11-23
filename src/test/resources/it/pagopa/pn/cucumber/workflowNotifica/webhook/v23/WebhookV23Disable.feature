@@ -183,7 +183,7 @@ Feature: disabilitazione stream
     And l'apiKey viene cancellata
 
 
-  @webhookV23 @precondition @cleanWebhook @webhook3
+  @webhookV23 @precondition @cleanWebhook @webhook3 @qa19093_webhook
   Scenario: [B2B-STREAM_ES1.1_118] Disabilitazione per una PA di uno stream che non esiste per la stessa PA
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
