@@ -86,8 +86,9 @@ public class RaddAltSteps {
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
     private static final Map<String, String> DOCUMENT_TYPE_ALIASES = Map.of(
-            "documentiFrontespizio", "COVER_FILE",
-            "documentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI"
+            "numeroDocumentiFrontespizio", "COVER_FILE",
+            "numeroDocumentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI",
+            "numeroDocumentiAtto", "ATTO_NOTIFICATO"
     );
 
     @Autowired
@@ -332,22 +333,43 @@ public class RaddAltSteps {
 
     @And("l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:")
     public void verificaRisultatiDownloadAttiRadd(DataTable dataTable) {
+
         Map<String, String> data = dataTable.asMap(String.class, String.class);
 
         Assertions.assertFalse(data.isEmpty(), "La tabella dei risultati non deve essere vuota");
 
-        int expectedCode = Integer.parseInt(data.get("codiceErrore"));
-        String expectedMessage = data.get("descrizioneErrore");
+        boolean hasCodiceRisposta = data.containsKey("codiceRisposta");
+        boolean hasDescrizione = data.containsKey("descrizione");
 
-        StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
-        Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
-        Assertions.assertEquals(expectedStatusCode, this.startTransactionResponse.getStatus().getCode(),
-                "Codice errore non coerente");
-        Assertions.assertNotNull(this.startTransactionResponse.getStatus().getMessage(), "Messaggio di errore non presente");
-        Assertions.assertEquals(expectedMessage.trim().toLowerCase(),
-                this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
-                "Descrizione errore non coerente");
+        if (!hasCodiceRisposta && !hasDescrizione) {
+            lOperazioneDiDownloadDegliAttiSiConcludeCorrettamente();
+        } else {
+            Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
+            Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
+
+            if (hasCodiceRisposta) {
+                int expectedCode = Integer.parseInt(data.get("codiceRisposta"));
+                StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
+                Assertions.assertEquals(
+                        expectedStatusCode,
+                        this.startTransactionResponse.getStatus().getCode(),
+                        "Codice risposta non coerente"
+                );
+            }
+
+            if (hasDescrizione) {
+                String expectedMessage = data.get("descrizione");
+                Assertions.assertNotNull(
+                        this.startTransactionResponse.getStatus().getMessage(),
+                        "Messaggio di risposta non presente"
+                );
+                Assertions.assertEquals(
+                        expectedMessage.trim().toLowerCase(),
+                        this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
+                        "Descrizione risposta non coerente"
+                );
+            }
+        }
 
         Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList(),
                 "La lista degli atti non deve essere null");
@@ -367,20 +389,27 @@ public class RaddAltSteps {
                         url -> url.getDocumentType(),
                         Collectors.counting()
                 ));
-
-        // 1. Verifica che ogni documento atteso nel feature sia presente nella risposta con la quantità corretta
+// 1. Verifica che ogni documento atteso nel feature sia presente nella risposta con la quantità corretta
         expectedDocumentsByType.forEach((type, expectedCount) -> {
             Long actualCount = actualDocumentsByType.get(type);
-            Assertions.assertNotNull(actualCount, "Tipo documento " + type + " dichiarato nel feature ma non presente nella risposta");
-            Assertions.assertEquals(expectedCount, actualCount, "Numero di documenti per tipo " + type + " non coerente");
+            Assertions.assertNotNull(actualCount, () -> String.format(
+                    "Tipo documento %s per lo IUN %s dichiarato nel feature ma non presente nella risposta.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    type, sharedSteps.getNotificationIun(), expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
+            Assertions.assertEquals(expectedCount, actualCount, () -> String.format(
+                    "Numero di documenti per tipo %s per lo IUN %s non coerente.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    type, sharedSteps.getNotificationIun(), expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
         });
 
-        // 2. Verifica che nella risposta non ci siano documenti non dichiarati nel feature
+// 2. Verifica che nella risposta non ci siano documenti non dichiarati nel feature
         actualDocumentsByType.forEach((type, actualCount) -> {
             Long expectedCount = expectedDocumentsByType.get(type);
-            Assertions.assertNotNull(expectedCount, "Nella risposta è presente il tipo di documento " + type + " ma non è dichiarato nel feature");
+            Assertions.assertNotNull(expectedCount, () -> String.format(
+                    "Nella risposta per lo IUN %s è presente il tipo di documento %s ma non è dichiarato nel feature.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    sharedSteps.getNotificationIun(), type, expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
         });
+
     }
+
 
     @And("l'operazione di download non restituisce atti, generando un errore {string} con codice {int} su radd alternative")
     public void lOperazioneDiDownloadNonRestituisceAttiGeneraUnErroreConCodice(String errorDescription, int erroCode) {
@@ -989,5 +1018,12 @@ public class RaddAltSteps {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "RaddAltSteps{" +
+                "startTransactionResponse=" + startTransactionResponse +
+                '}';
     }
 }
