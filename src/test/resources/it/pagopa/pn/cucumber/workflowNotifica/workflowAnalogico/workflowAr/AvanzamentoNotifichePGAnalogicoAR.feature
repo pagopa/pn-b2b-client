@@ -149,10 +149,12 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | senderDenomination    | Comune di milano            |
       | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_State   | MESSICO    |
-      | physicalAddress_zip     | ZONE_2     |
-      | physicalAddress_address | Via@ok_RIR |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_State        | BRASILE        |
+      | physicalAddress_municipality | Florianopolis  |
+      | physicalAddress_zip          | ZONA_2         |
+      | physicalAddress_province     | Santa Catarina |
+      | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
@@ -164,10 +166,12 @@ Feature: avanzamento notifiche analogico AR persona giuridica
       | senderDenomination    | Comune di milano                |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile         | NULL         |
-      | physicalAddress_State   | MESSICO      |
-      | physicalAddress_zip     | ZONE_2       |
-      | physicalAddress_address | Via@fail_RIR |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_State        | BRASILE        |
+      | physicalAddress_municipality | Florianopolis  |
+      | physicalAddress_zip          | ZONA_2         |
+      | physicalAddress_province     | Santa Catarina |
+      | physicalAddress_address      | Via@fail_RIR   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_0"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
