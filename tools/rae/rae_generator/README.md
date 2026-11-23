@@ -71,27 +71,6 @@ Nel workflow, i job che creano PR richiedono `permissions: contents: write, pull
 
 **Attenzione:** i push effettuati usando `GITHUB_TOKEN` non attivano normalmente nuovi workflow `push`/`pull_request`; per l'automazione completa serve il token dedicato. Se si usa il fallback con `GITHUB_TOKEN`, il repository deve consentire la creazione di PR da Actions e l'organizzazione può limitarla. Non inserire token nei file YAML/MD o negli artifact. Non concedere il token a codice non attendibile.
 
-#### Run QA nel repository `pagopa/interop-qa-tests`
-
-Il workflow ricevente [`rae-from-interop.yaml`](../../../.github/workflows/rae-from-interop.yaml) deve essere disponibile sul branch predefinito e sul ref `develop` di `pn-b2b-client`. Il workflow sorgente `.github/workflows/qa.yaml` su `main` pubblica `qa-test-artifacts-<tentativo>` anche in caso di KO, con `rae/run_metadata.json` e almeno uno tra `cucumber-reports/*.json` e `contract-test/report.json`. Dopo l'upload può avviare il ricevente:
-
-```bash
-gh workflow run rae-from-interop.yaml --repo pagopa/pn-b2b-client --ref develop \
-  -f run_id="$GITHUB_RUN_ID" -f artifact_id="$ARTIFACT_ID" \
-  -f run_attempt="$REPORT_RUN_ATTEMPT" -f suite="$TEST_SUITE" \
-  -f environment="$NORMALIZED_ENVIRONMENT" -f source_branch="$JAVA_BRANCH_NAME"
-```
-
-`REPORT_RUN_ATTEMPT` è il tentativo che ha prodotto l'artifact; `NORMALIZED_ENVIRONMENT` vale `qa` o `dev` (`es1-vapt` non è supportato). `source_branch` è il branch di `pn-b2b-client` effettivamente usato per i test, non il branch del workflow sorgente.
-
-| Secret | Repository in cui configurarlo | Permesso |
-|---|---|---|
-| `RAE_DISPATCH_TOKEN` | `interop-qa-tests` | `Actions: write` su `pn-b2b-client`; usare come `GH_TOKEN` nello step di dispatch |
-| `INTEROP_ARTIFACT_READ_TOKEN` | `pn-b2b-client` | `Actions: read` su `interop-qa-tests` |
-| `RAE_AUTOMATION_TOKEN` | `pn-b2b-client` | `Contents: write` e `Pull requests: write` su `pn-b2b-client` |
-
-Il ricevente verifica run e artifact, genera lo YAML in `rae/interop/` usando lo storico di `develop` e apre una Draft PR verso `develop` con le label `rae` e `interop`. Non rilancia i test.
-
 ### 3.4 Checklist di collaudo
 
 - Esecuzione NRT con report validi e 0 KO → YAML con `ko` e `ko_know` vuote.
