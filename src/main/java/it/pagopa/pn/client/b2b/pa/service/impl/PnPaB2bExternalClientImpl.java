@@ -4,7 +4,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiCli
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenBinding;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.api_v26.LegalFactsPrivateApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.LegalFactDownloadMetadataWithContentTypeResponse;
@@ -22,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 @Slf4j
 @Component()
@@ -47,22 +47,17 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final String apiKeySon;
     private final String apiKeyRoot;
     private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
-    private String bearerTokenInterop;
-    private final String enableInterop;
-    private final InteropTokenSingleton interopTokenSingleton;
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String BEARER = "Bearer ";
+    private final InteropTokenBinding interopTokenBinding;
 
     public PnPaB2bExternalClientImpl(RestTemplate restTemplate,
-                                     InteropTokenSingleton interopTokenSingleton,
+                                     InteropTokenInjector interopTokenInjector,
                                      @Value("${pn.external.base-url}") String basePath,
                                      @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath,
                                      @Value("${pn.external.api-key}") String apiKeyMvp1,
                                      @Value("${pn.external.api-key-2}") String apiKeyMvp2,
                                      @Value("${pn.external.api-key-GA}") String apiKeyGa,
                                      @Value("${pn.external.api-key-SON}") String apiKeySon,
-                                     @Value("${pn.external.api-key-ROOT}") String apiKeyRoot,
-                                     @Value("${pn.interop.enable}") String enableInterop
+                                     @Value("${pn.external.api-key-ROOT}") String apiKeyRoot
     ) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
@@ -72,59 +67,45 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
         this.apiKeyRoot = apiKeyRoot;
-        this.enableInterop = enableInterop;
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
-        }
-        this.newNotificationApi = new NewNotificationApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.senderReadB2BApi = new SenderReadB2BApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.legalFactsPrivateApi = new LegalFactsPrivateApi(newApiClientPriv(restTemplate, deliveryPushBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.notificationPriceApiV21 = new NotificationPriceApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv(restTemplate, deliveryPushBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.paymentEventsApi = new PaymentEventsApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.notificationCancellationApi = new NotificationCancellationApi(newApiClient(restTemplate, basePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.interopTokenSingleton = interopTokenSingleton;
+        this.interopTokenBinding = interopTokenInjector.newBinding("b2bClient");
+        this.newNotificationApi = new NewNotificationApi(newApiClient(apiKeyMvp1));
+        this.senderReadB2BApi = new SenderReadB2BApi(newApiClient(apiKeyMvp1));
+        this.legalFactsApi = new LegalFactsApi(newApiClient(apiKeyMvp1));
+        this.legalFactsPrivateApi = new LegalFactsPrivateApi(newApiClientPriv(apiKeyMvp1));
+        this.notificationPriceApiV21 = new NotificationPriceApi(newApiClient(apiKeyMvp1));
+        this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(apiKeyMvp1));
+        this.notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv(apiKeyMvp1));
+        this.paymentEventsApi = new PaymentEventsApi(newApiClient(apiKeyMvp1));
+        this.notificationCancellationApi = new NotificationCancellationApi(newApiClient(apiKeyMvp1));
+        this.interopTokenBinding
+                .register(() -> this.newNotificationApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.senderReadB2BApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.legalFactsApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.legalFactsPrivateApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.notificationPriceApiV21.getApiClient()::addDefaultHeader)
+                .register(() -> this.notificationPriceV23Api.getApiClient()::addDefaultHeader)
+                .register(() -> this.notificationProcessCostApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.paymentEventsApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.notificationCancellationApi.getApiClient()::addDefaultHeader);
     }
 
-    //@Scheduled(cron = "* * * * * ?")
     private void refreshAndSetTokenInteropClient() {
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            String tokenInterop = interopTokenSingleton.getTokenInterop();
-            if (!tokenInterop.equals(this.bearerTokenInterop)) {
-                log.info("b2bClient call interopTokenSingleton");
-                this.bearerTokenInterop = tokenInterop;
-                this.newNotificationApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.senderReadB2BApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.legalFactsApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.legalFactsPrivateApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.notificationPriceApiV21.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.notificationPriceV23Api.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.notificationProcessCostApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.paymentEventsApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-                this.notificationCancellationApi.getApiClient().addDefaultHeader(AUTHORIZATION, BEARER + bearerTokenInterop);
-            }
-        }
+        interopTokenBinding.refreshIfChanged();
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
+    private ApiClient newApiClient(String apikey) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + bearerToken);
-        }
+        interopTokenBinding.applyTo(newApiClient::addDefaultHeader);
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient newApiClientPriv(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
+    private it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient newApiClientPriv(String apikey) {
         it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient newApiClient = new it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
+        newApiClient.setBasePath(deliveryPushBasePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + bearerToken);
-        }
+        interopTokenBinding.applyTo(newApiClient::addDefaultHeader);
         return newApiClient;
     }
 
@@ -177,15 +158,15 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     public void setApiKey(String apiKey) {
-        this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.legalFactsPrivateApi.setApiClient(newApiClientPriv(restTemplate, deliveryPushBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.notificationPriceApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.notificationPriceV23Api.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.notificationProcessCostApi.setApiClient(newApiClientPriv(restTemplate, deliveryPushBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.paymentEventsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
-        this.notificationCancellationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop, enableInterop));
+        this.newNotificationApi.setApiClient(newApiClient(apiKey));
+        this.senderReadB2BApi.setApiClient(newApiClient(apiKey));
+        this.legalFactsApi.setApiClient(newApiClient(apiKey));
+        this.legalFactsPrivateApi.setApiClient(newApiClientPriv(apiKey));
+        this.notificationPriceApiV21.setApiClient(newApiClient(apiKey));
+        this.notificationPriceV23Api.setApiClient(newApiClient(apiKey));
+        this.notificationProcessCostApi.setApiClient(newApiClientPriv(apiKey));
+        this.paymentEventsApi.setApiClient(newApiClient(apiKey));
+        this.notificationCancellationApi.setApiClient(newApiClient(apiKey));
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIndex) {

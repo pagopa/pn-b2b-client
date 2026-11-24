@@ -4,7 +4,7 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import lombok.Getter;
@@ -50,7 +50,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 @Slf4j
 @Component
@@ -72,7 +71,6 @@ public class PnExternalServiceClientImpl {
     private final String deliveryBasePath;
     private final String dataVaultBasePath;
 
-    private final String enableInterop;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
 
@@ -82,13 +80,13 @@ public class PnExternalServiceClientImpl {
 
     private final String basePathWebApi;
 
-    private final InteropTokenSingleton interopTokenSingleton;
+    private final InteropTokenInjector interopTokenInjector;
 
     private final String consolidatoreApiKey;
 
     public PnExternalServiceClientImpl(
             RestTemplate restTemplate,
-            InteropTokenSingleton interopTokenSingleton,
+            InteropTokenInjector interopTokenInjector,
             @Value("${pn.safeStorage.base-url}") String safeStorageBasePath,
             @Value("${pn.external.base-url}") String gruopInfoBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
@@ -96,7 +94,6 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
             @Value("${pn.external.api-key-SON}") String apiKeySON,
             @Value("${pn.external.api-key-ROOT}") String apiKeyROOT,
-            @Value("${pn.interop.enable}") String enableInterop,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.base-url}") String basePathWebApi,
@@ -122,9 +119,7 @@ public class PnExternalServiceClientImpl {
         this.apiKeySON = apiKeySON;
         this.apiKeyROOT = apiKeyROOT;
 
-        this.enableInterop = enableInterop;
-
-        this.interopTokenSingleton = interopTokenSingleton;
+        this.interopTokenInjector = interopTokenInjector;
 
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
@@ -289,9 +284,7 @@ public class PnExternalServiceClientImpl {
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-api-key", apiKey);
 
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            headerParams.add("Authorization", "Bearer " + interopTokenSingleton.getTokenInterop());
-        }
+        interopTokenInjector.applyTo(headerParams::add);
 
         final String[] localVarAccepts = {
                 "application/json", "application/problem+json"

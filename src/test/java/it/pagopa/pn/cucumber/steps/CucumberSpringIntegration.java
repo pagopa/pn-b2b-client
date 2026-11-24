@@ -33,6 +33,7 @@ import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
@@ -108,6 +109,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
+        InteropTokenInjector.class,
         PnServiceDeskClientImpl.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,

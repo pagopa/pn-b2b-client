@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.impl.v26.PnPollingServiceValidationStatusV26;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.NotificationUtilsV24;
@@ -53,6 +54,7 @@ import static org.awaitility.Awaitility.await;
         PnBffPaClientImpl.class,
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
+        InteropTokenInjector.class,
         PnServiceDeskClientImpl.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
