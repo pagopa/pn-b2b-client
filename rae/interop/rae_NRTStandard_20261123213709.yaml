@@ -14,7 +14,7 @@ ko_know: []
 ko:
 - id_test: '[RA_GDPR_ART_9_10_COMPILE_7] Richiesta non soddisfatta misure tecniche compilando analisi rischio con
     dati particolari e giudiziari durante pubblicazione template e-service in ricezione [Examples: (senza nome)
-    | Example #1 | line: 414]'
+    | Example #1 | line: 414] [cucumber-report-adeg-analisi-rischio.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: The request code is not 400 Bad Request as expected ==> expected: <400> but was: <404>
     	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
@@ -29,7 +29,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-TK-02] A seguito del cambiamento di tenant kind si tenta modificare la risk analysis dell''e-service
-    template [Examples: (senza nome) | Example #2 | line: 3532]'
+    template [Examples: (senza nome) | Example #2 | line: 3532] [cucumber-report-adeg-analisi-rischio.json]'
   error_log: |
     java.lang.IllegalArgumentException: Error during polling: 409 Conflict: "{"type":"about:blank","title":"Conflict","status":409,"detail":"[CID=535636b9-a4ee-4722-87a8-8e63be759b22] [SV=48] [SID=951cc51a-1dba-42e0-a7d8-41f80bd045b9] Request conflicts with an ongoing operation on the same resource. Please retry.","correlationId":"535636b9-a4ee-4722-87a8-8e63be759b22","errors":[{"code":"005-10034","detail":"[CID=535636b9-a4ee-4722-87a8-8e63be759b22] [SV=48] [SID=951cc51a-1dba-42e0-a7d8-41f80bd045b9] Request conflicts with an ongoing operation on the same resource. Please retry."}]}"
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:38)
@@ -43,7 +43,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_PURPOSE_TEMPLATE_EVENTS_04] L''evento di generazione del template della Risk Analysis di un purpose
-    template deve essere visibile a tutti'
+    template deve essere visibile a tutti [cucumber-report-m2mv3.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: L'evento RISK_ANALYSIS_TEMPLATE_DOCUMENT_GENERATED doveva essere visibile
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -323,7 +323,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale
     è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti
-    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #1 | line: 105]'
+    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #1 | line: 105] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -334,7 +334,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale
     è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti
-    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #2 | line: 106]'
+    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #2 | line: 106] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -345,7 +345,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[AGREEMENT_ACTIVATE_04A] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale
     è in stato ACTIVE, ARCHIVED o SUSPENDED, alla richiesta di attivazione da parte di un utente con sufficienti
-    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #3 | line: 107]'
+    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #3 | line: 107] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -356,7 +356,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[AGREEMENT_ACTIVATE_04B] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale
     è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di attivazione da parte di un utente con sufficienti
-    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #1 | line: 174]'
+    permessi dell’ente erogatore, ottiene un errore [Examples: (senza nome) | Example #1 | line: 174] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -367,7 +367,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[AGREEMENT_ACTIVATE_04C] Per una richiesta di fruizione precedentemente creata da un fruitore, la quale
     è in stato REJECTED, alla richiesta di attivazione da parte di un utente con sufficienti permessi dell’ente
-    erogatore, ottiene un errore'
+    erogatore, ottiene un errore [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -377,7 +377,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENTS_UNSUSPEND_2A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED
-    restituisce errore [Examples: (senza nome) | Example #1 | line: 341]'
+    restituisce errore [Examples: (senza nome) | Example #1 | line: 341] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -387,7 +387,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENTS_UNSUSPEND_2A] La riattivazione di una richiesta di fruizione in stato differente da SUSPENDED
-    restituisce errore [Examples: (senza nome) | Example #2 | line: 342]'
+    restituisce errore [Examples: (senza nome) | Example #2 | line: 342] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -397,7 +397,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENTS_UNSUSPEND_2B] La riattivazione di una richiesta di fruizione in stato PENDING restituisce
-    errore'
+    errore [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -407,7 +407,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENTS_UNSUSPEND_3] La riattivazione di una richiesta di fruizione in stato REJECTED restituisce
-    errore'
+    errore [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -417,7 +417,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENTS_UNSUSPEND_4] La riattivazione di una richiesta di fruizione in stato MISSING_CERTIFIED_ATTRIBUTES
-    restituisce errore [Examples: (senza nome) | Example #1 | line: 380]'
+    restituisce errore [Examples: (senza nome) | Example #1 | line: 380] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -426,7 +426,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato'
+- id_test: '[AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [Atteso file AGREEMENT_CONTRACT_DOC dopo l'evento AGREEMENT_ACTIVATED nel bucket WORM ma non è stato trovato] 
     Expecting actual not to be null
@@ -437,7 +437,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
-    (senza nome) | Example #1 | line: 47]'
+    (senza nome) | Example #1 | line: 47] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:24:02Z, Retain=null] 
     Expecting actual not to be null
@@ -448,7 +448,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
-    (senza nome) | Example #2 | line: 48]'
+    (senza nome) | Example #2 | line: 48] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:23:14Z, Retain=null] 
     Expecting actual not to be null
@@ -458,7 +458,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato'
+- id_test: '[PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:23:43Z, Retain=null] 
     Expecting actual not to be null
@@ -468,7 +468,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[PURPOSE_DOC_ARCHIVE_2] Attivazione nuova versione finalità - archiviazione PDF firmato'
+- id_test: '[PURPOSE_DOC_ARCHIVE_2] Attivazione nuova versione finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:24:52Z, Retain=null] 
     Expecting actual not to be null
@@ -478,7 +478,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato'
+- id_test: '[DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:25:42Z, Retain=null] 
     Expecting actual not to be null
@@ -488,7 +488,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato'
+- id_test: '[DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:26:41Z, Retain=null] 
     Expecting actual not to be null
@@ -498,7 +498,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato'
+- id_test: '[DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:26:12Z, Retain=null] 
     Expecting actual not to be null
@@ -508,7 +508,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato'
+- id_test: '[DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:25:31Z, Retain=null] 
     Expecting actual not to be null
@@ -518,7 +518,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato'
+- id_test: '[KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:24:13Z, Retain=null] 
     Expecting actual not to be null
@@ -528,7 +528,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato'
+- id_test: '[KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:23:11Z, Retain=null] 
     Expecting actual not to be null
@@ -538,7 +538,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato'
+- id_test: '[CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: [La Retain until date non è 10 anni dopo la creation date. Creation=2026-11-23T19:22:22Z, Retain=null] 
     Expecting actual not to be null
@@ -549,7 +549,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il
-    feature flag è false.'
+    feature flag è false. [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: Il tenant ha un attributo certificato discreto ==> expected: <null> but was: <class CertifiedDiscreteTenantAttribute {
         kind: CERTIFIED_DISCRETE
@@ -567,7 +567,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[DISCRETE_ATTRIBUTE_CREATION_1b] La creazione di un attributo certificato discreto non va a buon fine'
+- id_test: '[DISCRETE_ATTRIBUTE_CREATION_1b] La creazione di un attributo certificato discreto non va a buon fine
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <501> but was: <200>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -577,7 +578,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN
-    se l’aderente non si è reso disponibile ad accettare deleghe'
+    se l’aderente non si è reso disponibile ad accettare deleghe [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <200>
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
@@ -588,7 +589,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_ESERVICE_ASYNC_TEMPLATE_INSTANCE_1.1] Un ente delegato può richiedere al delegante
     di avviare il processo di archiviazione di un e-service asincrono creato da template in delega [Examples: (senza
-    nome) | Example #6 | line: 1083]'
+    nome) | Example #6 | line: 1083] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: Il nuovo e-service non è stato creato correttamente
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceCreateSteps.checkEServiceCreated(EServiceTemplateInstanceCreateSteps.java:294)
@@ -600,7 +601,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_MANUAL_ARCHIVING_NEW_VERSION_CANCELLATION_1.2] L''invio di una richiesta di archiviazione
-    dell''e-service NON elimina l''ultima versione dell''e-service in stato `WAITING_FOR_APPROVAL`'
+    dell''e-service NON elimina l''ultima versione dell''e-service in stato `WAITING_FOR_APPROVAL` [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"1abc313a-1b86-4461-935b-aa36cfd88a2e","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -611,7 +612,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.1] Ente delegato e delegante NON possono duplicare un e-service in delega
-    in erogazione in stato PUBLISHED [Examples: (senza nome) | Example #1 | line: 1633]'
+    in erogazione in stato PUBLISHED [Examples: (senza nome) | Example #1 | line: 1633] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 403
@@ -624,7 +625,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega
-    in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED [Examples: (senza nome) | Example #1 | line: 1652]'
+    in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED [Examples: (senza nome) | Example #1 | line: 1652] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 403
@@ -637,7 +638,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega
-    in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED [Examples: (senza nome) | Example #2 | line: 1653]'
+    in erogazione in stato ARCHIVING o ARCHIVING_SUSPENDED [Examples: (senza nome) | Example #2 | line: 1653] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 403
@@ -650,7 +651,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.3] Ente delegato e delegante NON possono duplicare descrittore di un
-    e-service in delega in erogazione in stato DEPRECATED [Examples: (senza nome) | Example #1 | line: 1673]'
+    e-service in delega in erogazione in stato DEPRECATED [Examples: (senza nome) | Example #1 | line: 1673] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 403
@@ -663,7 +664,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.4] Ente delegato e delegante NON possono duplicare descrittore di un
-    e-service in delega in erogazione in stato ARCHIVED [Examples: (senza nome) | Example #1 | line: 1693]'
+    e-service in delega in erogazione in stato ARCHIVED [Examples: (senza nome) | Example #1 | line: 1693] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 403
@@ -676,7 +677,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[MANUAL_ARCHIVING_ESERVICE_2.2] Avviare il processo di archiviazione di un e-service in WAITING_FOR_APPROVAL
-    non è possibile'
+    non è possibile [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"ef4efb0a-4e9f-48a8-83ab-09139643c2f5","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -688,7 +689,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-052-1] La modifica di un documento di un e-service template in qualsiasi stato, o di un''interfaccia
     con template in stato DRAFT, può essere fatta da un ente in veste di ADMIN o API [Examples: (senza nome) | Example
-    #10 | line: 911]'
+    #10 | line: 911] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 204
@@ -702,7 +703,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-052-1] La modifica di un documento di un e-service template in qualsiasi stato, o di un''interfaccia
     con template in stato DRAFT, può essere fatta da un ente in veste di ADMIN o API [Examples: (senza nome) | Example
-    #11 | line: 912]'
+    #11 | line: 912] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 204
@@ -716,7 +717,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-052-1] La modifica di un documento di un e-service template in qualsiasi stato, o di un''interfaccia
     con template in stato DRAFT, può essere fatta da un ente in veste di ADMIN o API [Examples: (senza nome) | Example
-    #12 | line: 913]'
+    #12 | line: 913] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 204
@@ -729,7 +730,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-057] La modifica di un documento inserendo il nome di un altro documento esistente nell''e-service
-    template non può essere effettuata [Examples: (senza nome) | Example #2 | line: 986]'
+    template non può essere effettuata [Examples: (senza nome) | Example #2 | line: 986] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 409
@@ -742,7 +743,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere
-    effettuata da un ente diverso dal creatore del template'
+    effettuata da un ente diverso dal creatore del template [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 404
@@ -755,7 +756,8 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[TC_INCARICATO_48] La creazione di una delega in fruizione verso un ente che non ha dato la propria
-    disponibilità a ricevere deleghe in fruizione deve fallire [Examples: (senza nome) | Example #1 | line: 106]'
+    disponibilità a ricevere deleghe in fruizione deve fallire [Examples: (senza nome) | Example #1 | line: 106]
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <200>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -765,7 +767,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[TC_INCARICATO_85] Richiamare l’API di visualizzazione elenco deleghe conferite lato delegante [Examples:
-    (senza nome) | Example #2 | line: 800]'
+    (senza nome) | Example #2 | line: 800] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
@@ -775,7 +777,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[TC_INCARICATO_86] Richiamare l’API di visualizzazione elenco deleghe ricevute lato delegato da parte
-    di un utente amministratore o non-amministratore [Examples: (senza nome) | Example #2 | line: 823]'
+    di un utente amministratore o non-amministratore [Examples: (senza nome) | Example #2 | line: 823] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
@@ -786,7 +788,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TC_INCARICATO_89] L''ente NON deve essere in grado di creare una delega per un e-service per il quale
     ha in corso una richiesta di fruizione in stato ACTIVE, SUSPENDED [Examples: (senza nome) | Example #2 | line:
-    870]'
+    870] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <403>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -796,7 +798,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all''erogazione settando
-    il flag personal data [Examples: (senza nome) | Example #1 | line: 378]'
+    il flag personal data [Examples: (senza nome) | Example #1 | line: 378] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"0e5949d8-9e49-4a2e-abc4-3b05a131dd08","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -807,7 +809,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all''erogazione settando
-    il flag personal data [Examples: (senza nome) | Example #2 | line: 379]'
+    il flag personal data [Examples: (senza nome) | Example #2 | line: 379] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"afa742d7-8d13-459e-9ae3-a7606cfd2abc","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -850,7 +852,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_DELEGATIONS_CONSUMER_01] Un utente con ruolo M2M-ADMIN o M2M può recuperare i dettagli di una delega
-    in fruizione (Parte2#Scenario intorno a 236) [Examples: (senza nome) | Example #1 | line: 49]'
+    in fruizione (Parte2#Scenario intorno a 236) [Examples: (senza nome) | Example #1 | line: 49] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer","correlationId":"1b8b59b6-65cf-42a6-ac03-2ead7ec0cfcd","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -861,7 +863,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_DELEGATIONS_CONSUMER_01] Un utente con ruolo M2M-ADMIN o M2M può recuperare i dettagli di una delega
-    in fruizione (Parte2#Scenario intorno a 236) [Examples: (senza nome) | Example #2 | line: 50]'
+    in fruizione (Parte2#Scenario intorno a 236) [Examples: (senza nome) | Example #2 | line: 50] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer","correlationId":"7b438b82-7b87-49df-812c-8289a8c7a0e1","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedConsumer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -872,7 +874,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_DELEGATIONS_CONSUMER_1] Una delega in fruizione può essere creata da un utente con ruolo M2M-ADMIN
-    (Scenario 37)'
+    (Scenario 37) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <200> but was: <403>
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:175)
@@ -958,7 +960,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2MG_ESERVICES_29_B] Un utente con ruolo M2M-ADMIN non può effettuare riattivazione di un e-service
-    in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45)'
+    in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 45) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Failed to publish descriptor
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
@@ -1023,7 +1025,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_04] Verifica che il producer di un e-service in stato PUBLISHED, con delega in
     erogazione in attesa di approvazione verso un altro ente, visualizza gli eventi di creazione e pubblicazione
-    senza producerDelegationId'
+    senza producerDelegationId [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"4f406b0c-2d09-4078-b573-13af77c7e50b","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1034,7 +1036,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_05] Verifica che il producer di un e-service in stato PUBLISHED, con delega in
-    erogazione rifiutata, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId'
+    erogazione rifiutata, visualizza gli eventi di creazione e pubblicazione senza producerDelegationId [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"d240c2ce-e02c-4f06-b00f-93f47b65e8cc","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1047,7 +1049,7 @@ ko:
 - id_test: '[M2M_E-SERVICE_EVENTS_06] Verifica che il producer di un e-service creato in stato DRAFT, con delega
     in erogazione accettata da un altro ente e successivamente pubblicato dal delegato, visualizza gli eventi di
     creazione e pubblicazione relativi all''e-service con producerDelegationId valorizzato solo sull''evento di
-    pubblicazione'
+    pubblicazione [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"f64a12e0-73f8-4d02-ba67-972ff9d2799c","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1058,7 +1060,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_07] Verifica che il creatore di un e-service creato in bozza e pubblicato dal
-    delegato possa visualizzare tutti gli eventi correlati anche dopo la revoca della delega'
+    delegato possa visualizzare tutti gli eventi correlati anche dopo la revoca della delega [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"93b0c20b-324c-4742-864e-e4d508bcf289","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1069,7 +1071,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_10] Verifica che il client con delega non ancora accettata visualizzi solo l''evento
-    di pubblicazione di un e-service di un producer'
+    di pubblicazione di un e-service di un producer [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: There was an error while providing the delegation availability!
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
@@ -1083,7 +1085,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_11] Verifica che il client con delega rifiutata visualizzi solo l''evento di pubblicazione
-    di un e-service di un producer'
+    di un e-service di un producer [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"51ef2716-50f2-4acd-add9-7c1b027acdb8","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1094,7 +1096,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_E-SERVICE_EVENTS_13] Verifica che il client con delega revocata visualizzi solo l''evento di pubblicazione
-    di un e-service di un producer'
+    di un e-service di un producer [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"c331ff57-c4e3-4b59-97e1-75fef28043f4","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1105,7 +1107,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_TEMPLATE_ESERVICE_CALLBACK_INTERFACE_2] Verifica dell''emissione dell''evento di tracciamento dopo
-    la modifica'
+    la modifica [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.AssertionError: Il documento non è stato modificato correttamente dalla versione dell'e-service template: Eventual consistency error: Lo stato del documento restituito dalla API GET dei documenti non corrisponde a quello atteso
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.document.EServiceTemplateDocumentUpdateSteps.checkDocumentEditedFromEServiceTemplateVersion(EServiceTemplateDocumentUpdateSteps.java:167)
@@ -1114,7 +1116,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[M2M_ESERVICE_CALLBACK_INTERFACE_2] Verifica dell''emissione dell''evento di tracciamento dopo la modifica'
+- id_test: '[M2M_ESERVICE_CALLBACK_INTERFACE_2] Verifica dell''emissione dell''evento di tracciamento dopo la modifica
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
@@ -1125,7 +1128,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[M2M_PURPOSES_DOCUMENT_1] Il documento dell''analisi del rischio correlato a una finalità può essere
     visualizzato da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 24) [Examples: (senza nome) | Example #1
-    | line: 723]'
+    | line: 723] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Errore durante il recupero dell'analisi del rischio
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
@@ -1138,7 +1141,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[M2M_PURPOSES_DOCUMENT_1] Il documento dell''analisi del rischio correlato a una finalità può essere
     visualizzato da un utente con ruolo M2M-ADMIN o M2M (Parte2#Scenario 24) [Examples: (senza nome) | Example #2
-    | line: 724]'
+    | line: 724] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Errore durante il recupero dell'analisi del rischio
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
@@ -1260,7 +1263,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica richiesta fruizione sospesa e riattivata dalla Piattaforma] La Piattaforma PDND sospende e
-    riattiva la richiesta di fruizione del fruitore al cambiamento dei requisiti'
+    riattiva la richiesta di fruizione del fruitore al cambiamento dei requisiti [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: "La Piattaforma PDND ha sospeso la richiesta di fruizione del fruitore Agenzia per L'Italia Digitale per il tuo e-service e-service 221589680, in quanto l'ente fruitore non dispone più dei requisiti per poter fruire di questi dati." with DeepLink /erogazione/richieste/7c7ce8e8-6340-4b2f-89d2-726b06378c7f
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -1270,7 +1273,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[Notifica finalità rifiutata] L''erogatore rifiuta la finalità richiesta dal fruitore per un e-service'
+- id_test: '[Notifica finalità rifiutata] L''erogatore rifiuta la finalità richiesta dal fruitore per un e-service
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: "L'ente erogatore Comune di Milano ha rifiutato la finalità "purpose title - QA - 1119891748 - 122054598" che il tuo ente ha inoltrato per l'e-service eservice-0-856044154-1041241019." with DeepLink /fruizione/finalita/91c3a1ec-a34b-4c8b-881f-3f31225b586a
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -1281,7 +1285,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica approvazione nuova versione e-service] L''ente delegante approva la pubblicazione della nuova
-    versione dell''e-service'
+    versione dell''e-service [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"c7773644-f225-4ef9-a171-5ce4ca80614a","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1292,7 +1296,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica rifiuto nuova versione e-service] L''ente delegante rifiuta la pubblicazione della nuova versione
-    dell''e-service'
+    dell''e-service [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"c52012c5-c8f0-4343-bfc4-c17df3ad48f5","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1303,7 +1307,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica ricezione richiesta di delega] L''ente riceve una richiesta di delega all''erogazione per
-    un e-service'
+    un e-service [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"07108a94-3efb-4555-97f8-bcfccfc8019d","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1314,7 +1318,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica delega in erogazione revocata] Viene revocata la delega all''erogazione ad un ente per un
-    e-service'
+    e-service [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalStateException: La richiesta di delega non è stata eseguita correttamente: 403 Forbidden: "{"type":"about:blank","title":"Tenant not allowed to delegation","status":403,"detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer","correlationId":"ada2dace-f046-4785-af00-bd9cf81cd524","errors":[{"code":"010-0007","detail":"Tenant 0e9e2dab-2e93-4f24-ba59-38d9f11198ca not allowed to receive delegations of kind: DelegatedProducer"}]}"
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
@@ -1326,7 +1330,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[MANUAL_ARCHIVING_DESCRIPTOR_NOTIFICATION_1.3] L''utente erogatore NON riceve una notifica nel momento
     in cui avvia il processo di archiviazione di uno specifico descrittore se le notifiche per il cambio di stato
-    dell''e-service sono disabilitate'
+    dell''e-service sono disabilitate [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: Found not expected notification
     	at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkNoInAppNotificationBody(NotificationSteps.java:416)
@@ -1336,7 +1340,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.6] Un delegante all''erogazione rifiuta la richiesta di archiviazione
-    di una versione di un e-service di un delegato'
+    di una versione di un e-service di un delegato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalArgumentException: Error during polling: 403 Forbidden: "{"type":"about:blank","title":"Invalid eservice requester","status":403,"detail":"EService 7508573a-376c-4f57-8cde-4e65a2cda347 does not belong to producer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca","correlationId":"023865e7-d29e-4d75-83b7-6e77ec618938","errors":[{"code":"008-0006","detail":"EService 7508573a-376c-4f57-8cde-4e65a2cda347 does not belong to producer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca"}],"userMessage":"Non puoi visualizzare questo e-service perché non lo gestisci più in delega. Torna ai tuoi e-service per vedere quelli che puoi gestire."}"
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:38)
@@ -1349,7 +1353,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.1] Erogatore e fruitore ricevono una notifica quando
-    l''e-service in stato di archiviazione viene sospeso e quando viene riattivato'
+    l''e-service in stato di archiviazione viene sospeso e quando viene riattivato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: "La versione 1 dell'e-service e-service 1858825562 è al momento sospesa. L'e-service sarà archiviato il giorno 22/02/2027." with DeepLink /catalogo-e-service/fdcc0246-3fb6-4c0a-9385-1a6a9b2d17fe/597ee404-aa17-49a3-a864-88a82edae8a5
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -1360,7 +1364,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[MANUAL_ARCHIVING_ESERVICE_SUSPENSION_NOTIFICATION_1.2] Erogatore e fruitore ricevono una notifica quando
-    l''e-service istanza di un template in stato di archiviazione viene sospeso'
+    l''e-service istanza di un template in stato di archiviazione viene sospeso [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: "La versione 1 dell'e-service eservice-template-165007887-0 è al momento sospesa. L'e-service sarà archiviato il giorno 24/03/2027." with DeepLink /catalogo-e-service/96ff8ceb-2a4a-4308-a6dc-93f5ec4633e5/82e23c13-2011-4510-8307-8b01f28469fd
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -1371,7 +1375,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.1] Un delegato all''erogazione richiede l''archiviazione di un
-    e-service e viene approvata'
+    e-service e viene approvata [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Not Found expected notification: "L'ente delegato Agenzia per L'Italia Digitale ha richiesto l'archiviazione dell'e-service e-service 100203184. Puoi confermare o rifiutare la richiesta." with DeepLink /erogazione/e-service/9207b5be-40ca-41b7-a878-c2a0b3e90c84/07a491e5-f21c-4641-9439-7eb373a9f93e
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
@@ -1382,7 +1386,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.3] Un delegante all''erogazione rifiuta la richiesta di archiviazione
-    di un e-service di un delegato'
+    di un e-service di un delegato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     java.lang.IllegalArgumentException: Error during polling: 403 Forbidden: "{"type":"about:blank","title":"Invalid eservice requester","status":403,"detail":"EService dd0044d7-d0f2-443f-b486-ff6c82845111 does not belong to producer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca","correlationId":"1d6fea5e-02e1-4f8f-ba29-62deed2e447c","errors":[{"code":"008-0006","detail":"EService dd0044d7-d0f2-443f-b486-ff6c82845111 does not belong to producer 0e9e2dab-2e93-4f24-ba59-38d9f11198ca"}],"userMessage":"Non puoi visualizzare questo e-service perché non lo gestisci più in delega. Torna ai tuoi e-service per vedere quelli che puoi gestire."}"
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:38)
@@ -1396,7 +1400,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_CREATE_PURPOSE_FROM_TEMPLATE_PATCH_URL_02] La modifica di una finalità come se fosse
     stata creata a partire da un template SENZA che sia stata effettivamente creata a partire da un template produce
-    un errore'
+    un errore [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: [Check HTTP response status risultante da ultima call effettuata attraverso HttpCallExecutor] 
     expected: 400
@@ -1409,7 +1413,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_ARCHIVIATION_NO_CREATOR] Archiviazione di una finalità agevolata da parte di un utente
-    non appartenente alla PA che ha creato la finalità agevolata (error 403)'
+    non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
@@ -1419,7 +1423,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte
-    di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403)'
+    di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
@@ -1429,7 +1433,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_SUSPENSION_NO_CREATOR] Sospensione di una finalità agevolata da parte di un utente
-    non appartenente alla PA che ha creato la finalità agevolata (error 403)'
+    non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <404>
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
@@ -1438,7 +1442,7 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo)'
+- id_test: '[COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo) [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1447,7 +1451,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)'
+- id_test: '[COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1456,7 +1461,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)'
+- id_test: '[COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1465,7 +1471,8 @@ ko:
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
-- id_test: '[COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)'
+- id_test: '[COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)
+    [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <409> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1478,7 +1485,7 @@ ko:
     quale è stata in passato almeno per un momento ACTIVE, la quale ha avuto un aggiornamento della stima di carico
     la quale versione è stata almeno per un momento ACTIVE, alla richiesta di lettura del documento di analisi del
     rischio da parte di un qualsiasi utente dell''ente, va a buon fine; il documento deve essere diverso da quello
-    creato per la versione precedente.'
+    creato per la versione precedente. [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     it.pagopa.interop.authorization.service.utils.PollingPredicateException: Eventual consistency error: Non è stato prodotto alcun documento di analisi del rischio nel tempo limite
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:42)
@@ -1491,7 +1498,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 18]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 18] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
@@ -1502,7 +1509,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 19]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 19] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1513,7 +1520,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #3 | line: 20]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #3 | line: 20] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1524,7 +1531,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #4 | line: 21]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #4 | line: 21] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1535,7 +1542,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #5 | line: 22]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #5 | line: 22] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1546,7 +1553,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 27]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 27] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1557,7 +1564,7 @@ ko:
   link_suite_bug: ''
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
-    al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 28]'
+    al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 28] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
@@ -1569,7 +1576,7 @@ ko:
 - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_02] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, e poi successivamente verificato da un terzo aderente sempre al secondo aderente, alla
     richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va
-    a buon fine. Inoltre, l’istanza dell’attributo verificato dal terzo aderente rimane verificata'
+    a buon fine. Inoltre, l’istanza dell’attributo verificato dal terzo aderente rimane verificata [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
@@ -1579,7 +1586,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[VOUCHER_GENERATION_AGREEMENT_05] La generazione del Voucher va a buon fine quando il fruitore perde
-    e poi riottiene un attributo verificato necessario all’utilizzo dell’EService'
+    e poi riottiene un attributo verificato necessario all’utilizzo dell’EService [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: Something went wrong: Bad Request ==> expected: <false> but was: <true>
     	at it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.assertValidResponse(BFFDataPreparationService.java:1388)
@@ -1591,7 +1598,7 @@ ko:
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[VOUCHER_GENERATION_AGREEMENT_17] La generazione del Voucher fallisce quando il fruitore perde un attributo
-    verificato necessario all’utilizzo dell’EService'
+    verificato necessario all’utilizzo dell’EService [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     org.opentest4j.AssertionFailedError: Something went wrong: Bad Request ==> expected: <false> but was: <true>
     	at it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.assertValidResponse(BFFDataPreparationService.java:1388)
