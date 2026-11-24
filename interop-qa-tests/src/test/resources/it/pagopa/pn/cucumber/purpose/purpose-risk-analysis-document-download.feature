@@ -25,6 +25,13 @@ Feature: Download documento di analisi del rischio sigillato
       | PA1     | security     |       403 |
       | PA1     | api,security |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+
   @happy-path
   @nrt-minimal
   @purpose_risk_analysis_document_download2

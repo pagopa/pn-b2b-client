@@ -2,6 +2,7 @@ package it.pagopa.pn.interop.cucumber.steps.producer_keychains;
 
 import com.nimbusds.jose.jwk.KeyType;
 import io.cucumber.java.en.And;
+import io.jsonwebtoken.lang.Assert;
 import it.pagopa.interop.authorization.domain.KeyPairDecorator;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.KeyPairGeneratorUtil;
@@ -13,7 +14,7 @@ import it.pagopa.interop.producerkeychain.ProducerKeychainClient;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -56,7 +57,11 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         getContext().getPollingService().makePolling(
             () -> producerKeychainClient.get(getContext().getProducerKeychainCommonContext().getFirstProducerKeychainId()),
-            Objects::nonNull,
+            res -> {
+                Assert.notNull(res);
+                getContext().getProducerKeychainCommonContext().setKeychainName(res.getName());
+                return true;
+            },
             "La creazione del portachiavi erogatore non ha avuto successo"
         );
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
@@ -100,10 +105,16 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     @And("l'utente {string} di {string} aggiunge una chiave al portachiavi erogatore")
     public void createProducerKey(String ruolo, String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
-        KeySeed keySeed = buildKeySeed();
+
+        String keyType = "RSA";
+        KeyPairDecorator keyPair = KeyPairDecorator.of(keyType, 2048);
+
+        KeySeed keySeed = buildKeySeed(keyPair, keyType);
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext()
             .getFirstProducerKeychainId();
         producerKeychainClient.createProducerKey(producerKeychainId, keySeed);
+        getContext().getProducerKeychainCommonContext().addProducerKeyPair(keyPair);
+        getContext().getProducerKeychainCommonContext().setProducerKeyName(keySeed.getName());
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
         delayService.delay();
     }
@@ -115,8 +126,9 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
             .getFirstProducerKeychainId();
 
         delayService.delay();
-        producerKeychainClient.getProducerKeysIds(producerKeychainId).forEach(
-            key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
+        List<String> keyIds = producerKeychainClient.getProducerKeysIds(producerKeychainId);
+        getContext().getProducerKeychainCommonContext().setDeletedKeyIds(keyIds);
+        keyIds.forEach(key -> producerKeychainClient.deleteProducerKey(producerKeychainId, key));
 
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
@@ -125,15 +137,13 @@ public class ProducerKeychainSteps extends AbstractCommonSteps<ProducerKeychain,
     public void successfullyRemoveUserFromKeychain(String ruolo, String tenant, String roleToRemove) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, ruolo));
         UUID producerKeychainId = getContext().getProducerKeychainCommonContext()
-            .getFirstProducerKeychainId();
+                .getFirstProducerKeychainId();
         UUID userIdToRemove = identityService.getUserId(tenant, roleToRemove);
         producerKeychainClient.removeUserFromKeychain(producerKeychainId, userIdToRemove);
         clientTokenConfigurator.setBearerToken(getContext().getUserToken());
     }
 
-    private static KeySeed buildKeySeed() {
-        String keyType = "RSA";
-        KeyPairDecorator keyPair = KeyPairDecorator.of(keyType, 2048);
+    private static KeySeed buildKeySeed(KeyPairDecorator keyPair, String keyType) {
         String encodedPublicKey = keyPair.getDelimitedPublicKeyBase64();
         return KeyPairGeneratorUtil.createKeySeed(encodedPublicKey, KeyType.parse(keyType)).get(0);
     }

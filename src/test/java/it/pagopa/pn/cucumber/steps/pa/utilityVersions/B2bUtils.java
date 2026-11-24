@@ -1,7 +1,9 @@
 package it.pagopa.pn.cucumber.steps.pa.utilityVersions;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
@@ -17,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
+import it.pagopa.pn.cucumber.steps.utilitySteps.Environment;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import it.pagopa.pn.cucumber.utils.datatestVersions.AbstractDataTest;
@@ -55,10 +58,11 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Data
@@ -246,9 +250,9 @@ public abstract class B2bUtils {
 
     private static MultiValueMap<String, String> getHeadersMapForUploadToPresigned(String contentType, String sha256, String secret) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
-        headers.add("Content-type", contentType);
-        headers.add("x-amz-checksum-sha256", sha256);
-        headers.add("x-amz-meta-secret", secret);
+        if (contentType != null) headers.add("Content-type", contentType);
+        if (sha256 != null) headers.add("x-amz-checksum-sha256", sha256);
+        if (secret != null) headers.add("x-amz-meta-secret", secret);
         log.info("headers: {}", headers);
         return headers;
     }
@@ -552,6 +556,8 @@ public abstract class B2bUtils {
             case PREPARE_SIMPLE_REGISTERED_LETTER ->
                     TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case NOTIFICATION_VIEWED -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+            case NOTIFICATION_VIEWED_CREATION_REQUEST ->
+                    TimelineEventId.NOTIFICATION_VIEWED_CREATION_REQUEST.buildEventId(event);
             case COMPLETELY_UNREACHABLE -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
             case DIGITAL_DELIVERY_CREATION_REQUEST ->
                     TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
@@ -581,9 +587,47 @@ public abstract class B2bUtils {
         return rawJson;
     }
 
-    public static String getEnvironment(ApplicationContext context) {
+    public static Environment getEnvironment(ApplicationContext context) {
         String env = context.getEnvironment().getActiveProfiles()[0];
         log.info("Environment in use is: {}", env);
-        return env;
+        return Environment.valueOf(env.toUpperCase());
+    }
+
+    /**
+     * Metodo di utility per estrarre i valori di una DataTable, con la possibilità di restituire un valore di default in caso di valore null
+     */
+    public static String getDataTableParams(Map<String, String> inputData, String key, String defaultValue) {
+        String value = inputData.get(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        return value.equalsIgnoreCase("EMPTY_STRING") ? null : value;
+    }
+
+    public static String assertWithIun(String iun, String msg) {
+        return String.format("Assertion failed. Iun %s : %s", iun, msg);
+    }
+
+    public static JsonNode normalize(JsonNode node) {
+        if (node.isObject()) {
+            ObjectNode objectNode = (ObjectNode) node;
+            Iterator<Map.Entry<String, JsonNode>> fields = objectNode.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                JsonNode value = field.getValue();
+
+                if (value.isTextual() && value.asText().isEmpty()) {
+                    objectNode.putNull(field.getKey());
+                } else {
+                    normalize(value);
+                }
+            }
+        }
+        if (node.isArray()) {
+            for (JsonNode element : node) {
+                normalize(element);
+            }
+        }
+        return node;
     }
 }

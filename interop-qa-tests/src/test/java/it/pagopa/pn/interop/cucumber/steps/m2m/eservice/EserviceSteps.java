@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.m2m.eservice;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -11,34 +12,45 @@ import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient.*;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.mapper.EserviceDescriptorDomainMapper;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.DocumentMetadata;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDelegationPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceDescriptionPatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServiceNamePatchOperationsAssistant;
-import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.EServicePatchOperationsAssistant;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.assistant.*;
+import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.helpers.EServiceSeedFactory;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.mapper.DocumentMapper;
 import it.pagopa.pn.interop.cucumber.utility.BlobFileCreator;
-import it.pagopa.pn.interop.cucumber.utility.delay_service.DelayService;
+import it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.Precondition;
+import it.pagopa.interop.utils.delay_service.DelayService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.assertj.core.api.Assertions;
+import org.jeasy.random.randomizers.text.StringRandomizer;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 
-import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
+import static it.pagopa.pn.interop.cucumber.steps.catalog.EServiceCreationSteps.RANDOM_NAME_PLACEHOLDER;
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.nullableBoolean;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPrecondition;
+import static it.pagopa.pn.interop.cucumber.utility.PreconditionValidator.checkPreconditions;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.assertj.core.api.Assertions.within;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
@@ -49,12 +61,14 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     private final IM2MEserviceDescriptorClient descriptorClient;
     private final BlobFileCreator blobFileCreator;
     private final DelayService delayService;
+    private final CatalogResolver catalogResolver;
 
     private final EServicePatchOperationsAssistant eServicePatchAssistant;
     private final EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant;
     private final EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant;
     private final EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant;
 
+    private final EServiceSeedFactory eServiceSeedFactory;
     private final DocumentMapper documentMapper;
 
     public EserviceSteps(
@@ -65,6 +79,7 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
             EServiceDelegationPatchOperationsAssistant eServiceDelegationPatchAssistant,
             EServiceNamePatchOperationsAssistant eServiceNamePatchAssistant,
             EServiceDescriptionPatchOperationsAssistant eServiceDescriptionPatchAssistant,
+            EServiceSeedFactory eServiceSeedFactory,
             DocumentMapper documentMapper,
             DelayService delayService
     ) {
@@ -80,8 +95,54 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         this.eServiceDelegationPatchAssistant = eServiceDelegationPatchAssistant;
         this.eServiceNamePatchAssistant = eServiceNamePatchAssistant;
         this.eServiceDescriptionPatchAssistant = eServiceDescriptionPatchAssistant;
+        this.eServiceSeedFactory = eServiceSeedFactory;
         this.documentMapper = documentMapper;
         this.delayService = delayService;
+        this.catalogResolver = new CatalogResolver(sharedStepsContext);
+    }
+
+    @Given("l'utente tenta la creazione dell'e-service con la configurazione predefinita")
+    public void createEService() {
+        EServiceSeed seed = this.eServiceSeedFactory.defaultEServiceSeed();
+
+        EServiceCreateRequest request = EServiceCreateRequest.fromSeed(seed);
+
+        httpExecutor.performCall(() -> this.client.createEService(request));
+
+        if (httpExecutor.getResponseStatus() == HttpStatus.CREATED || httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(
+                    ((EService) httpExecutor.getResponse()).getId()
+            );
+        }
+    }
+
+    @Given("l'utente tenta la creazione dell'e-service con la seguente configurazione:")
+    public void createEService(DataTable dataTable) {
+
+        EServiceSeed seed = this.eServiceSeedFactory.defaultEServiceSeed();
+
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+
+        if (data.containsKey("description-length")) {
+            int descriptionLength = Integer.parseInt(data.get("description-length"));
+            seed.description((new StringRandomizer(descriptionLength, descriptionLength, System.currentTimeMillis())).getRandomValue());
+        }
+        if (data.containsKey("name")) {
+            String eServiceName = data.get("name").replace("%blank%", " ");
+            eServiceName = RANDOM_NAME_PLACEHOLDER.matcher(eServiceName)
+                    .replaceAll(match -> RandomStringUtils.insecure().nextAlphanumeric(Integer.parseInt(match.group(1))));
+            seed.name(eServiceName);
+        }
+
+        EServiceCreateRequest request = EServiceCreateRequest.fromSeed(seed);
+
+        httpExecutor.performCall(() -> this.client.createEService(request));
+
+        if (httpExecutor.getResponseStatus() == HttpStatus.CREATED || httpExecutor.getResponseStatus() == HttpStatus.OK) {
+            sharedStepsContext.getEServicesCommonContext().setEserviceId(
+                    ((EService) httpExecutor.getResponse()).getId()
+            );
+        }
     }
 
     @Given("l'utente effettua la cancellazione dell'e-service con successo")
@@ -106,6 +167,51 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void deleteEService() {
         UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
         httpExecutor.performCall(() -> this.client.delete(eserviceId));
+    }
+
+    @When("viene avviata l'archiviazione dell'e-service {string} indicando la motivazione {string} e un preavviso di {gracePeriodDays} giorni")
+    public void scheduleEServiceArchiving(String eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String resolvedArchivingReason = catalogResolver.resolveArchivingReason(archivingReason);
+
+        scheduleArchiveEService(resolvedEServiceId, resolvedArchivingReason, gracePeriodDays);
+    }
+
+    @When("viene avviata l'archiviazione dell'e-service {string} indicando una motivazione di {int} caratteri e un preavviso di {gracePeriodDays} giorni")
+    public void scheduleEServiceArchivingWithReasonLength(String eServiceId, int archivingReasonLength, GracePeriodDays gracePeriodDays) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+        String archivingReason = RandomStringUtils.insecure().nextAlphanumeric(archivingReasonLength);
+
+        scheduleArchiveEService(resolvedEServiceId, archivingReason, gracePeriodDays);
+    }
+
+    private void scheduleArchiveEService(UUID eServiceId, String archivingReason, GracePeriodDays gracePeriodDays) {
+        sharedStepsContext.getEServicesCommonContext()
+                .setEServiceArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setEServiceArchivingGracePeriodDays(gracePeriodDays);
+
+        EServiceArchivingRequest request = EServiceArchivingRequest.builder()
+                .archivingReason(archivingReason)
+                .gracePeriodDays(gracePeriodDays.getValue())
+                .build();
+
+        httpExecutor.performCall(() -> client.scheduleArchiveEService(eServiceId, request));
+    }
+
+    @When("viene annullato il processo di archiviazione dell'e-service con id {string}")
+    public void cancelEServiceArchiving(String eServiceId) {
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        httpExecutor.performCall(() -> client.cancelScheduleArchiveEService(resolvedEServiceId));
+    }
+
+    @When("l'utente tenta di sospende quel descrittore")
+    public void suspendDescriptor() {
+        UUID eserviceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+
+        httpExecutor.performCall(() -> descriptorClient.suspendDescriptor(eserviceId, descriptorId));
     }
 
     @When("l'utente tenta di effettuare la riattivazione dell'e-service")
@@ -195,25 +301,116 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
 
     @Then("i metadati dei documenti ottenuti sono coerenti con quelli caricati")
     public void checkDocumentsMetadata() {
+        // Step 1: raccolta dati reali (Interop API) e attesi (contesto scenario).
         List<Document> actualDocuments = ((Documents) httpExecutor.getResponse()).getResults();
         List<DocumentMetadata> actualDocumentsMetadata = documentMapper.map(actualDocuments);
         List<DocumentMetadata> expectedDocumentsMetadata = sharedStepsContext.getEServicesCommonContext()
                 .getDocumentsMetadata();
 
-        assertSoftly(softly -> softly.assertThat(actualDocumentsMetadata)
-                .as("Verifica che i metadati dei documenti caricati siano coerenti")
-                .usingFieldByFieldElementComparator()
-                .usingComparatorForElementFieldsWithType(
-                        (timestamp1, timestamp2) -> {
-                            Duration actualAndExpectedDifference = Duration.between(timestamp1, timestamp2).abs();
-                            Duration acceptedDelay = Duration.ofSeconds(10);
+        // Step 2: precondizione minima sul setup test.
+        // Se manca il riferimento atteso in contesto, il test non puo procedere in modo affidabile.
+        checkPrecondition(new Precondition(() -> expectedDocumentsMetadata != null,
+                "expected documents metadata in test context must not be null"));
 
-                            // Se i timestamp di creazione sono divisi da un delay ragionevole, allora
-                            // si considerano "uguali", per la riuscita del test
-                            return actualAndExpectedDifference.compareTo(acceptedDelay) < 0 ? 0 : 1;
-                        },
-                        OffsetDateTime.class)
-                .containsExactlyInAnyOrderElementsOf(expectedDocumentsMetadata));
+        // Step 3: precondizioni puntuali sui documenti attesi (id, name, prettyName, createdAt).
+        // Questi controlli intercettano errori di setup prima dei confronti di prodotto.
+        List<Precondition> expectedDocumentPreconditions = new ArrayList<>();
+        for (int i = 0; i < expectedDocumentsMetadata.size(); i++) {
+            int documentIndex = i + 1;
+            DocumentMetadata expectedDocument = expectedDocumentsMetadata.get(i);
+            expectedDocumentPreconditions.add(new Precondition(
+                    () -> expectedDocument != null,
+                    "expected document metadata at index " + documentIndex + " must not be null"
+            ));
+
+            if (expectedDocument != null) {
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getId() != null,
+                        "expected document id at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getName() != null,
+                        "expected document name at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getPrettyName() != null,
+                        "expected document prettyName at index " + documentIndex + " must not be null"
+                ));
+                expectedDocumentPreconditions.add(new Precondition(
+                        () -> expectedDocument.getCreatedAt() != null,
+                        "expected document createdAt at index " + documentIndex + " must not be null"
+                ));
+            }
+        }
+        checkPreconditions("checkDocumentsMetadata", expectedDocumentPreconditions);
+
+        // Step 4: verifiche di prodotto con soft assertions.
+        // Si raccolgono tutti i mismatch in un unico report finale.
+        assertSoftly(softly -> {
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che i metadati dei documenti caricati siano presenti")
+                    .isNotNull();
+
+            if (actualDocumentsMetadata == null) {
+                return;
+            }
+
+            softly.assertThat(actualDocumentsMetadata)
+                    .as("Verifica che il numero di documenti restituiti coincida con quello atteso")
+                    .hasSameSizeAs(expectedDocumentsMetadata);
+
+            // Step 5: indicizzazione dei documenti reali per id, per confronti stabili e leggibili.
+            Map<UUID, DocumentMetadata> actualDocumentsById = new HashMap<>();
+            actualDocumentsMetadata.forEach(actualDocument -> {
+                softly.assertThat(actualDocument)
+                        .as("Verifica che il documento reale non sia nullo")
+                        .isNotNull();
+                if (actualDocument == null) {
+                    return;
+                }
+
+                softly.assertThat(actualDocument.getId())
+                        .as("Verifica che il documento reale abbia un id")
+                        .isNotNull();
+                if (actualDocument.getId() != null) {
+                    actualDocumentsById.put(actualDocument.getId(), actualDocument);
+                }
+            });
+
+            // Step 6: confronto documento per documento sui campi restituiti dall'API.
+            // uploadPath non viene confrontato perché non è parte della response.
+            for (DocumentMetadata expectedDocument : expectedDocumentsMetadata) {
+                DocumentMetadata actualDocument = actualDocumentsById.get(expectedDocument.getId());
+
+                softly.assertThat(actualDocument)
+                        .as("Verifica che sia presente il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                if (actualDocument == null) {
+                    continue;
+                }
+
+                softly.assertThat(actualDocument.getName())
+                        .as("Verifica il name del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getName());
+                softly.assertThat(actualDocument.getPrettyName())
+                        .as("Verifica il prettyName del documento con id %s", expectedDocument.getId())
+                        .isEqualTo(expectedDocument.getPrettyName());
+
+                // uploadPath non viene restituito dalle API M2M: non va confrontato puntualmente.
+
+                softly.assertThat(actualDocument.getCreatedAt())
+                        .as("Verifica che createdAt sia valorizzato per il documento con id %s", expectedDocument.getId())
+                        .isNotNull();
+
+                // Step 7: confronto temporale tollerante per evitare falsi negativi dovuti a jitter.
+                if (actualDocument.getCreatedAt() != null) {
+                    softly.assertThat(actualDocument.getCreatedAt())
+                            .as("Verifica che createdAt del documento con id %s sia vicino al valore atteso", expectedDocument.getId())
+                            .isCloseTo(expectedDocument.getCreatedAt(), within(10, ChronoUnit.SECONDS));
+                }
+            }
+        });
     }
 
     @Then("è presente un'interfaccia per l'e-service")
@@ -245,6 +442,21 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
         uploadInterface(interfaceName, eServiceId, descriptorId);
     }
 
+    @When("l'utente tenta di effettuare il caricamento di un'interfaccia di tipo YAML {string}")
+    public void uploadInterfaceWithNoVersion(String versionState) {
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        String interfaceName = buildInterfaceName(eServiceId, descriptorId);
+
+        String filename = switch (versionState) {
+            case "senza versione" -> "missing-version-interface.yaml";
+            case "con versione obsoleta" -> "invalid-version-interface.yaml";
+            default -> throw new IllegalStateException("Unexpected value: " + versionState);
+        };
+
+        uploadInterface(interfaceName, eServiceId, descriptorId, filename);
+    }
+
     @When("l'utente tenta di effettuare la cancellazione di un'interfaccia di un e-service inesistente")
     public void deleteNonExistentEServiceInterface() {
         UUID eServiceId = UUID.randomUUID();
@@ -253,8 +465,11 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     }
 
     private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId) {
+        uploadInterface(interfaceName, eServiceId, descriptorId, String.format("interface.%s", "yaml"));
+    }
+
+    private void uploadInterface(String interfaceName, UUID eServiceId, UUID descriptorId, String fileName) {
         delayService.delay();
-        String fileName = String.format("interface.%s", "yaml");
         String filePath = String.format("src/main/resources/%s", fileName);
         Resource resource = blobFileCreator.createBlobFile(filePath, fileName);
         sharedStepsContext.getEServicesCommonContext().setInterfaceName(interfaceName);
@@ -291,6 +506,15 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
                 .name("some patched name - " + id)
                 .description("some patched description - " + id)
                 .technology(EServiceTechnology.REST)
+                .build();
+        eServicePatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica parziale dell'e-service in stato DRAFT specificando una descrizione di lunghezza pari a {int} caratteri")
+    public void patchEServiceWithDescriptionLength(int length) {
+        String description = (new StringRandomizer(length, length, System.currentTimeMillis())).getRandomValue();
+        EServicePatchRequest request = EServicePatchRequest.builder()
+                .description(description)
                 .build();
         eServicePatchAssistant.patchResource(request);
     }
@@ -400,6 +624,15 @@ public class EserviceSteps extends AbstractCommonSteps<EService, UUID> {
     public void patchEServiceDescription() {
         EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
                 .description("patched description - " + UUID.randomUUID())
+                .build();
+        eServiceDescriptionPatchAssistant.patchResource(request);
+    }
+
+    @When("l'utente tenta di effettuare la modifica della descrizione dell'e-service specificando una descrizione di lunghezza pari a {int} caratteri")
+    public void patchEServiceDescription(int length) {
+        String description = (new StringRandomizer(length, length, System.currentTimeMillis())).getRandomValue();
+        EServiceDescriptionPatchRequest request = EServiceDescriptionPatchRequest.builder()
+                .description(description)
                 .build();
         eServiceDescriptionPatchAssistant.patchResource(request);
     }

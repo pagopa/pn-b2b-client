@@ -1,13 +1,17 @@
 package it.pagopa.pn.cucumber.steps.delayer.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"pk", "deliveryDate", "weeklyEstimate"})
+@ToString
 public class DelayerSenderLimit {
     private String pk;
     private String deliveryDate;

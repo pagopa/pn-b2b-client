@@ -63,6 +63,11 @@ public class M2MV3CertifiedAttributeClientImpl extends AbstractDPoPClient implem
     }
 
     @Override
+    public List<CertifiedAttribute> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(CertifiedAttribute entity) {
         return entity == null ? null : entity.getId();
     }

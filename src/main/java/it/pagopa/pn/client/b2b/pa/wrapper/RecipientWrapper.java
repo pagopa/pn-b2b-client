@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.wrapper;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.UserAddresses;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;

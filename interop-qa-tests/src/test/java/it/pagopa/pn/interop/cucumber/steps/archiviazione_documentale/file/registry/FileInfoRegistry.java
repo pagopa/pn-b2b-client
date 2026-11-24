@@ -20,10 +20,17 @@ public class FileInfoRegistry {
     private final Map<InteropFile, FileInfo> registry;
     private final TokenResolver tokenResolver;
 
-    public FileInfoRegistry(TokenResolver tokenResolver, String documentBucketBase, String documentWormBucketBase, String eventBucketBase, String eventWormBucketBase) {
+    public FileInfoRegistry(TokenResolver tokenResolver, String documentBucketBase, String documentWormBucketBase,
+                            String eventBucketBase, String eventWormBucketBase,
+                            String jwtDetailsBucketBase, String jwtDetailsSignedBucketBase,
+                            String m2mJwtDetailsBucketBase, String m2mJwtDetailsSignedBucketBase) {
         this.tokenResolver = tokenResolver;
 
-        this.registry = definitions(documentBucketBase, documentWormBucketBase, eventBucketBase, eventWormBucketBase).stream()
+        this.registry = definitions(documentBucketBase, documentWormBucketBase,
+                    eventBucketBase, eventWormBucketBase,
+                    jwtDetailsBucketBase, jwtDetailsSignedBucketBase,
+                    m2mJwtDetailsBucketBase, m2mJwtDetailsSignedBucketBase)
+                .stream()
                 .collect(Collectors.toUnmodifiableMap(
                         FileInfoDefinition::type,
                         this::buildFileInfo

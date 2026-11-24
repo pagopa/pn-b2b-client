@@ -34,6 +34,15 @@ Feature: Cancellazione richiesta di fruizione
       | Privato | support      |       403 |
       | Privato | api,security |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
   @happy-path @nrt-minimal
   @agreement_delete1b @certifiedAttribute
   Scenario Outline: [AGREEMENT_DELETE_01B] Per una richiesta di fruizione precedentemente creata dall’ente, la quale è in stato MISSING_CERTIFIED_ATTRIBUTES, alla richiesta di cancellazione da parte di un utente con sufficienti permessi, va a buon fine

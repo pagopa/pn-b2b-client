@@ -18,6 +18,6 @@ public class AgreementCloneSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getAgreementClient()
-                        .cloneAgreement(sharedStepsContext.getAgreementId()));
+                        .cloneAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId()));
     }
 }

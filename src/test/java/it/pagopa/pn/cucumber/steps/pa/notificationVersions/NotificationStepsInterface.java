@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa.notificationVersions;
 
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,6 +60,8 @@ public interface NotificationStepsInterface {
 
     void addIuvGpdToDestinatario(String denominazione, String iuvGpd, Integer paymentIndex);
 
+    void addIuvGpdToDestinatario(Integer recIndex, String iuvGpd, Integer recipientPaymentIndex);
+
     List<String> getDatiPagamento(Integer destinatario, Integer pagamento);
 
     void waitForTimelineElement(String timelineElementCategory, Integer attempts);
@@ -87,4 +89,6 @@ public interface NotificationStepsInterface {
     String getCreditorTaxId(int recipientIndex);
 
     String getNoticeCode(int recipientIndex);
+
+    void setApplyCostFalse(int recipientIndex, int paymentIndex);
 }

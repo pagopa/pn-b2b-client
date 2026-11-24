@@ -21,11 +21,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -51,7 +51,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
         sharedSteps = webhookSteps.getSharedSteps();
         b2bClient = webhookSteps.getB2bClient();
         streamVersion = StreamVersion.V23;
-        progressResponseElementList = new LinkedList<>();
+        progressResponseElementList = new ArrayList<>();
     }
 
     @Override
@@ -80,7 +80,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
 
     @Override
     public void createStreamRequest(List<String> filterValues, int number, String title, String eventType) {
-        streamCreationRequestList = new LinkedList<>();
+        streamCreationRequestList = new ArrayList<>();
         for (int i = 0; i < number; i++) {
             StreamCreationRequestV23 streamRequest = new StreamCreationRequestV23();
             streamRequest.setTitle(title + "_" + i);
@@ -304,7 +304,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
 
     @Override
     public void createEventStream(String pa, List<String> listGroups, UUID streamIdToReplace, List<String> filteredValues, boolean forced) {
-        if (eventStreamList == null) eventStreamList = new LinkedList<>();
+        if (eventStreamList == null) eventStreamList = new ArrayList<>();
         for (StreamCreationRequestV23 request : streamCreationRequestList) {
             if (filteredValues != null && !filteredValues.isEmpty()) {
                 request.setFilterValues(filteredValues);
@@ -317,7 +317,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
             }
             StreamMetadataResponseV23 eventStream = webhookClient.createEventStreamV23(request);
             if (streamIdToReplace != null) {
-                eventStreamList = new LinkedList<>();
+                eventStreamList = new ArrayList<>();
             }
             eventStreamList.add(eventStream);
             webhookSteps.getPaStreamOwner().add(pa);
@@ -450,15 +450,18 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
             assertThat(convertedProgressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS))
                     .as("Il timestamp del progress response element (actual) non coincide con quello dell'elemento restituito da b2b (expected)")
                     .isEqualTo(elementToCheck.getTimestamp().truncatedTo(ChronoUnit.SECONDS));
+            if (timelineElementInternalCategory == TimelineElementCategoryV23.NOTIFICATION_CANCELLED) {
+                assertThat(convertedProgressResponseElement.getElement().getDetails())
+                        .as("I details dell'elemento NOTIFICATION_CANCELLED non devono essere null")
+                        .isNotNull();
+                assertThat(convertedProgressResponseElement.getElement().getDetails().getNotRefinedRecipientIndexes())
+                        .as("notRefinedRecipientIndexes è un campo obbligatorio per NOTIFICATION_CANCELLED")
+                        .isNotNull();
+            }
             log.info("EventProgress: " + progressResponseElement);
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
-    }
-
-    @Override
-    public void setValueForWaitForAccepted(boolean waitForAccepted) {
-        //waitForAccepted introdotto a partire dalla V27
     }
 
     @Override
@@ -567,7 +570,7 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
 
     @Override
     public List<Object> verificaCorrispondenzaElementiTimelineWebhookAndB2B() {
-        List<Object> resultList = new LinkedList<>();
+        List<Object> resultList = new ArrayList<>();
 
         TimelineElementV23 teWebhook = progressResponseElement.getElement();
         assertThat(teWebhook).as("L'elemento di timeline recuperato dal webhook non dev'essere null").isNotNull();
@@ -649,8 +652,8 @@ public class WebhookStepsV23 implements WebhookStepsInterface {
     private String logTimelineWebhook() {
         StringBuilder sb = new StringBuilder("\n");
         progressResponseElementList.forEach(x -> {
-            sb.append("eventType: ");
-            sb.append(x.getEventId());
+            sb.append("elementId: ");
+            sb.append(x.getElement().getElementId());
             sb.append(" status:");
             sb.append(x.getNewStatus());
             sb.append("\n");

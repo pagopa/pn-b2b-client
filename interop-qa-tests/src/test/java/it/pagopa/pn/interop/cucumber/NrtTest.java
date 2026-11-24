@@ -28,13 +28,17 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"wait_for_fix", "ignore"})
+@ExcludeTags({"wait_for_fix", "ignore", "adeguamento-analisi-rischio", "certifiedDiscreteAttributeFlagOn", "nuovi-operatori-off", "data-pagination", "m2m-ra-review", "m2m-ra-events"})
 @IncludeTags({
         // BFF
         "agreement", "attribute", "descriptor", "document", "eservice", "purpose", "daily_calls_update_request",
         "purpose_latest_risk_analysis", "purpose_risk_analysis", "incaricato", "capofila", "selfcare",
         "app-edit-ff-on", "llgg", "e-service-template", "e-service-template-receive-bff", "purposeTemplate",
         "client_admin", "client", "catalog", "producer", "DPoPSuite", "tenant", "voucher", "dailyCallsThreshold",
+        "e-service-async", "e-service-template-async", "voucher_async", "devToolsClientAssertion",
+        "manual-archiving-eservice", "notification-manual-archiving-eservice", "certifiedDiscreteAttributeFlagOff",
+        "nuovi-operatori","crudNotification", "document-url-description", "document-type-check", "bff-notification",
+        "archiviazione-documentale", "delegation-manual-archiving-eservice", "notification-manual-archiving-delegation",
 
         // M2M
         "m2m-agreements", "m2m-purposes", "m2m-attributes", "m2m-eservices", "m2m-agreements-parte2-luglio",

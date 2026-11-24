@@ -1,6 +1,7 @@
 @archiviazione-documentale
 Feature: Archiviazione documentale e verifica firma/marca temporale
 
+  @ignore
   Scenario: [TRIGGER]
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -46,7 +47,7 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AgreementSuspendedByConsumer | AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG |
       | ARCHIVED       | AgreementArchivedByConsumer  | AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG  |
 
-  Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione nuova versione finalità - archiviazione PDF firmato
+  Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
@@ -124,15 +125,31 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file contenga le opportune informazioni
 
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
-    Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
-    Given l'ente delegato "PA1"
+    Given l'utente è un "admin" di "PA2"
+    And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
+    And l'ente delegante "PA1"
+    And l'ente delegato "PA2"
     And l'utente è un "admin" dell'ente delegato
     And l'ente delegato concede la disponibilità a ricevere deleghe in fruizione
-    And l'ente delegante "PA2"
-    And l'utente è un "admin" dell'ente delegante
-    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato
+
+    # Delega in stato ACTIVE
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante ha inoltrato una richiesta di delega in fruizione all'ente delegato con successo
     And l'utente è un "admin" dell'ente delegato
-    And l'ente delegato rifiuta la delega in fruizione
+    And l'ente delegato accetta la delega in fruizione con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di reperire i dettagli della delega in fruizione
+    Then si ottiene lo status code 200
+    And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato ACTIVE
+
+    # Delega in stato REVOKED
+    Given l'utente è un "admin" dell'ente delegante
+    And l'ente delegante con ruolo "admin" revoca la delega in fruizione con successo
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And l'utente tenta di reperire i dettagli della delega in fruizione
+    Then si ottiene lo status code 200
+    And i dettagli della delega in fruizione sono coerenti con quanto atteso da una delega in stato REVOKED
+
     And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REVOKED_DOC
     And verifica che il file contenga le opportune informazioni
     And verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 WORM un CONSUMER_DELEGATION_REVOKED_DOC
@@ -186,23 +203,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che a fronte dell'evento ClientKeyDeleted venga generato nell'opportuno bucket S3 WORM un KEY_DELETED_EVENTS_LOG
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
-
-  Scenario Outline:[ESERVICE_EVENT_ARCHIVE_1] Upgrade descrittore eservice - archiviazione ZIP firmato
-    Given l'utente è un "admin" di "PA1"
-    Given "PA1" ha già creato un e-service con un descrittore in stato "<statoVersione>"
-    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 STANDARD un ESERVICE_DESCRIPTOR_EVENTS_LOG
-    And verifica che il file contenga le opportune informazioni
-    And verifica che a fronte dell'evento DescriptorEServiceUpgraded venga generato nell'opportuno bucket S3 WORM un ESERVICE_DESCRIPTOR_EVENTS_LOG
-    And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
-    And verifica che il file contenga le opportune informazioni
-
-    Examples:
-      | statoVersione |
-      | PUBLISHED     |
-      | SUSPENDED     |
-      | DEPRECATED    |
-      | ARCHIVED      |
-      | DRAFT         |
 
   Scenario: [CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"

@@ -28,6 +28,14 @@ Feature: Aggiunta o aggiornamento di una mail di contatto
       | Privato | support      |        403 |
       | Privato | api,security |        403 |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | statusCode |
+      | GSP     | reviewer     |        403 |
+      | GSP     | viewer       |        403 |
+      | Privato | reviewer     |        403 |
+      | Privato | viewer       |        403 |
+
   @nrt-minimal
   @tenant_mail_upsert2
   Scenario: [TENANT_MAIL_UPSERT_02] Per un utente con sufficienti permessi (admin), alla richiesta di aggiunta di una mail di contatto compilando i parametri kind e address ma non description, va a buon fine

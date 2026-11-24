@@ -8,24 +8,23 @@ import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextF
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeExecution;
+import it.pagopa.pn.cucumber.steps.templateEngine.escapemod.HtmlEscapeUtilities;
+import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.ITemplateEngineStrategy;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.io.RandomAccessReadBuffer;
-import org.apache.pdfbox.pdfparser.PDFParser;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,18 +37,26 @@ public class TemplateEngineSteps {
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
     private final Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
+    private final HtmlEscapeService htmlEscapeService;
     private TemplateEngineResult result;
+    private List<HtmlEscapeExecution> htmlEscapeExecutions = List.of();
 
     private HttpClientErrorException templateFileException;
     private HttpServerErrorException templateServerException;
     private List<HttpStatusCodeException> templateFileExceptions = new ArrayList<>();
     private String recipientType = "PF";
 
+    @Value("${spring.profiles.active}")
+    private String runProfile;
+
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
-                               TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
+                               TemplateEngineContextFactory contextFactory,
+                               Map<TemplateType, List<String>> templateEngineObjectFields,
+                               HtmlEscapeService htmlEscapeService) {
         this.templateEngineStrategy = templateEngineStrategy;
         this.contextFactory = contextFactory;
         this.templateEngineObjectFields = templateEngineObjectFields;
+        this.htmlEscapeService = htmlEscapeService;
     }
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
@@ -75,8 +82,9 @@ public class TemplateEngineSteps {
         this.recipientType = recipientType;
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("context_recipientType", recipientType); // todo t mc.
-        parameters.put("recipient_recipientType", recipientType); // todo t mc.
+        parameters.put("context_recipientType", recipientType);
+        parameters.put("recipient_recipientType", recipientType);
+        parameters.put("recipientType", recipientType);
         retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, "semplice", parameters);
     }
 
@@ -114,31 +122,32 @@ public class TemplateEngineSteps {
     public void verificoCheIlTemplateInFormato(String extentionFile) {
         Assertions.assertNull(templateFileException);
         Assertions.assertNotNull(result);
-        if(extentionFile.equals(".pdf")) {
-            Assertions.assertNotNull(result.getTemplateFileReturned());
-            Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
-        } else if (extentionFile.equals("html")){
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertTrue(result.getTemplateHtmlReturned().contains("<html"));
-        } else if (extentionFile.equals("text")) {
-            Assertions.assertNotNull(result.getTemplateHtmlReturned());
-            Assertions.assertFalse(result.getTemplateHtmlReturned().contains("<html"));
+        switch (extentionFile) {
+            case ".pdf" -> {
+                Assertions.assertNotNull(result.getTemplateFileReturned());
+                Assertions.assertTrue(isValidPdf(result.getTemplateFileReturned()));
+            }
+            case "html" -> {
+                Assertions.assertNotNull(result.getTemplateHtmlReturned());
+                Assertions.assertTrue(result.getTemplateHtmlReturned().contains("<html"));
+            }
+            case "text" -> {
+                Assertions.assertNotNull(result.getTemplateHtmlReturned());
+                Assertions.assertFalse(result.getTemplateHtmlReturned().contains("<html"));
+            }
+            default -> Assertions.fail("Formato template non supportato: " + extentionFile);
         }
     }
 
     public boolean isValidPdf(Resource resource) {
         try {
-            byte[] input = ((ByteArrayResource) resource).getByteArray();
-            RandomAccessReadBuffer buffer = new RandomAccessReadBuffer(input);
-            PDFParser parser = new PDFParser(buffer);
-            PDDocument doc = parser.parse();
-            try (PDDocument document = new PDDocument(doc.getDocument())) {
-                PDFTextStripper textStripper = new PDFTextStripper();
-                String retrievedText = textStripper.getText(document);
-                result.setFileTextRetrieved(retrievedText);
-                return retrievedText != null;
+            String retrievedText = HtmlEscapeUtilities.extractPdfText(resource, "template corrente");
+            if (retrievedText == null) {
+                return false;
             }
-        } catch (IOException | ClassCastException e) {
+            result.setFileTextRetrieved(retrievedText);
+            return !retrievedText.isBlank();
+        } catch (RuntimeException e) {
             return false;
         }
     }
@@ -156,14 +165,25 @@ public class TemplateEngineSteps {
         templateFileExceptions.forEach(data -> Assertions.assertEquals(errorCode, String.valueOf(data.getRawStatusCode())));
     }
 
-    private int countOccurrences(String searchString) {
-        return (int) Pattern.compile(Pattern.quote(searchString))
-                .splitAsStream(result.retrieveFormattedText())
-                .count() - 1;
+    private int countOccurrences(String regex) {
+        Matcher matcher = Pattern.compile(regex)
+                .matcher(result.retrieveFormattedText());
+
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+
+        return count;
     }
 
-    private String getTextToRetrieve(String language, TemplateType templateType, String recipientType) {
-        return templateEngineStrategy.get(templateType).getTextToCheckLanguage(language, recipientType);
+    private List<String> getTextsToRetrieve(String language, TemplateType templateType, String recipientType) {
+        List<String> retrievedTexts = templateEngineStrategy.get(templateType).getTextsToCheckLanguage(language, recipientType);
+        List<String> texts = new ArrayList<>();
+        for (String retrievedText : retrievedTexts) {
+            texts.add(retrievedText.replace("{%profile}", runProfile));
+        }
+        return texts;
     }
 
     @And("controllo che nel file {string} contenga il (campo)(testo) {string} valorizzato (a)(con) {string}")
@@ -171,7 +191,7 @@ public class TemplateEngineSteps {
         if (fileType.equals("pdf")) {
             Assertions.assertNotNull(result.getFileTextRetrieved());
             if (field.equals("finale")) {
-                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue));
+                Assertions.assertTrue(result.retrieveFormattedText().endsWith(fieldValue + " PagoPA S.p.A. società per azioni capitale sociale di euro 1,000,000 interamente versato sede legale in Roma, Piazza Colonna 370, CAP 00187 n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"));
             } else if (field.equals("delegato")) {
                 Assertions.assertTrue(result.retrieveFormattedText().contains("il " + fieldValue + " ha avuto accesso ai documenti informatici oggetto di notifica"));
             } else {
@@ -185,47 +205,80 @@ public class TemplateEngineSteps {
     @And("controllo che per il template {string} il file {string} sia in lingua {string}")
     public void controlloChePerIlTemplateIlFilePerUnaNotificaIlTestoSiaInLingua(String templateType, String fileType, String languange) {
         TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
-        String textToFind = getTextToRetrieve(languange, templateTypeObject, recipientType);
+        List<String> textsToFind = getTextsToRetrieve(languange, templateTypeObject, recipientType);
+        String[] textsToFindArray = textsToFind.toArray(new String[0]);
         if (fileType.equals("pdf")) {
             assertThat(result.getFileTextRetrieved()).isNotNull();
             assertThat(result.retrieveFormattedText())
-                    .as("Checking if formatted text contains: " + textToFind)
-                    .contains(textToFind);
+                    .as("Checking if formatted text contains all of: " + textsToFind)
+                    .contains(textsToFindArray);
         } else {
             assertThat(result.getTemplateHtmlReturned()).isNotNull();
             assertThat(result.getTemplateHtmlReturned())
-                    .as("Checking if formatted text contains: " + textToFind)
-                    .contains(textToFind);
+                    .as("Checking if formatted text contains all of: " + textsToFind)
+                    .contains(textsToFindArray);
         }
     }
 
     @And("controllo che la notifica {string} abbia i giusti campi valorizzati")
     public void controlloCheLaNotificaAbbiaIGiustiCampiValorizzati(String notificationType) {
         switch (notificationType) {
-            case "monodestinatario" -> {
-                int count = countOccurrences("Nome e Cognome / Ragione Sociale");
-                Assertions.assertEquals(1, count);
-            } case "multidestinatario" -> {
-                int count = countOccurrences("Nome e Cognome / Ragione Sociale");
-                Assertions.assertEquals(2, count);
-            } case "singolo allegato" -> {
-                int count = countOccurrences("TEST_digest_allegato");
-                Assertions.assertEquals(1, count);
-            } case "piu allegati" -> {
-                int count = countOccurrences("TEST_digest_allegato");
-                Assertions.assertEquals(2, count);
-            }
-            default -> throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
+            case "monodestinatario" ->
+                    Assertions.assertEquals(1, countOccurrences("Nome e(?: string)? Cognome(?: /(?: string)? Ragione Sociale)?"));
+            case "multidestinatario" ->
+                    Assertions.assertEquals(2, countOccurrences("Nome e(?: string)? Cognome(?: /(?: string)? Ragione Sociale)?"));
+            case "singolo allegato" ->
+                    Assertions.assertEquals(1, countOccurrences("TEST_digest_allegato"));
+            case "piu allegati" ->
+                    Assertions.assertEquals(2, countOccurrences("TEST_digest_allegato"));
+            default ->
+                    throw new IllegalConfigurationException("Invalid notification type: " + notificationType);
         }
     }
 
+    @And("il corpo del messaggio non contiene il testo {string}")
+    public void checkMessageNotContains(String message) {
+        assertMessageContent(false, message);
+    }
+
     @And("il corpo del messaggio contiene il testo {string}")
-    public void checkMessageContents(String message) {
+    public void checkMessageContains(String message) {
+        assertMessageContent(true, message);
+    }
+
+    public void assertMessageContent(boolean contains, String message) {
         Assertions.assertNotNull(result.getFileTextRetrieved(), "Nessun testo recuperato");
-
         String formattedText = result.retrieveFormattedText();
+        if (contains) {
+            Assertions.assertTrue(formattedText.contains(message),
+                    "Il corpo del messaggio non contiene il testo atteso: " + message);
+        } else {
+            Assertions.assertFalse(formattedText.contains(message),
+                    "Il corpo del messaggio contiene il testo non atteso: " + message);
+        }
+    }
 
-        Assertions.assertTrue(formattedText.contains(message),
-                "Il corpo del messaggio non contiene il testo atteso: " + message);
+    // -------------------------------------------------------------------------
+    // HTML ESCAPE
+    // -------------------------------------------------------------------------
+
+    @When("eseguo HTML escaping sull'endpoint {string} in lingua {string} sui campi {string}")
+    public void eseguoIlFuzzingHtmlEscapingSullEndpoint(String endpoint, String language, String fields) {
+        htmlEscapeExecutions = htmlEscapeService.executeFieldsFuzzing(endpoint, language, fields);
+    }
+
+    @Then("verifico che tutti i valori siano rappresentati con HTML escaping disabilitato nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoRappresentatiSenzaEscaping(String format) {
+        htmlEscapeService.verifyEscapingDisabled(htmlEscapeExecutions, format);
+    }
+
+    @When("eseguo il corpus di HTML escaping sull'endpoint {string} in lingua {string} sul campo {string}")
+    public void eseguoIlCorpusDiFuzzingHtmlEscaping(String endpoint, String language, String field) {
+        htmlEscapeExecutions = htmlEscapeService.executeCorpusFuzzing(endpoint, language, field);
+    }
+
+    @Then("verifico che tutti i valori siano correttamente rappresentati nel template di tipo {string}")
+    public void verificoCheTuttiIValoriFuzzedSianoEscapati(String format) {
+        htmlEscapeService.verifyEscapingEnabled(htmlEscapeExecutions, format);
     }
 }

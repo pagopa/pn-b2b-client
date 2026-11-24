@@ -1,35 +1,34 @@
 package it.pagopa.pn.cucumber.steps.delayer.validator;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import io.cucumber.spring.ScenarioScope;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractWorkflowStep;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMondayFromDate;
 
 @Slf4j
+@Service
+@ScenarioScope
+@RequiredArgsConstructor
 public class DelayerValidator {
 
     public static final int FROZEN_POLLING_MAX_MINUTES = 45;
     private final DelayerContext context;
-    private final DelayerLambdaClient lambdaClient;
+    private final DelayerSevice service;
     private final DelayerPaperDeliveryUtils utils;
-
-    public DelayerValidator(DelayerContext context, DelayerLambdaClient lambdaClient, DelayerPaperDeliveryUtils utils) {
-        this.context = context;
-        this.lambdaClient = lambdaClient;
-        this.utils = utils;
-    }
 
     public void assertPianifications() {
         if (context.failPianification.isEmpty()) return;
@@ -138,29 +137,77 @@ public class DelayerValidator {
             assertPianifications();
         }
 
-        List<DelayerPaperDelivery> actualFrozen = lambdaClient.findByWorkflowStep(
+        List<DelayerPaperDelivery> actualFrozen = service.findByWorkflowStep(
                 frozenExpected.stream().map(DelayerPaperDelivery::getRequestId).collect(Collectors.toSet()),
                 step.name(),
-                getNextMonday(),
+                getNextMondayFromDate(context.expectedDeliveryDate, 1),
                 FROZEN_POLLING_MAX_MINUTES
         );
 
-        if (frozenExpected.size() != actualFrozen.size()) {
-            validSeeds.forEach(seed -> registerFailureIfAbsent(seed,
-                    "Mismatch congelati - attesi: %d, trovati: %d".formatted(frozenExpected.size(), actualFrozen.size())));
-            return;
-        }
+        frozenExpected.forEach(expectedDelivery ->
+                actualFrozen.stream()
+                        .filter(actualDelivery -> actualDelivery.getRequestId().equals(expectedDelivery.getRequestId()))
+                        .findFirst()
+                        .ifPresent(actualDelivery ->
+                                expectedDelivery.setVirtualNotificationSentAt(actualDelivery.getVirtualNotificationSentAt()))
+        );
 
-        Set<Map<String, String>> expectedSet = toComparableMapList(frozenExpected, step).stream().collect(Collectors.toSet());
-        Set<Map<String, String>> actualSet = toComparableMapList(actualFrozen, step).stream().collect(Collectors.toSet());
+        frozenExpected.forEach(expectedDelivery ->
+                expectedDelivery.setSk(utils.calculateSk(WorkflowSteps.EVALUATE_SENDER_LIMIT, expectedDelivery))
+        );
 
-        Set<Map<String, String>> missing = new HashSet<>(expectedSet);
-        missing.removeAll(actualSet);
+        List<String> problems = diffFrozen(frozenExpected, actualFrozen, step);
 
-        if (!missing.isEmpty()) {
+        if (!problems.isEmpty()) {
             validSeeds.forEach(seed ->
-                    registerFailureIfAbsent(seed, "Differenze tra congelati attesi e trovati: " + missing));
+                    registerFailureIfAbsent(seed, "Differenze tra congelati attesi e trovati (attesi: %d, trovati: %d) -> %s"
+                            .formatted(frozenExpected.size(), actualFrozen.size(), problems)));
         }
+    }
+
+    /**
+     * Confronto campo-per-campo per requestId, sul modello di DelayerPaperDeliveryUtils.compare():
+     * a differenza del confronto per set-equality precedente, segnala esattamente quale campo diverge
+     * (es. prepareRequestDate expected=..., actual=...) invece di limitarsi a dire "non trovato".
+     */
+    private List<String> diffFrozen(List<DelayerPaperDelivery> expected, List<DelayerPaperDelivery> actual, WorkflowSteps step) {
+        Map<String, Map<String, String>> expectedByReqId = toComparableMapList(expected, step).stream()
+                .collect(Collectors.toMap(m -> m.get("requestId"), m -> m, (a, b) -> a, LinkedHashMap::new));
+        Map<String, Map<String, String>> actualByReqId = toComparableMapList(actual, step).stream()
+                .collect(Collectors.toMap(m -> m.get("requestId"), m -> m, (a, b) -> a, LinkedHashMap::new));
+
+        List<String> problems = new ArrayList<>();
+
+        expectedByReqId.forEach((requestId, expectedMap) -> {
+            Map<String, String> actualMap = actualByReqId.get(requestId);
+            if (actualMap == null) {
+                problems.add("Atteso congelato ma non trovato tra i reali (requestId=" + requestId + ")");
+                return;
+            }
+
+            Set<String> keys = new LinkedHashSet<>();
+            keys.addAll(expectedMap.keySet());
+            keys.addAll(actualMap.keySet());
+
+            List<String> diffs = new ArrayList<>();
+            for (String key : keys) {
+                String expectedValue = expectedMap.get(key);
+                String actualValue = actualMap.get(key);
+                if (!Objects.equals(expectedValue, actualValue)) {
+                    diffs.add(key + " [expected=" + expectedValue + ", actual=" + actualValue + "]");
+                }
+            }
+
+            if (!diffs.isEmpty()) {
+                problems.add("Differenze per requestId=" + requestId + " -> " + diffs);
+            }
+        });
+
+        actualByReqId.keySet().stream()
+                .filter(requestId -> !expectedByReqId.containsKey(requestId))
+                .forEach(requestId -> problems.add("Trovato tra i congelati reali ma non atteso (requestId=" + requestId + ")"));
+
+        return problems;
     }
 
     private void registerFailureIfAbsent(String seed, String message) {

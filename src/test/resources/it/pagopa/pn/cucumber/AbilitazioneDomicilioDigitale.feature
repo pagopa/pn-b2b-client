@@ -39,7 +39,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "CucumberSpa"
 #    Then l'utente "CucumberSpa" "ACCETTA" i tos per sercq
     And viene disabilitato il servizio SERCQ SEND per la PA "default"
-    # da rivedere
+    And vengono rimossi eventuali recapiti presenti per l'utente
 
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
@@ -140,7 +140,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
 
@@ -212,10 +212,9 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Alda Merini"
     Then l'utente "Alda Merini" "ACCETTA" i tos per sercq
-
+    And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
@@ -246,10 +245,8 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-
     And viene attivato il servizio SERCQ SEND per la PA "Comune_Root"
     And viene verificato che Sercq sia "abilitato" per la PA "Comune_Root"
 
@@ -314,7 +311,7 @@ Feature: Abilitazione domicilio digitale
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Alda Merini"
-    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene inserito un recapito legale "example4@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
@@ -483,7 +480,7 @@ Feature: Abilitazione domicilio digitale
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 
   @sercq @addressBook2
@@ -496,7 +493,7 @@ Feature: Abilitazione domicilio digitale
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene attivato il servizio SERCQ SEND per la PA "default"
     And viene verificato che Sercq sia "abilitato" per la PA "default"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail1@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
 
 #  @sercq @addressBook1
@@ -579,7 +576,7 @@ Feature: Abilitazione domicilio digitale
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @sercq @addressBook1 @webhookV23 @precondition @cleanWebhook @webhook2 @ignoreHotfixTemp #temp
+  @sercq @addressBook1 @webhookV23 @precondition @cleanWebhook @webhook3 @ignoreHotfixTemp #temp
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_WEBHOOK_V23] Creazione di un nuovo stream con versione V23 e controllo che SERCQ è presente
     Given si predispone addressbook per l'utente "Galileo Galilei"
     Then l'utente "Galileo Galilei" "ACCETTA" i termini di servizio di tipo: TOS_SERCQ
@@ -735,7 +732,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che Sercq sia "abilitato" per la PA "default"
 #    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
 #    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
-    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
+    And viene inserita l'email di cortesia "provaemail1@test.it" per il comune "Comune_1"
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
@@ -747,10 +744,10 @@ Feature: Abilitazione domicilio digitale
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline           | true                                                |
-      | details                | NOT_NULL                                            |
+      | loadTimeline           | true                                               |
+      | details                | NOT_NULL                                           |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-      | details_recIndex       | 0                                                   |
+      | details_recIndex       | 0                                                  |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi

@@ -18,7 +18,7 @@ public class AgreementRejectionSteps {
     public void rejectAgreementWithMessage() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         new AgreementRejectionPayload().reason("rejection reason: qa-testing"))
         );
     }
@@ -26,7 +26,7 @@ public class AgreementRejectionSteps {
     @When("l'utente richiede una operazione di rifiuto di quella richiesta di fruizione senza messaggio")
     public void rejectAgreementWithoutMessage() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementId(),
+                () -> clientTokenConfigurator.getAgreementClient().rejectAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId(),
                         new AgreementRejectionPayload().reason(""))
         );
     }

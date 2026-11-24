@@ -44,12 +44,12 @@ Feature: Listing chiavi client
   @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEYS_LISTING_3] Un utente api, security o api/security; appartenente all'ente che ha creato il client; il quale utente non è membro del client; richiede l’elenco delle chiavi caricate per il client. L’operazione non va a buon fine
-    Given l'utente è un "<ruolo>" di "PA1"
-    Given "PA1" ha già creato 1 client "CONSUMER"
-    Given "PA1" ha già inserito l'utente con ruolo "admin" come membro di quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica in quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica in quel client
-    Given un "admin" di "PA1" ha caricato una chiave pubblica in quel client
+    Given l'utente è un "<ruolo>" di "PA2"
+    Given "PA2" ha già creato 1 client "CONSUMER"
+    Given "PA2" ha già inserito l'utente con ruolo "admin" come membro di quel client
+    Given un "admin" di "PA2" ha caricato una chiave pubblica in quel client
+    Given un "admin" di "PA2" ha caricato una chiave pubblica in quel client
+    Given un "admin" di "PA2" ha caricato una chiave pubblica in quel client
     When l'utente richiede una operazione di listing delle chiavi di quel client
     Then si ottiene status code 403
 
@@ -58,6 +58,12 @@ Feature: Listing chiavi client
       | api          |
       | security     |
       | api,security |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        |
+      | reviewer     |
+      | viewer       |
 
   @happy-path
   @nrt-minimal

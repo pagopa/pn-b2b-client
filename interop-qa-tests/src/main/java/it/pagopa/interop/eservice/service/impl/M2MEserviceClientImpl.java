@@ -1,5 +1,6 @@
 package it.pagopa.interop.eservice.service.impl;
 
+import it.pagopa.interop.APIUnavailableException;
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.common.operation.SimpleOperation;
@@ -7,14 +8,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.eservice.service.IM2MEserviceClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Document;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EService;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDelegationUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceDraftUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServices;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import java.util.List;
 import java.util.UUID;
 import lombok.EqualsAndHashCode;
@@ -102,6 +96,11 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     }
 
     @Override
+    public List<EService> getPage(int page, int size) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public UUID getId(EService entity) {
         return entity == null ? null : entity.getId();
     }
@@ -119,6 +118,26 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
             body.getFile(),
             body.getPrettyName()
         );
+    }
+
+    @Override
+    public Document uploadAsyncExchangeCallbackInterface(EServiceInterfaceUploadRequest body) {
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
+    }
+
+    @Override
+    public void deleteEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
+    }
+
+    @Override
+    public FileDownloadMultipart downloadEServiceDescriptorAsyncExchangeCallbackInterface(UUID eServiceId, UUID descriptorId) {
+        throw new APIUnavailableException("Endpoint available only for M2M v3");
+    }
+
+    @Override
+    public EService createEService(EServiceCreateRequest body) {
+        return this.eservicesApi.createEService(body.toSeed());
     }
 
     @Override
@@ -147,6 +166,16 @@ public class M2MEserviceClientImpl extends AbstractClient implements IM2MEservic
     @Override
     public EService patchEServiceDescription(UUID eServiceId, EServiceDescriptionPatchRequest body) {
         return eservicesApi.updatePublishedEServiceDescription(eServiceId, new EServiceDescriptionUpdateSeed().description(body.getDescription()));
+    }
+
+    @Override
+    public EService scheduleArchiveEService(UUID eServiceId, EServiceArchivingRequest body) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
+    }
+
+    @Override
+    public EService cancelScheduleArchiveEService(UUID eServiceId) {
+        throw new APIUnavailableException("Endpoint disponibile solo per M2M v3");
     }
 
     @Override

@@ -1,26 +1,41 @@
 package it.pagopa.pn.cucumber.steps.delayer.planner;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerPaperDelivery;
 import it.pagopa.pn.cucumber.steps.delayer.model.enums.WorkflowSteps;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.*;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.extractSeed;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getCapDeliveryDriverKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getNextMondayFromDate;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getSenderKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getUnifiedDeliveryDriverKey;
+import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.sortByPriority;
 
+@Component
+@ScenarioScope
+@RequiredArgsConstructor
 public class DelayerPlanner {
 
     private final DelayerContext context;
     private final DelayerPaperDeliveryUtils utils;
-
-    public DelayerPlanner(DelayerContext context) {
-        this.context = context;
-        this.utils = new DelayerPaperDeliveryUtils(context);
-    }
+    private final DelayerSkipSenderLimitService skipSenderLimitService;
 
     public Map<String, List<DelayerPaperDelivery>> simulateAlgorithm(WorkflowSteps endAt, String seed) {
         Map<String, List<DelayerPaperDelivery>> groupedByStep = initWorkflowMap();
@@ -35,16 +50,38 @@ public class DelayerPlanner {
 
         // Step 1: Sender Limit
         var pairResult = applySenderLimit(sortedNotifications, groupedByStep, frozenByStep);
-        List<DelayerPaperDelivery> toEvaluateDriverCapacity = pairResult.getLeft();
+        List<DelayerPaperDelivery> toEvaluateSenderPriority = pairResult.getLeft();
         List<DelayerPaperDelivery> toEvaluateResidualCapacity = pairResult.getRight();
-        if (endAt == WorkflowSteps.EVALUATE_SENDER_LIMIT) return finalizeResult(groupedByStep, frozenByStep);
 
-        // Step 2: Driver Capacity
-        List<DelayerPaperDelivery> toEvaluatePrintCapacity = applyDriverCapacity(toEvaluateDriverCapacity, toEvaluateResidualCapacity, groupedByStep, frozenByStep);
+        // Step 2: Sender Priority
+        List<DelayerPaperDelivery> toEvaluateDriverCapacity = applySenderPriority(toEvaluateSenderPriority, groupedByStep);
+
+        if (endAt == WorkflowSteps.EVALUATE_SENDER_LIMIT) {
+            groupedByStep.put(
+                    WorkflowSteps.EVALUATE_SENDER_LIMIT.name(),
+                    utils.deepCopyAndUpdateKeys(
+                            toEvaluateDriverCapacity,
+                            WorkflowSteps.EVALUATE_SENDER_LIMIT,
+                            context.expectedDeliveryDate
+                    )
+            );
+
+            return finalizeResult(groupedByStep, frozenByStep);
+        }
+
+        if (endAt == WorkflowSteps.EVALUATE_SENDER_PRIORITY) return finalizeResult(groupedByStep, frozenByStep);
+
+        // Step 3: Driver Capacity
+        List<DelayerPaperDelivery> toEvaluatePrintCapacity = applyDriverCapacity(
+                toEvaluateDriverCapacity,
+                toEvaluateResidualCapacity,
+                groupedByStep,
+                frozenByStep
+        );
         if (endAt == WorkflowSteps.EVALUATE_DRIVER_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
 
-        // Step 3: Print Capacity
-        List<DelayerPaperDelivery> toPreparePhase2 = applyPrintCapacity(toEvaluatePrintCapacity, groupedByStep, frozenByStep);
+        // Step 4: Print Capacity
+        applyPrintCapacity(toEvaluatePrintCapacity, groupedByStep, frozenByStep);
         if (endAt == WorkflowSteps.EVALUATE_PRINT_CAPACITY) return finalizeResult(groupedByStep, frozenByStep);
 
         return finalizeResult(groupedByStep, frozenByStep);
@@ -141,16 +178,26 @@ public class DelayerPlanner {
         // 2. Separa RS e secondi tentativi
         List<DelayerPaperDelivery> rsOrSecondAttempt = notifications.stream()
                 .filter(n -> n.isRS() || n.isSecondAttempt())
+                .filter(n -> !n.isInformalCommunication())
+                .toList();
+
+        // 2bis. Separa i residui prioritari (skipSenderLimit=true): stesso bypass di RS/secondi tentativi,
+        // ma non consumano il limite garantito del mittente sulla settimana di elaborazione corrente.
+        List<DelayerPaperDelivery> residuiPrioritari = notifications.stream()
+                .filter(n -> !n.isRS() && !n.isSecondAttempt() && !n.isInformalCommunication())
+                .filter(n -> Boolean.TRUE.equals(n.getSkipSenderLimit()))
                 .toList();
 
         List<DelayerPaperDelivery> toEvaluateNormally = notifications.stream()
-                .filter(n -> !(n.isRS() || n.isSecondAttempt()))
+                .filter(n -> !((n.isRS() && !n.isInformalCommunication()) || n.isSecondAttempt()))
+                .filter(n -> !Boolean.TRUE.equals(n.getSkipSenderLimit()))
                 .toList();
 
-        // 3. RS e secondi tentativi vanno direttamente alla valutazione successiva
-        passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
+        // 3. RS, secondi tentativi e residui prioritari vanno direttamente alla valutazione successiva
+        passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(rsOrSecondAttempt, WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
+        passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(residuiPrioritari, WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
 
-        //4. Gli 890 vengono processati per mittente censito e non
+        //4. Gli 890 e gli RS INFORMAL (comunicazioni bonarie) vengono processati per mittente censito e non
         toEvaluateNormally = sortByPriority(toEvaluateNormally);
 
         for (DelayerPaperDelivery notification : toEvaluateNormally) {
@@ -158,7 +205,7 @@ public class DelayerPlanner {
 
             if (utils.isMittenteCensito(senderKey)) {
                 int senderLimit = utils.getSenderLimit(senderKey);
-                passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(Stream.of(notification).limit(senderLimit).toList(), WorkflowSteps.EVALUATE_DRIVER_CAPACITY, context.expectedDeliveryDate));
+                passedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(Stream.of(notification).limit(senderLimit).toList(), WorkflowSteps.EVALUATE_SENDER_PRIORITY, context.expectedDeliveryDate));
                 notPassedSenderLimit.addAll(utils.deepCopyAndUpdateKeys(Stream.of(notification).skip(senderLimit).toList(), WorkflowSteps.EVALUATE_RESIDUAL_CAPACITY, context.expectedDeliveryDate));
                 utils.setSenderLimit(senderKey, Math.max(0, senderLimit - 1));
             } else {
@@ -296,18 +343,23 @@ public class DelayerPlanner {
     }
 
     private DelayerPaperDelivery freezeNotification(DelayerPaperDelivery notification) {
-        String deliveryDate = getNextMonday(1);
-        return utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
+        String currentWeek = context.expectedDeliveryDate;
+        String deliveryDate = getNextMondayFromDate(currentWeek, 1);
+        DelayerPaperDelivery frozen = utils.deepCopyAndUpdateKeys(List.of(notification), WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate).get(0);
+
+        // Congelata per capacità di recapito o di stampa (non per limite mittente): se non è già residuo
+        // prioritario, verifica sul backend reale la quota residua sulla settimana X-1 (stessa data usata
+        // per il controllo del limite garantito), non la settimana appena valutata.
+        skipSenderLimitService.resolveOnFreeze(frozen, currentWeek);
+
+        return frozen;
     }
 
     private List<DelayerPaperDelivery> collectAllFrozen(Map<String, List<DelayerPaperDelivery>> frozenByStep) {
-        String deliveryDate = getNextMonday(1);
-
-        List<DelayerPaperDelivery> toFreeze = frozenByStep.values().stream()
+        return frozenByStep.values().stream()
                 .flatMap(List::stream)
+                .map(this::freezeNotification)
                 .toList();
-
-        return utils.deepCopyAndUpdateKeys(toFreeze, WorkflowSteps.EVALUATE_SENDER_LIMIT, deliveryDate);
     }
 
     private Map<String, List<DelayerPaperDelivery>> initWorkflowMap() {
@@ -316,6 +368,84 @@ public class DelayerPlanner {
             map.put(step.name(), new ArrayList<>());
         }
         return map;
+    }
+
+    private List<DelayerPaperDelivery> applySenderPriority(
+            List<DelayerPaperDelivery> notifications,
+            Map<String, List<DelayerPaperDelivery>> groupedByStep
+    ) {
+        List<DelayerPaperDelivery> reassigned = new ArrayList<>();
+
+        // RS e secondi tentativi mantengono la priorità tecnica esistente:
+        // non partecipano al riordino per senderPriority.
+        List<DelayerPaperDelivery> technicalPriorityNotifications = notifications.stream()
+                .filter(n -> n.isRS() || n.isSecondAttempt())
+                .map(DelayerPaperDelivery::new)
+                .toList();
+
+        reassigned.addAll(technicalPriorityNotifications);
+
+        // La senderPriority vale solo per le spedizioni normali / primi tentativi.
+        List<DelayerPaperDelivery> normalNotifications = notifications.stream()
+                .filter(n -> !(n.isRS() || n.isSecondAttempt()))
+                .toList();
+
+        Map<String, List<DelayerPaperDelivery>> bySender = normalNotifications.stream()
+                .collect(Collectors.groupingBy(
+                        n -> Optional.ofNullable(n.getSenderPaId()).orElse(""),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        for (List<DelayerPaperDelivery> senderNotifications : bySender.values()) {
+
+            // Slot temporali originari del singolo sender.
+            // Usiamo getEffectiveNotificationSentAt() per non perdere un eventuale slot virtuale già presente.
+            // Allo slot è associato anche skipSenderLimit: il privilegio di residuo prioritario appartiene
+            // alla posizione in coda, non alla singola spedizione, quindi segue lo slot nel riordino.
+            List<DelayerPaperDelivery> notificationsBySlot = senderNotifications.stream()
+                    .sorted(Comparator.comparing(DelayerPaperDelivery::getEffectiveNotificationSentAt))
+                    .toList();
+
+            List<String> originalTimeSlots = notificationsBySlot.stream()
+                    .map(DelayerPaperDelivery::getEffectiveNotificationSentAt)
+                    .toList();
+
+            List<Boolean> originalSkipSenderLimits = notificationsBySlot.stream()
+                    .map(DelayerPaperDelivery::getSkipSenderLimit)
+                    .toList();
+
+            // Riordino interno allo stesso sender:
+            // senderPriority decrescente, poi notificationSentAt crescente.
+            List<DelayerPaperDelivery> senderPrioritySorted = senderNotifications.stream()
+                    .sorted(
+                            Comparator.comparingInt(DelayerPaperDelivery::getSenderPriorityValue)
+                                    .reversed()
+                                    .thenComparing(DelayerPaperDelivery::getNotificationSentAt)
+                                    .thenComparing(DelayerPaperDelivery::getRequestId)
+                    )
+                    .toList();
+
+            for (int i = 0; i < senderPrioritySorted.size(); i++) {
+                DelayerPaperDelivery copy = new DelayerPaperDelivery(senderPrioritySorted.get(i));
+                copy.setVirtualNotificationSentAt(originalTimeSlots.get(i));
+                copy.setSkipSenderLimit(originalSkipSenderLimits.get(i));
+                reassigned.add(copy);
+            }
+        }
+
+        // Dopo aver valorizzato virtualNotificationSentAt, il sort globale torna a fare fairness
+        // usando gli slot temporali virtuali/originari, senza ordinare globalmente per senderPriority.
+        List<DelayerPaperDelivery> sorted = sortByPriority(reassigned);
+
+        groupedByStep.get(WorkflowSteps.EVALUATE_SENDER_PRIORITY.name())
+                .addAll(utils.deepCopyAndUpdateKeys(
+                        sorted,
+                        WorkflowSteps.EVALUATE_SENDER_PRIORITY,
+                        context.expectedDeliveryDate
+                ));
+
+        return sorted;
     }
 
 }

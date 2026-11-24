@@ -285,8 +285,8 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
   @preesitiEnabledTags
   Scenario: [PREESITI_POSTALIZZAZIONE_11.B] Verifica presenza evento SEND_ANALOG_PROGRESS con il DeliveryDetailCode RECRS002A all’interno della timeline B2B ma non della timeline web
     Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RS  |

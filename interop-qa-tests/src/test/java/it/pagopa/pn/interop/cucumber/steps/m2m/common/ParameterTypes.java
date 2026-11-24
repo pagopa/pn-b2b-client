@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps.m2m.common;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.enums.EntityIdType;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.EServiceTemplateVersionState;
+import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.attribute.CertifiedDiscreteAttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.CertifiedAttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.DeclaredAttributeSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.attribute.VerifiedAttributeSteps;
@@ -11,12 +13,13 @@ import it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps;
 
 public class ParameterTypes {
 
-    @ParameterType("verifiedAttribute|declaredAttribute|certifiedAttribute|descriptor|eService")
+    @ParameterType("verifiedAttribute|declaredAttribute|certifiedAttribute|certifiedDiscreteAttribute|descriptor|eService")
     public Class<? extends ICommonSteps> entityType(String type) {
         return switch (type) {
             case "verifiedAttribute" -> VerifiedAttributeSteps.class;
             case "declaredAttribute" -> DeclaredAttributeSteps.class;
             case "certifiedAttribute" -> CertifiedAttributeSteps.class;
+            case "certifiedDiscreteAttribute" -> CertifiedDiscreteAttributeSteps.class;
             case "descriptor" -> EserviceDescriptorSteps.class;
             case "eService" -> EserviceSteps.class;
             default -> throw new IllegalArgumentException("Unknown type: " + type);
@@ -45,5 +48,10 @@ public class ParameterTypes {
             case "consumer delegation" -> InteropEntityKind.CONSUMER_DELEGATION;
             default -> throw new IllegalArgumentException("Tipo di entità INTEROP non supportata: " + entityString);
         };
+    }
+
+    @ParameterType("DRAFT|PUBLISHED|DEPRECATED|SUSPENDED")
+    public static EServiceTemplateVersionState eServiceTemplateVersionStateM2M(String value) {
+        return EServiceTemplateVersionState.fromValue(value);
     }
 }
