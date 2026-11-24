@@ -63,6 +63,10 @@ public abstract class AbstractCommonSteps<T, K> implements ICommonSteps {
         setActualEntities(client.getAll());
     }
 
+    public void getPage(int page, int size) {
+        setActualEntities(client.getPage(page, size));
+    }
+
     public void getByFirstExpectedId() {
         getByIdType(null);
     }

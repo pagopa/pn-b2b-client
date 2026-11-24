@@ -11,6 +11,8 @@ public interface IClient<E, K> extends SettableBearerToken {
 
     List<E> getAll();
 
+    List<E> getPage(int page, int size);
+
     K getId(E entity);
 
     K generateId(EntityIdType entityIdType);

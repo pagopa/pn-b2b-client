@@ -27,10 +27,10 @@ Feature: test per il recupero indirizzo al primo tentativo vas
       | details            | NOT_NULL |
       | details_recIndexes | [0]      |
     And viene verificato che l'elemento di timeline "PUBLIC_REGISTRY_VALIDATION_RESPONSE" esista
-      | details                 | NOT_NULL                                                               |
-      | details_registry        | ANPR                                                                   |
-      | details_recIndex        | 0                                                                      |
-      | details_physicalAddress | {"address": "Via Umbria 5L", "municipality": "PADOVA", "zip": "35127"} |
+      | details                 | NOT_NULL                                                                         |
+      | details_registry        | ANPR                                                                             |
+      | details_recIndex        | 0                                                                                |
+      | details_physicalAddress | {"address": "Via Umbria 5/L KM 24123", "municipality": "PADOVA", "zip": "35127"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline            | true                                       |
       | details                 | NOT_NULL                                   |
@@ -255,8 +255,9 @@ Feature: test per il recupero indirizzo al primo tentativo vas
   Scenario: [RICERCA_INDIRIZZO_SECONDO_TENTATIVO] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR -  Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
     And destinatario
       | denomination    | PF 2 tentativi   |
       | recipientType   | PF               |
@@ -443,7 +444,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 # STREAM
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PIU' RECENTE
-  @ricercaIndirizzoVas @cleanWebhook @webhook1
+  @ricercaIndirizzoVas @cleanWebhook @webhook3
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_NEW] Invio notifica e controllo che stream con eventType vuoto e versione V28 o superiore contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "più recente"
@@ -464,7 +465,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
     And la category "PUBLIC_REGISTRY_VALIDATION_RESPONSE" è presente in almeno un elemento di timeline restituito dalla consumeStream con versione "più recente"
 
   #PA ABILITATA, PG CENSITA, CLIENT ABILITATO, STREAM PRECEDENTE ALLA 28 (CHE HA STATO INTRODOTTO IL VAS)
-  @ricercaIndirizzoVas @cleanWebhook @webhook1
+  @ricercaIndirizzoVas @cleanWebhook @webhook3
   Scenario: [RICERCA_INDIRIZZI_VAS_STREAM_OLD] Invio notifica e controllo che stream con eventType vuoto e versione V27 o inferiore non contenga elemento PUBLIC_REGISTRY_VALIDATION_CALL
     Given il test è effettuabile con API versione "V25" o superiore
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V27"
@@ -842,7 +843,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
   #PA ABILITATA, PF CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 3-5-15-24-43-48-11
+  @ricercaIndirizzoVas @ignoreUat  #rif srs 3-5-15-24-43-48-11
   Scenario: [RICERCA_INDIRIZZO_MONO_PF_OK_UAT] Invio notifica AR monodestinatario verso PF con campo address vuoto e recupero indirizzo da ANPR - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     Given viene generata una nuova notifica
@@ -885,7 +886,7 @@ Feature: test per il recupero indirizzo al primo tentativo vas
 
 
      #PA ABILITATA, PF CENSITA + PG CENSITA, CLIENT ABILITATO
-  @ricercaIndirizzoVas  #rif srs 53-57
+  @ricercaIndirizzoVas @ignoreUat  #rif srs 53-57
   Scenario: [RICERCA_INDIRIZZO_MULTI_PF_PG_OK_UAT] Invio notifica multidestinatario AR verso PF-PG con campo address vuoto e recupero indirizzo dai registri nazionali - Vas attivo
     Given il test è effettuabile con API versione "V25" o superiore
     And viene generata una nuova notifica

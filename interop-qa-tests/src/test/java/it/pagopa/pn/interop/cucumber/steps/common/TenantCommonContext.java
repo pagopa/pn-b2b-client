@@ -12,4 +12,5 @@ import org.springframework.stereotype.Component;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TenantCommonContext {
     private Boolean isTenantDelegationsAllowed;
+    private String consumerTenantName;
 }

@@ -1,15 +1,5 @@
 Feature: Test relativi al SRS di correzione timeline Fase 2
 
-
-  Scenario: [TIMELINE_REWORK_1] Verificare che, per una notifica inviata da oltre 120 giorni, l’operazione di invalidazione degli elementi di timeline vada a buon fine, a fronte del recupero dei documenti
-    Given imposto lo iun di SharedSteps a "" e la pa a "Comune_Multi"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-    Then viene invocata una richiesta di rework per la notifica appena creata con i seguenti parametri:
-      | iun | attemptId | pcRetry   | recIndex   | expectedStatusCode | expectedDeliveryFailureCause | reason    |
-      |     | ATTEMPT_0 | PCRETRY_0 | RECINDEX_0 | RECRN002F          | M01                          | REASON111 |
-    And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
-    And si verifica che la richiesta di rework effettuata sia in stato "READY" entro 130 secondi controllando ogni 5 secondi
-
   @timelineReworkF2
   Scenario: [TIMELINE_REWORK_2] Verificare che, per una notifica mono destinatario con ATTEMPT_0 in OK, la richiesta di rework vada in ERROR se viene passato un pcRetry = PCRETRY_1
     Given viene generata una nuova notifica
@@ -184,7 +174,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
     Then vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
-  @timelineReworkF2 #rif 3.4
+  @timelineReworkF2 @work-item:QA-18844 #rif 3.4
   Scenario: [TIMELINE_REWORK_6] ATTEMPT_0 in KO e ATTEMPT_1 in OK, la prima richiesta di rework vada in DONE passando ATTEMPT_0 da KO in OK e la seconda richiesta di rework modifichi l’ATTEMPT_0 in OK con destinatario deceduto
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -234,6 +224,14 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si verifica che la richiesta di rework effettuata sia in stato "DONE" entro 240 secondi controllando ogni 5 secondi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_WORKFLOW_RECIPIENT_DECEASED"
+    Then controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato INVALIDATED
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
+      | element2 | REFINEMENT;RECINDEX_0                     |
+    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline risultino in stato NEW
+      | element1 | REFINEMENT;RECINDEX_0                         |
+      | element2 | ANALOG_WORKFLOW_RECIPIENT_DECEASED;RECINDEX_0 |
+    And controllo che su pn-ReworkedTimelinesForInvoicing i seguenti elementi di timeline non risultino in stato NEW
+      | element1 | SEND_ANALOG_DOMICILE;ATTEMPT_1;RECINDEX_0 |
 
   @timelineReworkF2 #rif 5.1
   Scenario: [TIMELINE_REWORK_7] verificare che non sia possibile effettuare la correzione di una timeline su una notifica visualizzata dal destinatario, in cui è presente un ATTEMPT_1 in OK da invalidare completamente
@@ -406,7 +404,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV23 @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
-    And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V23" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -457,7 +455,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
       |                           |                           | RECRN002F          | M123                         | 400        |
       |                           |                           | RECAG003C          |                              | 400        |
       | WPUJ-CCCC-AAAA-202602-Q-1 |                           | RECRN002F          | M01                          | 404        |
-      |                           | REWORK_0.TRY_0.RECINDEX_1 | RECRN002F          | M01                          | 400        |
+      |                           | REWORK_0.TRY_0.RECINDEX_1 | RECRN002F          | M01                          | 404        |
 
   @timelineReworkF2 #rif 1 204
   Scenario: [TIMELINE_REWORK_9_2] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso con successo
@@ -569,7 +567,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV25 @webhook1 @precondition
   Scenario: [TIMELINE_REWORK_13B] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V25"
-    And si crea il nuovo stream per il "Comune_1" con versione "V25" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_1" con versione "V25" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V25"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -594,7 +592,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
   @timelineReworkF2 @cleanWebhook @webhookV28 @webhook2 @precondition
   Scenario: [TIMELINE_REWORK_13C] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V28"
-    And si crea il nuovo stream per il "Comune_2" con versione "V28" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_2" con versione "V28" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V28"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -616,10 +614,10 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V28" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V28"
 
-  @timelineReworkF2 @cleanWebhook @webhook2 @precondition
+  @timelineReworkF2 @cleanWebhook @webhook3 @precondition
   Scenario: [TIMELINE_REWORK_13D] Lettura nuovo evento di timeline dallo stream
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
-    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro status "DEFAULT"
+    And si crea il nuovo stream per il "Comune_2" con versione "V10" e filtro timeline "DEFAULT"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V10"
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

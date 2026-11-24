@@ -21,6 +21,7 @@ import java.util.UUID;
 public class ClientCommonContext {
     private List<UUID> clients = new ArrayList<>();
     private List<UUID> users = new ArrayList<>();
+    private List<String> clientNames = new ArrayList<>();
     private List<DPoPTokenService.PreparedClient> preparedClients = new ArrayList<>();
 
     //Represents the public key uploaded to the client
@@ -47,6 +48,9 @@ public class ClientCommonContext {
     private String keyId;
 
     private UUID adminId;
+
+    // Mantiene il primo client di riferimento per scenari che creano ulteriori batch di client.
+    private UUID trackedFirstClientId;
 
     private String newKeyId;
 

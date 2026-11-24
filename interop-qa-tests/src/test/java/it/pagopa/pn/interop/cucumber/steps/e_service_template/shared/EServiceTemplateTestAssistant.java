@@ -1,10 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.shared;
 
-import static java.util.Objects.nonNull;
-import static java.util.Objects.requireNonNull;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.assertj.core.api.Assertions.fail;
-
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingPredicateException;
 import it.pagopa.interop.authorization.service.utils.PollingService;
@@ -13,29 +8,13 @@ import it.pagopa.interop.e_service_template.IEServiceTemplateClient;
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.e_service_template.mapper.DescriptorAttributesMapper;
 import it.pagopa.interop.e_service_template.mapper.RiskAnalysisMapper;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateAttributesSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysis;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRiskAnalysisSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateDocumentInfo;
 import it.pagopa.pn.interop.cucumber.steps.common.EServiceTemplateInfo;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import lombok.Data;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomUtils;
@@ -46,6 +25,18 @@ import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+
+import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.assertj.core.api.Assertions.fail;
 
 /** It contains general utility functions used across all other classes.  */
 @Data
@@ -86,10 +77,30 @@ public class EServiceTemplateTestAssistant {
     }
 
     public void mutateLastVersionState(EServiceTemplateVersionState desiredState) {
+        mutateLastVersionState(desiredState, true);
+    }
+
+    public void mutateLastVersionState(EServiceTemplateVersionState desiredState, boolean successRequired) {
         EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext()
             .getLastTemplateManaged();
         BiConsumer<UUID, UUID> publisher = (templateId, versionId) -> {
-            this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0); // perché ogni template deve avere almeno un'interfaccia
+            // ogni template deve avere almeno un'interfaccia
+            if (successRequired) {
+                this.addDocumentToEServiceTemplateVersionSuccessfully(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0);
+            } else {
+                this.addDocumentToEServiceTemplateVersion(templateId, versionId, EServiceTemplateDocumentKind.INTERFACE, 0);
+                if (httpCallExecutor.getResponseStatus().isError()) return;
+            }
+            if (Boolean.TRUE.equals(lastTemplateManaged.getAsync())) {
+                // ogni template async deve avere almeno un'interfaccia di callback
+                this.updateLastTemplateVersionWithAsyncExchangeProperties();
+                if (successRequired) {
+                    this.addDocumentToEServiceTemplateVersionSuccessfully(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0);
+                } else {
+                    this.addDocumentToEServiceTemplateVersion(EServiceTemplateDocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, 0);
+                    if (httpCallExecutor.getResponseStatus().isError()) return;
+                }
+            }
             publishEServiceTemplate(templateId, versionId);
         };
         switch (desiredState) {
@@ -105,6 +116,98 @@ public class EServiceTemplateTestAssistant {
                 publisher.accept(lastTemplateManaged.getId(), newVersionId);
             }
             default -> throw new IllegalArgumentException("Stato non supportato: " + desiredState);
+        }
+    }
+
+    /**
+     * Aggiorna l'ultima versione del template con una configurazione async di base,
+     * preservando gli attributi già presenti sulla versione corrente.
+     *
+     * Flusso:
+     * 1) legge la versione attuale del template
+     * 2) recupera/mappa gli attributes esistenti
+     * 3) invia update con asyncExchangeProperties
+     * 4) effettua polling finché i campi async non risultano persistiti
+     */
+    private void updateLastTemplateVersionWithAsyncExchangeProperties() {
+        EServiceTemplateInfo lastTemplateManaged = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged();
+        UUID eServiceTemplateId = lastTemplateManaged.getId();
+        UUID eServiceTemplateVersionId = lastTemplateManaged.getLastVersionId();
+
+        // Read della versione corrente per non perdere informazioni preesistenti (es. attributes).
+        httpCallExecutor.performCall(
+            () -> this.eServiceTemplateClient.getEServiceTemplateVersion(
+                eServiceTemplateId,
+                eServiceTemplateVersionId));
+
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException(
+                "Esito negativo non previsto durante il recupero della versione del template: "
+                    + httpCallExecutor.getResponseStatus()
+                    + " - "
+                    + httpCallExecutor.getErrorMessage());
+        }
+
+        EServiceTemplateVersionDetails retrievedVersion = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
+        DescriptorAttributes retrievedAttributes = nonNull(retrievedVersion)
+            ? retrievedVersion.getAttributes()
+            : null;
+        // Gli attributes vengono rimappati nel seed di update così da preservare lo stato attuale.
+        EServiceTemplateAttributesSeed attributesSeed = nonNull(retrievedAttributes)
+            ? this.descriptorAttributesMapper.mapAttributesToSeeds(retrievedAttributes)
+            : new EServiceTemplateAttributesSeed();
+
+        AsyncExchangeProperties asyncExchangeProperties = new AsyncExchangeProperties()
+            .responseTime(100)
+            .resourceAvailableTime(100)
+            .maxResultSet(100)
+            .confirmation(true)
+            .bulk(true);
+
+        UpdateEServiceTemplateVersionSeed seed = new UpdateEServiceTemplateVersionSeed()
+            .attributes(attributesSeed)
+            .voucherLifespan(6000)
+            .asyncExchangeProperties(asyncExchangeProperties);
+
+        // Update della versione con i dati async richiesti dallo scenario.
+        httpCallExecutor.performCall(
+            () -> this.eServiceTemplateClient.updateEServiceTemplateVersion(
+                eServiceTemplateId,
+                eServiceTemplateVersionId,
+                seed));
+
+        if (httpCallExecutor.getResponseStatus().isError()) {
+            throw new IllegalStateException(
+                "Esito negativo non previsto durante l'aggiornamento delle asyncExchangeProperties: "
+                    + httpCallExecutor.getResponseStatus()
+                    + " - "
+                    + httpCallExecutor.getErrorMessage());
+        }
+
+        try {
+            // Polling su GET versione finché la configurazione async non è effettivamente visibile.
+            pollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                    () -> this.eServiceTemplateClient.getEServiceTemplateVersion(
+                        eServiceTemplateId,
+                        eServiceTemplateVersionId)),
+                status -> {
+                    if (status == HttpStatus.NOT_FOUND) {
+                        return false;
+                    }
+                    EServiceTemplateVersionDetails version = (EServiceTemplateVersionDetails) httpCallExecutor.getResponse();
+                    AsyncExchangeProperties retrievedAsyncExchangeProperties = nonNull(version) ? version.getAsyncExchangeProperties() : null;
+                    return nonNull(retrievedAsyncExchangeProperties)
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getResponseTime())
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getResourceAvailableTime())
+                        && Integer.valueOf(100).equals(retrievedAsyncExchangeProperties.getMaxResultSet())
+                        && retrievedAsyncExchangeProperties.getConfirmation()
+                        && retrievedAsyncExchangeProperties.getBulk();
+                },
+                "Le asyncExchangeProperties non sono state applicate correttamente alla versione dell'e-service template"
+            );
+        } catch (PollingPredicateException e) {
+            fail("Le asyncExchangeProperties non sono state applicate correttamente alla versione dell'e-service template: " + e.getMessage());
         }
     }
 
@@ -174,7 +277,7 @@ public class EServiceTemplateTestAssistant {
         addDocumentToEserviceTemplateVersion(eServiceTemplateId, eServiceTemplateVersionId, kind, prettyName, userToken, doc);
     }
 
-    private static Resource buildResource(EServiceTemplateDocumentKind kind, int fileIndex) {
+    private Resource buildResource(EServiceTemplateDocumentKind kind, int fileIndex) {
         /* 19/03/2025 Versione precedente in cui si supponeva si potesse passare ogni genere di byte array. */
         /*String docBody = "Hello, I'm a document of type %s".formatted(kind);
         Resource doc = new ByteArrayResource(docBody.getBytes(StandardCharsets.UTF_8));*/
@@ -183,13 +286,15 @@ public class EServiceTemplateTestAssistant {
         String strFileIndex = fileIndex == 0 ? "" : String.valueOf(fileIndex);
 
         String documentPath = basePath + "dummy" + strFileIndex + ".pdf";
-        String interfacePath = basePath + "interface" + strFileIndex + ".yaml";
+
+        boolean isRest = this.sharedStepsContext.getEServiceTemplateStepContext().getTechnology() == EServiceTechnology.REST;
+        String interfacePath = basePath + "interface" + strFileIndex + (isRest ? ".yaml" : ".wsdl");
 
         switch (kind) {
             case DOCUMENT -> {
                 return new PathResource(Path.of(documentPath));
             }
-            case INTERFACE -> {
+            case INTERFACE, ASYNC_EXCHANGE_CALLBACK_INTERFACE -> {
                 return new PathResource(Path.of(interfacePath));
             }
             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
@@ -258,6 +363,7 @@ public class EServiceTemplateTestAssistant {
                             case DOCUMENT -> res.getBody().getDocs().stream().filter(d -> d.getId().equals(
                                 lastAddedDocument.id())).findFirst().orElse(null);
                             case INTERFACE -> res.getBody().getInterface();
+                            case ASYNC_EXCHANGE_CALLBACK_INTERFACE -> res.getBody().getAsyncExchangeCallbackInterface();
                             default -> throw new IllegalArgumentException("Unsupported %s value: %s".formatted(
                                 EServiceTemplateDocumentKind.class.getSimpleName(),
                                 kind));
@@ -310,9 +416,32 @@ public class EServiceTemplateTestAssistant {
         checkRiskAnalysisAddedToEServiceTemplate();
     }
 
+    public void addSpecifiedRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis) {
+        addSpecifiedRiskAnalysisToEServiceTemplate(riskAnalysis, true);
+    }
+
+    public void addSpecifiedRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis, boolean successRequired) {
+        addRiskAnalysisToEServiceTemplate(riskAnalysis);
+        if (successRequired) checkRiskAnalysisAddedToEServiceTemplate();
+    }
+
     public void addRiskAnalysisToEServiceTemplate() {
+        addRiskAnalysisToEServiceTemplate(null);
+    }
+
+    public void addRiskAnalysisToEServiceTemplate(RiskAnalysis riskAnalysis) {
         UUID eServiceTemplateId = sharedStepsContext.getEServiceTemplateStepContext().getLastTemplateManaged().getId();
-        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(getEServiceRiskAnalysisSeed());
+        EServiceTemplateRiskAnalysisSeed riskAnalysisSeed;
+        if (riskAnalysis == null) {
+            riskAnalysisSeed = getEServiceRiskAnalysisSeed();
+        } else {
+            riskAnalysisSeed = this.riskAnalysisMapper.mapToSeed(
+                    riskAnalysis, TenantKind.fromValue(
+                            sharedStepsContext.getIdentityService().getKind(sharedStepsContext.getTenantType())
+                    )
+            );
+        }
+        sharedStepsContext.getEServiceTemplateStepContext().setLastAddedRiskAnalysis(riskAnalysisSeed);
         sharedStepsContext.getEServiceTemplateStepContext().incrementLastAddedRiskAnalysisIndex();
         addRiskAnalysisToEServiceTemplate(eServiceTemplateId, sharedStepsContext.getEServiceTemplateStepContext().getLastAddedRiskAnalysis());
     }
@@ -322,8 +451,12 @@ public class EServiceTemplateTestAssistant {
     }
 
     public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeed(boolean completed) {
-        IdentityService identityService = sharedStepsContext.getIdentityService();
         String tenantType = sharedStepsContext.getTenantType();
+        return getEServiceRiskAnalysisSeedWithType(tenantType, true);
+    }
+
+    public EServiceTemplateRiskAnalysisSeed getEServiceRiskAnalysisSeedWithType(String tenantType, boolean completed) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
         RiskAnalysis riskAnalysis = this.dataPreparationService.getRiskAnalysis(tenantType, completed);
         return this.riskAnalysisMapper.mapToSeed(riskAnalysis, TenantKind.fromValue(identityService.getKind(tenantType)));
     }
@@ -370,9 +503,21 @@ public class EServiceTemplateTestAssistant {
 
     public EServiceTemplateAttributesSeed nextAttributesSeed() {
         return new EServiceTemplateAttributesSeed()
-            .addCertifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
-            .addDeclaredItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList())
-            .addVerifiedItem(easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3).toList());
+                .addCertifiedItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                )
+                .addDeclaredItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                )
+                .addVerifiedItem(
+                        easyRandom.objects(EServiceTemplateVersionAttributeSeed.class, 3)
+                                .peek(seed -> seed.setDiscreteConfig(null))
+                                .toList()
+                );
     }
 
     public boolean areConsistent(EServiceTemplateRiskAnalysisSeed lastRiskAnalysis, EServiceTemplateRiskAnalysis retrievedAnalysis) {

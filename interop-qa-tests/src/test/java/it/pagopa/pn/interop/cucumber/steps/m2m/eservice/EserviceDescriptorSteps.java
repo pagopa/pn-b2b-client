@@ -9,20 +9,25 @@ import it.pagopa.interop.common.enums.EntityIdType;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorPatchRequest;
 import it.pagopa.interop.eservice.service.IM2MEserviceDescriptorClient.EServiceDescriptorQuotasPatchRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.AbstractCommonSteps;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorPatchOperationsAssistant;
 import it.pagopa.pn.interop.cucumber.steps.m2m.eservice.descriptor.assistant.EServiceDescriptorQuotasPatchOperationsAssistant;
+import org.apache.commons.lang3.tuple.Pair;
+import org.assertj.core.api.Assertions;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.apache.commons.lang3.tuple.Pair;
-import org.assertj.core.api.Assertions;
 
 public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescriptor, Pair<UUID, UUID>> {
     private final IM2MEserviceDescriptorClient client;
     private final SharedStepsContext sharedStepsContext;
+    private final CatalogResolver catalogResolver;
 
     private final EServiceDescriptorPatchOperationsAssistant eServiceDescriptorPatchAssistant;
     private final EServiceDescriptorQuotasPatchOperationsAssistant quotasPatchAssistant;
@@ -36,6 +41,7 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         super("descriptor", clientTokenConfigurator.getM2mEServiceDescriptorClient(), sharedStepsContext);
         this.client = clientTokenConfigurator.getM2mEServiceDescriptorClient();
         this.sharedStepsContext = sharedStepsContext;
+        this.catalogResolver = new CatalogResolver(sharedStepsContext);
         this.client.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.eServiceDescriptorPatchAssistant = eServiceDescriptorPatchAssistant;
         this.quotasPatchAssistant = eServiceDescriptorQuotasPatchAssistant;
@@ -140,6 +146,35 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         quotasPatchAssistant.patchResource(tenant, m2mRole);
     }
 
+    @When("l'utente avvia l'archiviazione della vecchia versione {string} dell'e-service {string} prevedendo {gracePeriodDays} giorni di preavviso")
+    public void scheduleArchiveOldDescriptor(String descriptorId, String eServiceId, GracePeriodDays gracePeriodDays) {
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> client.scheduleArchiveEServiceDescriptor(resolvedEServiceId, resolvedDescriptorId, gracePeriodDays.getValue()));
+    }
+
+    @When("l'utente avvia l'archiviazione della versione più recente dell'e-service prevedendo {gracePeriodDays} giorni di preavviso")
+    public void archiveLatestDescriptor(GracePeriodDays gracePeriodDays) {
+        UUID descriptorId = sharedStepsContext.getEServicesCommonContext().getDescriptorId();
+        UUID eServiceId = sharedStepsContext.getEServicesCommonContext().getEserviceId();
+
+        registerDescriptorArchivingRequestTimestamp(gracePeriodDays);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> client.scheduleArchiveEServiceDescriptor(eServiceId, descriptorId, gracePeriodDays.getValue()));
+    }
+
+    @When("l'utente tenta di annullare il processo di archiviazione della vecchia versione con id {string} dell'e-service con id {string}")
+    public void cancelOldDescriptorArchiving(String descriptorId, String eServiceId) {
+        UUID resolvedDescriptorId = catalogResolver.resolveOldDescriptorId(descriptorId);
+        UUID resolvedEServiceId = catalogResolver.resolveEServiceId(eServiceId);
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+            () -> client.cancelEServiceDescriptorArchiving(resolvedEServiceId, resolvedDescriptorId));
+    }
+
     @Override
     public void bindActual(SharedStepsContext context, List<EServiceDescriptor> actualEntities) {
         var eserviceContext = this.sharedStepsContext.getEServicesCommonContext();
@@ -163,5 +198,12 @@ public class EserviceDescriptorSteps extends AbstractCommonSteps<EServiceDescrip
         this.actualEntities.clear();
         this.actualEntities.addAll(actualDescriptors);
         this.bindActual(sharedStepsContext, actualDescriptors);
+    }
+
+    private void registerDescriptorArchivingRequestTimestamp(GracePeriodDays gracePeriodDays) {
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingRequestTimestamp(OffsetDateTime.now(ZoneOffset.UTC));
+        sharedStepsContext.getEServicesCommonContext()
+                .setDescriptorArchivingGracePeriodDays(gracePeriodDays);
     }
 }

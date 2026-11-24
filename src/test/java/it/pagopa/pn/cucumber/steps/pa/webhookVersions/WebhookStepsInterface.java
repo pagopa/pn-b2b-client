@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa.webhookVersions;
 
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingWebhook;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.CommunicationType;
 import it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps;
 
 import java.util.List;
@@ -77,7 +78,13 @@ public interface WebhookStepsInterface {
 
     <T> void verifyAssertionsTimeline(AvanzamentoNotificheWebhookB2bSteps.TimelineElementSearchResult<?> timelineForStream, T progressResponseElement);
 
-    void setValueForWaitForAccepted(boolean waitForAccepted);
+    default void setValueForWaitForAccepted(String waitForAccepted) {
+        // waitForAccepted introdotto a partire dalla V27
+    }
+
+    default void setValueForCommunicationType(String communicationType) {
+        // communicationType introdotto a partire dalla V30
+    }
 
     void verifyIncrementalEventId();
 
@@ -104,4 +111,8 @@ public interface WebhookStepsInterface {
     void verificaPresenzaSercQ(boolean isPresent);
 
     void checkLegalFactCategory(String timelineCategory, String legalFactCategory, boolean arePresent);
+
+    default void checkCommunicationTypeOfConsumeOutput(CommunicationType communicationType) {
+        // communicationType introdotto a partire dalla V30
+    }
 }

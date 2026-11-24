@@ -47,4 +47,9 @@ build/
 /config/bearer-token-dev.properties
 /interop-qa-tests/src/main/resources/interop-tracing-dev.properties
 
+### Data Preparation ###
 token.json
+tmp-files/
+
+# Local checkouts used by the PST generator
+/source-repos/

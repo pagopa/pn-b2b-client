@@ -283,7 +283,7 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | %random                              | %actual            | m2m-admin | 404        |
 
     #producerKeychainId appartenente ad un tenant differente da quello del chiamante
-      | PA2    | %actual                              | %actual            | m2m-admin | 403        |
+      | PA2    | %actual                              | %actual            | m2m-admin | 404        |
     #userId appartenente ad un tenant differente da quello in cui è presente il producerKeychain
       | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 
@@ -410,7 +410,7 @@ Feature: Gestione dei producer keychains - API v3
       | PA1    | %actual                              | %random            | m2m-admin | 404        |
 
        #producerKeychainId appartenente ad un tenant differente da quello del chiamante
-      | PA2    | %actual                              | %actual            | m2m-admin | 403        |
+      | PA2    | %actual                              | %actual            | m2m-admin | 404        |
       #userId appartenente ad un tenant differente da quello in cui è presente il producerKeychain
       | PA1    | c27e3508-3d26-4b6b-9c73-54cb38e6fe1b | %actual            | m2m-admin | 404        |
 

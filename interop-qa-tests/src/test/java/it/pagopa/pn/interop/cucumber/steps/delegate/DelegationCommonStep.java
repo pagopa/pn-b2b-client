@@ -6,7 +6,9 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantFeature;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
@@ -32,11 +34,13 @@ public class DelegationCommonStep {
     private final IHttpExecutor httpCallExecutor;
     private final ITenantsApi tenantsApi;
     private final BFFDataPreparationService dataPreparationService;
+    private final DescriptorPublicationSteps descriptorPublicationSteps;
 
     public DelegationCommonStep(ClientTokenConfigurator clientTokenConfigurator,
                                 SharedStepsContext sharedStepsContext,
                                 PollingService pollingService,
-                                BFFDataPreparationService dataPreparationService) {
+                                BFFDataPreparationService dataPreparationService,
+                                DescriptorPublicationSteps descriptorPublicationSteps) {
         this.sharedStepsContext = sharedStepsContext;
         this.clientTokenConfigurator = clientTokenConfigurator;
         this.identityService = sharedStepsContext.getIdentityService();
@@ -44,6 +48,7 @@ public class DelegationCommonStep {
         this.tenantsApi = clientTokenConfigurator.getTenantsApi();
         this.pollingService = pollingService;
         this.dataPreparationService = dataPreparationService;
+        this.descriptorPublicationSteps = descriptorPublicationSteps;
     }
 
     @Given("l'ente {string} rimuove la disponibilità a ricevere deleghe")
@@ -116,7 +121,8 @@ public class DelegationCommonStep {
             CatalogCommonSteps.createEServiceWithDescriptor(
                 "DRAFT",
                 dataPreparationService,
-                sharedStepsContext.getEServicesCommonContext());
+                sharedStepsContext.getEServicesCommonContext(),
+                new EServiceSeed(), new UpdateEServiceDescriptorSeed());
         }
 
         // Il associa un'interfaccia all'e-service
@@ -148,7 +154,7 @@ public class DelegationCommonStep {
         );
 
         // Il delegato pubblica l'e-service
-        DescriptorPublicationSteps.publishDescriptor(
+        descriptorPublicationSteps.publishDescriptor(
             httpCallExecutor,
             clientTokenConfigurator.getEServiceClient(),
             sharedStepsContext.getEServicesCommonContext());

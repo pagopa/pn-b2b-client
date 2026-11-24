@@ -25,8 +25,8 @@ public class P7mFileProcessor implements IFileProcessor {
             byte[] gzBytes = (byte[]) signedContent.getContent();
             InputStream gzStream = new ByteArrayInputStream(gzBytes);
 
-            // Convenzione di dominio: P7M → GZIP
-            return new ProcessedFile(gzStream, ContentType.GZIP);
+            // Convenzione di dominio: P7M → ZIP
+            return new ProcessedFile(gzStream, ContentType.ZIP);
 
         } catch (Exception e) {
             throw new RuntimeException("Errore durante l'estrazione del contenuto P7M", e);

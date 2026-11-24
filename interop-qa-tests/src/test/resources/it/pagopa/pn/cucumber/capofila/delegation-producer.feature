@@ -9,117 +9,148 @@ Feature: Creazione di una delega in erogazione
   #TC-31: Una delega può essere creata dal delegante se delegato da la disponibilità a ricevere la delega
   @deleghe2
   Scenario Outline: [TC_CAPOFILA_4_5] Il richiamo dell’API di creazione di una delega possa essere compiuto da un utente di livello operatore amministrativo (admin)
-    Given l'utente è un "<ruolo>" di "PA1"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-    When l'utente richiede la creazione di una delega per l'ente "PA2"
+    Given l'utente è un "<ruolo>" di "<delegante>"
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "<delegato>" concede la disponibilità a ricevere deleghe
+    When l'utente richiede la creazione di una delega per l'ente "<delegato>"
     Then si ottiene lo status code <statusCode>
 
     @happy-path
     Examples:
-      | ruolo        | statusCode |
-      | admin        |        200 |
+      | ruolo        | delegante | delegato | statusCode |
+      | admin        | PA1       | PA2      |        200 |
 
     @sad-path
     Examples:
-      | ruolo        | statusCode |
-      | api          |        403 |
-      | security     |        403 |
-      | api,security |        403 |
-      | support      |        403 |
+      | ruolo        | delegante | delegato | statusCode |
+      | api          | PA1       | PA2      |        403 |
+      | security     | PA1       | PA2      |        403 |
+      | api,security | PA1       | PA2      |        403 |
+      | support      | PA1       | PA2      |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | delegante | delegato | statusCode |
+      | reviewer     | PA2       | PA3      |        403 |
+      | viewer       | PA2       | PA3      |        403 |
 
   @deleghe2
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_PENDING] Il rifiuto di una delega in stato di pending possa essere compiuto solo da un utente con ruolo admin
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
+    Given l'ente delegante "<delegante>"
+    And l'ente delegato "<delegato>"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "<delegato>" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
     When l'utente rifiuta la delega
     Then si ottiene lo status code <statusCode>
 
     @happy-path
     Examples:
-      | ruolo        | funzione  | statusCode  |
+      | ruolo        | funzione  | delegante | delegato | statusCode  |
       # Scenario: 26
       # Esito: coerente
-      | admin        | delegato  | 200         |
+      | admin        | delegato  | PA1       | PA2      | 200         |
 
     @sad-path
     Examples:
-      | ruolo        | funzione  | statusCode  |
+      | ruolo        | funzione  | delegante | delegato | statusCode  |
       # Scenario: 6
       # Esito: coerente
-      | api          | delegato  | 403         |
+      | api          | delegato  | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | reviewer     | delegato  | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | viewer       | delegato  | PA1       | PA2      | 403         |
       # Scenario: 6
       # Esito: coerente
-      | security     | delegato  | 403         |
+      | security     | delegato  | PA1       | PA2      | 403         |
       # Scenario: 6
       # Esito: coerente
-      | api,security | delegato  | 403         |
+      | api,security | delegato  | PA1       | PA2      | 403         |
       # Scenario: 6
       # Esito: coerente
-      | support      | delegato  | 403         |
+      | support      | delegato  | PA1       | PA2      | 403         |
       # Scenario: 28
       # Esito: incoerente, 403, "Unauthorized"
-      | admin        | delegante | 403         |
+      | admin        | delegante | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | api          | delegante | 403         |
+      | api          | delegante | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | security     | delegante | 403         |
+      | reviewer     | delegante | PA2       | PA3      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | api,security | delegante | 403         |
+      | viewer       | delegante | PA2       | PA3      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | support      | delegante | 403         |
+      | security     | delegante | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | api,security | delegante | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | support      | delegante | PA1       | PA2      | 403         |
 
   @sad-path @deleghe2
   Scenario Outline: [TC_CAPOFILA_RIFIUTO_DELEGA_ACCETTATA] Il rifiuto di una delega già accettata non possa essere compiuto da nessun utente indipendentemente dal ruolo
-    Given l'ente delegante "PA1"
-    And l'ente delegato "PA2"
+    Given l'ente delegante "<delegante>"
+    And l'ente delegato "<delegato>"
     And un utente dell'ente <funzione> con ruolo "<ruolo>"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "<delegato>" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And l'ente "PA2" accetta la delega
+    And l'ente "<delegato>" accetta la delega
     When l'utente rifiuta la delega
     Then si ottiene lo status code <statusCode>
     Examples:
-      | ruolo        | funzione  | statusCode  |
+      | ruolo        | funzione  | delegante | delegato | statusCode  |
       # Scenario: 29
       # Esito: coerente
-      | admin        | delegato  | 409         |
+      | admin        | delegato  | PA1       | PA2      | 409         |
       # Scenario: <mancante>
       # Esito: si ottiene 403
-      | api          | delegato  | 403         |
+      | api          | delegato  | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403
-      | security     | delegato  | 403         |
+      | reviewer     | delegato  | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403
-      | api,security | delegato  | 403         |
+      | viewer       | delegato  | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403
-      | support      | delegato  | 403         |
+      | security     | delegato  | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403
+      | api,security | delegato  | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403
+      | support      | delegato  | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Operation restricted to delegate"
-      | admin        | delegante | 403         |
+      | admin        | delegante | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | api          | delegante | 403         |
+      | api          | delegante | PA1       | PA2      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | security     | delegante | 403         |
+      | reviewer     | delegante | PA2       | PA3      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | api,security | delegante | 403         |
+      | viewer       | delegante | PA2       | PA3      | 403         |
       # Scenario: <mancante>
       # Esito: si ottiene 403 "Unauthorized"
-      | support      | delegante | 403         |
+      | security     | delegante | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | api,security | delegante | PA1       | PA2      | 403         |
+      # Scenario: <mancante>
+      # Esito: si ottiene 403 "Unauthorized"
+      | support      | delegante | PA1       | PA2      | 403         |
 
   @sad-path @deleghe2
   Scenario: [TC_CAPOFILA_33] La creazione di una delega in erogazione NON può essere compiuto da un utente ADMIN se l’aderente non si è reso disponibile ad accettare deleghe
@@ -134,39 +165,56 @@ Feature: Creazione di una delega in erogazione
   #TC-14: La revoca di una delega può essere fatta da un utente con ruolo ADMIN
   @deleghe2
   Scenario Outline: [TC_CAPOFILA_ACCETTA_REVOCA_DELEGA] L'accettazione e la revoca di una delega non può essere effettuata da un utente diverso da admin
-    Given l'utente è un "<ruolo>" di "PA2"
-    And "PA1" ha già creato e pubblicato 1 e-service
-    And l'ente "PA2" concede la disponibilità a ricevere deleghe
-    When l'ente "PA1" richiede la creazione di una delega per l'ente "PA2"
+    Given l'utente è un "<ruolo>" di "<delegato>"
+    And "<delegante>" ha già creato e pubblicato 1 e-service
+    And l'ente "<delegato>" concede la disponibilità a ricevere deleghe
+    When l'ente "<delegante>" richiede la creazione di una delega per l'ente "<delegato>"
     And l'utente accetta la delega
     Then si ottiene lo status code <statusCode>
-    When l'ente "PA1" con ruolo "<ruolo>" revoca la delega
+    When l'ente "<delegante>" con ruolo "<ruolo>" revoca la delega
     Then si ottiene lo status code <statusCode>
 
     @happy-path
     Examples:
-      | ruolo        | statusCode |
-      | admin        |        200 |
+      | ruolo        | delegante | delegato | statusCode |
+      | admin        | PA1       | PA2      |        200 |
 
     @sad-path
     Examples:
-      | ruolo        | statusCode |
-      | api          |        403 |
-      | security     |        403 |
-      | api,security |        403 |
-      | support      |        403 |
+      | ruolo        | delegante | delegato | statusCode |
+      | api          | PA1       | PA2      |        403 |
+      | security     | PA1       | PA2      |        403 |
+      | api,security | PA1       | PA2      |        403 |
+      | support      | PA1       | PA2      |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | delegante | delegato | statusCode |
+      | reviewer     | PA2       | PA3      |        403 |
+      | viewer       | PA2       | PA3      |        403 |
 
   #TC-21: Delegato con ruolo admin non può revocare la delega
   @sad-path @deleghe2
-  Scenario: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
+  Scenario Outline: [TC_CAPOFILA_DELEGATO_REVOCA] La revoca di una delega in stato PENDING non può essere effettuata da un delegato con ruolo admin
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
     And l'ente "PA2" concede la disponibilità a ricevere deleghe
     And l'ente delegante ha inoltrato una richiesta di delega all'ente delegato
-    And un utente dell'ente delegato con ruolo "admin"
-    When l'ente "PA2" con ruolo "admin" revoca la delega
+    And un utente dell'ente delegato con ruolo "<ruolo>"
+    When l'ente "PA2" con ruolo "<ruolo>" revoca la delega
     Then si ottiene lo status code 403
+    Examples:
+      | ruolo    |
+      | admin    |
+      | api      |
+
+    @nuovi-operatori-update
+    Examples:
+      | ruolo    |
+      | reviewer |
+      | viewer   |
 
   #TC-12: L'API di disponibilità NON puà essere invocata da un utente admin di un tenant NON PA
   @sad-path
@@ -197,6 +245,13 @@ Feature: Creazione di una delega in erogazione
       | security     |        403 |
       | api,security |        403 |
       | support      |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | statusCode |
+      | reviewer     |        403 |
+      | viewer       |        403 |
 
   @sad-path @deleghe2
   Scenario: [TC_CAPOFILA_35] Un delegante può delegare un solo ente per volta per un e-service
@@ -251,6 +306,7 @@ Feature: Creazione di una delega in erogazione
   # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-7927
   @deleghe2
+  @nuovi-operatori-update
   Scenario: [TC_CAPOFILA_APPROVE_2] Un utente dell'ente delegante di livello inappropriato NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
 
@@ -278,9 +334,22 @@ Feature: Creazione di una delega in erogazione
     Given l'utente è un "admin" di "PA1"
     Then l'e-service è in stato "WAITING_FOR_APPROVAL"
 
+    When l'utente è un "reviewer" di "PA2"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "viewer" di "PA2"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
   # NOTA 08/08/2025: aggiunto a posteriori, momentaneamente assente in SRS
   # DEV. NOTE 08/08/2025: evitato l'uso di Scenario Outline per eseguire una sola volta la creazione dell'e-service e il processo di delega
   @deleghe2
+  @nuovi-operatori-update
   Scenario: [TC_CAPOFILA_APPROVE_3] Un ente diverso dal delegante NON è in grado di effettuare l'approvazione dell'e-service in stato WAITING_FOR_APPROVAL
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
 
@@ -290,7 +359,31 @@ Feature: Creazione di una delega in erogazione
     Given l'utente è un "admin" di "PA1"
     Then l'e-service è in stato "WAITING_FOR_APPROVAL"
 
+    When l'utente è un "reviewer" di "PA2"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "viewer" di "PA2"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
     When l'utente è un "api" di "GSP"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "reviewer" di "GSP"
+    And l'utente approva la pubblicazione dell'e-service
+    Then si ottiene lo status code 403
+    Given l'utente è un "admin" di "PA1"
+    Then l'e-service è in stato "WAITING_FOR_APPROVAL"
+
+    When l'utente è un "viewer" di "GSP"
     And l'utente approva la pubblicazione dell'e-service
     Then si ottiene lo status code 403
     Given l'utente è un "admin" di "PA1"

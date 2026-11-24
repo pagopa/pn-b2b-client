@@ -8,10 +8,11 @@ import java.util.Optional;
 @Getter
 public enum WorkflowSteps {
     EVALUATE_SENDER_LIMIT(0),
-    EVALUATE_DRIVER_CAPACITY(1),
-    EVALUATE_PRINT_CAPACITY(2),
-    SENT_TO_PREPARE_PHASE_2(3),
-    EVALUATE_RESIDUAL_CAPACITY(4);
+    EVALUATE_SENDER_PRIORITY(1),
+    EVALUATE_DRIVER_CAPACITY(2),
+    EVALUATE_PRINT_CAPACITY(3),
+    SENT_TO_PREPARE_PHASE_2(4),
+    EVALUATE_RESIDUAL_CAPACITY(5);
 
     private final int index;
 
@@ -29,10 +30,5 @@ public enum WorkflowSteps {
         return Arrays.stream(values())
                 .filter(ws -> ws.name().equalsIgnoreCase(name))
                 .findFirst();
-    }
-
-    @Override
-    public String toString() {
-        return name() + "(" + index + ")";
     }
 }

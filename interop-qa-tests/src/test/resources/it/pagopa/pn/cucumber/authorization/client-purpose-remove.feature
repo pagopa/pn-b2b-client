@@ -33,6 +33,15 @@ Feature: Rimozione purpose dal client
       | PA1  | support      | ACTIVE        |        403 |
       | PA1  | api,security | ACTIVE        |        403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statoFinalità | statusCode |
+      | GSP  | reviewer     | ACTIVE        |        403 |
+      | GSP  | viewer       | ACTIVE        |        403 |
+      | PA2  | reviewer     | ACTIVE        |        403 |
+      | PA2  | viewer       | ACTIVE        |        403 |
+
     @happy-path
     Examples:
       | ente | ruolo | statoFinalità | statusCode |

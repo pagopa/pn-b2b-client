@@ -62,6 +62,9 @@ public class ProducerKeychainClientImpl extends AbstractClient implements Produc
     }
 
     @Override
+    public List<ProducerKeychain> getPage(int page, int size) { throw new UnsupportedOperationException(); }
+
+    @Override
     public UUID getId(ProducerKeychain entity) {
         throw new UnsupportedOperationException();
     }

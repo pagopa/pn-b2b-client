@@ -23,6 +23,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 "api.bff.version=V1"
 )
 @ExcludeTags({"wait_for_fix", "eservice"})
-@IncludeTags({"eservice_published_delegation"})
+@IncludeTags({"eservice_published_delegation_m2m_v3"})
 public class AbilitazioneDelegheEServicePubblicatiV3Test {
 }

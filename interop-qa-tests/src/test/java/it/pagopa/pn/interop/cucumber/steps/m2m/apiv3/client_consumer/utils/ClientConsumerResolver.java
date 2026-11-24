@@ -5,10 +5,11 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.apiv3.client_consumer.model.ClientConsumerContext;
 import it.pagopa.pn.interop.cucumber.steps.m2m.common.utils.AbstractResolver;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class ClientConsumerResolver extends AbstractResolver {
     private final ClientConsumerContext clientConsumerContext;
@@ -61,7 +62,7 @@ public class ClientConsumerResolver extends AbstractResolver {
                             .toList();
 
                     return roles.stream()
-                            .map(r -> identityService.getUserId(tenant, r))
+                            .map(r -> r.equalsIgnoreCase("%random") ? UUID.randomUUID() : identityService.getUserId(tenant, r))
                             .toList();
                 },
                 clientConsumerContext::getActualMembers,

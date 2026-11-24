@@ -11,13 +11,13 @@ import java.util.function.Supplier;
 
 public abstract class AbstractResolver {
 
-    protected final SharedStepsContext sharedStepsContext;
+    public final SharedStepsContext sharedStepsContext;
 
-    protected AbstractResolver(SharedStepsContext sharedStepsContext) {
+    public AbstractResolver(SharedStepsContext sharedStepsContext) {
         this.sharedStepsContext = sharedStepsContext;
     }
 
-    protected <T> T resolveOrParse(
+    public <T> T resolveOrParse(
             String raw,
             Function<String, T> nonTokenParser,
             Supplier<T> actualSupplier,
@@ -43,7 +43,7 @@ public abstract class AbstractResolver {
     }
 
     // overload comodo quando BLANK/RANDOM non servono
-    protected <T> T resolveOrParse(
+    public <T> T resolveOrParse(
             String raw,
             Function<String, T> nonTokenParser,
             Supplier<T> actualSupplier,

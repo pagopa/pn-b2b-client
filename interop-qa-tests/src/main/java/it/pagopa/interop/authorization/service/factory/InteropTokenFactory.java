@@ -22,12 +22,7 @@ public class InteropTokenFactory extends SessionTokenFactory {
         KmsClient kmsClient
         ) {
         super(interopClientConfigs, configFileReader, kmsClient);
-        getSessionTokenPayloadTemplate().put("aud", "{{ENVIRONMENT}}.interop.pagopa.it/ui");
-        try {
-            if (cachedTokens == null) cachedTokens = generateSessionToken();
-        } catch (Exception ex) {
-            throw new IllegalArgumentException("There was an error while creating the session token: " + ex.getMessage(), ex);
-        }
+        loadToken();
     }
 
     public synchronized Map<String, Map<String, List<String>>> loadToken() {

@@ -176,7 +176,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And destinatario Cucumber Society
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
@@ -199,7 +199,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And destinatario Cucumber Society
     And destinatario
       | denomination            | Test AR Fail 2           |
-      | taxId                   | DVNLRD52D15M059P         |
+      | taxId                   | FNTLCU80T25F205R         |
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"

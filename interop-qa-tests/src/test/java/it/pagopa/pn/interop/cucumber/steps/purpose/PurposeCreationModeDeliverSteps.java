@@ -3,15 +3,14 @@ package it.pagopa.pn.interop.cucumber.steps.purpose;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.purpose.domain.RiskAnalysis;
 import it.pagopa.interop.purpose.domain.TEServiceMode;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
+import org.springframework.http.HttpStatus;
 
 import java.util.Random;
 import java.util.UUID;
@@ -33,10 +32,20 @@ public class PurposeCreationModeDeliverSteps {
         this.dataPreparationService = dataPreparationService;
     }
 
+    private void savePurposeIdIfSuccessful() {
+        if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
+            CreatedResource createdResource = (CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse();
+            sharedStepsContext.getPurposeCommonContext().setPurposeId(createdResource.getId().toString());
+        }
+    }
+
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
     public void createPurposeWithAllRequiredFields() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
-        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+        String tenantType = sharedStepsContext.getTenantType();
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+
         sharedStepsContext.getHttpCallExecutor().performCall(
                 () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
                         new PurposeSeed()
@@ -47,8 +56,90 @@ public class PurposeCreationModeDeliverSteps {
                                 .isFreeOfCharge(true)
                                 .freeOfChargeReason("free of charge - QA")
                                 .dailyCalls(49)
+                                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm())
                 )
         );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeWithPolicyURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        String kind = identityService.getKind(tenantType);
+        RiskAnalysisFormSeed riskAnalysisByExample = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(true)
+                                .freeOfChargeReason("free of charge - QA")
+                                .dailyCalls(49)
+                                .riskAnalysisForm(riskAnalysisByExample)
+                )
+        );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void successfullyCreatePurposeWithPolicyURL() {
+        createPurposeWithPolicyURL();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                                ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId()
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "Purpose not found"
+        );
+        Purpose purpose = (Purpose) sharedStepsContext.getHttpCallExecutor().getResponse();
+
+        sharedStepsContext.getPurposeCommonContext().setPurposeId(purpose.getId().toString());
+        sharedStepsContext.getPurposeCommonContext().setVersionId(purpose.getCurrentVersion().getId().toString());
+    }
+
+    @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati e con dailyCalls uguale a {int}")
+    public void createPurposeWithAllRequiredFields(int dailyCalls) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        String tenantType = sharedStepsContext.getTenantType();
+        UUID consumerId = identityService.getOrganizationId(tenantType);
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(tenantType, true);
+
+        var purposeSeed = new PurposeSeed()
+                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                .consumerId(consumerId)
+                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                .description("description of the purpose - QA")
+                .isFreeOfCharge(true)
+                .freeOfChargeReason("free of charge - QA")
+                .dailyCalls(dailyCalls)
+                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(purposeSeed)
+        );
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                                ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId()
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "Purpose not found"
+        );
+        Purpose purpose = (Purpose) sharedStepsContext.getHttpCallExecutor().getResponse();
+
+        sharedStepsContext.getPurposeCommonContext().setPurposeId(purpose.getId().toString());
+        sharedStepsContext.getPurposeCommonContext().setVersionId(purpose.getCurrentVersion().getId().toString());
+        sharedStepsContext.getPurposeCommonContext().getCreatedPurposes().add(purposeSeed);
     }
 
     @Given("{string} ha già creato una finalità per quell'e-service con tutti i campi richiesti correttamente formattati")
@@ -86,6 +177,8 @@ public class PurposeCreationModeDeliverSteps {
                                 .dailyCalls(49)
                 )
         );
+
+        savePurposeIdIfSuccessful();
     }
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione")
@@ -106,6 +199,30 @@ public class PurposeCreationModeDeliverSteps {
                                 .dailyCalls(49)
                 )
         );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti, in modalità NON gratuita e tuttavia specificando una ragione di gratuità")
+    public void userCreatePurposeInFreeModeWithReason() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+        String title = String.format("purpose title - QA - %d - %d", sharedStepsContext.getTestSeed(), new Random().nextInt());
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurpose(
+                        new PurposeSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(title)
+                                .description("description of the purpose - QA")
+                                .isFreeOfCharge(false)
+                                .freeOfChargeReason("Some reason")
+                                .dailyCalls(49)
+                )
+        );
+
+        savePurposeIdIfSuccessful();
     }
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, con un'analisi del rischio parzialmente compilata ma formattata correttamente")
@@ -131,6 +248,8 @@ public class PurposeCreationModeDeliverSteps {
                                 )
                 )
         );
+
+        savePurposeIdIfSuccessful();
     }
 
     @When("l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, con un'analisi del rischio parzialmente compilata, formattata correttamente, ma con un template datato")
@@ -159,6 +278,47 @@ public class PurposeCreationModeDeliverSteps {
                                 )
                 )
         );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void createPurposeFromTemplateWithPolicyURL() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID consumerId = identityService.getOrganizationId(sharedStepsContext.getTenantType());
+        UUID purposeTemplateId = sharedStepsContext.getPurposeTemplateContext().getPurposeTemplateId();
+
+        sharedStepsContext.getHttpCallExecutor().performCall(
+                () -> clientTokenConfigurator.getPurposeApiClient().createPurposeFromTemplate(
+                        purposeTemplateId,
+                        new PurposeFromTemplateSeed()
+                                .eserviceId(sharedStepsContext.getEServicesCommonContext().getEserviceId())
+                                .consumerId(consumerId)
+                                .title(String.format("purpose title - QA - %d -%d", sharedStepsContext.getTestSeed(), new Random().nextInt()))
+                                .dailyCalls(49)
+                )
+        );
+
+        savePurposeIdIfSuccessful();
+    }
+
+    @When("l'utente crea con successo una nuova finalità dal template per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void successfullyCreatePurposeFromTemplateWithPolicyURL() {
+        createPurposeFromTemplateWithPolicyURL();
+        UUID purposeId = ((CreatedResource) sharedStepsContext.getHttpCallExecutor().getResponse()).getId();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> sharedStepsContext.getHttpCallExecutor().performCall(
+                        () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(
+                                purposeId
+                        )
+                ),
+                HttpStatus::is2xxSuccessful,
+                "Purpose not found"
+        );
+        Purpose purpose = (Purpose) sharedStepsContext.getHttpCallExecutor().getResponse();
+
+        sharedStepsContext.getPurposeCommonContext().setPurposeId(purpose.getId().toString());
+        sharedStepsContext.getPurposeCommonContext().setVersionId(purpose.getCurrentVersion().getId().toString());
     }
 
 }

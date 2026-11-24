@@ -1,3 +1,5 @@
+# QA-18544: https://pagopa.atlassian.net/browse/QA-18544
+# PST QA-18546: casi RUN 1.1, 2.1 e 2.2; regressione DRY caso 4.1.
 Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il prodotto 890
 
 
@@ -201,7 +203,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_responseStatus     | OK       |
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     And si verifica che non ci siano errori per i trackingId richiesti
-    And si verifica che non ci siano outputs per i trackingId richiesti
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "OK-GIACENZA-LTE10_890"
 
   @paperTrackerRunMode890
   Scenario: [PAPER_TRACKER_RUN_MODE_890_2] Viene verificato che tutti gli elementi desiderati per la sequence OK-GIACENZA-GT10_890 siano generati
@@ -473,6 +475,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequence>"
+    And si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequence>"
     Examples:
       | sequence                         |
       | OK_890                           |
@@ -563,3 +566,48 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | details_sentAttemptMade    | 0                         |
       | details_attachments        | [{"documentType": "23L"}] |
 
+  @paperTrackerRunMode890
+  Scenario: [PAPER_TRACKER_TEMPORARY_TEST_4_890_11] Per la sequence FAIL-Giacenza-lte10_890_NO23L sono previsti due RECAG012 e questo in timeline deve produrre la presenza di un solo elemento di tipo RECAG012A e controllo la correttezza dei dati presenti all'interno delle tabelle Tracker, DryRunOutputs per il prodotto 890
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-Giacenza-lte10_890_NO23L |
+      | digitalDomicile         | NULL                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "ARCAD"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    And si controlla che siano presenti tutti gli eventi relativi alla sequence "FAIL-Giacenza-lte10_890_NO23L"
+
+  @paperTrackerRunMode890 @work-item:QA-19079
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_12] Se il recapitista invia più RECAG012 per un 890 in giacenza, il FEEDBACK RECAG012 riporta la data dell'ultimo RECAG012 ricevuto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012[NOAUTODATETIME].5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
+      | digitalDomicile         | NULL                                                                                                                                                                            |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista
+
+  @paperTrackerRunMode890 @ocrEnabled @work-item:QA-19079
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_13] Se il recapitista invia più RECAG012 per un 890 in giacenza, la verifica OCR del 23L è associata all'ultimo RECAG012 ricevuto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG012.30s-RECAG012[NOAUTODATETIME].5s-RECAG005A.5s-RECAG005B[DOC:ARCAD;DOC:23L].5s-RECAG005C |
+      | digitalDomicile         | NULL                                                                                                                                                                            |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si verifica che la richiesta OCR del documento "23L" sia associata all'ultimo RECAG012 inviato dal recapitista
+    And si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista

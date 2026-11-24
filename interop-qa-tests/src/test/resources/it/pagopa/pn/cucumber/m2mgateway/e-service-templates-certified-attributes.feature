@@ -232,7 +232,6 @@ Feature: Gestione degli attributi certificati degli e-service templates template
     Given l'utente è un "admin" di "PA2" con ruolo M2M m2m
     When l'utente tenta di reperire gli attributi certificati dal gruppo dell'e-service template
     Then si ottiene lo status code 404
-    And gli attributi certificati ottenuti sono coerenti con quelli aggiunti nel template
     Examples:
       | mode        |
       | erogazione  |

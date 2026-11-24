@@ -76,3 +76,25 @@ Feature: Lettura singola finalità
       | SUSPENDED            |
       | WAITING_FOR_APPROVAL |
       | ARCHIVED             |
+
+  # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-10265
+  @adeguamento-analisi-rischio
+  # TODO in tutte le descrizioni degli scenari di questa feature si sta descrivendo quello che si tenta di fare senza parlare dei risultati attesi. Correggere.
+  # NOTE 04/06/2026: al momento l'analisi del rischio viene restituita anche per ruolo API. Chiesto conferma https://pagopaspa.slack.com/archives/C069AP16WG7/p1780565330577099
+  Scenario Outline: [LETTURA_FINALITA_TK_1] A seguito del cambiamento di tenant kind si tenta di reperire una finalità attiva
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    And "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And "<ente>" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And il tenant kind dell'ente "<ente>" viene impostato a "<kind>"
+    When l'utente è un "admin" di "<ente>"
+    And l'utente richiede la lettura della finalità
+    Then si ottiene status code 200
+    When l'utente è un "api" di "<ente>"
+    And l'utente richiede la lettura della finalità
+    Then si ottiene status code 200
+    Examples:
+      | ente    | kind        |
+      | PA4     | PRIVATE     |
+      | PA4     | GSP         |
+      | GSP2    | PA          |
+      | Privato | PA          |

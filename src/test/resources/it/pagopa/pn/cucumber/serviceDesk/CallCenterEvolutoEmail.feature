@@ -460,7 +460,7 @@ Feature: Gestione evolutiva del Call Center Evoluto per consentire ai destinatar
 
   @CallCenterEvolutoV2
   Scenario Outline: [ACT_OPERATION_BUG_VALIDATION_14813] Creazione di un actOperation relativa a una notifica i cui documenti risultano non disponibili e verifica della popolazione del campo uncompletedIuns
-    Given "Comune_Multi" recupera lato web PA una notifica inviata tra 180 e 150 giorni fa con destinatario Mario Gherkin
+    Given "Comune_Multi" recupera lato web PA una notifica perfezionata inviata tra 180 e 150 giorni fa con destinatario Mario Gherkin
     When viene popolata una richiesta di creazione Act operation "<actOperationVersion>" con i seguenti dati
       | ticketId          | auto                      |
       | iun               | auto                      |

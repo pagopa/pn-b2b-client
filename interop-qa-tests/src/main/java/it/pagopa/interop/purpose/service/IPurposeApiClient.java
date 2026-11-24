@@ -2,8 +2,10 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +17,7 @@ public interface IPurposeApiClient extends SettableBearerToken {
     PurposeVersionResource createPurposeVersion(UUID purposeId, PurposeVersionSeed purposeVersionSeed);
     CreatedResource createPurposeForReceiveEservice(PurposeEServiceSeed purposeEServiceSeed);
     Purpose getPurpose(UUID purposeId);
+    ResponseEntity<Purpose> getPurposeWithHttpInfo(UUID purposeId);
     PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef);
     PurposeVersionResource activatePurposeVersion(UUID purposeId, UUID versionId);
     PurposeVersionResource suspendPurposeVersion(UUID purposeId, UUID versionId, DelegationRef delegationRef);
@@ -31,4 +34,15 @@ public interface IPurposeApiClient extends SettableBearerToken {
     PurposeVersionResource updateReversePurpose(UUID purposeId, ReversePurposeUpdateContent reversePurposeUpdateContent);
     CreatedResource createPurposeFromTemplate(UUID purposeTemplateId, PurposeFromTemplateSeed purposeFromTemplateSeed) throws RestClientException;
     PurposeVersionResource patchUpdatePurposeFromTemplate(UUID purposeTemplateId, UUID purposeId, PatchPurposeUpdateFromTemplateContent patchPurposeUpdateFromTemplateContent) throws RestClientException;
+    RemainingDailyCallsResponse getRemainingDailyCalls(UUID purposeId);
+    void assignRiskAnalysis(UUID purposeId, RiskAnalysisAssignmentSeed payload) throws RestClientException;
+    void compileRiskAnalysisForm(UUID purposeId, RiskAnalysisFormSeed payload) throws RestClientException;
+    void submitRiskAnalysis(UUID purposeId, RiskAnalysisSubmissionSeed payload) throws RestClientException;
+    void rejectRiskAnalysis(UUID purposeId, RiskAnalysisRejectionSeed payload) throws RestClientException;
+    void signRiskAnalysis(UUID purposeId) throws RestClientException;
+    void signRiskAnalysis(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException;
+    ResponseEntity<Void> signRiskAnalysisWithHttpInfo(UUID purposeId, RiskAnalysisSignSeed payload) throws RestClientException;
+    Purposes getRiskAnalysisAssignments(Integer offset, Integer limit, List<UUID> eservicesIds, List<RiskAnalysisSigningState> states);
+    Integer getPurposeMetadataVersion(UUID purposeId) throws RestClientException;
+    @Nonnull Integer extractPurposeMetadataVersion(ResponseEntity<Purpose> purposeWithHttpInfo);
 }

@@ -10,12 +10,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
@@ -456,6 +462,79 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     public ResponseEntity<List<ProgressResponseElementV29>> consumeEventStreamHttpV29(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return eventsApi.consumeEventStreamV29WithHttpInfo(streamId, lastEventId);
+    }
+
+    //V30
+    @Override
+    public StreamMetadataResponseV30 createEventStreamV30(StreamCreationRequestV30 streamCreationRequestV30) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.createEventStreamV30(streamCreationRequestV30);
+    }
+
+    @Override
+    public StreamMetadataResponseV30 disableEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.disableEventStreamV30(streamId);
+    }
+
+    @Override
+    public List<StreamListElement> listEventStreamsV30() throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.listEventStreamsV30();
+    }
+
+    @Override
+    public void deleteEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        streamsApi.removeEventStreamV30(streamId);
+    }
+
+    @Override
+    public StreamMetadataResponseV30 retrieveEventStreamV30(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.retrieveEventStreamV30(streamId);
+
+    }
+
+    @Override
+    public StreamMetadataResponseV30 updateEventStreamV30(UUID streamId, StreamRequestV30 streamRequestV30) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return streamsApi.updateEventStreamV30(streamId, streamRequestV30);
+    }
+
+    @Override
+    public List<ProgressResponseElementV30> consumeEventStreamV30(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV30(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV30>> consumeEventStreamHttpV30(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return eventsApi.consumeEventStreamV30WithHttpInfo(streamId, lastEventId);
+    }
+
+    /**
+     * Overload di {@link #consumeEventStreamV30(UUID, String)} con il tipo di risposta scelto dal chiamante. Con
+     * {@code String} il body resta il JSON così come ricevuto: serve a verificare che gli eventi non contengano campi
+     * che il modello generato scarterebbe in deserializzazione.
+     */
+    public <T> ResponseEntity<T> consumeEventStreamV30(UUID streamId, String lastEventId, ParameterizedTypeReference<T> responseType) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        ApiClient apiClient = eventsApi.getApiClient();
+        return apiClient.invokeAPI(
+                "/delivery-progresses/v3.0/streams/{streamId}/events",
+                HttpMethod.GET,
+                Map.of("streamId", streamId),
+                apiClient.parameterToMultiValueMap(null, "lastEventId", lastEventId),
+                null,
+                new HttpHeaders(),
+                new LinkedMultiValueMap<>(),
+                new LinkedMultiValueMap<>(),
+                List.of(MediaType.APPLICATION_JSON),
+                null,
+                new String[]{"ApiKeyAuth"},
+                responseType);
     }
 
 

@@ -58,7 +58,7 @@ public class AgreementUpgradeSteps {
 
     private void requireAgreementUpgradeImpl() {
         sharedStepsContext.getHttpCallExecutor().performCall(
-            () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementId())
+            () -> clientTokenConfigurator.getAgreementClient().upgradeAgreement(sharedStepsContext.getAgreementCommonContext().getAgreementId())
         );
         if (sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful()) {
             Agreement agreement = ((Agreement) sharedStepsContext.getHttpCallExecutor().getResponse());

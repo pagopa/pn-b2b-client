@@ -34,6 +34,35 @@ Feature: Creazione finalità per e-service in erogazione diretta
       | Privato | api,security |       403 |
       | Privato | support      |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ente    | ruolo        | risultato |
+      | PA2     | reviewer     |       403 |
+      | PA2     | viewer       |       403 |
+      | GSP     | reviewer     |       403 |
+      | GSP     | viewer       |       403 |
+      | Privato | reviewer     |       403 |
+      | Privato | viewer       |       403 |
+
+  # BUG validation in corso: https://pagopa.atlassian.net/browse/QA-18048
+  @nrt-minimal
+  @purpose_creation_deliver1
+  @privacy-policy-url
+  Scenario Outline: [CREAZIONE_FINALITA_DELIVER_INFORMATIVA_1] Un utente può specificare un URL come indirizzo dell'informativa sul trattamento dei dati personali all'interno della risk analysis.
+    Given l'utente è un "admin" di "<ente>"
+    Given "PA2" ha già creato e pubblicato 1 e-service con personalData true
+    Given "<ente>" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    Then si ottiene status code 200
+
+    @happy-path
+    Examples:
+      | ente    |
+      | PA1     |
+      | GSP     |
+      | Privato |
+
   @happy-path
   @nrt-minimal
   @purpose_creation_deliver2
@@ -117,6 +146,16 @@ Feature: Creazione finalità per e-service in erogazione diretta
     Given "PA2" ha già creato e pubblicato 1 e-service
     Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
     When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti correttamente formattati, in modalità gratuita senza specificare una ragione
+    Then si ottiene status code 400
+
+  @sad-path
+  @nrt-minimal
+  @purpose_creation_deliver6
+  Scenario: [CREAZIONE_FINALITA_DELIVER_8_B] Un utente con sufficienti permessi (admin); il cui ente ha già una richiesta di fruizione in stato ACTIVE per una versione di e-service, il quale ha mode = DELIVER, crea una nuova finalità con tutti i campi richiesti, il campo isFreeOfCharge valorizzato a false e il campo freeOfChargeReason compilato (combinazione illegale). Ottiene un errore.
+    Given l'utente è un "admin" di "PA1"
+    Given "PA2" ha già creato e pubblicato 1 e-service
+    Given "PA1" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    When l'utente crea una nuova finalità per quell'e-service con tutti i campi richiesti, in modalità NON gratuita e tuttavia specificando una ragione di gratuità
     Then si ottiene status code 400
 
   @happy-path
