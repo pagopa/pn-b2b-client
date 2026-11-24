@@ -341,7 +341,6 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And salvo il timestamp corrente
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
-    Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     And la richiesta INIPEC per il cf "39274018561" risulta INVIATA al primo tentativo
     And recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     And risulta una richiesta INAD per il cf "39274018561"
