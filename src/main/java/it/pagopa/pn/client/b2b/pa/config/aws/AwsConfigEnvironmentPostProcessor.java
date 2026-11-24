@@ -39,8 +39,8 @@ import java.util.concurrent.CompletionException;
  */
 public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-    private static final String ENABLED_PROPERTY = "aws.config.enabled";
-    private static final String SECRET_IDS_PROPERTY = "aws.config.secret-ids";
+    private static final String ENABLED_PROPERTY = "pn.aws.config.enabled";
+    private static final String SECRET_IDS_PROPERTY = "pn.aws.config.secret-ids";
     private static final String SECRETS_PROPERTY_SOURCE_NAME = "awsSecretsManager";
 
     private static final Region REGION = Region.EU_SOUTH_1;
@@ -77,7 +77,7 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
 
     @Override
     public int getOrder() {
-        // dopo il caricamento di config/application*.properties, per poter leggere aws.config.*
+        // dopo il caricamento di config/application*.properties, per poter leggere pn.aws.config.*
         return ConfigDataEnvironmentPostProcessor.ORDER + 1;
     }
 
