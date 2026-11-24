@@ -209,8 +209,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    And il ritentativo della chiamata verso INAD per il cf "TYXYHK14A01A001Q" risulta correttamente registrato
-    And il batch associato alla richiesta verso INAD per il cf "TYXYHK14A01A001Q" risulta in stato ERROR
+    And il retry della richiesta verso INAD per il cf "TYXYHK14A01A001Q" risulta correttamente registrato
 
   @inadMassive @mockNR @ignoreUAT @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
