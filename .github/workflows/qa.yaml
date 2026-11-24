@@ -19,32 +19,37 @@ defaults:
     shell: bash
 
 permissions:
-  id-token: write
   contents: read
 
+env:
+  JAVA_TEST_SUITE: ${{ inputs.testSuite || 'InteropTracingTest' }}
+
 jobs:
-  inputs:
-    runs-on: ubuntu-22.04
-    environment: ${{ inputs.environment }}
-
-    steps:
-      - name: Print Inputs
-        id: print_inputs
-        run: |
-          echo "- environment: \`${{ inputs.environment }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- branch name: \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- testSuite: \`${{ inputs.testSuite }}\`" >> $GITHUB_STEP_SUMMARY
-
   run_test:
     name: Run Cucumber Test Suite
     runs-on: ubuntu-22.04
     environment: ${{ inputs.environment }}
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      artifact-id: ${{ steps.reports.outputs.artifact-id }}
+      report-run-url: ${{ steps.collect_reports.outputs.run-url }}
 
     env:
       ENVIRONMENT: ${{ inputs.environment }}
       ST_VERBOSE_MODE: ${{ vars.ST_VERBOSE_MODE }}
 
     steps:
+      - name: Validate and summarize inputs
+        run: |
+          [[ "$JAVA_TEST_SUITE" =~ ^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$ ]] || {
+            echo '::error::Specify a single Java test suite'
+            exit 1
+          }
+          printf -- '- environment: `%s`\n- branch: `%s`\n- suite: `%s`\n' \
+            "$ENVIRONMENT" "$GITHUB_REF_NAME" "$JAVA_TEST_SUITE" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@50ac8dd1e1b10d09dac7b8727528b91bed831ac0
         with:
@@ -61,8 +66,9 @@ jobs:
       - name: Clone pn-b2b-client repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.sha }}
           fetch-depth: 1
+          persist-credentials: false
 
       - name: Build common module
         run: |
@@ -71,13 +77,137 @@ jobs:
 
       - name: Run QA tests
         id: run_qa_tests
+        working-directory: interop-qa-tests
         run: |
-          set -uo pipefail
+          started_at=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          start=$SECONDS
+          status=0
+          mvn "-Dtest=it.pagopa.pn.interop.cucumber.$JAVA_TEST_SUITE" clean verify || status=$?
+          elapsed=$((SECONDS - start))
+          mkdir -p target/rae-input/rae
+          printf '{"data_ora":"%s","durata":"%02d:%02d:%02d"}\n' \
+            "$started_at" "$((elapsed / 3600))" "$((elapsed / 60 % 60))" "$((elapsed % 60))" \
+            > target/rae-input/rae/run_metadata.json
+          exit "$status"
 
-          echo "Running tests..."
+      - name: Collect Cucumber reports
+        id: collect_reports
+        if: ${{ !cancelled() && (steps.run_qa_tests.outcome == 'success' || steps.run_qa_tests.outcome == 'failure') }}
+        working-directory: interop-qa-tests
+        run: |
+          shopt -s nullglob
+          reports=(target/*cucumber-report*.json)
+          if ((${#reports[@]} == 0)); then
+            echo '::error::Maven produced no Cucumber JSON; RAE generation requires a report'
+            exit 1
+          fi
+          mkdir -p target/rae-input/cucumber-reports
+          cp -- "${reports[@]}" target/rae-input/cucumber-reports/
+          test -s target/rae-input/rae/run_metadata.json
+          printf 'run-url=%s/%s/actions/runs/%s/attempts/%s\n' \
+            "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
 
-          cd interop-qa-tests
+      - name: Upload QA test reports
+        id: reports
+        if: ${{ !cancelled() && steps.collect_reports.outcome == 'success' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: qa-test-artifacts-${{ github.run_attempt }}
+          path: interop-qa-tests/target/rae-input/
+          if-no-files-found: error
+          retention-days: 10
 
-          mvn \
-            -Dtest=it.pagopa.pn.interop.cucumber.${{ inputs.testSuite }} \
-            clean verify
+  generate_rae:
+    name: Generate RAE YAML and Draft PR
+    needs: run_test
+    if: ${{ !cancelled() && needs.run_test.outputs.artifact-id != '' && (inputs.environment == 'qa' || inputs.environment == 'dev') }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+      RAE_NAMESPACE: interop
+    steps:
+      - name: Checkout develop for trusted generator and RAE history
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          path: base
+          token: ${{ secrets.RAE_AUTOMATION_TOKEN || github.token }}
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install RAE Python dependencies
+        run: python -m pip install -r base/tools/rae/rae_generator/requirements.txt
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          artifact-ids: ${{ needs.run_test.outputs.artifact-id }}
+          path: ${{ runner.temp }}/rae-test-artifacts
+          merge-multiple: true
+
+      - name: Generate RAE YAML
+        id: generate
+        working-directory: base
+        env:
+          REPORTS: ${{ runner.temp }}/rae-test-artifacts
+          GITHUB_ACTOR_NAME: ${{ github.actor }}
+          GITHUB_RUN_LINK: ${{ needs.run_test.outputs.report-run-url }}
+        run: |
+          set -euo pipefail
+          METADATA="$REPORTS/rae/run_metadata.json"
+          test -s "$METADATA" || { echo 'Missing Maven execution metadata, refusing to create RAE'; exit 1; }
+          RUNNER="$JAVA_TEST_SUITE"
+          [[ "$RUNNER" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Unsafe runner name'; exit 1; }
+          [[ "$RAE_NAMESPACE" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]] && [[ "$RAE_NAMESPACE" != "." ]] && [[ "$RAE_NAMESPACE" != ".." ]] || { echo 'Unsafe RAE namespace'; exit 1; }
+          for attempt in 1 2 3 4 5; do
+            TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
+            BRANCH="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}"
+            if existing=$(git ls-remote --heads origin "refs/heads/$BRANCH"); then
+              [[ -n "$existing" ]] || break
+            else
+              exit 1
+            fi
+            sleep 1
+          done
+          if [[ -n "$existing" ]]; then
+            echo 'Could not allocate unique RAE branch'; exit 1
+          fi
+          git checkout -b "$BRANCH"
+          YAML="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}.yaml"
+          PYTHONPATH=tools/rae/rae_generator python -P -m rae_generator generate \
+            --reports "$REPORTS" \
+            --history rae \
+            --namespace "$RAE_NAMESPACE" \
+            --suite "$RUNNER" \
+            --environment "$ENVIRONMENT" \
+            --executor "$GITHUB_ACTOR_NAME" \
+            --source-branch "$GITHUB_REF_NAME" \
+            --run-url "$GITHUB_RUN_LINK" \
+            --metadata "$METADATA" \
+            --output "$YAML"
+          printf 'branch=%s\nyaml=%s\ntimestamp=%s\n' "$BRANCH" "$YAML" "$TIMESTAMP" >> "$GITHUB_OUTPUT"
+
+      - name: Publish RAE Draft PR
+        working-directory: base
+        env:
+          GH_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN || github.token }}
+          BRANCH: ${{ steps.generate.outputs.branch }}
+          YAML: ${{ steps.generate.outputs.yaml }}
+          TIMESTAMP: ${{ steps.generate.outputs.timestamp }}
+          GITHUB_RUN_LINK: ${{ needs.run_test.outputs.report-run-url }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$YAML"
+          git commit -m "chore(rae): [QA-18253] create analysis for $JAVA_TEST_SUITE ($TIMESTAMP)"
+          git push origin "HEAD:refs/heads/$BRANCH"
+          gh pr create --draft --base develop --label "rae" --label "interop" --head "$BRANCH" \
+            --title "RAE: ${JAVA_TEST_SUITE} (${TIMESTAMP})" \
+            --body "RAE YAML to complete. NRT run: ${GITHUB_RUN_LINK}. Fill release, issue_jira, procedure and result; the RAE validation action will generate the Markdown."
