@@ -1,10 +1,10 @@
 {
   "document": "8c08ad4a85ddfaaacce01c8e0b6db5a4acd38c04955c7842d561cbbaf00cc463",
-  "input": "78debe5dc167a70c63a80b32ed63784b02c5cf0b5b0677d12b8d1d0500f9f508",
+  "input": "825f07be9d358b1b358e12f9efdfe1e255face24e111cd9eb27d3c9c31225d3a",
   "outputs": {
-    "pst_QA-18430.md": "2b031fcd556dee0f6974cf329dea9e7d68a516babb036d4031b145723a964811"
+    "pst_QA-18430.md": "eac1fbf6213b562d4bb838011a6003e0f76d252f145e126583a988c42e67b7b8"
   },
-  "scenarios": "d3dbc6fbec0eee3106fb932fbd9c6cd6970beee863a3584d1fa6770cc5f2fefb",
+  "scenarios": "4dcb5c87d1b91bbd0b9526377aa28aa1d4e941dee0bd6b491398a7152ae0fca8",
   "schema": 1,
   "versions": [
     {
@@ -21,6 +21,11 @@
       "date": "23/11/2026",
       "description": "Aggiornamento del PST",
       "version": 3
+    },
+    {
+      "date": "24/11/2026",
+      "description": "Aggiornamento del PST",
+      "version": 4
     }
   ]
 }
