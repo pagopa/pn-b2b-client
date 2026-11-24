@@ -1,0 +1,2 @@
+org.springframework.boot.env.EnvironmentPostProcessor=\
+it.pagopa.pn.client.b2b.pa.config.aws.AwsConfigEnvironmentPostProcessor
