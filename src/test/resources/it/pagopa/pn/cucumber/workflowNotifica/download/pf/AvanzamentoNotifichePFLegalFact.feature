@@ -228,7 +228,7 @@ Feature: Download legalFact
     Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS" senza legalFactType
 
 
-  @legalFact
+  @legalFact @qa19093_pa
   Scenario: [B2B_PA_LEGALFACT_9] Invio notifica e richiesta atto opponibile PEC_RECEIPT con ente diverso dalla notifica - PN-8702
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

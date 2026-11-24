@@ -1,6 +1,6 @@
 Feature: verifica feature aoo/uo
 
-  @AOO_UO
+  @AOO_UO @qa19093_pa
   Scenario: [B2B-AOO-UO_1] Invio notifica digitale_scenario da PA figlio e non riesce a recuperare la notifica PA padre
     Given viene generata una nuova notifica
       | subject            | invio notifica multi cucumber |
@@ -12,7 +12,7 @@ Feature: verifica feature aoo/uo
 
   # Questo test viene escluso da hotfix poiché in quell'ambiente non è presente una seconda PA di tipo SON
   # Su hotfix viene però eseguito il test B2B-AOO-UO_FILTER_1.B che usa una sola PA
-  @AOO_UO @ignoreOnHotfixEnv
+  @AOO_UO @ignoreOnHotfixEnv @qa19093_dest
   Scenario: [B2B-AOO-UO_FILTER_1] Invocazione API per filtrare le PA di Root da una lista in input passando come input PA di tipo Root e PA figlie.
   Come risultato si ci aspetta che la risposta contenga solo id relativi a PA non di tipo Root.
     When viene invocata l'api di filtro pa di tipo Root passando le seguenti PA:

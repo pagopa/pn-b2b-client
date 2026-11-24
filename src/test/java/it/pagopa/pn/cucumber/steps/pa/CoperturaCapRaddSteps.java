@@ -6,6 +6,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddCapCoverageClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddcoverage.model.Coverage;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddcoverage.model.CreateCoverageRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddcoverage.model.UpdateCoverageRequest;
@@ -18,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -122,13 +123,13 @@ public class CoperturaCapRaddSteps {
 
     @Then("l'operazione di copertura Radd ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        assertThat(httpStatusCodeException)
-                .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla")
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
+        assertThat(error)
+                .as("Atteso un errore HTTP ma l'operazione non ha prodotto errori")
                 .isNotNull();
 
-        assertThat(httpStatusCodeException.getStatusCode().toString().substring(0, 3))
-                .as("Il codice di stato HTTP non corrisponde a quello atteso", statusCode, httpStatusCodeException.getStatusCode().toString().substring(0, 3))
+        assertThat(String.valueOf(error.statusCode()))
+                .as("Il codice di stato HTTP non corrisponde a quello atteso. Dettaglio errore: %s", error.problem())
                 .isEqualTo(statusCode);
     }
 
@@ -184,22 +185,29 @@ public class CoperturaCapRaddSteps {
 
     @And("invoco l'API di aggiornamento copertura cap Radd con errore")
     public void invokeUpdateCoverageApiError() {
-        try {
-            System.out.println("Request JSON per updateCoverage: " + updateRequest);
-            response = raddCapCoverageClient.updateCoverageWithHttpInfo(cap, locality, updateRequest);
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        System.out.println("Request JSON per updateCoverage: " + updateRequest);
+        handleCoverageResult(ApiCallHelper.callBody(() -> raddCapCoverageClient.updateCoverageWithHttpInfo(cap, locality, updateRequest)));
     }
 
     @Then("creo una nuova copertura Radd con Errore")
     public void newCoverageError() {
-        try {
-            response = raddCapCoverageClient.addCoverageWithHttpInfo(request);
+        handleCoverageResult(ApiCallHelper.callBody(() -> raddCapCoverageClient.addCoverageWithHttpInfo(request)));
+    }
 
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+    /** Il body dell'ApiResult è la ResponseEntity originale (status reale), salvata in {@link #response}. */
+    private void handleCoverageResult(ApiResult<ResponseEntity<Coverage>> result) {
+        if (result.is2xx()) {
+            response = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
+        }
+    }
+
+    private void handleCheckCoverageResult(ApiResult<CheckCoverageResponse> result) {
+        if (result.is2xx()) {
+            checkCoverageResponse = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
         }
     }
 
@@ -242,12 +250,7 @@ public class CoperturaCapRaddSteps {
 
     @And("invoco l'API di verifica copertura cap Radd Complete mode con errore")
     public void invokeVerifyCoverageApiCError() {
-        try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest, searchDate);
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        handleCheckCoverageResult(ApiCallHelper.callBody(() -> raddCapCoverageClient.checkCoverage(SearchMode.COMPLETE, checkCoverageRequest, searchDate)));
     }
 
     @Then("invoco l'API di verifica copertura cap Radd Complete mode")
@@ -262,22 +265,12 @@ public class CoperturaCapRaddSteps {
 
     @And("invoco l'API di verifica copertura cap Radd Light mode con errore")
     public void invokeVerifyCoverageApiLError() {
-        try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest, searchDate);
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        handleCheckCoverageResult(ApiCallHelper.callBody(() -> raddCapCoverageClient.checkCoverage(SearchMode.LIGHT, checkCoverageRequest, searchDate)));
     }
 
     @And("invoco l'API di verifica copertura cap Radd mode: NULL con errore")
     public void invokeVerifyCoverageApiLModeError() {
-        try {
-            checkCoverageResponse = raddCapCoverageClient.checkCoverage(null, checkCoverageRequest, searchDate);
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        handleCheckCoverageResult(ApiCallHelper.callBody(() -> raddCapCoverageClient.checkCoverage(null, checkCoverageRequest, searchDate)));
     }
 
     @Then("invoco l'API di verifica copertura cap Radd Light mode")
@@ -445,14 +438,14 @@ public class CoperturaCapRaddSteps {
                         .province(resolveValue(province));
 
                 try {
-                    raddCapCoverageClient.addCoverageWithHttpInfo(createRequest);
-                    inserted++;
-                } catch (HttpStatusCodeException e) {
-                    if (e.getStatusCode().value() == 409) {
+                    ApiResult<ResponseEntity<Coverage>> insertResult = ApiCallHelper.callBody(() -> raddCapCoverageClient.addCoverageWithHttpInfo(createRequest));
+                    if (insertResult.is2xx()) {
+                        inserted++;
+                    } else if (insertResult.statusCode() == 409) {
                         System.out.println("Coverage già presente per CAP " + cap + ", skipping insert.");
                         skipped++;
                     } else {
-                        System.out.println("Errore durante l'inserimento per CAP " + cap + ": " + e.getMessage());
+                        System.out.println("Errore durante l'inserimento per CAP " + cap + ": " + insertResult.statusCode() + " " + insertResult.problem());
                         failed++;
                     }
                 } catch (Exception e) {

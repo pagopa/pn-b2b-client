@@ -605,7 +605,7 @@ Feature: Radd Alternative
 
 # FLUSSO ACT su PF con IUN - error cases
 
-  @raddAlt
+  @raddAlt @qa19093_radd
   Scenario: [RADD-ALT_ACT-47] PF - Restituzione errore - Recupero notifica solo con CF corretto
     When L'operatore usa lo IUN "non esistente" per recuperare gli atti di Mario Cucumber con restituzione errore
     Then l'operazione ha prodotto un errore con status code "400"
@@ -1342,7 +1342,7 @@ Feature: Radd Alternative
     And L'operatore esegue il download del frontespizio del operazione "act"
     Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-  @raddAlt @zip
+  @raddAlt @zip @qa19093_radd
   Scenario: [RADD-ALT_ACT-94] PF - Verifica restituzione errore al download del documento Frontespizio con attachmentId non esistente - PN-11259
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |

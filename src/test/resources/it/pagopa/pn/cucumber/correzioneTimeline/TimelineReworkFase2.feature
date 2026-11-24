@@ -426,7 +426,7 @@ Feature: Test relativi al SRS di correzione timeline Fase 2
     And si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then la category "NOTIFICATION_TIMELINE_REWORKED" non è presente in nessun elemento di timeline restituito dalla consumeStream con versione "V23"
 
-  @timelineReworkF2 #rif 5,6,7,8
+  @timelineReworkF2 @qa19093_dest #rif 5,6,7,8
   Scenario Outline: [TIMELINE_REWORK_9_1] Verificare che l’API di aggiornamento richiesta di correzione timeline risponda secondo l’esito atteso Errore
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |

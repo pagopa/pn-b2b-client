@@ -87,7 +87,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then si tenta la lettura della notifica da parte del delegato "Mario Gherkin" che produce un errore con status code "404"
 
-  @deleghe1
+  @deleghe1 @qa19093_dest
   Scenario: [WEB-PF-MANDATE_8] Delega a se stesso _scenario negativo
     Given "Mario Gherkin" viene delegato da "Mario Gherkin"
     Then l'operazione di delega ha prodotto un errore con status code "409"

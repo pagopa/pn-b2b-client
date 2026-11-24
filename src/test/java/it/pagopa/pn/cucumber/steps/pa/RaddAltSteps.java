@@ -16,6 +16,8 @@ import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
@@ -79,7 +81,7 @@ public class RaddAltSteps {
     private CompleteTransactionResponse completeTransactionResponse;
     private B2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
-    private HttpStatusCodeException documentUploadError;
+    private ApiResult<?> documentUploadError;
     private HttpStatusCodeException expectedStartTransactionException;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
@@ -166,27 +168,21 @@ public class RaddAltSteps {
     public void lOperatoreUsoIUNPerRecuperareGliAttiDaIssuer(String tipologiaIun, Destinatario destinatario, String issuer) {
         changeRaddista(issuer);
         selectUserRaddAlternative(destinatario);
-        ActInquiryResponse actInquiryResponse = null;
-        try {
-            actInquiryResponse = raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, null, tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() : tipologiaIun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null);
-        } catch (HttpStatusCodeException exception) {
-            sharedSteps.setNotificationError(exception);
-        }
-        log.info("actInquiryResponse: {}", actInquiryResponse);
-        this.actInquiryResponse = actInquiryResponse;
+        String iunParam = tipologiaIun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() : tipologiaIun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null;
+        ApiResult<ActInquiryResponse> result = ApiCallHelper.callBody(() -> raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, null, iunParam));
+        sharedSteps.setNotificationError(result);
+        log.info("actInquiryResponse: {}", result.body());
+        this.actInquiryResponse = result.body();
     }
 
     @When("L'operatore usa lo IUN {string} per recuperare gli atti di {destinatario} con restituzione errore")
     public void lOperatoreUsoIUNPerRecuperareGliAttiWithError(String iun, Destinatario destinatario) {
         selectUserRaddAlternative(destinatario);
-        ActInquiryResponse actInquiryResponse = null;
-        try {
-            actInquiryResponse = raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, null, iun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() : iun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null);
-        } catch (HttpStatusCodeException exception) {
-            sharedSteps.setNotificationError(exception);
-        }
-        log.info("actInquiryResponse: {}", actInquiryResponse);
-        this.actInquiryResponse = actInquiryResponse;
+        String iunParam = iun.equalsIgnoreCase("corretto") ? this.iun = sharedSteps.getNotificationIun() : iun.equalsIgnoreCase("errato") ? this.iun = "GLDZ-MGZD-AGAR-202402-Y-1" : null;
+        ApiResult<ActInquiryResponse> result = ApiCallHelper.callBody(() -> raddClient.actInquiry(uid, this.currentUserCf, this.recipientType, null, iunParam));
+        sharedSteps.setNotificationError(result);
+        log.info("actInquiryResponse: {}", result.body());
+        this.actInquiryResponse = result.body();
     }
 
     private ActInquiryResponseStatus.CodeEnum getErrorCodeRaddAlternative(int errorCode) {
@@ -272,7 +268,8 @@ public class RaddAltSteps {
     public void lOperatoreTentaDiCaricareIDocumentoDiIdentitaDelCittadinoSuRaddAlternativeSenzaSuccesso(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
         this.operationId = generateRandomNumber();
-        documentUploadError = Assertions.assertThrows(HttpStatusCodeException.class, () -> uploadDocumentRaddOperatorAlternative(true, raddOperator));
+        documentUploadError = ApiCallHelper.run(() -> uploadDocumentRaddOperatorAlternative(true, raddOperator));
+        Assertions.assertTrue(documentUploadError.isError(), "Il caricamento del documento di identità doveva fallire con un errore HTTP");
     }
 
     @And("si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative")
@@ -760,18 +757,20 @@ public class RaddAltSteps {
         DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest();
         documentUploadRequest = without.equalsIgnoreCase("contentType") ? documentUploadRequest : documentUploadRequest.checksum(sha256);
 
-        try {
-            DocumentUploadResponse documentUploadResponse = raddClient.documentUpload(this.uid, documentUploadRequest);
-            log.debug("DocumentUploadResponse: {}", documentUploadResponse);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            this.documentUploadError = httpStatusCodeException;
+        DocumentUploadRequest request = documentUploadRequest;
+        ApiResult<DocumentUploadResponse> result = ApiCallHelper.callBody(() -> raddClient.documentUpload(this.uid, request));
+        if (result.is2xx()) {
+            log.debug("DocumentUploadResponse: {}", result.body());
+        } else {
+            this.documentUploadError = result;
         }
     }
 
     @Then("il caricamento ha prodotto une errore http {int} su radd alternative")
     public void uploadProducedAnHttpError(int httpError) {
-        Assertions.assertNotNull(this.documentUploadError);
-        Assertions.assertEquals(this.documentUploadError.getStatusCode().value(), httpError);
+        Assertions.assertNotNull(this.documentUploadError, "Il caricamento non ha prodotto errori");
+        Assertions.assertEquals(httpError, this.documentUploadError.statusCode(),
+                "Dettaglio errore: " + this.documentUploadError.problem());
     }
 
     @Then("la transazione viene abortita per gli {string}")
@@ -892,11 +891,7 @@ public class RaddAltSteps {
 
     @Given("L'operatore esegue il download del frontespizio del operazione {string} con attachmentId {string}")
     public void lOperatoreEsegueDownloadFrontespizioAttachmentIdNonEsistente(String operationType, String attachmentId) {
-        try {
-            downloadFrontespizio(operationType.toUpperCase(), this.operationId, attachmentId);
-        } catch (HttpStatusCodeException exception) {
-            sharedSteps.setNotificationError(exception);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.run(() -> downloadFrontespizio(operationType.toUpperCase(), this.operationId, attachmentId)));
     }
 
     @When("L'operatore scansiona il qrCode e stampa gli atti per {int} volte senza errori")

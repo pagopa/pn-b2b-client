@@ -15,6 +15,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeV2ClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.AuthenticatorCognito;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRaddCognito;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.Address;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD_V2.*;
@@ -30,7 +32,6 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import software.amazon.awssdk.regions.Region;
 
@@ -208,15 +209,10 @@ public class AnagraficaRaddAltSteps {
     @When("viene richiesta la lista degli sportelli Radd V2 con errore")
     public void listaSportelliRaddV2Error(Map<String, String> dataSportello) {
 
-        try {
-            raddAltClientV2.retrieveRegistries(
-                    this.xPagopaPnCxId,
-                    getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key)),
-                    getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        Integer limit = getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key));
+        String lastKey = getValue(dataSportello, RADD_FILTER_LASTKEY.key);
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() ->
+                raddAltClientV2.retrieveRegistries(this.xPagopaPnCxId, limit, lastKey)));
     }
 
     @Then("viene impostato un partenr Id non valido")
@@ -293,12 +289,12 @@ public class AnagraficaRaddAltSteps {
 
     @When("viene generato uno sportello Radd V2 con restituzione errore con dati:")
     public void vieneGeneratoConErroreSportelloRaddV2(@Transpose CreateRegistryRequestV2 dataSportelloV2) {
-        try {
-            this.createRegistryRequestV2 = dataSportelloV2;
-            RegistryV2 response = raddAltClientV2.addRegistry(xPagopaPnCxId, dataSportelloV2);
-            this.registryV2Response = response;
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+        this.createRegistryRequestV2 = dataSportelloV2;
+        ApiResult<RegistryV2> result = ApiCallHelper.callBody(() -> raddAltClientV2.addRegistry(xPagopaPnCxId, dataSportelloV2));
+        if (result.is2xx()) {
+            this.registryV2Response = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
         }
     }
 
@@ -333,20 +329,20 @@ public class AnagraficaRaddAltSteps {
         } else {
             locationIdTmp = this.locationId;
         }
-        try {
-            RegistryV2 response = raddAltClientV2.updateRegistry(this.xPagopaPnCxId, locationIdTmp, aggiornamentoSportelloRadd);
+        ApiResult<RegistryV2> result = ApiCallHelper.callBody(() ->
+                raddAltClientV2.updateRegistry(this.xPagopaPnCxId, locationIdTmp, aggiornamentoSportelloRadd));
 
+        if (result.is2xx()) {
+            RegistryV2 response = result.body();
             this.registryV2Response = response;
             this.updateRegistryRequestV2 = aggiornamentoSportelloRadd;
 
             log.info("Response Body:\n{}", response.toString());
-            log.info("Request Body:\n{}", aggiornamentoSportelloRadd.toString());
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-            log.info("errore: {}", e.getStatusText());
-            log.info("Request Body:\n{}", aggiornamentoSportelloRadd.toString());
+        } else {
+            this.sharedSteps.setNotificationError(result);
+            log.info("errore: {} {}", result.statusCode(), result.problem());
         }
+        log.info("Request Body:\n{}", aggiornamentoSportelloRadd.toString());
     }
 
     @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId con status code")
@@ -418,11 +414,8 @@ public class AnagraficaRaddAltSteps {
 
         String locationIdTmp = "NULL".equalsIgnoreCase(locationId) ? null : locationId;
         log.info("location id to delete: {}", locationId);
-        try {
-            raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, locationIdTmp);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.call(() ->
+                raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, locationIdTmp)));
     }
 
     @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId: {string} e partnerId: {string} con errore")
@@ -431,12 +424,8 @@ public class AnagraficaRaddAltSteps {
         String locationIdTmp = "NULL".equalsIgnoreCase(locationId) ? null : locationId;
         String partnerIdTmp = "NULL".equalsIgnoreCase(locationId) ? null : partnerId;
 
-        try {
-            raddAltClientV2.deleteRegistryWithHttpInfo(partnerIdTmp, locationIdTmp);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.call(() ->
+                raddAltClientV2.deleteRegistryWithHttpInfo(partnerIdTmp, locationIdTmp)));
     }
 
     @When("viene cancellato lo sportello Radd V2 appena inserito con partnerId: {string} con errore")
@@ -444,11 +433,8 @@ public class AnagraficaRaddAltSteps {
 
         String partnerIdTmp = "NULL".equalsIgnoreCase(partnerId) ? null : partnerId;
 
-        try {
-            raddAltClientV2.deleteRegistryWithHttpInfo(partnerIdTmp, locationId);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.call(() ->
+                raddAltClientV2.deleteRegistryWithHttpInfo(partnerIdTmp, locationId)));
     }
 
     @When("viene cancellato lo sportello Radd V2 appena inserito tramite locationId con errore")
@@ -458,17 +444,15 @@ public class AnagraficaRaddAltSteps {
             log.warn("registryV2Response o locationId null: nessuno sportello da cancellare.");
             return;
         }
-        try {
-            raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, registryV2Response.getLocationId());
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        String locationIdToDelete = registryV2Response.getLocationId();
+        this.sharedSteps.setNotificationError(ApiCallHelper.call(() ->
+                raddAltClientV2.deleteRegistryWithHttpInfo(xPagopaPnCxId, locationIdToDelete)));
     }
 
     @Then("l'operazione Radd V2 ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
 
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
 
         String createRequestStr = (this.createRegistryRequestV2 != null)
                 ? this.createRegistryRequestV2.toString()
@@ -482,18 +466,18 @@ public class AnagraficaRaddAltSteps {
                 ? this.locationId.toString()
                 : "locationId is null";
 
-        assertThat(httpStatusCodeException)
-                .as("L'eccezione httpStatusCodeException non dovrebbe essere nulla. "
+        assertThat(error)
+                .as("Atteso un errore HTTP ma l'operazione non ha prodotto errori. "
                                 + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
                         createRequestStr, updateRequestStr, locationIdStr)
                 .isNotNull();
 
-        String actualStatusCode = httpStatusCodeException.getStatusCode().toString().substring(0, 3);
+        String actualStatusCode = String.valueOf(error.statusCode());
 
         assertThat(actualStatusCode)
-                .as("Il codice di stato HTTP non corrisponde a quello atteso. Atteso: %s, Ottenuto: %s. "
+                .as("Il codice di stato HTTP non corrisponde a quello atteso. Atteso: %s, Ottenuto: %s. Dettaglio errore: %s. "
                                 + "createRegistryRequestV2: %s, updateRegistryRequestV2: %s, locationId: %s",
-                        statusCode, actualStatusCode, createRequestStr, updateRequestStr, locationIdStr)
+                        statusCode, actualStatusCode, error.problem(), createRequestStr, updateRequestStr, locationIdStr)
                 .isEqualTo(statusCode);
     }
 
@@ -993,30 +977,31 @@ public class AnagraficaRaddAltSteps {
         creazioneCsv(dataCsv, formatoCsv.equalsIgnoreCase("corretto"), null);
         RegistryUploadRequest registryUploadRequest = new RegistryUploadRequest().checksum(this.shaCSV);
 
-        try {
+        // Il preload resta nello stesso ApiResult: anche il suo errore HTTP è un esito atteso dello step
+        this.sharedSteps.setNotificationError(ApiCallHelper.run(() -> {
             RegistryUploadResponse responseUploadCsv = raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
             if (responseUploadCsv != null) {
                 this.requestid = responseUploadCsv.getRequestId();
                 B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
             }
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        }));
     }
 
     @When("viene caricato il csv 2 volte con dati:")
     public void vieneGeneratoIlCsvConResituzioneErrore(List<Map<String, String>> dataCsv) throws IOException {
         creazioneCsv(dataCsv, true, addresses);
         RegistryUploadRequest registryUploadRequest = new RegistryUploadRequest().checksum(this.shaCSV);
-        RegistryUploadResponse responseUploadCsv = null;
+        ApiResult<RegistryUploadResponse> firstUpload = ApiCallHelper.callBody(() -> raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest));
+        RegistryUploadResponse responseUploadCsv = firstUpload.body();
+        ApiResult<?> result = firstUpload;
 
-        try {
-            responseUploadCsv = raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
+        if (firstUpload.is2xx()) {
             this.requestid = responseUploadCsv.getRequestId();
-            raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
+            result = ApiCallHelper.callBody(() -> raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest));
+        }
 
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+        if (result.isError()) {
+            this.sharedSteps.setNotificationError(result);
             B2bUtils.preloadRaddCsvDocument(sharedSteps.getContext(), "classpath:/" + this.fileCsvName, this.shaCSV, responseUploadCsv, true);
         }
     }
@@ -1075,22 +1060,13 @@ public class AnagraficaRaddAltSteps {
     @When("viene eseguita la richiesta per controllo dello stato di caricamento del csv con restituzione errore")
     public void vieneControllatoErroreSullaRichiestaDelloStatoDelCsv(Map<String, String> richiestaSportello) {
 
-        try {
-            raddAltClient.verifyRequest(getValue(richiestaSportello, RADD_UID.key), getValue(richiestaSportello, RADD_REQUESTID.key));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
-
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() ->
+                raddAltClient.verifyRequest(getValue(richiestaSportello, RADD_UID.key), getValue(richiestaSportello, RADD_REQUESTID.key))));
     }
 
     @When("controllo che venga restituito vuoto perchè non presente")
     public void controlloNonPresenza() {
-
-        try {
-            Assertions.assertTrue(this.sportelliCsvRaddista.getItems().isEmpty());
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        Assertions.assertTrue(this.sportelliCsvRaddista.getItems().isEmpty());
     }
 
     @When("viene richiesta la lista degli sportelli caricati dal csv:")
@@ -1126,14 +1102,17 @@ public class AnagraficaRaddAltSteps {
 
     @When("viene richiesta la lista degli sportelli caricati dal csv con dati errati:")
     public void vieneRichiestolaListaDeiSportelliRaddDelCsvDatiErrati(Map<String, String> dataSportello) {
-        try {
-            this.sportelliCsvRaddista = raddAltClient.retrieveRequestItems(
-                    getValue(dataSportello, RADD_UID.key),
-                    getValue(dataSportello, RADD_REQUESTID.key) == null ? null : getValue(dataSportello, RADD_REQUESTID.key),
-                    getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key)),
-                    getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
+        Integer limit = getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key));
+        ApiResult<it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse> result =
+                ApiCallHelper.callBody(() -> raddAltClient.retrieveRequestItems(
+                getValue(dataSportello, RADD_UID.key),
+                getValue(dataSportello, RADD_REQUESTID.key),
+                limit,
+                getValue(dataSportello, RADD_FILTER_LASTKEY.key)));
+        if (result.is2xx()) {
+            this.sportelliCsvRaddista = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
         }
     }
 
@@ -1299,11 +1278,7 @@ public class AnagraficaRaddAltSteps {
 
     @When("viene generato uno sportello Radd con restituzione errore con dati:")
     public void vieneGeneratoConErroreSportelloRadd(@Transpose CreateRegistryRequest dataSportello) {
-        try {
-            raddAltClient.addRegistry(this.uid, dataSportello);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> raddAltClient.addRegistry(this.uid, dataSportello)));
     }
 
     @When("viene modificato uno sportello Radd con dati:")
@@ -1323,15 +1298,14 @@ public class AnagraficaRaddAltSteps {
 
         UpdateRegistryRequest aggiornamentoSportelloRadd = dataTableTypeRaddAlt.convertUpdateRegistryRequest(datiAggiornamento);
 
-        try {
-            raddAltClient.updateRegistry(
-                    getValue(datiAggiornamento, RADD_UID.key),
-                    getValue(datiAggiornamento, RADD_REGISTRYID.key) == null ? null :
-                            getValue(datiAggiornamento, RADD_REGISTRYID.key).equalsIgnoreCase("corretto") ? this.registryId : getValue(datiAggiornamento, RADD_REGISTRYID.key),
-                    aggiornamentoSportelloRadd);
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-            log.info("errore: {}", e.getStatusText());
+        ApiResult<Void> result = ApiCallHelper.run(() -> raddAltClient.updateRegistry(
+                getValue(datiAggiornamento, RADD_UID.key),
+                getValue(datiAggiornamento, RADD_REGISTRYID.key) == null ? null :
+                        getValue(datiAggiornamento, RADD_REGISTRYID.key).equalsIgnoreCase("corretto") ? this.registryId : getValue(datiAggiornamento, RADD_REGISTRYID.key),
+                aggiornamentoSportelloRadd));
+        if (result.isError()) {
+            this.sharedSteps.setNotificationError(result);
+            log.info("errore: {} {}", result.statusCode(), result.problem());
         }
     }
 
@@ -1362,16 +1336,15 @@ public class AnagraficaRaddAltSteps {
     @When("viene cancellato uno sportello Radd con dati errati:")
     public void vieneCancellatoSportelloRaddDatiErrati(Map<String, String> richiestaCancellazione) {
 
-        try {
-            raddAltClient.deleteRegistry(
-                    getValue(richiestaCancellazione, RADD_UID.key),
-                    getValue(richiestaCancellazione, RADD_REGISTRYID.key) == null ? null :
-                            getValue(richiestaCancellazione, RADD_REGISTRYID.key).equalsIgnoreCase("corretto") ? this.registryId : getValue(richiestaCancellazione, RADD_REGISTRYID.key),
-                    getValue(richiestaCancellazione, RADD_END_VALIDITY.key) == null ? null :
-                            dataTableTypeRaddAlt.setData(getValue(richiestaCancellazione, RADD_END_VALIDITY.key)));
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-            log.info("errore: {}", e.getStatusText());
+        ApiResult<Void> result = ApiCallHelper.run(() -> raddAltClient.deleteRegistry(
+                getValue(richiestaCancellazione, RADD_UID.key),
+                getValue(richiestaCancellazione, RADD_REGISTRYID.key) == null ? null :
+                        getValue(richiestaCancellazione, RADD_REGISTRYID.key).equalsIgnoreCase("corretto") ? this.registryId : getValue(richiestaCancellazione, RADD_REGISTRYID.key),
+                getValue(richiestaCancellazione, RADD_END_VALIDITY.key) == null ? null :
+                        dataTableTypeRaddAlt.setData(getValue(richiestaCancellazione, RADD_END_VALIDITY.key))));
+        if (result.isError()) {
+            this.sharedSteps.setNotificationError(result);
+            log.info("errore: {} {}", result.statusCode(), result.problem());
         }
     }
 
@@ -1435,20 +1408,15 @@ public class AnagraficaRaddAltSteps {
     @When("viene richiesta la lista degli sportelli con dati")
     public void vieneRichiestolaListaDeiSportelliRaddConDatiErrati(Map<String, String> dataSportello) {
 
-        try {
-            raddAltClient.retrieveRegistries(
-                    this.uid
-                    , getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key))
-                    , getValue(dataSportello, RADD_FILTER_LASTKEY.key) == null ? null : getValue(dataSportello, RADD_FILTER_LASTKEY.key)
-                    , getValue(dataSportello, ADDRESS_RADD_CAP.key) == null ? null : getValue(dataSportello, ADDRESS_RADD_CAP.key)
-                    , getValue(dataSportello, ADDRESS_RADD_CITY.key) == null ? null : getValue(dataSportello, ADDRESS_RADD_CITY.key)
-                    , getValue(dataSportello, ADDRESS_RADD_PROVINCE.key) == null ? null : getValue(dataSportello, ADDRESS_RADD_PROVINCE.key)
-                    , getValue(dataSportello, RADD_EXTERNAL_CODE.key) == null ? null : getValue(dataSportello, RADD_EXTERNAL_CODE.key));
-
-
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        Integer limit = getValue(dataSportello, RADD_FILTER_LIMIT.key) == null ? null : Integer.parseInt(getValue(dataSportello, RADD_FILTER_LIMIT.key));
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> raddAltClient.retrieveRegistries(
+                this.uid,
+                limit,
+                getValue(dataSportello, RADD_FILTER_LASTKEY.key),
+                getValue(dataSportello, ADDRESS_RADD_CAP.key),
+                getValue(dataSportello, ADDRESS_RADD_CITY.key),
+                getValue(dataSportello, ADDRESS_RADD_PROVINCE.key),
+                getValue(dataSportello, RADD_EXTERNAL_CODE.key))));
     }
 
     @When("viene contrallato il numero di sportelli trovati sia uguale a {int}")
@@ -1629,9 +1597,10 @@ public class AnagraficaRaddAltSteps {
     @Then("se lo status della response è 400, il messaggio di errore deve contenere il messaggio generato da tipo {string} e valore {string}")
     public void seLoStatusDellaResponseE400IlMessaggioDiErroreDeveContenere(String expectedErrorType, String testedValueString) throws JsonProcessingException {
         if (lastHttpStatus != 400) return;
-        HttpStatusCodeException e = sharedSteps.getNotificationError();
-        assertNotNull(e, "Attesa una risposta di errore HTTP ma nessuna eccezione è stata intercettata");
-        String body = e.getResponseBodyAsString();
+        ApiResult<?> error = sharedSteps.getNotificationErrorResult();
+        assertNotNull(error, "Attesa una risposta di errore HTTP ma nessun errore è stato registrato");
+        String body = error.problem();
+        assertNotNull(body, "La risposta di errore HTTP " + error.statusCode() + " non ha body");
         ObjectMapper mapper = new ObjectMapper();
         Problem problem = mapper.readValue(body, Problem.class);
         String expectedDetail = ExpectedErrorMessageStrategies.build(expectedErrorType, testedValueString);
@@ -1687,23 +1656,19 @@ public class AnagraficaRaddAltSteps {
     }
 
     private void executePutSelective(SelectiveUpdateRegistryRequestV2 request) {
-        try {
-            registryV2Response = raddAltClientV2.selectiveUpdateRegistry(xPagopaPnCxId, locationId, request);
-            lastHttpStatus = HttpStatus.OK.value();
-        } catch (HttpStatusCodeException e) {
-            lastHttpStatus = e.getStatusCode().value();
-            sharedSteps.setNotificationError(e);
-        }
+        handleRegistryV2Result(ApiCallHelper.callBody(() -> raddAltClientV2.selectiveUpdateRegistry(xPagopaPnCxId, locationId, request)));
     }
 
     private void executePatch(UpdateRegistryRequestV2 request) {
-        try {
-            RegistryV2 response = raddAltClientV2.updateRegistry( this.xPagopaPnCxId, this.locationId, request );
-            this.registryV2Response = response;
-            this.lastHttpStatus = HttpStatus.OK.value();
-        } catch (HttpStatusCodeException e) {
-            this.lastHttpStatus = e.getStatusCode().value();
-            this.sharedSteps.setNotificationError(e);
+        handleRegistryV2Result(ApiCallHelper.callBody(() -> raddAltClientV2.updateRegistry(this.xPagopaPnCxId, this.locationId, request)));
+    }
+
+    private void handleRegistryV2Result(ApiResult<RegistryV2> result) {
+        this.lastHttpStatus = result.statusCode();
+        if (result.is2xx()) {
+            this.registryV2Response = result.body();
+        } else {
+            this.sharedSteps.setNotificationError(result);
         }
     }
     // --- (END) --- PN-17459 | PN-17689 --- (END) --- //

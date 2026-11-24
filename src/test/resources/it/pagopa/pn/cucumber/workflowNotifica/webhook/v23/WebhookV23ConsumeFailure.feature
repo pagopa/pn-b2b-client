@@ -68,7 +68,7 @@ Feature: tentativo consumo stream
     And l'apiKey viene cancellata
 
     #Verificare se corretto che restituisce un 400 invece di un 403
-  @webhookV23 @precondition @cleanWebhook @webhook3
+  @webhookV23 @precondition @cleanWebhook @webhook3 @qa19093_webhook
   Scenario: [B2B-STREAM_ES1.5_139] Creazione di uno stream senza gruppo con la V23 e lettura Eventi di timeline o di cambio di stato con la versione V10  utilizzando un apikey abilitata
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo

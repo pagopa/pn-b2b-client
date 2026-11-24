@@ -66,7 +66,7 @@ Feature: Api b2b per destinatari strutturati
       | DISPLAY_NAME_NOT_VALID |
 
 
-  @useB2B @deleghe1 @b2bDestinatariStrutturati
+  @useB2B @deleghe1 @b2bDestinatariStrutturati @qa19093_dest
   Scenario: [Scenario-8] Viene invocata l’API di creazione delega da delegante PG a delegato PF con data di fine delega antecedente a quella di inizio
     And viene creata una delega con i seguenti parametri errati:
       | delegator | CucumberSpa |
@@ -307,7 +307,7 @@ Feature: Api b2b per destinatari strutturati
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£(@gmail.com                  |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£@gmail.com                   |
 
-  @addressBook2 @useB2B @b2bDestinatariStrutturati @ignoreHotfixTemp #temp
+  @addressBook2 @useB2B @b2bDestinatariStrutturati @ignoreHotfixTemp @qa19093_step0 #temp
   Scenario: [B2B-DEST-USER-ATTR_10] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente

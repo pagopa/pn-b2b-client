@@ -417,7 +417,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
       | delivered  | true               |
     And si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno 5 notifiche
 
-  @ricercaNotifiche
+  @ricercaNotifiche @qa19093_dest
   Scenario Outline: [MITTENTE_RICERCA_NOTIFICHE_BONARIE_2.B] Si tenta il recupero delle notifiche bonarie inviate dal mittente quando manca un campo obbligatorio
     And vengono recuperate le notifiche bonarie inviate dal mittente "Comune_Multi"
       | <campo> | $NULL |
@@ -501,7 +501,7 @@ Feature: Ricerca delle notifiche legali e bonarie ricevute lato mittente
 
 
   #CASO DI TEST 6.1 - campo obbligatorio non valorizzato -> 400 KO
-  @ricercaNotifiche
+  @ricercaNotifiche @qa19093_dest
   Scenario Outline: [SERVICEDESK_RICERCA_NOTIFICHE_4] Il servicedesk non riesce a recuperare le notifiche se manca un campo obbligatorio
     And vengono recuperate le notifiche da servicedesk
       | <campo> | $NULL |

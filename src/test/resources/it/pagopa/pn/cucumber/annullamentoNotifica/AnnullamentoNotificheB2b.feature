@@ -122,7 +122,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @Annullamento
+  @Annullamento @qa19093_pa
   Scenario: [B2B-PA-ANNULLAMENTO_8_2] PA mittente: annullamento notifica con dati pagamento
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -163,7 +163,7 @@ Feature: annullamento notifiche b2b
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-  @Annullamento
+  @Annullamento @qa19093_pa
   Scenario: [B2B-PA-ANNULLAMENTO_11] PA mittente: dettaglio notifica annullata - download bollettini di pagamento (scenari positivi)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -343,7 +343,7 @@ Feature: annullamento notifiche b2b
 
   #ANNULLAMENTO LATO DESTINATARIO----------------------------------->>
 
-  @Annullamento
+  @Annullamento @qa19093_dest
   Scenario: [B2B-PF-ANNULLAMENTO_16] Destinatario PF: dettaglio notifica annullata - download allegati (scenario negativo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -816,7 +816,7 @@ Feature: annullamento notifiche b2b
   #Scenario:  [B2B-PA-ANNULLAMENTO_32]
   #Accesso alla tabella pn-TimelinesForInvoicing, popolata da pn-progression-sensor, per verifica fatturazione dei costi contestualmente all’annullamento di una notifica digitale
 
-  @Annullamento
+  @Annullamento @qa19093_pa
   Scenario: [B2B-PA-ANNULLAMENTO_31] PA mittente: Annullamento notifica in stato “CANCELLED”
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -846,7 +846,7 @@ Feature: annullamento notifiche b2b
     And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
 
-  @Annullamento @webhook1 @cleanWebhook
+  @Annullamento @webhook1 @cleanWebhook @qa19093_webhook
   Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST e NOTIFICATION_CANCELLED stream v2_scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
@@ -1033,7 +1033,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non esiste
 
-  @Annullamento
+  @Annullamento @qa19093_step0
   Scenario: [B2B-PA-ANNULLAMENTO_38] PA mittente: Annullamento notifica in stato “depositata” da parte di una PA diversa da quella che ha inviato la notifica scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1064,7 +1064,7 @@ Feature: annullamento notifiche b2b
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @Annullamento @appIo
+  @Annullamento @appIo @qa19093_pa
   Scenario: [B2B-PA-ANNULLAMENTO_40] Invio notifica con api b2b e tentativo recupero del documento di una notifica annullata tramite AppIO_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

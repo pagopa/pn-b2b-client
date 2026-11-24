@@ -18,8 +18,8 @@ Feature: Api Service Cruscotto Assistenza
   # API-SERVICE-CA_CE02.2_13
   #API-SERVICE-CA_CE02.2_15
   # API-SERVICE-CA_CE02.2_16
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.2] Come operatore devo accedere all’elenco di tutti i messaggi di cortesia inviati con:
+  @cruscottoAssistenza @qa19093_dest
+  Scenario Outline: [API-SERVICE-CA_CE02.2]Come operatore devo accedere all’elenco di tutti i messaggi di cortesia inviati con:
   1) taxId vuoto
   2) non formalmente corretto
   3) ma senza endDate - senza startDate - con recipientType vuoto -senza recipientType - recipientType valorizzato correttamente ma senza taxId - searchPageSize = 0 - searchPageSize = 51 - con endDate < startDate - searchNextPagesKey = 51
@@ -53,7 +53,7 @@ Feature: Api Service Cruscotto Assistenza
   # API-SERVICE-CA_CE02.2_9,
   # API-SERVICE-CA_CE02.2_12
   #Response 200 OK
-  @cruscottoAssistenza
+  @cruscottoAssistenza @qa19093_dest
   Scenario Outline: [API-SERVICE-CA_CE02.2_8] PG - PF Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAX_ID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente

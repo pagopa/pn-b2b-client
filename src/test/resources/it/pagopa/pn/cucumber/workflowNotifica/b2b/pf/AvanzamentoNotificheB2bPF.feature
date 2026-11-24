@@ -48,6 +48,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
 
+  @qa19093_pa
   Scenario: [B2B_TIMELINE_27] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

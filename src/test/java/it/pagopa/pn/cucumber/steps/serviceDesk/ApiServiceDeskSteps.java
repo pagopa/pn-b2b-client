@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
 import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
@@ -33,7 +34,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -93,7 +93,7 @@ public class ApiServiceDeskSteps {
     private static final Integer DELAY = 420000;
     private static final Integer WORK_FLOW_WAIT_DEFAULT = 31000;
     private List<PaSummary> listPa = null;
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
     private NotificationRecipientDetailResponse notificationRecipientDetailResponse;
     private SearchNotificationsRequest searchNotificationsRequest;
@@ -113,7 +113,7 @@ public class ApiServiceDeskSteps {
     private OperationResponse searchOperationResponse;
     private String operationId;
     private GetOperationsResponseV2 getOperationsResponseV2;
-    private ApiResult httpResponse;
+    private ApiResult<?> httpResponse;
     private String statusOperationResponse;
 
     @Autowired
@@ -194,7 +194,7 @@ public class ApiServiceDeskSteps {
     public void operationProducedAnError(String statusCode) {
         try {
             operationProducedAnErrorSteps(statusCode);
-            log.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
+            log.info("Errore: " + notificationError.statusCode() + " " + notificationError.problem());
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
         }
@@ -310,25 +310,21 @@ public class ApiServiceDeskSteps {
 
     @When("viene invocato il servizio UPLOAD VIDEO con operationid vuoto")
     public void preUploadVideoResponseOperationIdNull() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(null, videoUploadRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @When("viene invocato il servizio UPLOAD VIDEO con errore")
     public void preUploadVideoResponseWithError() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             log.error("Operation id:" + operationsResponseV1.getOperationId());
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponseV1.getOperationId(), videoUploadRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con sha256 vuoto")
@@ -478,21 +474,15 @@ public class ApiServiceDeskSteps {
 
     @Then("il video viene caricato su SafeStorage con url scaduta")
     public void loadFileSafeStorageUrlExpired() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             threadWait(3720000);//aspetta 62 minuti
             loadFileSafeStorageSteps();
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Then("il video viene caricato su SafeStorage con errore")
     public void loadFileSafeStorageWithError() {
-        try {
-            loadFileSafeStorageSteps();
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        recordError(ApiCallHelper.run(this::loadFileSafeStorageSteps));
     }
 
     @Then("viene effettuato un controllo sulla durata della retention")
@@ -636,16 +626,14 @@ public class ApiServiceDeskSteps {
 
     @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con recipientType vuoto")
     public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConRecipientTypeVuoto() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             searchNotificationsRequest = new SearchNotificationsRequest();
             searchNotificationsRequest.setTaxId(CF_CORRETTO);
             searchNotificationsRequest.setRecipientType(null);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(searchNotificationsResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
@@ -672,7 +660,11 @@ public class ApiServiceDeskSteps {
 
     @Then("Il servizio risponde correttamente")
     public void ilServizioRispondeCorrettamente() {
-        Assertions.assertNull(notificationError);
+        Assertions.assertNull(notificationError, this::describeUnexpectedError);
+    }
+
+    private String describeUnexpectedError() {
+        return "Il servizio ha prodotto l'errore HTTP " + notificationError.statusCode() + ": " + notificationError.problem();
     }
 
     @Then("Il servizio risponde correttamente con presenza delle apiKey")
@@ -682,7 +674,7 @@ public class ApiServiceDeskSteps {
 
     @Then("Il servizio risponde correttamente con presenza di allegati {string}")
     public void ilServizioRispondeCorrettamenteAllegatiTrue(String presenzaAllegati) {
-        Assertions.assertNull(notificationError);
+        Assertions.assertNull(notificationError, this::describeUnexpectedError);
         Assertions.assertNotNull(documentsResponse);
         if ("true".equalsIgnoreCase(presenzaAllegati)) {
             Assertions.assertTrue(documentsResponse.getDocumentsAvailable());
@@ -693,7 +685,7 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
     public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             profileRequest = new ProfileRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
                 profileRequest.setTaxId(null);
@@ -715,13 +707,11 @@ public class ApiServiceDeskSteps {
             }
             profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
             Assertions.assertNotNull(profileResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             Integer size = setSearchPageSize(searchPageSize);
             String nextPagesKey = setNextPagesKey(searchNextPagesKey);
             OffsetDateTime sDate = getDate(startDate);
@@ -754,9 +744,7 @@ public class ApiServiceDeskSteps {
             if (size == 1 && nextPagesKey == null) {
                 Assertions.assertEquals(1, searchNotificationsResponse.getResults().size());
             }
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
@@ -766,52 +754,43 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN(String iun) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             profileRequest = new ProfileRequest();
             String iunParameter = iun.equals("NULL") ? null : iun.equals("VUOTO") ? "" : iun;
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunParameter);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN)")
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             profileRequest = new ProfileRequest();
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
-
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @And("invocazione servizio per recupero dettaglio notifica")
     public void recuperoDettaglioNotifica() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());
             Assertions.assertFalse(searchNotificationsResponse.getResults().isEmpty());
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(searchNotificationsResponse.getResults().get(0).getIun());
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @And("verifica IsMultiRecipients nel dettaglio notifica")
     public void recuperoVerifyIsMultiRecipientsDettaglioNotifica() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getNotificationIun());
             Assertions.assertNotNull(notificationDetailResponse);
             Assertions.assertNotEquals(Boolean.TRUE, notificationDetailResponse.getIsMultiRecipients());
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @And("invocazione servizio per recupero dettaglio timeline notifica con taxId {string} e iun {string}")
     public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String taxid, String iun) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             //Parametri di Richiesta utilizzati per il recupero della notifica
             String taxidQuery = searchNotificationsRequest.getTaxId();
             RecipientType recipientType = searchNotificationsRequest.getRecipientType();
@@ -841,14 +820,12 @@ public class ApiServiceDeskSteps {
             if (diversoTaxid) {
                 Assertions.assertNull(timelineResponse);
             }
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Then("invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId {string} e iun {string} per il  destinatario {int}")
     public void invocazioneServizioPerRecuperoDettaglioTimelineNotificaMultidestinatarioConCfEIun(String taxId, String iun, Integer destinatario) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             searchNotificationsRequest = new SearchNotificationsRequest();
             searchNotificationsRequest.setRecipientType(RecipientType.PF);
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -873,14 +850,12 @@ public class ApiServiceDeskSteps {
                 }
             }
             Assertions.assertNull(timelineElement);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
     public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitaValiditaEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             FullSentNotificationV29 fullSentNotification = sharedSteps.getNotificationIun() != null ? sharedSteps.getSentNotificationLastVersion() : null;
             documentsRequest = new DocumentsRequest();
             if (fullSentNotification != null) {
@@ -901,14 +876,12 @@ public class ApiServiceDeskSteps {
             String iunSearch = setIUNNotifica(iun);
             documentsResponse = ipServiceDeskClient.getDocumentsOfIUN(iunSearch, documentsRequest);
             Assertions.assertNotNull(documentsResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come {string} di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchInternalId {string}")
     public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String type, String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchInternalId) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             Assertions.assertNotNull(profileResponse);
             if ("delegato".equalsIgnoreCase(type)) {
                 Assertions.assertNotNull(profileResponse.getDelegateMandates());
@@ -952,9 +925,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());
             Assertions.assertFalse(searchNotificationsResponse.getResults().isEmpty());
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @Given("come operatore devo accedere alla lista di notifiche depositate che rientrano nei seguenti criteri:")
@@ -971,11 +942,8 @@ public class ApiServiceDeskSteps {
         paNotificationsRequest.setStartDate(startDate);
         paNotificationsRequest.setEndDate(endDate);
 
-        try {
-            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromSenderId(searchPageSize, searchNextPagesKey, paNotificationsRequest);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        recordError(ApiCallHelper.run(() ->
+                searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromSenderId(searchPageSize, searchNextPagesKey, paNotificationsRequest)));
     }
 
     private String getIunSearch(String iun) {
@@ -992,7 +960,7 @@ public class ApiServiceDeskSteps {
     }
 
     private void invocazioneServizioPerRecuperoDettaglioNotificaConIunSteps(String iun, boolean isNotification) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             String iunSearch = getIunSearch(iun);
             if (isNotification) {
                 notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunSearch);
@@ -1001,9 +969,7 @@ public class ApiServiceDeskSteps {
                 timelineResponse = ipServiceDeskClient.getTimelineOfIUN(iunSearch);
                 Assertions.assertNotNull(timelineResponse);
             }
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     @And("invocazione servizio per recupero dettaglio notifica con iun {string}")
@@ -1023,13 +989,11 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma {string}")
     public void comeOperatoreDevoAccedereAlleInformazioniRelativeAlleRichiesteDiAPIKeyAvanzateDaUnEnteMittenteDiNotificheSullaPiattaforma(String paId) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             String paIDSearch = setPaID(paId);
             responseApiKeys = ipServiceDeskClient.getApiKeys(paIDSearch);
             Assertions.assertNotNull(responseApiKeys);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void createRequestByFiscalCode(String cf, boolean isNotificationRequest) {
@@ -1159,50 +1123,52 @@ public class ApiServiceDeskSteps {
     }
 
     private void preUploadVideoResponseSteps(String operationId) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationId, videoUploadRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void operationProducedAnErrorSteps(String statusCode) {
-        notificationError.getStatusCode();
-        assertThat(notificationError.getStatusCode().toString().substring(0, 3))
-                .as("Il codice di errore non coincide con quanto atteso: " + notificationError)
+        assertThat(notificationError).as("Il servizio non ha prodotto l'errore atteso %s", statusCode).isNotNull();
+        assertThat(String.valueOf(notificationError.statusCode()))
+                .as("Il codice di errore non coincide con quanto atteso. Dettaglio errore: %s", notificationError.problem())
                 .isEqualTo(statusCode);
     }
 
+    /**
+     * Registra in {@link #notificationError} il risultato solo se è un errore (non-2xx).
+     * Usato con {@link ApiCallHelper#run}: le verifiche nel corpo della chiamata vengono eseguite solo in caso di successo.
+     */
+    private void recordError(ApiResult<?> result) {
+        if (result.isError()) {
+            this.notificationError = result;
+        }
+    }
+
     private void createOperationResponseWithErrorSteps() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             operationsResponseV1 = ipServiceDeskClient.createOperation(createOperationRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(notificationsUnreachableResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void notificationsUnreachableResponseWithErrorSteps() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             notificationsUnreachableResponse = ipServiceDeskClient.notification(notificationRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(notificationsUnreachableResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void searchResponseWithErrorSteps() {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             searchResponse = ipServiceDeskClient.searchOperationsFromTaxId(searchNotificationRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(searchResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void createPreUploadVideoRequestSteps(String preloadIdx, String contentType) throws Exception {
@@ -1235,16 +1201,14 @@ public class ApiServiceDeskSteps {
     }
 
     private void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiSteps(String cf) {
-        try {
+        recordError(ApiCallHelper.run(() -> {
             searchNotificationsRequest = new SearchNotificationsRequest();
             searchNotificationsRequest.setTaxId(cf);
             searchNotificationsRequest.setRecipientType(RecipientType.PF);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
             threadWait(getWorkFlowWait());
             Assertions.assertNotNull(searchNotificationsResponse);
-        } catch (HttpStatusCodeException exception) {
-            this.notificationError = exception;
-        }
+        }));
     }
 
     private void checkOperationResponseList(List<OperationResponse> lista, String operationIdToSearch, String status, boolean checkIun, String iun) {
@@ -1498,11 +1462,8 @@ public class ApiServiceDeskSteps {
     @When("come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun {string} associata all' utente {string} con uid {string}")
     public void comeOperatoreDevoAccedereAiDettagliDeiPagamentiDiUnaNotificaConUnoIun(String iun, String taxId, String xPagopaPnUid) {
         String taxIdRequest = createTaxId(taxId);
-        try {
-            notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createUid(xPagopaPnUid), createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest));
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-        }
+        recordError(ApiCallHelper.run(() ->
+                notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createUid(xPagopaPnUid), createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest))));
     }
 
     private String createUid(String xPagopaPnUid) {

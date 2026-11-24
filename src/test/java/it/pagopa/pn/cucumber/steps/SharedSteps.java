@@ -33,6 +33,8 @@ import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
@@ -58,11 +60,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -129,9 +131,11 @@ public class SharedSteps {
     @Setter
     private IPnWebRecipientClient webRecipientClient;
 
-    @Getter
-    @Setter
-    private HttpStatusCodeException notificationError;
+    /**
+     * Ultimo errore HTTP/di rete prodotto da uno step. Contiene solo risultati non-2xx.
+     * Accesso tramite {@link #setNotificationError(ApiResult)} / {@link #consumeNotificationErrorResult()}.
+     */
+    private ApiResult<?> notificationErrorResult;
 
     @Getter
     @Setter
@@ -596,13 +600,10 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b dal {string} con allegato uguale all'allegato di pagamento")
     public void laNotificaVieneInviataAllegatiUgualeAlPagamento(String paName) {
         setPaAndSenderTaxId(paName);
-        try {
+        setNotificationError(ApiCallHelper.callBody(() -> unchecked(() -> {
             getNotificationStepInterface().uploadNotificationAllegatiUgualiPagamento();
-        } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notificationError = (HttpStatusCodeException) e;
-            }
-        }
+            return null;
+        })));
     }
 
     @And("la notifica {string} essere annullata dal sistema tramite codice IUN dal comune {string}")
@@ -617,11 +618,7 @@ public class SharedSteps {
                 Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(response.getDetails().get(0).getCode()));
             });
         } else {
-            try {
-                b2bClient.notificationCancellation(notificationIun);
-            } catch (HttpStatusCodeException exception) {
-                this.notificationError = exception;
-            }
+            setNotificationError(ApiCallHelper.callBody(() -> b2bClient.notificationCancellation(notificationIun)));
         }
     }
 
@@ -661,7 +658,13 @@ public class SharedSteps {
 
     @Then("l'operazione di annullamento ha prodotto un errore con status code {string}")
     public void cancellationProducedErrorWithStatusCode(String statusCode) {
-        Assertions.assertTrue(this.notificationError != null && this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode));
+        ApiResult<?> error = this.notificationErrorResult;
+        assertThat(error)
+                .as("Atteso un errore con status code %s ma l'operazione non ha prodotto errori", statusCode)
+                .isNotNull();
+        assertThat(String.valueOf(error.statusCode()))
+                .as("Status code dell'annullamento non atteso. Dettaglio errore: %s", error.problem())
+                .isEqualTo(statusCode);
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si annulla prima che lo stato diventi REFUSED")
@@ -676,8 +679,9 @@ public class SharedSteps {
     public void sendNotificationHttpError(String paName) {
         setPaAndSenderTaxId(paName);
         sendNotificationWithError();
-        Assertions.assertNotNull(this.notificationError);
-        Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
+        Assertions.assertNotNull(this.notificationErrorResult);
+        Assertions.assertEquals(400, this.notificationErrorResult.statusCode(),
+                "Dettaglio errore: " + this.notificationErrorResult.problem());
     }
 
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
@@ -749,25 +753,13 @@ public class SharedSteps {
     }
 
     private void sendNotificationWithError() {
-        try {
-            getNotificationStepInterface().uploadNotification(null);
-        } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException httpError) {
-                this.notificationError = httpError;
-            }
-        }
+        setNotificationError(ApiCallHelper.callBody(() -> unchecked(() -> getNotificationStepInterface().uploadNotification(null))));
     }
 
     @When("la notifica viene inviata dal {string} con errore {string}")
     public void laNotificaVieneInviataDallaPAWithError(String paName, String errorType) {
         setPaAndSenderTaxId(paName);
-        try {
-            getNotificationStepInterface().uploadNotification(errorType);
-        } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException httpError) {
-                this.notificationError = httpError;
-            }
-        }
+        setNotificationError(ApiCallHelper.callBody(() -> unchecked(() -> getNotificationStepInterface().uploadNotification(errorType))));
     }
 
     // Spostato da AvanzamentoNotificheB2bSteps, ha più senso qua
@@ -839,17 +831,18 @@ public class SharedSteps {
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
         try {
-            List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalCourtesyAddressWrapper.ChannelType.PEC);
-                log.info("PEC FOUND AND DELETED");
-            }
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+            ApiResult<Void> result = ApiCallHelper.run(() -> {
+                List<LegalCourtesyAddressWrapper> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+                if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                    this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalCourtesyAddressWrapper.ChannelType.PEC);
+                    log.info("PEC FOUND AND DELETED");
+                }
+            });
+            if (result.status().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
-            } else {
+            } else if (result.isError()) {
                 log.warn("Errore durante la rimozione PEC di piattaforma (status: {}): {}",
-                        httpStatusCodeException.getStatusCode(), httpStatusCodeException.getMessage());
+                        result.statusCode(), result.problem());
             }
         } catch (Exception e) {
             log.warn("Errore imprevisto durante la rimozione PEC di piattaforma: {}", e.getMessage());
@@ -1001,19 +994,48 @@ public class SharedSteps {
         getNotificationStepInterface().resetNotificationRequest();
     }
 
-    public HttpStatusCodeException consumeNotificationError() {
-        HttpStatusCodeException value = this.notificationError;
-        this.notificationError = null;
+    /**
+     * Registra l'esito di una chiamata: viene memorizzato solo se è un errore (non-2xx).
+     * Un esito positivo non cancella un errore registrato in precedenza; {@code null} lo azzera.
+     */
+    public void setNotificationError(ApiResult<?> result) {
+        if (result == null) {
+            this.notificationErrorResult = null;
+        } else if (result.isError()) {
+            log.info("Registrato errore HTTP: Status={}, Problem={}", result.statusCode(), result.problem());
+            this.notificationErrorResult = result;
+        }
+    }
+
+    /** Restituisce e azzera l'ultimo errore registrato ({@code null} se non presente). */
+    public ApiResult<?> consumeNotificationErrorResult() {
+        ApiResult<?> value = this.notificationErrorResult;
+        this.notificationErrorResult = null;
 
         if (value != null) {
-            log.info("Consuming HttpStatusCodeException: Status={}, Message={}, ResponseBody={}",
-                    value.getStatusCode(),
-                    value.getMessage(),
-                    value.getResponseBodyAsString()
-            );
+            log.info("Consuming ApiResult error: Status={}, Problem={}", value.statusCode(), value.problem());
         }
 
         return value;
+    }
+
+    /** Restituisce l'ultimo errore registrato senza azzerarlo ({@code null} se non presente). */
+    public ApiResult<?> getNotificationErrorResult() {
+        return this.notificationErrorResult;
+    }
+
+    @FunctionalInterface
+    private interface IoCall<T> {
+        T execute() throws IOException;
+    }
+
+    /** Rilancia le IOException (errori locali, es. lettura allegati) come unchecked, fuori da ApiResult. */
+    private static <T> T unchecked(IoCall<T> call) {
+        try {
+            return call.execute();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 
     private void setPaAndSenderTaxId(String paName) {

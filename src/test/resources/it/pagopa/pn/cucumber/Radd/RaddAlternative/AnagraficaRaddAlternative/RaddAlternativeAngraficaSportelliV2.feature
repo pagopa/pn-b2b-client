@@ -72,7 +72,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | 330370611      |
       | +393331234567 |
 
-  @raddAnagraficaV2 @deleteNewSite @cognito1 #rif srs 1
+  @raddAnagraficaV2 @deleteNewSite @cognito1 @qa19093_radd #rif srs 1
   Scenario: [RADD_ANAGRAFICA_CRUD_V2_27] Creazione nuova sede RADD con endValidity nel passato
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con restituzione errore con dati:
@@ -575,7 +575,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
     Then verifica che il locationId oggetto della cancellazione è "ASSENTE" nella response di lettura
 
 
-  @raddAnagraficaV2 @deleteNewSite @cognito2 #rif srs 59, 60
+  @raddAnagraficaV2 @deleteNewSite @cognito2 @qa19093_radd #rif srs 59, 60
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_15] Cancellazione sportello RADD con locationId non accettato
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -667,7 +667,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | radd_filter_lastKey | NULL |
     And l'operazione ha prodotto un errore con status code "400"
 
-  @raddAnagraficaV2 @patchGeo @deleteNewSite
+  @raddAnagraficaV2 @patchGeo @deleteNewSite @qa19093_radd
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_23] - PATCH – validazione latitudine e longitudine RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:
@@ -698,7 +698,7 @@ Feature: Radd Alternative Anagrafica Aggiornata Sportelli V2
       | NULL   | NULL    | 400                | "NULL_LAT_LON"    | ""          |
 
 
-  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3
+  @raddAnagraficaV2 @putSelectiveRadd @deleteNewSite @cognito3 @qa19093_radd
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_V2_24] - PUT Selective – validazione campi RADD
     Given Effettuo l'autenticazione per l' utente con permessi: "LETTURA_SCRITTURA"
     When viene generato uno sportello Radd V2 con dati:

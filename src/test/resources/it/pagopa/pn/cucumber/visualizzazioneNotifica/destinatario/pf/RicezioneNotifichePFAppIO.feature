@@ -43,7 +43,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
     Then il documento notificato può essere recuperata tramite AppIO
 
-  @appIo
+  @appIo @qa19093_pa
   Scenario: [B2B-PA-APP-IO_5] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -55,7 +55,7 @@ Feature: recupero notifiche tramite api AppIO b2b
   #viene richiesto il codice QR per lo IUN {string}
 
   #[TC_1]
-  @appIo
+  @appIo @qa19093_pa
   Scenario: [QR_CODE_1] Viene scansionato il QR Code sull'AAR per recuperare i dettagli della notifica tramite appIO
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

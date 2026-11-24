@@ -4,11 +4,12 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicReference;
@@ -60,17 +61,13 @@ public class InvioNotificheB2bMultiPaSteps {
     @Then("si tenta il recupero dal sistema tramite codice IUN dalla PA {string}")
     public void retrievalAttemptedIUNFromPA(String paName) {
         sharedSteps.setPA(paName);
-        try {
-            sharedSteps.getSentNotificationLastVersion();
-        } catch (HttpStatusCodeException e) {
-            this.sharedSteps.setNotificationError(e);
-        }
+        this.sharedSteps.setNotificationError(ApiCallHelper.callBody(sharedSteps::getSentNotificationLastVersion));
     }
 
     @Then("(l'invio ha prodotto)(l'operazione ha generato) un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
-        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-        Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        ApiResult<?> error = this.sharedSteps.consumeNotificationErrorResult();
+        Assertions.assertNotNull(error, "L'operazione non ha prodotto errori");
+        Assertions.assertEquals(statusCode, String.valueOf(error.statusCode()), "Dettaglio errore: " + error.problem());
     }
 }

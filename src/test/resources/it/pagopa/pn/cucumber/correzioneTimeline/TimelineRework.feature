@@ -16,7 +16,7 @@ Feature: Test relativi al SRS di correzione timeline
     Then viene invocata una richiesta di rework per la notifica appena creata
     And si verifica che la richiesta di rework effettuata sia in stato "CREATED"
 
-  @timelineRework
+  @timelineRework @qa19093_dest
   Scenario Outline: [TIMELINE_REWORK_2] Viene invocata con errori la chiamata di rework
     Then viene invocata una richiesta di rework con eccezione per la notifica appena creata con i seguenti parametri:
       | iun   | attemptId   | pcRetry   | recIndex   | expectedStatusCode   | expectedDeliveryFailureCause   | reason   |

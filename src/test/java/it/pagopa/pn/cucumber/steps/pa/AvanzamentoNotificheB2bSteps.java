@@ -14,6 +14,8 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v24.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model_v26.NotificationProcessCostResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -28,7 +30,6 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.client.HttpStatusCodeException;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -63,7 +64,7 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnExternalServiceClientImpl externalClient;
     @Getter
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
-    private HttpStatusCodeException notificationError;
+    private ApiResult<?> notificationError;
     @Getter
     private final PnPollingFactory pnPollingFactory;
     @Getter
@@ -695,12 +696,12 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }
-        try {
-            priceVerification(price, 0);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+        ApiResult<Void> result = ApiCallHelper.run(() -> priceVerification(price, 0));
+        if (result.isError()) {
+            this.notificationError = result;
         }
-        Assertions.assertTrue(this.notificationError != null && this.notificationError.getStatusCode().toString().substring(0, 3).equals(errorCode));
+        Assertions.assertNotNull(this.notificationError, "La verifica del costo non ha prodotto errori");
+        Assertions.assertEquals(errorCode, String.valueOf(this.notificationError.statusCode()), "Dettaglio errore: " + this.notificationError.problem());
     }
 
     @Then("viene verificato il costo = {string} della notifica per l'utente {int}")
@@ -754,11 +755,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void userReadReceivedNotificationWithError(String recipient) {
         sharedSteps.selectUser(recipient);
         String iun = sharedSteps.getNotificationIun();
-        try {
-            sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null);
-        } catch (HttpStatusCodeException e) {
-            sharedSteps.setNotificationError(e);
-        }
+        sharedSteps.setNotificationError(ApiCallHelper.callBody(() -> sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null)));
     }
 
     @And("{string} legge la notifica ricevuta")
@@ -779,20 +776,20 @@ public class AvanzamentoNotificheB2bSteps {
     public void userReadReceivedNotificationVersioning(String recipient, String versione) {
         sharedSteps.selectUser(recipient);
         String iun = sharedSteps.getNotificationIun();
-        try {
-            sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null);
+        ApiResult<?> result = ApiCallHelper.callBody(() -> sharedSteps.getWebRecipientClient().getFullReceivedNotification(iun, null));
 //            if (versione.equalsIgnoreCase("V1")) {
 //                sharedSteps.getWebRecipientClient().getReceivedNotificationV1(iun, null);
 //            } else {
 //                sharedSteps.getWebRecipientClient().getReceivedNotificationV2(iun, null);
 //            }
-            try {
-                Thread.sleep(sharedSteps.getWorkFlowWait());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-        } catch (HttpStatusCodeException e) {
-            sharedSteps.setNotificationError(e);
+        if (result.isError()) {
+            sharedSteps.setNotificationError(result);
+            return;
+        }
+        try {
+            Thread.sleep(sharedSteps.getWorkFlowWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
         }
     }
 

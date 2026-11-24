@@ -10,4 +10,8 @@ public record ApiResult<T>(
         HttpHeaders headers
 ) {
     public boolean is2xx() { return status.is2xxSuccessful(); }
+
+    public boolean isError() { return !is2xx(); }
+
+    public int statusCode() { return status.value(); }
 }

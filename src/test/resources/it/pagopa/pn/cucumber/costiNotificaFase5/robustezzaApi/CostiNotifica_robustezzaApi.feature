@@ -2,7 +2,7 @@ Feature: Costi Notifica Fase 5
 #SRS: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2686713956/SRS+Costi+di+notifica+-+fase+5+BE#WI-CN-F5-3.3---Creazione-consumer-eventi-di-aggiornamento-costo-su-pn-notification-cost-service
 #PST: https://pagopa.atlassian.net/wiki/spaces/PN/pages/2849800311/DRAFT+PST+PN-18622+Costi+Notifica+BE+-+fase+5
 
-  @costiNotificaFase5 @CNF5_FF_ENABLED
+  @costiNotificaFase5 @CNF5_FF_ENABLED @qa19093_dest
   Scenario: [CNF5_ROBUSTEZZA_API_INSERIMENTO_COSTI] Verifica la robustezza dell'API di inizializzazione dei costi passando una serie di parametri
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |
@@ -29,7 +29,7 @@ Feature: Costi Notifica Fase 5
     And verifico il comportamento dell'API di inserimento costi passando in input "iun inesistente"
     And verifico il comportamento dell'API di inserimento costi passando in input "pagamenti vuoti"
 
-  @costiNotificaFase5 @CNF5_FF_ENABLED
+  @costiNotificaFase5 @CNF5_FF_ENABLED @qa19093_dest
   Scenario: [CNF5_ROBUSTEZZA_API_RECUPERO_COSTI] Invocazione dell'api di recupero costi da Pn-PaymentInfo passando input errati
     Given viene generata una nuova notifica
       | subject            | test costi notifica fase 5 |

@@ -10,9 +10,10 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalPrepareResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.InformalProposalProductTypeEnum;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaperChannelClient;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiCallHelper;
+import it.pagopa.pn.client.b2b.pa.wrapper.ApiResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -118,10 +119,12 @@ public class PaperChannelSteps {
 
     @When("si richiede la prepare della comunicazione bonaria")
     public void callPaperChannelInformal() {
-        try {
-            this.informalPrepareResponse = paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, this.xClientId);
-        } catch (HttpStatusCodeException ex) {
-            httpStatusCode = ex.getStatusCode();
+        ApiResult<ResponseEntity<InformalPrepareResponse>> result =
+                ApiCallHelper.callBody(() -> paperChannelClient.sendInformalPrepareRequest(informalPrepareRequest, this.xClientId));
+        if (result.is2xx()) {
+            this.informalPrepareResponse = result.body();
+        } else {
+            httpStatusCode = result.status();
         }
     }
 
