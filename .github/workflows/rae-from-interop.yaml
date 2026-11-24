@@ -1,0 +1,202 @@
+name: RAE from Interop QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Workflow run ID in pagopa/interop-qa-tests
+        required: true
+        type: string
+      artifact_id:
+        description: ID of the uploaded QA reports artifact
+        required: true
+        type: string
+      run_attempt:
+        description: Attempt that produced the artifact
+        required: true
+        type: string
+      suite:
+        description: Java test suite executed
+        required: true
+        type: string
+      environment:
+        description: Normalized test environment (qa or dev)
+        required: true
+        type: string
+      source_branch:
+        description: pn-b2b-client branch used to run the tests
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  generate_rae:
+    name: Generate RAE YAML and Draft PR
+    if: github.repository == 'pagopa/pn-b2b-client' && github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    concurrency:
+      group: rae-from-interop-${{ inputs.artifact_id }}
+      cancel-in-progress: false
+    env:
+      SOURCE_REPO: pagopa/interop-qa-tests
+      RUN_ID: ${{ inputs.run_id }}
+      ARTIFACT_ID: ${{ inputs.artifact_id }}
+      RUN_ATTEMPT: ${{ inputs.run_attempt }}
+      JAVA_TEST_SUITE: ${{ inputs.suite }}
+      TEST_ENVIRONMENT: ${{ inputs.environment }}
+      JAVA_BRANCH: ${{ inputs.source_branch }}
+      RAE_NAMESPACE: interop
+
+    steps:
+      - name: Verify source run and artifact
+        id: source
+        env:
+          GH_TOKEN: ${{ secrets.INTEROP_ARTIFACT_READ_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::error::Missing INTEROP_ARTIFACT_READ_TOKEN'
+            exit 1
+          fi
+          for number in "$RUN_ID" "$ARTIFACT_ID" "$RUN_ATTEMPT"; do
+            if [[ ! "$number" =~ ^[1-9][0-9]*$ ]]; then
+              echo '::error::Run ID, artifact ID, and attempt must be positive integers'
+              exit 1
+            fi
+          done
+          if [[ ! "$JAVA_TEST_SUITE" =~ ^[A-Za-z0-9_]+(\.[A-Za-z0-9_]+)*$ ]] ||
+             [[ "$TEST_ENVIRONMENT" != qa && "$TEST_ENVIRONMENT" != dev ]] ||
+             ! git check-ref-format "refs/heads/$JAVA_BRANCH"; then
+            echo '::error::Invalid Java suite, environment, or source branch'
+            exit 1
+          fi
+
+          run=$(gh api "repos/$SOURCE_REPO/actions/runs/$RUN_ID/attempts/$RUN_ATTEMPT")
+          if ! jq -e --arg repo "$SOURCE_REPO" --arg attempt "$RUN_ATTEMPT" '
+            .path == ".github/workflows/qa.yaml" and
+            .head_repository.full_name == $repo and
+            .head_branch == "main" and
+            (.run_attempt | tostring) == $attempt and
+            (.event == "schedule" or .event == "workflow_dispatch")
+          ' <<< "$run" > /dev/null; then
+            echo "::error::Run $RUN_ID attempt $RUN_ATTEMPT is not a QA run on $SOURCE_REPO/main"
+            exit 1
+          fi
+          executor=$(jq -er '(.triggering_actor.login // .actor.login) | select(length > 0)' <<< "$run")
+
+          artifact=$(gh api "repos/$SOURCE_REPO/actions/artifacts/$ARTIFACT_ID")
+          if ! jq -e --arg run "$RUN_ID" --arg name "qa-test-artifacts-$RUN_ATTEMPT" '
+            (.workflow_run.id | tostring) == $run and .name == $name and .expired == false
+          ' <<< "$artifact" > /dev/null; then
+            echo "::error::Artifact $ARTIFACT_ID is expired or does not belong to run $RUN_ID attempt $RUN_ATTEMPT"
+            exit 1
+          fi
+
+          created_at=$(jq -er '.created_at' <<< "$artifact")
+          timestamp=$(date -u -d "$created_at" +%Y%m%d%H%M%S)
+          printf 'executor=%s\ntimestamp=%s\nrun-url=%s/%s/actions/runs/%s/attempts/%s\n' \
+            "$executor" "$timestamp" "$GITHUB_SERVER_URL" "$SOURCE_REPO" "$RUN_ID" "$RUN_ATTEMPT" >> "$GITHUB_OUTPUT"
+
+      - name: Download verified QA reports
+        uses: actions/download-artifact@v4
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          run-id: ${{ inputs.run_id }}
+          artifact-ids: ${{ inputs.artifact_id }}
+          github-token: ${{ secrets.INTEROP_ARTIFACT_READ_TOKEN }}
+          path: ${{ runner.temp }}/rae-test-artifacts
+          merge-multiple: true
+
+      - name: Checkout develop for trusted generator and RAE history
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install RAE Python dependencies
+        run: python -m pip install -r tools/rae/rae_generator/requirements.txt
+
+      - name: Generate RAE YAML
+        env:
+          REPORTS: ${{ runner.temp }}/rae-test-artifacts
+          EXECUTOR: ${{ steps.source.outputs.executor }}
+          TIMESTAMP: ${{ steps.source.outputs.timestamp }}
+          SOURCE_RUN_URL: ${{ steps.source.outputs.run-url }}
+        run: |
+          metadata="$REPORTS/rae/run_metadata.json"
+          if [[ ! -s "$metadata" ]]; then
+            echo '::error::Missing Maven execution metadata, refusing to create RAE'
+            exit 1
+          fi
+          PYTHONPATH=tools/rae/rae_generator python -P -m rae_generator generate \
+            --reports "$REPORTS" \
+            --history rae \
+            --namespace "$RAE_NAMESPACE" \
+            --suite "$JAVA_TEST_SUITE" \
+            --environment "$TEST_ENVIRONMENT" \
+            --executor "$EXECUTOR" \
+            --source-branch "$JAVA_BRANCH" \
+            --run-url "$SOURCE_RUN_URL" \
+            --metadata "$metadata" \
+            --output "rae/$RAE_NAMESPACE/rae_${JAVA_TEST_SUITE}_${TIMESTAMP}.yaml"
+
+      - name: Publish RAE Draft PR
+        env:
+          GH_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN }}
+          TIMESTAMP: ${{ steps.source.outputs.timestamp }}
+          SOURCE_RUN_URL: ${{ steps.source.outputs.run-url }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo '::error::Missing RAE_AUTOMATION_TOKEN'
+            exit 1
+          fi
+          branch="rae/$RAE_NAMESPACE/rae_${JAVA_TEST_SUITE}_${TIMESTAMP}"
+          yaml="$branch.yaml"
+          marker="RAE-Artifact: $SOURCE_REPO/$ARTIFACT_ID"
+          existing_prs=$(gh api --method GET "repos/$GITHUB_REPOSITORY/pulls" \
+            -f state=all -f base=develop -f head="${GITHUB_REPOSITORY_OWNER}:$branch")
+          if jq -e --arg marker "$marker" 'any(.[]; .body // "" | contains($marker + " -->"))' \
+            <<< "$existing_prs" > /dev/null; then
+            echo "A RAE PR already exists for artifact $ARTIFACT_ID"
+            exit 0
+          fi
+          if jq -e 'length > 0' <<< "$existing_prs" > /dev/null; then
+            echo "::error::Branch $branch already has a PR for a different artifact"
+            exit 1
+          fi
+
+          remote_branch=$(git -c credential.helper= -c 'credential.helper=!gh auth git-credential' \
+            ls-remote --heads origin "refs/heads/$branch")
+          if [[ -n "$remote_branch" ]]; then
+            remote_sha=${remote_branch%%$'\t'*}
+            existing_marker=$(gh api "repos/$GITHUB_REPOSITORY/commits/$remote_sha" \
+              --jq '.commit.message' | git interpret-trailers --parse)
+            if ! grep -Fxq -- "$marker" <<< "$existing_marker"; then
+              echo "::error::Branch $branch already exists for a different artifact"
+              exit 1
+            fi
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -- "$yaml"
+            git commit -m "chore(rae): [QA-18253] create analysis for $JAVA_TEST_SUITE ($TIMESTAMP)" \
+              -m "$marker"
+            git -c credential.helper= -c 'credential.helper=!gh auth git-credential' \
+              push --force-with-lease="refs/heads/$branch:" origin "HEAD:refs/heads/$branch"
+          fi
+
+          gh pr create --draft --base develop --head "$branch" --label rae --label interop \
+            --title "RAE: $JAVA_TEST_SUITE ($TIMESTAMP)" \
+            --body "$(printf 'NRT run: %s\n\nComplete release, issue_jira, procedure and result. RAE validation will generate the Markdown.\n\n<!-- %s -->' \
+              "$SOURCE_RUN_URL" "$marker")"
