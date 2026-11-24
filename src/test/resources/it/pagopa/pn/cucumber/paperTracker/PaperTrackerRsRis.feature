@@ -15,6 +15,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -49,6 +50,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
     Then si verifica che gli eventi presenti in PaperTrackerDryRunOutputs coincidano con la timeline per la sequence: "<sequenceName>"
     And si verifica che non ci siano errori per i trackingId richiesti
@@ -71,6 +73,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
@@ -107,6 +110,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And genera la key da utilizzare per invocare l'API per il prodotto: "RS"
+    And si attende che siano presenti in timeline tutti gli eventi relativi alla sequence "<sequenceName>"
     Then si controlla che non ci siano eventi duplicati
     And si controlla che siano presenti tutti gli eventi relativi alla sequence "<sequenceName>"
     And si verifica che la risposta tracking per la sequence "<sequenceName>" contenga tutti gli elementi attesi e che sia strutturalmente valida
