@@ -297,17 +297,17 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId           | GNFRSS80A01G203W |
+      | taxId           | PRPMGG80A41H501W |
       | digitalDomicile | NULL             |
       | recipientType   | PF               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
-    And la risposta sul registro INAD per il cf "GNFRSS80A01G203W" non contiene recapiti
-    And il batch associato alla richiesta verso INAD per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-    And la richiesta verso il servizio INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
-    And il batch associato alla richiesta verso INIPEC per il cf "GNFRSS80A01G203W" risulta in stato WORKED
+    And la risposta sul registro INAD per il cf "PRPMGG80A41H501W" non contiene recapiti
+    And il batch associato alla richiesta verso INAD per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And la richiesta verso il servizio INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
+    And il batch associato alla richiesta verso INIPEC per il cf "PRPMGG80A41H501W" risulta in stato WORKED
 
 
   @inadMassive @mockNR @ignoreUAT @inadMassiveTrueInipecTrue @work-item:QA-18515 #EnableInadMassiveApi:true;EnableOldInipecFlow:true
