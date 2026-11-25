@@ -1519,7 +1519,6 @@ public class SharedSteps {
                 recipientTaxId,
                 it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.valueOf(status.trim().toUpperCase()),
                 null,
-                null,
                 50,
                 null);
         assumeThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
