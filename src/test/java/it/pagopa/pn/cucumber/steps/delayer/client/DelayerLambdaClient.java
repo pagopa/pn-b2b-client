@@ -102,19 +102,9 @@ public class DelayerLambdaClient {
         deleteData(null);
     }
 
+    // DELETE_MOCK_TABLES non accetta parametri: la lambda conosce già le tabelle mock pn-* da eliminare e ricreare
     public void deleteMockTables() {
-        deleteMockTables(
-                DelayerTable.DelayerPaperDeliveryMock,
-                DelayerTable.PaperDeliveryCountersMock,
-                DelayerTable.PaperDeliveryDriverCapacitiesMock,
-                DelayerTable.PaperDeliveryDriverUsedCapacitiesMock,
-                DelayerTable.PaperDeliverySenderLimitMock,
-                DelayerTable.PaperDeliveryUsedSenderLimitMock
-        );
-    }
-
-    public void deleteMockTables(Object... tables) {
-        invoke(DelayerOperation.DELETE_MOCK_TABLES, Void.class, paramsOf(tables));
+        invoke(DelayerOperation.DELETE_MOCK_TABLES, Void.class, List.of());
     }
 
     public Optional<DelayerUsedCapacity> getUsedCapacity(String unifiedDeliveryDriver,

@@ -96,10 +96,6 @@ public class DelayerMockService {
         return dynamoDbService.isEmpty(table.tableName);
     }
 
-    public void deleteMockTables(String table) {
-        lambdaClient.deleteMockTables(table);
-    }
-
     public Integer getMockPaperDeliverySize(String deliveryDate) {
         return getPaperDeliverySize(DelayerTable.DelayerPaperDeliveryMock, deliveryDate);
     }
