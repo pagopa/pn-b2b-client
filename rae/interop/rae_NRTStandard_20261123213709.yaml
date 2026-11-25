@@ -3151,17 +3151,19 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.accuratelyVerifyStatusCode(ClientCommonSteps.java:149)
       	at ✽.si ottiene response status code 400(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-from-purpose-template.feature:256)
     procedure: |
-      Consultare il caso negativo relativo alla modifica della finalità usando un
-      URL non coerente con una finalità derivata dal template; confrontare
-      l'asserzione HTTP 400 con la risposta effettiva e verificare la condizione che
-      avrebbe dovuto determinare il rifiuto. Confrontare il risultato con l'anomalia
-      già descritta nella precedente analisi.
+      Crea e pubblica un purpose template e crea separatamente una
+      finalità ordinaria per un e-service. Richiedi la modifica
+      parziale della finalità tramite l'endpoint destinato alle
+      istanze di template, specificando un nuovo URL per l'informativa
+      sul trattamento dei dati personali. Verifica lo status restituito.
+
     result: |
-      La chiamata che lo scenario prevede debba essere rifiutata con HTTP 400 è
-      invece accettata con HTTP 200. La precedente analisi segnala il comportamento
-      come noto e atteso in correzione con una release successiva, senza indicare un
-      ticket o confermare la data di risoluzione.
-    link_prod_bug: ''
+      Nel rerun effettuato dopo la correzione dello scenario, la
+      finalità viene creata tramite l'endpoint ordinario, senza essere
+      istanziata dal template. La successiva PATCH all'endpoint
+      /purposeTemplates/{purposeTemplateId}/purposes/{purposeId}
+      risponde HTTP 200, mentre il test attende HTTP 400.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-11087
     link_suite_bug: ''
   - id_test: '[PURPOSE_TEMPLATE_ARCHIVIATION_NO_CREATOR] Archiviazione di una finalità agevolata da parte di un utente
     non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
