@@ -9,14 +9,18 @@ import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerProbeAwaiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
+import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 
 import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static it.pagopa.pn.cucumber.steps.delayer.utils.DelayerPaperDeliveryUtils.getPreviousMondayFromDate;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +40,38 @@ public class DelayerMockService {
             DelayerTable.PaperDeliveryDriverUsedCapacitiesMock,
             DelayerTable.PaperDeliveryUsedSenderLimitMock
     );
+
+    /**
+     * Le sei tabelle reali speculari a quelle mock, nello stesso ordine di {@link #MOCK_TABLES}.
+     */
+    public static final List<DelayerTable> REAL_TABLES = List.of(
+            DelayerTable.PaperDeliverySenderLimit,
+            DelayerTable.PaperDeliveryCounters,
+            DelayerTable.PaperDeliveryDriverCapacities,
+            DelayerTable.DelayerPaperDelivery,
+            DelayerTable.PaperDeliveryDriverUsedCapacities,
+            DelayerTable.PaperDeliveryUsedSenderLimit
+    );
+
+    // Chiavi primarie (partition key, sort key) delle tabelle reali, necessarie per la GetItem dei record campione
+    private static final Map<DelayerTable, List<String>> REAL_TABLE_KEYS = Map.of(
+            DelayerTable.PaperDeliverySenderLimit, List.of("pk", "deliveryDate"),
+            DelayerTable.PaperDeliveryCounters, List.of("pk", "sk"),
+            DelayerTable.PaperDeliveryDriverCapacities, List.of("pk", "activationDateFrom"),
+            DelayerTable.DelayerPaperDelivery, List.of("pk", "sk"),
+            DelayerTable.PaperDeliveryDriverUsedCapacities, List.of("unifiedDeliveryDriverGeokey", "deliveryDate"),
+            DelayerTable.PaperDeliveryUsedSenderLimit, List.of("pk", "deliveryDate")
+    );
+
+    private static final int REAL_TABLE_SAMPLE_SIZE = 5;
+
+    /**
+     * Stato di una tabella reale prima di DELETE_MOCK_TABLES: data di creazione e ARN (cambiano se la tabella viene
+     * eliminata e ricreata) e le chiavi di un campione di record esistenti.
+     */
+    public record RealTableSnapshot(DelayerTable table, Instant creationDateTime, String tableArn,
+                                    List<Map<String, AttributeValue>> sampleKeys) {
+    }
 
     private final DelayerLambdaClient lambdaClient;
     private final DynamoDbService dynamoDbService;
@@ -81,32 +117,39 @@ public class DelayerMockService {
     }
 
     /**
-     * Conteggia i record presenti nelle sei tabelle reali speculari a quelle coinvolte da DELETE_MOCK_TABLES.
-     * I limiti mittente utilizzati sono letti alla settimana precedente la deliveryDate (cfr. checkSenderLimitForPA).
+     * Salva lo stato di una tabella reale senza scriverci nulla: DescribeTable (deve essere ACTIVE) e Scan keys-only
+     * di al massimo {@value #REAL_TABLE_SAMPLE_SIZE} record.
      */
-    public Map<DelayerTable, Integer> countRealTables(String deliveryDate, String province, String product, String unifiedDeliveryDriver) {
-        Map<DelayerTable, Integer> counts = new LinkedHashMap<>();
-        counts.put(DelayerTable.PaperDeliverySenderLimit, getSenderLimitsSize(DelayerTable.PaperDeliverySenderLimit, deliveryDate, province));
-        counts.put(DelayerTable.PaperDeliveryCounters, getCountersSumEstimatesSize(deliveryDate, province, product, false));
-        counts.put(DelayerTable.PaperDeliveryDriverCapacities, getDeclaredCapacitySize(DelayerTable.PaperDeliveryDriverCapacities, province, deliveryDate));
-        counts.put(DelayerTable.DelayerPaperDelivery, getPaperDeliverySize(DelayerTable.DelayerPaperDelivery, deliveryDate));
-        counts.put(DelayerTable.PaperDeliveryDriverUsedCapacities, getUsedCapacitySize(DelayerTable.PaperDeliveryDriverUsedCapacities, unifiedDeliveryDriver, province, deliveryDate));
-        counts.put(DelayerTable.PaperDeliveryUsedSenderLimit, getUsedSenderLimitSize(DelayerTable.PaperDeliveryUsedSenderLimit, getPreviousMondayFromDate(deliveryDate, 1), province));
-        return counts;
+    public RealTableSnapshot snapshotRealTable(DelayerTable table) {
+        TableDescription description = dynamoDbService.describeTable(table.tableName);
+        if (description.tableStatus() != TableStatus.ACTIVE)
+            throw new IllegalStateException("La tabella reale %s non è ACTIVE: %s".formatted(table.tableName, description.tableStatusAsString()));
+        List<Map<String, AttributeValue>> sampleKeys = dynamoDbService.scanKeys(table.tableName, REAL_TABLE_KEYS.get(table), REAL_TABLE_SAMPLE_SIZE);
+        if (sampleKeys.isEmpty())
+            log.warn("Tabella reale {} vuota: verificato solo stato/creazione", table.tableName);
+        return new RealTableSnapshot(table, description.creationDateTime(), description.tableArn(), sampleKeys);
     }
 
-    private Integer getSenderLimitsSize(DelayerTable table, String deliveryDate, String province) {
-        var response = lambdaClient.getSenderLimitByProvinceWithTable(table.tableName, deliveryDate, province);
-        if (response == null || response.getItems() == null)
-            throw new IllegalStateException("GET_SENDER_LIMIT returned no items list for table " + table.tableName);
-        return response.getItems().size();
-    }
-
-    private Integer getCountersSumEstimatesSize(String deliveryDate, String province, String product, boolean fromMock) {
-        var response = lambdaClient.getCountersSumEstimates(deliveryDate, province, product, fromMock);
-        if (response == null || response.getItems() == null)
-            throw new IllegalStateException("GET_COUNTERS returned no items list for the " + (fromMock ? "mock" : "real") + " table");
-        return response.getItems().size();
+    /**
+     * Confronta lo stato attuale della tabella reale con lo snapshot: deve essere ACTIVE, con stessi creationDateTime
+     * e ARN (se fosse stata eliminata e ricreata la data di creazione cambierebbe) e deve contenere ancora i record campione.
+     *
+     * @return le discrepanze rilevate (lista vuota se la tabella è invariata)
+     */
+    public List<String> verifyRealTableUnchanged(RealTableSnapshot before) {
+        String tableName = before.table().tableName;
+        TableDescription after = dynamoDbService.describeTable(tableName);
+        List<String> differences = new ArrayList<>();
+        if (after.tableStatus() != TableStatus.ACTIVE)
+            differences.add("%s: stato %s invece di ACTIVE".formatted(tableName, after.tableStatusAsString()));
+        if (!Objects.equals(before.creationDateTime(), after.creationDateTime()))
+            differences.add("%s: creationDateTime prima %s, dopo %s".formatted(tableName, before.creationDateTime(), after.creationDateTime()));
+        if (!Objects.equals(before.tableArn(), after.tableArn()))
+            differences.add("%s: tableArn prima %s, dopo %s".formatted(tableName, before.tableArn(), after.tableArn()));
+        before.sampleKeys().stream()
+                .filter(key -> dynamoDbService.getItem(tableName, key).isEmpty())
+                .forEach(key -> differences.add("%s: record con chiave %s non più presente".formatted(tableName, key)));
+        return differences;
     }
 
     private Integer getPaperDeliverySize(DelayerTable table, String deliveryDate) {
