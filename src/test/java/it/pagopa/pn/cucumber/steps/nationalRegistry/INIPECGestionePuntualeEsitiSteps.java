@@ -64,7 +64,7 @@ public class INIPECGestionePuntualeEsitiSteps {
      * Valori del campo {@code sendStatus} sull'indice usato dalla query su pn-batchRequests.
      */
     private enum SendStatus {
-        SENT, NOT_SENT, SENT_TO_DLQ
+        SENT, NOT_TO_SEND, SENT_TO_DLQ
     }
 
     public enum Eservice {
@@ -291,7 +291,7 @@ public class INIPECGestionePuntualeEsitiSteps {
     public void requestRequeuedForRetry(String cf) {
         // Ripete query + assert finché il dato non è presente su DB come NOT_SENT con retry > 0, oppure scade il timeout.
         Poller.pollUntil(
-                () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT),
+                () -> retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_TO_SEND),
                 items -> {
                     assertThat(items)
                             .as("Nessuna richiesta NOT_SENT trovata per cf=%s nella finestra temporale", cf)
@@ -466,7 +466,7 @@ public class INIPECGestionePuntualeEsitiSteps {
      * Numero totale di richieste per il CF, sia SENT sia NOT_SENT, nella finestra temporale.
      */
     private int countAnySendStatus(String cf) {
-        return retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT).size() + retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_SENT).size();
+        return retrieveBatchRequestItemsBySendStatus(cf, SendStatus.SENT).size() + retrieveBatchRequestItemsBySendStatus(cf, SendStatus.NOT_TO_SEND).size();
     }
 
     /**
@@ -491,22 +491,37 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("risulta una richiesta {eservice} per il cf {string}")
     public void verifyRegistryRequestExists(Eservice eservice, String cf) {
 
-        String iun = sharedSteps.getNotificationIun();
-
-        Poller.pollUntil(
-                () -> retrieveRegistryRequests(cf, eservice, iun),
-                items -> {
-                    assertThat(items).as("Nessuna richiesta %s trovata per cf=%s e iun=%s", eservice, cf, iun).isNotEmpty();
-                },
-                REGISTRY_REQUEST_POLLING);
+        verifyRegistryRequest(eservice, cf, SendStatus.SENT, request ->
+                assertThat(request.get("sendStatus").s())
+                        .isEqualTo(SendStatus.SENT.name()));
     }
 
-    private List<Map<String, AttributeValue>> retrieveRegistryRequests(String cf, Eservice eservice, String iun) {
+    @Then("risulta una richiesta {eservice} per il cf {string} non inviata")
+    public void verifyRegistryRequestNotSent(Eservice eservice, String cf) {
 
-        Map<String, AttributeValue> attributeValues = Map.of(":v_sendStatus", AttributeValue.builder().s(SendStatus.SENT.name()).build(), ":v_lastReserved", AttributeValue.builder().s(MIN_LAST_RESERVED).build());
+        verifyRegistryRequest(eservice, cf, SendStatus.NOT_TO_SEND, request ->
+                assertThat(request.get("sendStatus").s())
+                        .isEqualTo(SendStatus.NOT_TO_SEND.name()));
+    }
+
+    private List<Map<String, AttributeValue>> retrieveRegistryRequests(String cf, Eservice eservice, String iun, SendStatus sendStatus) {
+
+        Map<String, AttributeValue> attributeValues = Map.of(":v_sendStatus", AttributeValue.builder().s(sendStatus.name()).build(), ":v_lastReserved", AttributeValue.builder().s(MIN_LAST_RESERVED).build());
         List<Map<String, AttributeValue>> items = dynamoDbService.callAllPages(DynamoTableName.BATCH_REQUESTS_WITH_INDEX_SEND_STATUS, attributeValues);
 
-        return items.stream().filter(item -> cf.equals(item.get("cf").s())).filter(item -> eservice.name().equals(item.get("eservice").s())).filter(item -> item.get("correlationId").s().contains(iun)).toList();
+        return items.stream()
+                .filter(item -> cf.equals(item.get("cf").s()))
+                .filter(item -> eservice.name().equals(item.get("eservice").s()))
+                .filter(item -> item.get("correlationId").s().contains(iun))
+                .toList();
+    }
+
+    private void verifyRegistryRequest(Eservice eservice, String cf, SendStatus sendStatus, Consumer<Map<String, AttributeValue>> assertions) {
+
+        Poller.pollUntil(() -> retrieveRegistryRequests(cf, eservice, sharedSteps.getNotificationIun(), sendStatus), items -> {
+            assertThat(items).hasSize(1);
+            assertions.accept(items.get(0));
+        }, REGISTRY_REQUEST_POLLING);
     }
 }
 
