@@ -26,6 +26,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailDocument;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.NotificationStatusV26;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
@@ -87,6 +88,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -778,7 +780,7 @@ public class RicezioneNotificheWebSteps {
         BffLegalNotificationsResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        convertedStatus, searchParam.subjectRegExp,
+                        convertedStatus,
                         searchParam.iunMatch, searchParam.size, null);
         List<BffLegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
@@ -789,7 +791,7 @@ public class RicezioneNotificheWebSteps {
                     notificationSearchResponse = webPaClient
                             .searchSentNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    convertedStatus, searchParam.subjectRegExp,
+                                    convertedStatus,
                                     searchParam.iunMatch, searchParam.size, pageKey);
                     resultsPage = notificationSearchResponse.getResultsPage();
                     beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;

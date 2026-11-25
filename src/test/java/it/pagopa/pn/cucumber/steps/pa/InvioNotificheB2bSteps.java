@@ -241,7 +241,7 @@ public class InvioNotificheB2bSteps {
             notificationByIun.set(
                     webPaClient.searchSentNotification(
                             OffsetDateTime.now().minusDays(1), OffsetDateTime.now(),
-                            null, null, null, iun, 1, null
+                            null, null, iun, 1, null
                     )
             );
 
@@ -337,7 +337,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
 
         notificationByIun.set(Objects.requireNonNull(
-                webPaClient.searchSentNotification(data, data.plusDays(20), null, null, null, null, 50, null),
+                webPaClient.searchSentNotification(data, data.plusDays(20), null, null, null, 50, null),
                 "Il risultato della ricerca delle notifiche inviate non deve essere nullo"
         ));
 
@@ -383,7 +383,6 @@ public class InvioNotificheB2bSteps {
                                     OffsetDateTime.now(),
                                     null,
                                     notificationInternalStatus,
-                                    null,
                                     null,
                                     1,
                                     null

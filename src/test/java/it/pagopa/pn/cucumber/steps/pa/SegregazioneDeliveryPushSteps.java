@@ -75,7 +75,7 @@ public class SegregazioneDeliveryPushSteps {
         searchResponse = webPaClient.searchSentNotification(
                 queryParamsPojo.dateStart,
                 queryParamsPojo.dateEnd,
-                null, null, null, null, 50, null);
+                null, null, null, 50, null);
     }
 
     @Then("confronto le timeline ottenute chiamando la nuova API e la vecchia impostando confidentialInfoRequired a {string}")
@@ -117,7 +117,7 @@ public class SegregazioneDeliveryPushSteps {
                 searchResponse = webPaClient.searchSentNotification(
                         queryParamsPojo.dateStart,
                         queryParamsPojo.dateEnd,
-                        null, null, null, null, 50, nextPageKey);
+                        null, null, null, 50, nextPageKey);
             } else {
                 counter = queryParamsPojo.notificationSampleSize;
             }
@@ -169,7 +169,7 @@ public class SegregazioneDeliveryPushSteps {
                 searchResponse = webPaClient.searchSentNotification(
                         queryParamsPojo.dateStart,
                         queryParamsPojo.dateEnd,
-                        null, null, null, null, 20, nextPageKey);
+                        null, null, null, 20, nextPageKey);
             } else {
                 counter = queryParamsPojo.notificationSampleSize;
             }

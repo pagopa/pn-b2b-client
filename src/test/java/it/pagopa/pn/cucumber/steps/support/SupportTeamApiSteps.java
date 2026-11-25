@@ -104,7 +104,7 @@ public class SupportTeamApiSteps {
         OffsetDateTime startDate = now().minusYears(1).atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         OffsetDateTime endDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
         return bffPaClient.searchSentNotification(startDate, endDate,
-                null, EFFECTIVE_DATE, null, null, 50, null);
+                null, EFFECTIVE_DATE, null, 50, null);
     }
 
     private void getSentNotificationDocument() {
