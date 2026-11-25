@@ -4,6 +4,7 @@ import it.pagopa.interop.conf.InteropClientConfigs;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.tenant_process.model.RevokeVerifiedAttributeRequest;
 import it.pagopa.interop.tenant.service.ITenantsApi;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -117,8 +118,7 @@ public class TenantsApiClientImpl implements ITenantsApi {
 
     @Override
     public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
-        // TODO assicurarsi che con il rilascio 2.25 agreementId non sia più nel body, ma nei query params
-        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, new RevokeVerifiedAttributeRequest().agreementId(agreementId));
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId, null);
     }
 
     @Override

@@ -53,3 +53,52 @@ tmp-files/
 
 # Local checkouts used by the PST generator
 /source-repos/
+
+
+### Python ###
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode and cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing and coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+
+# Type checking and linting
+.mypy_cache/
+.pyright/
+.ruff_cache/
+.dmypy.json
+.pyre/
+
+# Build and distribution artifacts
+*.egg-info/
+.eggs/
+dist/
+site/
+pip-wheel-metadata/
+
+# Local Python environment files
+.env
+.env.*
+!.env.example
+.python-version
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local logs and temporary files
+pip-log.txt
+pip-delete-this-directory.txt
