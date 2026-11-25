@@ -34,6 +34,15 @@ Feature: Creazione nuova richiesta di fruizione
       | Privato      | PA2               | GSP           | support      |       403 |
       | Privato      | PA2               | GSP           | api,security |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | enteFruitore | enteCertificatore | enteErogatore | ruolo        | risultato |
+      | GSP          | PA2               | PA1           | reviewer     |       403 |
+      | GSP          | PA2               | PA1           | viewer       |       403 |
+      | Privato      | PA2               | GSP           | reviewer     |       403 |
+      | Privato      | PA2               | GSP           | viewer       |       403 |
+
   @happy-path @nrt-minimal
   @agreement_creation2a @certifiedAttribute
   Scenario Outline: [AGREEMENT_CREATION_02A] Un utente con sufficienti permessi, il cui ente rispetta i requisiti (attributi certificati), con altre richieste di fruizione in stato REJECTED per un e-service, crea una nuova richiesta di fruizione in bozza per l’ultima versione disponibile di quell'e-service, la quale è in stato PUBLISHED. La richiesta va a buon fine.

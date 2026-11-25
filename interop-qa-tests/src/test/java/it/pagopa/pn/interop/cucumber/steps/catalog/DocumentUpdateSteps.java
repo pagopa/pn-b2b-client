@@ -33,9 +33,20 @@ public class DocumentUpdateSteps {
 
     @When("l'utente aggiorna il nome di quel documento")
     public void updateNameDocument() {
+        final String documentName = "updatedPrettyName";
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient().updateEServiceDocumentById(
                 eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getDocumentId(),
+                new UpdateEServiceDescriptorDocumentSeed().prettyName(documentName))
+        );
+        sharedStepsContext.getEServicesCommonContext().setDocumentName(documentName);
+    }
+
+    @When("l'utente aggiorna il nome dell'interfaccia di callback per quel descrittore")
+    public void updateNameCallbackInterface() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getEServiceClient().updateEServiceDocumentById(
+                eServicesCommonContext.getEserviceId(), eServicesCommonContext.getDescriptorId(), eServicesCommonContext.getCallbackInterfaceId(),
                 new UpdateEServiceDescriptorDocumentSeed().prettyName("updatedPrettyName"))
         );
     }

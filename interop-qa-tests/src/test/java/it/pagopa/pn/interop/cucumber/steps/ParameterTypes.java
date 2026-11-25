@@ -2,6 +2,8 @@ package it.pagopa.pn.interop.cucumber.steps;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.conf.api_profile.ApiProfile;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
 
 import java.util.*;
@@ -49,6 +51,11 @@ public class ParameterTypes {
         return EServiceState.fromValue(value);
     }
 
+    @ParameterType("30|60|90|120")
+    public static GracePeriodDays gracePeriodDays(String value) {
+        return GracePeriodDays.fromValue(Integer.parseInt(value));
+    }
+
     // 1. Definiamo i componenti base come stringhe letterali
     private static final String STATUS_REGEX = "(\\d+)";
     private static final String SET_REGEX = "(BFF|M2M)";
@@ -82,5 +89,39 @@ public class ParameterTypes {
             }
         }
         return resultMap;
+    }
+
+    @ParameterType("BFF|M2M")
+    public static ApiProfile.ApiSet apiSet(String value) {
+        return ApiProfile.ApiSet.valueOf(value.toUpperCase());
+    }
+
+    /* Converte un intero singolo o una lista separata da virgole in List<Integer>. */
+    @ParameterType("\\d+(?:,\\d+)*")
+    public static List<Integer> integerList(String value) {
+        List<Integer> result = new ArrayList<>();
+        String[] parts = value.split(",");
+        for (String part : parts) {
+            result.add(Integer.parseInt(part.trim()));
+        }
+        return result;
+    }
+
+    @ParameterType("NULL|nessuno|[1-9][0-9]*(?:,[1-9][0-9]*)*")
+    public static List<Integer> reviewerList(String value) {
+        if ("NULL".equals(value)) {
+            return null;
+        }
+        return "nessuno".equals(value) ? List.of() : integerList(value);
+    }
+
+    @ParameterType("ReviewerWritesReviewerSigns|AdminWritesReviewerSigns|AdminWritesAdminSigns")
+    public static RiskAnalysisReviewMode riskAnalysisReviewMode(String mode) {
+        return switch (mode) {
+            case "AdminWritesAdminSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
+            case "ReviewerWritesReviewerSigns" -> RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
+            case "AdminWritesReviewerSigns" -> RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
+            default -> throw new IllegalArgumentException("Modalita di review non supportata: " + mode);
+        };
     }
 }

@@ -16,26 +16,30 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pa.BffResponseNewApiKey;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationsResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationSearchRow;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.digitaladdresses.BffUserAddress;
+import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.domain.Costanti;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
+import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
 import it.pagopa.pn.client.b2b.pa.wrapper.RecipientWrapper;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationStepsInterface;
 import it.pagopa.pn.cucumber.steps.pa.notificationVersions.NotificationVersion;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Costanti;
-import it.pagopa.pn.cucumber.steps.utilitySteps.Destinatario;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
@@ -49,6 +53,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -56,8 +61,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -65,9 +73,11 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.*;
+import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -79,11 +89,22 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 @Slf4j
 public class SharedSteps {
 
+    private static final Pattern TEST_CASE_ID_PATTERN = Pattern.compile("\\[([^\\[\\]]+)]");
+
+    @Getter
+    private final SenderInfoProvider senderInfoProvider;
+
+    @Getter
+    private final DestinatarioRegistry destinatarioRegistry;
+
     @Getter
     private final ApplicationContext context;
 
     @Getter
     private final IPnPaB2bClient b2bClient;
+
+    @Getter
+    private final PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl;
 
     @Getter
     private final PnPollingFactory pollingFactory;
@@ -154,6 +175,17 @@ public class SharedSteps {
     @Getter
     private final ObjectMapper objMapper;
 
+    @Getter
+    private final DynamoDbService dynamoDbService;
+
+    private final CacheManager<String, String> senderTaxIdCacheManager;
+
+    private final SendSharedContext sendSharedContext;
+
+    @Getter
+    @Setter
+    private String informalSenderId;
+
     /**
      * Rappresenta la versione con cui è stata generata una notifica. Viene impostata al momento di preparazione della request.
      * Va da sè che gli step successivi (aggiunta di destinatari, invio, etc) dovranno anch'essi utilizzare tale versione, salvo diversamente specificato.
@@ -187,6 +219,20 @@ public class SharedSteps {
     @Getter
     private List<String> notificationIunList = new ArrayList<>();
 
+    @Getter
+    @Setter
+    private List<Destinatario> destinatariList = new ArrayList<>();
+
+    /**
+     * L'id dell'ultima delega (mandate) selezionata per la ricerca delle notifiche ricevute da un delegato.
+     * Viene valorizzato dagli step che gestiscono le deleghe (es. {@code RicezioneNotificheWebDelegheSteps})
+     * e serve a risolvere, tramite {@link it.pagopa.pn.cucumber.utils.token.TokenResolver}, i placeholder
+     * usati nei feature file per riferirsi a un valore generato dinamicamente (es. {@code :mandateId}).
+     */
+    @Getter
+    @Setter
+    private String mandateId;
+
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
@@ -198,18 +244,27 @@ public class SharedSteps {
     @Autowired
     public SharedSteps(ApplicationContext context,
                        IPnPaB2bClient b2bClient,
+                       PnPaB2bInternalInformalClientImpl pnPaB2bInternalInformalClientImpl,
+                       PnPaB2bExternalInformalClientImpl pnPaB2bExternalInformalClientImpl,
                        PnPollingFactory pollingFactory,
                        IPnWebPaClient webPaClient,
                        PnWebRecipientExternalClientImpl webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
+                       PnWebUserAttributesInternalClientImpl iPnWebUserAttributesClient,
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl,
                        IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl,
-                       PnB2bClientTimingConfigs timingConfigs) {
+                       PnB2bClientTimingConfigs timingConfigs,
+                       DynamoDbService dynamoDbService,
+                       SenderInfoProvider senderInfoProvider,
+                       @Qualifier("senderTaxIdCacheManager") CacheManager<String, String> senderTaxIdCacheManager,
+                       DestinatarioRegistry destinatarioRegistry,
+                       SendSharedContext sendSharedContext
+    ) {
         this.context = context;
         this.b2bClient = b2bClient;
+        this.pnPaB2bInternalInformalClientImpl = pnPaB2bInternalInformalClientImpl;
         this.pollingFactory = pollingFactory;
         this.webPaClient = webPaClient;
         this.webRecipientClient = webRecipientClient;
@@ -223,7 +278,12 @@ public class SharedSteps {
         this.iuvGPD = new ArrayList<>();
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
+        this.dynamoDbService = dynamoDbService;
+        this.senderInfoProvider = senderInfoProvider;
         versionUsed = getNotificationVersion(MOST_RECENT);
+        this.senderTaxIdCacheManager = senderTaxIdCacheManager;
+        this.destinatarioRegistry = destinatarioRegistry;
+        this.sendSharedContext = sendSharedContext;
     }
 
     @BeforeAll
@@ -238,9 +298,21 @@ public class SharedSteps {
     }
 
     @Before
-    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
+    public void injectScenarioNameInsideSlf4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
+        Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);
+        if (testCaseIdMatcher.find()) {
+            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group(1));
+        }
+        MDC.put(RestTemplateConfiguration.CUCUMBER_FEATURE_FILE_MDC_ENTRY, extractFeatureFileName(scenario.getUri()));
+        log.info("START SCENARIO: {}", scenarioName);
+    }
+
+    private static String extractFeatureFileName(URI featureUri) {
+        String path = featureUri.getPath() != null ? featureUri.getPath() : featureUri.getSchemeSpecificPart();
+        int lastSlash = path.lastIndexOf('/');
+        return lastSlash >= 0 ? path.substring(lastSlash + 1) : path;
     }
 
     @Before("@integrationTest")
@@ -249,11 +321,18 @@ public class SharedSteps {
     }
 
     /**
-     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
+     * Restituisce lo FullSentNotification di una notifica legale aggiornata all'ultima versione
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV28 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV28(notificationIun);
+    public FullSentNotificationV29 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV29(notificationIun);
+    }
+
+    /**
+     * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
+     */
+    public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
+        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
     }
 
     /**
@@ -262,13 +341,21 @@ public class SharedSteps {
      * Usato in un solo punto del codice
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV28 getSentNotificationLastVersionByIun(String iun) {
-        return b2bClient.getSentNotificationV28(iun);
+    public FullSentNotificationV29 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV29(iun);
+    }
+
+
+    /**
+     * In base al notificationIun settato stabilisce se si tratta di una notifica legale o bonaria (le legali terminano con 1, le bonarie con la lettera)
+     */
+    public boolean isLegalNotification() {
+        return notificationIun != null && notificationIun.endsWith("1");
     }
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V26;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
@@ -301,7 +388,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -319,7 +406,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -362,11 +449,13 @@ public class SharedSteps {
 
     @And("destinatario {destinatario}")
     public void addDestinatario(Destinatario destinatario) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, new HashMap<>());
     }
 
     @And("destinatario {destinatario} e:")
     public void addDestinatarioWithParams(Destinatario destinatario, Map<String, String> data) {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 
@@ -378,6 +467,7 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
+        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
@@ -407,7 +497,7 @@ public class SharedSteps {
         }
     }
 
-    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
+    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isTheSame}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 true, isCodiceAvvisoUguale, false, null);
@@ -482,8 +572,17 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+    }
+
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID")
+    public void laNotificaVieneInviataOkAndCancelledExtraRapid(String paName) {
+        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_EXTRA_RAPID);
+    }
+
+    private void laNotificaVieneInviataOkAndCancelled(String paName, int wait, String status, String pollingStrategy) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
+        getNotificationStepInterface().sendNotification(wait, status, pollingStrategy);
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
 
@@ -528,38 +627,23 @@ public class SharedSteps {
         }
     }
 
-    @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
-    public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
-
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+    @Then("la timeline {contains} elementi con la stringa {string}")
+    public void verifyPresenceOfTimelineElementsWithString(boolean contains, String searchString) {
+        FullSentNotificationV29 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-
-        List<TimelineElementV28> matchingElements = timeline.stream()
-                .filter(e -> e.getElementId() != null && e.getElementId().contains(searchString))
-                .toList();
+        List<TimelineElementV28> matchingElements = timeline.stream().filter(e -> e.getElementId() != null && e.getElementId().contains(searchString)).toList();
 
         if (!matchingElements.isEmpty()) {
             log.warn("Elementi di timeline contenenti '{}':", searchString);
-            matchingElements.forEach(e ->
-                    log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp())
-            );
+            matchingElements.forEach(e -> log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp()));
         } else {
             log.info("Nessun elemento di timeline contiene la stringa '{}'", searchString);
         }
-
-        boolean isPresenceExpected = presence.equalsIgnoreCase("presenza");
-
-        if (isPresenceExpected) {
-            Assertions.assertFalse(
-                    matchingElements.isEmpty(),
-                    "Attesa la presenza di elementi contenenti '" + searchString + "' ma non ne sono stati trovati"
-            );
+        int matchingElementsSize = matchingElements.size();
+        if (contains) {
+            assertThat(matchingElementsSize).as("Attesa la presenza di elementi contenenti '%s' ma non ne sono stati trovati", searchString).isGreaterThan(0);
         } else {
-            Assertions.assertTrue(
-                    matchingElements.isEmpty(),
-                    "Non attesa la presenza di elementi contenenti '" + searchString +
-                            "' ma ne sono stati trovati: " + matchingElements.size()
-            );
+            assertThat(matchingElementsSize).as("Non era attesa la presenza di elementi contenenti '%s' ma ne sono stati trovati %s", searchString, matchingElementsSize).isEqualTo(0);
         }
     }
 
@@ -676,6 +760,18 @@ public class SharedSteps {
         }
     }
 
+    @When("la notifica viene inviata dal {string} con errore {string}")
+    public void laNotificaVieneInviataDallaPAWithError(String paName, String errorType) {
+        setPaAndSenderTaxId(paName);
+        try {
+            getNotificationStepInterface().uploadNotification(errorType);
+        } catch (HttpStatusCodeException | IOException e) {
+            if (e instanceof HttpStatusCodeException httpError) {
+                this.notificationError = httpError;
+            }
+        }
+    }
+
     // Spostato da AvanzamentoNotificheB2bSteps, ha più senso qua
     //Annullamento Notifica
     @And("la notifica può essere annullata dal sistema tramite codice IUN")
@@ -693,6 +789,11 @@ public class SharedSteps {
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione, Integer posizioneDebitoria) {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
+    }
+
+    @And("al destinatario {int} viene associato lo iuv creato mediante partita debitoria alla posizione {int} per il suo pagamento alla posizione {int}")
+    public void destinatarioAddIuvGPD(Integer recIndex, Integer posizioneDebitoria, Integer recipientPaymentIndex) {
+        getNotificationStepInterface().addIuvGpdToDestinatario(recIndex, getIuvGPD(posizioneDebitoria), recipientPaymentIndex);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
@@ -749,8 +850,11 @@ public class SharedSteps {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
             } else {
-                throw httpStatusCodeException;
+                log.warn("Errore durante la rimozione PEC di piattaforma (status: {}): {}",
+                        httpStatusCodeException.getStatusCode(), httpStatusCodeException.getMessage());
             }
+        } catch (Exception e) {
+            log.warn("Errore imprevisto durante la rimozione PEC di piattaforma: {}", e.getMessage());
         }
     }
 
@@ -953,34 +1057,37 @@ public class SharedSteps {
     private void setSenderTaxIdAndGroup(String pa) {
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         String senderTaxId = notificationStepsInterface.getSenderTaxId();
-        switch (pa) {
-            case COMUNE_1 -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_1_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.MVP_1);
-            }
-            case COMUNE_2 -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_2_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.MVP_2);
-            }
-            case COMUNE_MULTI -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_MULTI_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.GA);
-            }
-            case COMUNE_SON -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_SON_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.SON);
-            }
-            case COMUNE_ROOT -> {
-                setIfNull(senderTaxId, () -> notificationStepsInterface.setSenderTaxId(COMUNE_ROOT_TAX_ID));
-                setGroup(SettableApiKey.ApiKeyType.ROOT);
-            }
+
+        // Recupera il senderTaxId da Dynamo solo se non passato da scenario
+        if (senderTaxId == null) {
+            // Recupera da cache o computa
+            senderTaxId = senderTaxIdCacheManager.getOrCompute(
+                    pa,  // Chiave: il nome della PA
+                    () -> fetchSenderTaxIdFromDynamo(pa)  // Supplier che ritorna String
+            );
+
+            Assertions.assertNotNull(senderTaxId, "La sender tax id non è presente nel DB DynamoDb ONBOARD_INSTITUTIONS");
+            notificationStepsInterface.setSenderTaxId(senderTaxId);
         }
+        SettableApiKey.ApiKeyType apiKeyType = mapPaToApiKeyType(pa);
+        setGroup(apiKeyType);
     }
 
-    private void setIfNull(String current, Runnable setter) {
-        if (current == null) {
-            setter.run();
-        }
+    private String fetchSenderTaxIdFromDynamo(String pa) {
+        String senderId = senderInfoProvider.getSenderId(pa);
+        log.debug("Fetching sender tax ID for PA: {} with senderId: {}", pa, senderId);
+        QueryResponse response = dynamoDbService.call(DynamoTableName.ONBOARD_INSTITUTIONS, Map.of(
+                ":v_id", AttributeValue.builder().s(senderId).build()
+        ));
+        return response.items().stream()
+                .findFirst()
+                .flatMap(item -> Optional.ofNullable(item.get("taxCode"))
+                        .map(AttributeValue::s))
+                .orElse(null);
+    }
+
+    private SettableApiKey.ApiKeyType mapPaToApiKeyType(String pa) {
+        return senderInfoProvider.getApiKeyType(pa);
     }
 
     private void setGroup(SettableApiKey.ApiKeyType apiKeyType) {
@@ -1054,6 +1161,12 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+            }
+            case CUCUMBER_SPA_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_2);
+            }
+            case GHERKIN_SRL_B2B -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_B2B_1);
             }
             default -> throw new IllegalArgumentException("Invalid recipient name: " + recipient);
         }
@@ -1190,6 +1303,26 @@ public class SharedSteps {
         return id;
     }
 
+    public String getGroupIdByPa(String paName, GroupPosition position, String status) {
+        List<HashMap<String, String>> hashMapsList = getGroupsByPa(paName);
+        String id = null;
+        int count = 0;
+        for (HashMap<String, String> elem : hashMapsList) {
+            if (elem.get("status").equalsIgnoreCase(status)) {
+                id = elem.get("id");
+                count++;
+                if (GroupPosition.FIRST.equals(position)) {
+                    break;
+                }
+            }
+        }
+        Assertions.assertNotNull(id);
+        if (!GroupPosition.FIRST.equals(position)) {
+            Assertions.assertTrue(count >= 2);
+        }
+        return id;
+    }
+
     public List<String> getGroupAllActiveByPa(String paName) {
         List<HashMap<String, String>> hashMapsList = getGroupsByPa(paName);
         List<String> groups = new ArrayList<>();
@@ -1237,7 +1370,7 @@ public class SharedSteps {
      * @return a list of timeline elements that match the given event category and data from test
      */
     public List<TimelineElementV28> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
+        FullSentNotificationV29 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timelineElementList = fullSentNotification.getTimeline();
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -1347,10 +1480,10 @@ public class SharedSteps {
     /**
      * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
      */
-    @And("{string} recupera lato web PA una notifica inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
+    @And("{string} recupera lato web PA una notifica perfezionata inviata tra {int} e {int} giorni fa con destinatario {destinatario}")
     public void retrieveNotification120DaysOldByIunWebPaSide(String paName, int limitA, int limitB, Destinatario recipient) {
-        long upperLimit = limitA > limitB ? limitA : limitB;
-        long lowerLimit = limitB < limitA ? limitB : limitA;
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
         setPA(paName);
         String recipientTaxId = recipient.getTaxId();
         OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
@@ -1365,10 +1498,58 @@ public class SharedSteps {
                         n -> n.getRecipients().size() == 1 && n.getRecipients().contains(recipientTaxId))
                 .findFirst().orElse(null);
         AssertionsForClassTypes.assertThat(result).as("Nessuna notifica trovato con il solo destinatario " + recipientTaxId).isNotNull();
-        FullSentNotificationV28 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
+        FullSentNotificationV29 oldNotification = getSentNotificationLastVersionByIun(result.getIun());
         notificationIun = oldNotification.getIun();
         notificationIunList.add(oldNotification.getIun());
         log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
         log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
+
+    /**
+     * Step precedentemente adibito unicamente al recupero di una notifica vecchia 120 giorni, ora il range temporale è impostabile a piacimento
+     */
+    @And("{string} recupera lato web PA una notifica {monodest} in stato {string} inviata tra {int} e {int} giorni fa con destinatario {destinatario} {with} allegati disponibili")
+    public void retrieveNotificationWithFilters(String paName, boolean isMonoDest, String status, int limitA, int limitB, Destinatario recipient, boolean withAttachments) {
+        long upperLimit = Math.max(limitA, limitB);
+        long lowerLimit = Math.min(limitB, limitA);
+        setPA(paName);
+        String recipientTaxId = recipient.getTaxId();
+        OffsetDateTime todayDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
+        BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
+                todayDate.minusDays(upperLimit),
+                todayDate.minusDays(lowerLimit),
+                recipientTaxId,
+                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.valueOf(status.trim().toUpperCase()),
+                null,
+                null,
+                50,
+                null);
+        assumeThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
+        assumeThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
+
+        List<BffLegalNotificationSearchRow> filteredResults = bffNotificationsResponse.getResultsPage().stream().filter(n ->
+                        n.getRecipients().contains(recipientTaxId) && (isMonoDest ? n.getRecipients().size() == 1 : n.getRecipients().size() > 1))
+                .collect(Collectors.toList());
+
+        FullSentNotificationV29 oldNotification = null;
+        for (BffLegalNotificationSearchRow row : filteredResults) {
+            FullSentNotificationV29 fsn = getSentNotificationLastVersionByIun(row.getIun());
+            boolean documentsAvailable = Boolean.TRUE.equals(fsn.getDocumentsAvailable());
+            if (documentsAvailable == withAttachments) {
+                oldNotification = fsn;
+                break;
+            }
+        }
+        assumeThat(oldNotification).as("Non è stata trovata nessuna notifica che soddisfi i criteri di ricerca").isNotNull();
+        notificationIun = oldNotification.getIun();
+        notificationIunList.add(oldNotification.getIun());
+        log.info("RECIPIENTS OLDER {} GG: {}", lowerLimit, oldNotification.getRecipients().stream().map(r -> r.getTaxId()).toList());
+        log.info("IUN OLDER {} GG: {}", lowerLimit, oldNotification.getIun());
+    }
+
+    @And("al destinatario {int} viene settato l'applyCost del pagamento PagoPa alla posizione {int} a false")
+    public void setApplyCostFalse(int recIndex, int paymentIndex) {
+        getNotificationStepInterface().setApplyCostFalse(recIndex, paymentIndex);
     }
 }

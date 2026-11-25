@@ -36,6 +36,17 @@ Feature: Cancellazione di una richiesta di aggiornamento di una stima di carico
       | Privato | api,security | ACTIVE        |       403 |
       | Privato | support      | ACTIVE        |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente    | ruolo        | statoFinalità | risultato |
+      | PA2     | reviewer     | ACTIVE        |       403 |
+      | PA2     | viewer       | ACTIVE        |       403 |
+      | GSP     | reviewer     | ACTIVE        |       403 |
+      | GSP     | viewer       | ACTIVE        |       403 |
+      | Privato | reviewer     | ACTIVE        |       403 |
+      | Privato | viewer       | ACTIVE        |       403 |
+
     @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoFinalità | risultato |

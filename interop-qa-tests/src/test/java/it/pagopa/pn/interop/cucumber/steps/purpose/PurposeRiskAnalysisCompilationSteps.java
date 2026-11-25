@@ -1,0 +1,493 @@
+package it.pagopa.pn.interop.cucumber.steps.purpose;
+
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.authorization.service.identity.IdentityService;
+import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.purpose.domain.RiskAnalysis;
+import it.pagopa.interop.purpose.service.IPurposeApiClient;
+import it.pagopa.interop.purpose.service.RiskAnalysisReviewMode;
+import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
+import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.common.RiskAnalysisCommonContext.AssignedReviewerActorRef;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
+import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.template.DataPreparationServiceTemplate;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import static java.util.Objects.nonNull;
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class PurposeRiskAnalysisCompilationSteps {
+    private final ClientTokenConfigurator clientTokenConfigurator;
+    private final SharedStepsContext sharedStepsContext;
+    private final BFFDataPreparationService dataPreparationService;
+    private final IHttpExecutor httpCallExecutor;
+    private final IdentityService identityService;
+    private final PurposeRiskAnalysisAssignSteps assignmentSteps;
+    private RiskAnalysis compiledRiskAnalysis;
+    private UUID purposeIdToSign;
+    private Purpose purposeBeforeSign;
+    private RiskAnalysisSignSeed riskAnalysisSignSeed;
+    private RiskAnalysisFormSeed lastCompiledForm;
+
+    public PurposeRiskAnalysisCompilationSteps(
+            ClientTokenConfigurator clientTokenConfigurator,
+            SharedStepsContext sharedStepsContext,
+            BFFDataPreparationService dataPreparationService,
+            PurposeRiskAnalysisAssignSteps assignmentSteps
+    ) {
+        this.clientTokenConfigurator = clientTokenConfigurator;
+        this.sharedStepsContext = sharedStepsContext;
+        this.dataPreparationService = dataPreparationService;
+        this.httpCallExecutor = sharedStepsContext.getHttpCallExecutor();
+        this.identityService = sharedStepsContext.getIdentityService();
+        this.assignmentSteps = assignmentSteps;
+    }
+
+    /** Richiede una finalità esistente senza workflow e l'amministratore del fruitore selezionato. */
+    @Given("si ha una compilazione dell'analisi del rischio in modalità {riskAnalysisReviewMode} in stato {string}")
+    public void prepareRiskAnalysisCompilation(RiskAnalysisReviewMode mode, String state) {
+        if (mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS) {
+            prepareUnsignedRiskAnalysis(mode, state);
+            return;
+        }
+        RiskAnalysisSigningState desiredState = RiskAnalysisSigningState.valueOf(state.toUpperCase(Locale.ROOT));
+        boolean adminWrites = mode == RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
+        List<RiskAnalysisSigningState> allowedStates = adminWrites
+                ? List.of(RiskAnalysisSigningState.DRAFT, RiskAnalysisSigningState.SUBMITTED,
+                          RiskAnalysisSigningState.SIGNED, RiskAnalysisSigningState.REJECTED)
+                : List.of(RiskAnalysisSigningState.ASSIGNED, RiskAnalysisSigningState.SIGNED);
+        if (!allowedStates.contains(desiredState)) {
+            throw new IllegalArgumentException("Stato " + state + " non ammesso per la modalità " + mode);
+        }
+
+        assignmentSteps.userAssignsReviewerWithModeSuccessfully(
+                adminWrites ? "AdminWritesReviewerSigns" : "ReviewerWritesReviewerSigns");
+        if (adminWrites) {
+            compilesRiskAnalysisViaGenericEndpointSuccessfully();
+            if (desiredState != RiskAnalysisSigningState.DRAFT) {
+                userSubmitsRiskAnalysisSuccessfully();
+            }
+        } else {
+            assignedReviewerCompilesRiskAnalysisSuccessfully();
+        }
+        if (desiredState == RiskAnalysisSigningState.SIGNED) {
+            assignedReviewerSignsRiskAnalysisSuccessfully();
+        } else if (desiredState == RiskAnalysisSigningState.REJECTED) {
+            assignedReviewerRejectsRiskAnalysisSuccessfully();
+        }
+        verifyRiskAnalysisSigningState(desiredState.name());
+        sharedStepsContext.getRiskAnalysisCommonContext().rememberInitialReviewers();
+        rememberPreparedRiskAnalysis();
+    }
+
+    @Given("si ha un'analisi del rischio non firmata in modalità {riskAnalysisReviewMode} in stato {string}")
+    public void prepareUnsignedRiskAnalysis(RiskAnalysisReviewMode mode, String state) {
+        if (mode == RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS) {
+            if (!"DRAFT".equals(state)) {
+                throw new IllegalArgumentException("Il flusso admin richiede una finalità DRAFT non pubblicata");
+            }
+            assignmentSteps.assignWithoutReviewersSuccessfully(mode);
+            compilesRiskAnalysisViaGenericEndpoint();
+            verifyCompilationSuccessful();
+            assignmentSteps.verifyNoReviewersAndMode(mode);
+            rememberPreparedRiskAnalysis();
+            return;
+        }
+        if ("SIGNED".equalsIgnoreCase(state)) {
+            throw new IllegalArgumentException("L'analisi del rischio deve essere non firmata");
+        }
+        prepareRiskAnalysisCompilation(mode, state);
+    }
+
+    private void rememberPreparedRiskAnalysis() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        RiskAnalysisForm form = clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId).getRiskAnalysisForm();
+        assertThat(form).as("La RA preparata deve contenere un form").isNotNull();
+        assertThat(form.getAnswers())
+                .as("La preparazione standard richiede risposte RA non vuote").isNotEmpty();
+        sharedStepsContext.getRiskAnalysisCommonContext().rememberRiskAnalysis(purposeId, form);
+    }
+
+    @When("il valutatore assegnato compila l'analisi del rischio della finalità")
+    public void assignedReviewerCompilesRiskAnalysis() {
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
+            RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+            RiskAnalysisFormSeed riskAnalysisForm = new RiskAnalysisFormSeed()
+                    .version(riskAnalysis.getRiskAnalysisForm().getVersion())
+                    .answers(riskAnalysis.getRiskAnalysisForm().getAnswers());
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            lastCompiledForm = riskAnalysisForm;
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
+        });
+    }
+
+    @When("il valutatore assegnato compila l'analisi del rischio della finalità indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    public void assignedReviewerCompilesRiskAnalysisWithUrl() {
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
+            String tenantType = sharedStepsContext.getTenantType();
+            String kind = identityService.getKind(tenantType);
+            RiskAnalysisFormSeed riskAnalysisForm = dataPreparationService.getRiskAnalysisByExample(kind, DataPreparationServiceTemplate.RiskAnalysisExample.PERSONAL_DATA);
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, riskAnalysisForm));
+        });
+    }
+
+    @Given("uno dei reviewer assegnati compila l'analisi del rischio della finalità con successo")
+    @Given("il valutatore assegnato compila l'analisi del rischio della finalità con successo")
+    public void assignedReviewerCompilesRiskAnalysisSuccessfully() {
+        assignedReviewerCompilesRiskAnalysis();
+        verifyCompilationSuccessful();
+        verifyRiskAnalysisSigningState("ASSIGNED");
+    }
+
+    @When("uno dei reviewer assegnati compila l'analisi del rischio della finalità")
+    public void oneAssignedReviewerCompilesRiskAnalysis() {
+        assignedReviewerCompilesRiskAnalysis();
+    }
+
+    private String resolveAssignedReviewerToken(AssignedReviewerActorRef assignedReviewerActor) {
+        IdentityService identityService = sharedStepsContext.getIdentityService();
+        try {
+            return identityService.getToken(
+                    assignedReviewerActor.tenantType(),
+                    assignedReviewerActor.role(),
+                    assignedReviewerActor.index()
+            );
+        } catch (Exception ex) {
+            throw new IllegalStateException(String.format(
+                    "Impossibile risolvere il token per il valutatore assegnato (%s,%s,%d)",
+                    assignedReviewerActor.tenantType(),
+                    assignedReviewerActor.role(),
+                    assignedReviewerActor.index()
+            ), ex);
+        }
+    }
+
+    /**
+     * Salva il token corrente, imposta il token del reviewer indicato, esegue l'azione,
+     * e ripristina il token originale in un blocco try/finally.
+     */
+    private void withReviewerToken(AssignedReviewerActorRef actor, Runnable action) {
+        String previousToken = sharedStepsContext.getUserToken();
+        String reviewerToken = resolveAssignedReviewerToken(actor);
+        try {
+            clientTokenConfigurator.setBearerToken(reviewerToken);
+            action.run();
+        } finally {
+            clientTokenConfigurator.setBearerToken(previousToken);
+        }
+    }
+
+    /**
+     * Restituisce l'ultimo reviewer assegnato in contesto, o lancia eccezione se assente.
+     */
+    private AssignedReviewerActorRef getLastAssignedReviewerActor() {
+        List<AssignedReviewerActorRef> actors = getAssignedReviewerActorsOrThrow(
+                1, "Nessun valutatore assegnato presente in contesto"
+        );
+        return actors.get(actors.size() - 1);
+    }
+
+    /**
+     * Esegue il rifiuto dell'analisi del rischio come ultimo reviewer assegnato,
+     * usando il payload fornito.
+     */
+    private void rejectAsLastAssignedReviewer(RiskAnalysisRejectionSeed payload) {
+        AssignedReviewerActorRef actor = getLastAssignedReviewerActor();
+        withReviewerToken(actor, () -> {
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
+        });
+    }
+
+    @And("lo stato della compilazione dell'analisi del rischio è {string}")
+    public void verifyRiskAnalysisSigningState(String expectedState) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        RiskAnalysisSigningState expectedSigningState = RiskAnalysisSigningState.valueOf(expectedState.toUpperCase());
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> purpose.getReviewerWorkflow() != null &&
+                          purpose.getReviewerWorkflow().getSigningState() == expectedSigningState,
+                String.format("The risk analysis signing state is not %s", expectedState)
+        );
+    }
+
+    @Then("non sussiste alcun workflow di revisione in corso")
+    public void verifyNoReviewerWorkflowInProgress() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> purpose.getReviewerWorkflow() == null,
+                "Reviewer workflow presente ma non atteso"
+        );
+    }
+
+    @When("compila l'analisi del rischio della finalità")
+    public void compilesRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().compileRiskAnalysisForm(purposeId, compiledRiskAnalysis.getRiskAnalysisForm()));
+    }
+
+    @When("compila l'analisi del rischio tramite endpoint generico")
+    public void compilesRiskAnalysisViaGenericEndpoint() {
+        compilesRiskAnalysisViaGenericEndpoint(a -> {});
+    }
+
+    @When("compila l'analisi del rischio tramite endpoint generico introducendo una variazione")
+    public void compilesRiskAnalysisViaGenericEndpointIntroducingVariation() {
+        Consumer<RiskAnalysis> institutionalPurposeVariation = riskAnalysis ->
+                riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("purpose variata"));
+        compilesRiskAnalysisViaGenericEndpoint(institutionalPurposeVariation);
+    }
+
+    private void compilesRiskAnalysisViaGenericEndpoint(Consumer<RiskAnalysis> riskAnalysisModifier) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+
+        compiledRiskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        riskAnalysisModifier.accept(compiledRiskAnalysis);
+        lastCompiledForm = compiledRiskAnalysis.getRiskAnalysisForm();
+
+        // Use generic purpose update endpoint instead of dedicated risk analysis form endpoint
+        PurposeUpdateContent updateContent = new PurposeUpdateContent()
+                .title("Updated title")
+                .description("Updated description")
+                .dailyCalls(1)
+                .isFreeOfCharge(true)
+                .riskAnalysisForm(lastCompiledForm);
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().updatePurpose(purposeId, updateContent));
+    }
+
+    @Given("compila l'analisi del rischio tramite endpoint generico con successo")
+    public void compilesRiskAnalysisViaGenericEndpointSuccessfully() {
+        compilesRiskAnalysisViaGenericEndpoint();
+        verifyCompilationSuccessful();
+        verifyRiskAnalysisSigningState("DRAFT");
+    }
+
+    private void verifyCompilationSuccessful() {
+        assertThat(httpCallExecutor.getResponseStatus())
+                .as("La compilazione deve restituire uno status HTTP")
+                .isNotNull();
+        assertThat(httpCallExecutor.getResponseStatus().is2xxSuccessful())
+                .as("Status HTTP della compilazione: %s", httpCallExecutor.getResponseStatus())
+                .isTrue();
+        assertThat(lastCompiledForm).isNotNull();
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getPurposeApiClient().getPurpose(purposeId),
+                purpose -> purpose.getRiskAnalysisForm() != null
+                        && java.util.Objects.equals(lastCompiledForm.getVersion(), purpose.getRiskAnalysisForm().getVersion())
+                        && java.util.Objects.equals(lastCompiledForm.getAnswers(), purpose.getRiskAnalysisForm().getAnswers()),
+                "Il form compilato dell'analisi del rischio non risulta persistito"
+        );
+    }
+
+    @Then("la variazione nell'analisi del rischio è stata persistita")
+    public void verifyRiskAnalysisVariationPersisted() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        RiskAnalysisFormSeed expectedVariation = sharedStepsContext.getRiskAnalysisCommonContext().getRiskAnalysisVariation();
+        if (expectedVariation == null) {
+            throw new IllegalStateException("Nessuna variazione registrata nel contesto");
+        }
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> {
+                    if (purpose.getRiskAnalysisForm() == null) {
+                        return false;
+                    }
+                    java.util.Map<String, java.util.List<String>> persistedAnswers = purpose.getRiskAnalysisForm().getAnswers();
+                    java.util.Map<String, java.util.List<String>> expectedAnswers = expectedVariation.getAnswers();
+                    return expectedAnswers.equals(persistedAnswers);
+                },
+                "The risk analysis variation is not persisted"
+        );
+    }
+
+    @When("l'utente invia il submit dell'analisi del rischio della finalità")
+    public void userSubmitsRiskAnalysis() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        RiskAnalysisSubmissionSeed submissionSeed = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(
+                        nonNull(this.compiledRiskAnalysis)
+                                ? this.compiledRiskAnalysis.getRiskAnalysisForm()
+                                : dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true).getRiskAnalysisForm());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().submitRiskAnalysis(purposeId, submissionSeed));
+    }
+
+    @When("l'utente invia il submit dell'analisi del rischio della finalità con successo")
+    public void userSubmitsRiskAnalysisSuccessfully() {
+        userSubmitsRiskAnalysis();
+        verifyRiskAnalysisSigningState("SUBMITTED");
+    }
+
+    @When("l'utente invia il submit dell'analisi del rischio della finalità introducendo una variazione")
+    public void userSubmitsRiskAnalysisWithVariation() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        RiskAnalysis riskAnalysis = dataPreparationService.getRiskAnalysis(sharedStepsContext.getTenantType(), true);
+        // Variazione minima richiesta dal CDT: aggiorno institutionalPurpose nel payload di submit.
+        riskAnalysis.getRiskAnalysisForm().getAnswers().put("institutionalPurpose", List.of("variazione introdotta per il test"));
+        RiskAnalysisSubmissionSeed payload = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm());
+
+        sharedStepsContext.getRiskAnalysisCommonContext().setRiskAnalysisVariation(riskAnalysis.getRiskAnalysisForm());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient()
+                .submitRiskAnalysis(purposeId, payload));
+    }
+
+    @When("il valutatore assegnato rifiuta la propria compilazione dell'analisi del rischio")
+    public void assignedReviewerRejectsOwnRiskAnalysisCompilation() {
+        rejectAsLastAssignedReviewer(new RiskAnalysisRejectionSeed().rejectionReason("Rifiuto della propria compilazione"));
+    }
+
+    @When("un reviewer assegnato rifiuta l'analisi del rischio")
+    public void assignedReviewerRejectsRiskAnalysis() {
+        assignedReviewerRejectsOwnRiskAnalysisCompilation();
+    }
+
+    @Given("un reviewer assegnato rifiuta l'analisi del rischio con successo")
+    public void assignedReviewerRejectsRiskAnalysisSuccessfully() {
+        assignedReviewerRejectsRiskAnalysis();
+        verifyRiskAnalysisSigningState("REJECTED");
+    }
+
+    @When("l'utente rifiuta l'analisi del rischio della finalità")
+    public void userRejectsRiskAnalysis() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        RiskAnalysisRejectionSeed payload = new RiskAnalysisRejectionSeed().rejectionReason("Rifiuto del valutatore");
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().rejectRiskAnalysis(purposeId, payload));
+    }
+
+    @When("il valutatore assegnato convalida l'analisi del rischio della finalità")
+    public void assignedReviewerSignsRiskAnalysis() {
+        signRiskAnalysisAsReviewer(getLastAssignedReviewerActor());
+    }
+
+    @Given("il valutatore assegnato convalida l'analisi del rischio della finalità con successo")
+    public void assignedReviewerSignsRiskAnalysisSuccessfully() {
+        assignedReviewerSignsRiskAnalysis();
+        verifyRiskAnalysisSigningState("SIGNED");
+    }
+
+    @Given("l'utente acquisisce la finalità e la versione dei metadati per la convalida")
+    public void userRetrievesPurposeMetadataVersionToSign() {
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+        Integer version = purposeApiClient.getPurposeMetadataVersion(purposeId);
+        purposeBeforeSign = purposeApiClient.getPurpose(purposeId);
+
+        riskAnalysisSignSeed = new RiskAnalysisSignSeed().metadataVersionToSign(version);
+        purposeIdToSign = purposeId;
+    }
+
+    /* Il get dell'informazione metadataVersion, necessaria per il sign, è deliberatamente fatta altrove e non in questo
+    * step, per lasciar la possibilità di usare questo step anche in test negativi, in cui viene settato un valore
+    * di metadataVersion errato. */
+    @When("l'utente convalida l'analisi del rischio della finalità")
+    @When("l'utente convalida l'analisi del rischio della finalità usando la versione dei metadati precedentemente acquisita")
+    public void userSignsRiskAnalysis() {
+        if (riskAnalysisSignSeed == null || purposeIdToSign == null) {
+            throw new IllegalStateException("Acquisire prima la finalità e la versione dei metadati per la convalida con un utente autorizzato");
+        }
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeIdToSign, riskAnalysisSignSeed));
+    }
+
+    /** Confronta l'intera finalità e la versione acquisita prima del cambio al ruolo non autorizzato. */
+    @Then("la firma rifiutata lascia invariati la finalità e la versione dei metadati acquisite")
+    public void verifyRejectedSignUnchanged() {
+        assertThat(purposeBeforeSign).as("Acquisire la baseline di firma prima del tentativo").isNotNull();
+
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        IPurposeApiClient client = clientTokenConfigurator.getPurposeApiClient();
+        assertThat(client.getPurpose(purposeIdToSign))
+                .as("Il diniego di firma non deve modificare alcun campo della Purpose")
+                .isEqualTo(purposeBeforeSign);
+        assertThat(client.getPurposeMetadataVersion(purposeIdToSign))
+                .as("Il diniego di firma non deve incrementare la versione dei metadati")
+                .isEqualTo(riskAnalysisSignSeed.getMetadataVersionToSign());
+    }
+
+    /**
+     * Verifica tramite polling che la finalità presenti notifiche non lette per l'utente.
+     */
+    @Then("all'utente risultano delle notifiche per quella finalità")
+    public void verifyUserHasUnreadNotificationsForPurpose() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+
+        UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+        IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
+
+        sharedStepsContext.getPollingService().makePolling(
+                () -> purposeApiClient.getPurpose(purposeId),
+                purpose -> Boolean.TRUE.equals(purpose.getHasUnreadNotifications()),
+                "L'attributo hasUnreadNotifications della finalità non è diventato true entro il tempo massimo di attesa"
+        );
+    }
+
+    @When("un altro reviewer assegnato convalida l'analisi del rischio della finalità")
+    public void anotherAssignedReviewerSignsRiskAnalysis() {
+        List<AssignedReviewerActorRef> assignedReviewerActors = getAssignedReviewerActorsOrThrow(
+                2,
+                "Sono necessari almeno due reviewer assegnati in contesto"
+        );
+        AssignedReviewerActorRef anotherAssignedReviewerActor = assignedReviewerActors.get(0);
+        signRiskAnalysisAsReviewer(anotherAssignedReviewerActor);
+    }
+
+    private List<AssignedReviewerActorRef> getAssignedReviewerActorsOrThrow(int minRequired, String errorMessage) {
+        List<AssignedReviewerActorRef> assignedReviewerActors = sharedStepsContext.getRiskAnalysisCommonContext().getAssignedReviewerActors();
+        if (assignedReviewerActors == null || assignedReviewerActors.size() < minRequired) {
+            throw new IllegalStateException(errorMessage);
+        }
+        return assignedReviewerActors;
+    }
+
+    private void signRiskAnalysisAsReviewer(AssignedReviewerActorRef reviewerActor) {
+        withReviewerToken(reviewerActor, () -> {
+            UUID purposeId = UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId());
+            httpCallExecutor.performCall(() -> clientTokenConfigurator.getPurposeApiClient().signRiskAnalysis(purposeId));
+        });
+    }
+
+    @When("un reviewer assegnato tenta di rifiutare l'analisi del rischio senza motivazione")
+    public void assignedReviewerAttemptsRejectRiskAnalysisWithoutReason() {
+        rejectAsLastAssignedReviewer(new RiskAnalysisRejectionSeed());
+    }
+}

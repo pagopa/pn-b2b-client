@@ -100,7 +100,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_PG_ANALOG_890_8] Invio notifica ed attesa sospensione invio cartaceo per avvenuto pagamento positivo
+  Scenario: [B2B_TIMELINE_PG_ANALOG_890_8] Il flusso analogico 890 prosegue dopo il pagamento della notifica
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di milano                |
@@ -111,9 +111,8 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
       | title_payment           | F24_FLAT_GHERKIN |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
-    Then si attende la corretta sospensione dell'invio cartaceo
-
-    # 28/11/2024: è stato osservato che questo test non produce nella timeline nessun evento di
-    # tipo SEND_ANALOG_PROGRESS, e quindi nessun evento CON020. IUN: ZXAD-RMEY-QMRL-202411-X-1
-    # Controllo su CON020 sospeso fino a ulteriori indagini.
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And si attende il corretto pagamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And l'evento "ANALOG_SUCCESS_WORKFLOW" è successivo all'evento "PAYMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"

@@ -64,6 +64,10 @@ public class TracingSteps {
         return "/tracing_" + pstTestId + ".csv";
     }
 
+    public String getBucketNameOfCurrentEnv(String bucketName) {
+        return bucketName + "-" + envProfile.split("-")[1];
+    }
+
     private static final int OFFSET_VALUE = 0;
     private static final int LIMIT_VALUE = 50;
     private final IInteropTracingClient interopTracingClient;
@@ -196,8 +200,10 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.submitTracingWithHttpInfo(tracingFileUtils.getCsvFile(fileType), currentTracing.getFormattedDate()));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
-            currentTracing.setTracingId(((SubmitTracingResponse)responseEntity.getBody()).getTracingId().toString());
+            currentTracing.setTracingId(((SubmitTracingResponse) responseEntity.getBody()).getTracingId().toString());
             log.info(String.format("Tracing ID in response: %s", currentTracing.getTracingId()));
 
         } catch (ClassCastException e) {
@@ -277,13 +283,13 @@ public class TracingSteps {
         Assertions.assertNotNull(httpCallExecutor.getResponse(), "There was an error while retrieving the tracing error!");
         Assertions.assertNotNull(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults());
         List<GetTracingErrorsResponseResultsInner> expectedResult = List.of(
-                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2020-01-01) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 1),
-                //createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2),
-                createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 1),
-                //createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                createExpectedResponse("INVALID_TOKEN", "token_id: Invalid uuid", "", 1),
-                createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "", 1),
-                createExpectedResponse("INVALID_REQUEST_COUNT", "requests_count: Invalid input", "", 1)
+                createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2020-01-01) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 1),
+                //createExpectedResponse("INVALID_DATE", "INVALID", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", currentTracing.getFormattedDate()), "", 2),
+                createExpectedResponse("INVALID_PURPOSE", "INVALID", "purpose_id: Invalid uuid", "", 1),
+                //createExpectedResponse("PURPOSE_NOT_FOUND", "INVALID", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_TOKEN", "INVALID", "token_id: Invalid uuid", "", 1),
+                createExpectedResponse("INVALID_STATUS_CODE", "INVALID", "status: Invalid HTTP status code", "", 1),
+                createExpectedResponse("INVALID_REQUEST_COUNT", "INVALID", "requests_count: Invalid input", "", 1)
         );
         org.assertj.core.api.Assertions.assertThat(((GetTracingErrorsResponse)httpCallExecutor.getResponse()).getResults()).containsAll(expectedResult);
     }
@@ -302,6 +308,8 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.recoverTracingWithHttpInfo(UUID.fromString(tracingId), resource));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
             RecoverTracingResponse response = (RecoverTracingResponse)responseEntity.getBody();
             currentTracing.setTracingId(response.getTracingId().toString());
@@ -339,6 +347,8 @@ public class TracingSteps {
         httpCallExecutor.performCall(() -> interopTracingClient.replaceTracingWithHttpInfo(tracingId, resource));
         try {
             ResponseEntity responseEntity = (ResponseEntity)httpCallExecutor.getResponse();
+            if (responseEntity == null) throw new ClassCastException("Retrieved object is null");
+
             currentTracing.setCorrelationId(responseEntity.getHeaders().getFirst("x-correlation-id"));
             currentTracing.incrementVersion();
 
@@ -392,9 +402,10 @@ public class TracingSteps {
         return 0;
     }
 
-    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {
+    private GetTracingErrorsResponseResultsInner createExpectedResponse(String errorCode, String severity, String message, String purposeId, Integer rowNumber) {
         GetTracingErrorsResponseResultsInner tracingErrorsResponse = new GetTracingErrorsResponseResultsInner();
         tracingErrorsResponse.setErrorCode(errorCode);
+        tracingErrorsResponse.setSeverity(GetTracingErrorsResponseResultsInner.SeverityEnum.fromValue(severity));
         tracingErrorsResponse.setMessage(message);
         tracingErrorsResponse.setPurposeId(purposeId);
         tracingErrorsResponse.setRowNumber(rowNumber);
@@ -417,7 +428,7 @@ public class TracingSteps {
     }
 
     private String composeS3KeyWithTracing(Tracing tracing) {
-        String tenantType = ("TENANT2".equals(currentTenant)) ? "PA2" : "PA1";
+        String tenantType = ("TENANT2".equalsIgnoreCase(currentTenant)) ? "PA2" : "PA1";
         String key = String.format(
                 "tenantId=%s/date=%s/tracingId=%s/version=%s/correlationId=%s/%s.csv",
                 interopTracingClient.getIdentityService().getOrganizationId(tenantType),
@@ -433,7 +444,7 @@ public class TracingSteps {
 
     @Then("si attende che l'invio in ERROR sia registrato come header CSV non valido")
     public void verifyWrongCsvHeaderIsTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -463,23 +474,26 @@ public class TracingSteps {
 
     @Then("nessun file CSV di tracing viene arricchito")
     public void verifyNoNewEnrichedCsvTracingGenerated() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertFalse(isCsvTracingFilePresent(
                 getS3PollingSpecification(4_000, 1_000, 2),
-                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga ricevuto")
     public void verifyCsvTracingFileIsReceived() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing arricchito venga generato")
     public void verifyEnrichedCsvTracingFileIsGenerated() {
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
-                getS3PollingSpecification(), "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                getS3PollingSpecification(), bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
@@ -488,15 +502,16 @@ public class TracingSteps {
         long timeoutMs = waitInMinutes * 60 * 1000L;
         long pollIntervalMs = 30_000;
         int deltaSeconds = 60;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         Assertions.assertTrue(isCsvTracingFilePresent(
                 getS3PollingSpecification(timeoutMs, pollIntervalMs, deltaSeconds),
-                "tracing-enriched-files-" + envProfile, composeS3KeyWithTracing(currentTracing)
+                bucketName, composeS3KeyWithTracing(currentTracing)
         ));
     }
 
     @Then("si attende che il file di tracing venga arricchito con altri dati")
     public void verifyCsvUploadedFileIsEnriched() {
-        String bucketName = "tracing-enriched-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-enriched-files");
         String s3Key = composeS3KeyWithTracing(currentTracing);
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
@@ -520,7 +535,8 @@ public class TracingSteps {
 
     @Then("si attende che il record con codice HTTP non valido sia tracciato negli errori")
     public void verifyWrongCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(
@@ -550,7 +566,7 @@ public class TracingSteps {
 
     @Then("si attende che l'invio in WARNING sia registrato come purpose ID non conforme all'utenza")
     public void verifyWarningCsvRecordsAreTrackedInTracingErrors() {
-        String bucketName = "tracing-errors-files-" + envProfile;
+        String bucketName = getBucketNameOfCurrentEnv("tracing-errors-files");
         TracingS3Client.PollingSpecification pollingSpec = getS3PollingSpecification();
 
         Assertions.assertTrue(isCsvTracingFilePresent(

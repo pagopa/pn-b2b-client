@@ -145,4 +145,82 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     public String smsbody(LanguageEnum xLanguage) throws RestClientException {
         return templateApi.smsVerificationCodeBody(xLanguage);
     }
+
+    @Override
+    public Resource informalAnalogCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalAnalogCommunication(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalEmailCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalEmailCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.informalEmailCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalPecCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalPecCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalPecCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.informalPecCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalIoCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.informalIoCommunication(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public String informalSmsCommunication(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException {
+        return templateApi.informalSmsCommunication(xLanguage, informalSmsCommunication);
+    }
+
+    @Override
+    public String notificationCceForEmail(LanguageEnum xLanguage, NotificationCceForEmail request) throws RestClientException {
+        return templateApi.notificationCceForEmail(xLanguage, request);
+    }
+
+    @Override
+    public String courtesyEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication);
+    }
+
+    @Override
+    public Resource analogDeliveryWorkflowTimeoutLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowTimeoutLegalFact request) throws RestClientException {
+        return templateApi.analogDeliveryWorkflowTimeoutLegalFact(xLanguage,
+                request
+        );
+    }
+
+    @Override
+    public Resource analogFeedbackAvailabilityStatement(
+            LanguageEnum xLanguage,
+            AnalogFeedbackAvailabilityStatement request
+    ) throws RestClientException {
+        return templateApi.analogFeedbackAvailabilityStatement(
+                xLanguage,
+                request
+        );
+    }
+
+    @Override
+    public String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationBody(xLanguage, informalCommunication );
+    }
+
+    @Override
+    public String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException {
+        return templateApi.courtesyEmailCommunicationSubject(xLanguage, informalEmailCommunicationSubject);
+    }
+
+    @Override
+    public String informalSmsCourtesy(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException {
+        return templateApi.courtesySmsCommunication(xLanguage, informalSmsCommunication);
+    }
 }

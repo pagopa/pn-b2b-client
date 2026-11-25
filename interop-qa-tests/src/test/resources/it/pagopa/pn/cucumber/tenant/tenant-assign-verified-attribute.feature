@@ -25,6 +25,12 @@ Feature: Assegnazione di un attributo verificato ad un aderente
       | GSP  | support      |        403 |
       | GSP  | api,security |        403 |
 
+    @nuovi-operatori-update
+    Examples:
+      | ente | ruolo        | statusCode |
+      | GSP  | reviewer     |        403 |
+      | GSP  | viewer       |        403 |
+
   @nrt-minimal
   @tenant_assign_verified_attribute2
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_02] Per un attributo verificato precedentemente creato da un primo aderente, alla richiesta di assegnazione dell’attributo senza data di scadenza ad un secondo aderente da parte di un utente con sufficienti permessi (admin) appartenente al terzo aderente, va a buon fine. Spiega: gli attributi verificati possono essere assegnati indipendentemente da chi li ha creati

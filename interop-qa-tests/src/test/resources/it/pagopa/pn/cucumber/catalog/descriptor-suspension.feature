@@ -26,6 +26,15 @@ Feature: Sospensione di un descrittore
       | PA1  | security     | PUBLISHED     |       403 |
       | PA1  | support      | PUBLISHED     |       403 |
 
+    @sad-path
+    @nuovi-operatori-update
+    Examples: # Test sui ruoli
+      | ente | ruolo        | statoVersione | risultato |
+      | GSP  | reviewer     | PUBLISHED     |       403 |
+      | GSP  | viewer       | PUBLISHED     |       403 |
+      | PA2  | reviewer     | PUBLISHED     |       403 |
+      | PA2  | viewer       | PUBLISHED     |       403 |
+
     @happy-path
     Examples: # Test sugli stati
       | ente | ruolo | statoVersione | risultato |

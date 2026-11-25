@@ -15,10 +15,7 @@ import it.pagopa.interop.authorization.service.utils.voucher.domain.VoucherRespo
 import it.pagopa.interop.common.client.AbstractClient;
 import it.pagopa.interop.common.operation.SimpleOperation;
 import it.pagopa.interop.utils.HttpCallExecutor;
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -51,6 +48,9 @@ public class DPoPTokenService extends AbstractClient {
     private final DPoPVoucherService voucherService;
     private final DpopProofService dpopProofService;
     private final Map<TokenKey, Pair<String, VoucherResponse>> tokenCache = new ConcurrentHashMap<>();
+
+    @Getter
+    private String usedClientAssertion;
 
     @Value("${authorization.server.token.creation.url}")
     private String dpopHtu;
@@ -87,6 +87,7 @@ public class DPoPTokenService extends AbstractClient {
         }
 
         String clientAssertion = generateClientAssertion(clientId, keyPair, clientKind, purposeId);
+        this.usedClientAssertion = clientAssertion;
         VoucherRequest request = VoucherRequest.builder()
                 .clientId(clientId)
                 .clientAssertion(clientAssertion)

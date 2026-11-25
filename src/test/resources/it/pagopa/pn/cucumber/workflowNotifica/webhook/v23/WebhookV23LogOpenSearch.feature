@@ -23,3 +23,10 @@ Feature: lettura log stream da open search
   Scenario: [B2B-STREAM_ES2.2] Impostare nuova tipologia di Audit Log
     Then viene verificato che esiste un audit log "AUD_WH_CONSUME" in "10y"
     And viene verificato che esiste un audit log "AUD_WH_CONSUME" con messaggio "[AUD_WH_CONSUME] FAILURE - Error in reading stream"
+
+  @webhookV23
+  Scenario: [B2B-STREAM_AUDIT_ERROR_1] Viene verificata la presenza del audit log specifico in caso di errore durante la lettura di uno stream di eventi.
+    Given vengono letti gli eventi dello stream con id "ffffffff-ffff-ffff-ffff-ffffffffffff" e versione "v23"
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-stream" negli ultimi 5 minuti riportante i seguenti dati nel messaggio
+      | tag     | AUD_WH_CONSUME                    |
+      | message | FAILURE - Error in reading stream |

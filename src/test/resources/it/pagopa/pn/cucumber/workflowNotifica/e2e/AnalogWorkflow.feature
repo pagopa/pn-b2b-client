@@ -2014,3 +2014,185 @@ Feature: Workflow analogico
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
+
+  @timelineElementsAddress
+  Scenario Outline: [E2E-WF-TIMELINE-ADDRESSES-01.1] Verifica valorizzazione indirizzo su timeline per AR e 890
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | <COMMUNICATION_TYPE>            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | <SEQUENCE> |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_ANALOG_DOMICILE" siano valorizzati
+    Examples:
+      | SEQUENCE    | COMMUNICATION_TYPE    |
+      | via @OK_AR  | AR_REGISTERED_LETTER  |
+      | via @OK_890 | REGISTERED_LETTER_890 |
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.A] Verifica valorizzazione indirizzo su timeline per RS
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@OK_RS    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.2.B] Verifica valorizzazione indirizzo su timeline per RIS
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State        | FRANCIA      |
+      | physicalAddress_municipality | Parigi       |
+      | physicalAddress_zip          | ZONE_1       |
+      | physicalAddress_province     | Paris        |
+      | digitalDomicile_address      | test@fail.it |
+      | physicalAddress_address      | Via@OK_RIS   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" siano valorizzati
+
+
+  @timelineElementsAddress
+  Scenario: [E2E-WF-TIMELINE-ADDRESSES-01.3] Verifica valorizzazione indirizzo su timeline per notifica digitale
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@pecOk.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS"
+    Then viene verificato che i dati relativi all'indirizzo nell'elemento di timeline "NORMALIZED_ADDRESS" siano valorizzati
+
+  @PostelPDFInjection @work-item:QA-18635
+  Scenario: [POSTEL-PDF-INJECTION] Invio notifica analogica e controllo gestione PDF ARR stampato e firmato Postel
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@OK-AR-CON020-PDF |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 0                       |
+      | details_sentAttemptMade    | 0                       |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
+    Then scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
+
+
+  @PostelPDFInjection @work-item:QA-18635
+  Scenario: [POSTEL-PDF-INJECTION-MULTI] Invio notifica multidestinatario analogica e controllo gestione PDF ARR stampato e firmato Postel
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@OK-AR-CON020-PDF |
+    And destinatario Gherkin Analogic e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@OK-AR-CON020-PDF |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_generatedAarUrl | NOT_NULL |
+    And viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 1        |
+      | details_generatedAarUrl | NOT_NULL |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 0                       |
+      | details_sentAttemptMade    | 0                       |
+      | pollingTime                | 40000                   |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL                |
+      | details_recIndex           | 1                       |
+      | details_sentAttemptMade    | 0                       |
+      | pollingTime                | 40000                   |
+      | details_deliveryDetailCode | CON020                  |
+      | aarType                    | PN_EXTERNAL_LEGAL_FACTS |
+    And scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
+    And scarico l'AAR della notifica analogica per il destinatario 1 e verifico che sia un PDF valido
+
+  @PostelPDFInjection @work-item:QA-18635
+  Scenario: [POSTEL-ZIP-NONREGRESSION] Invio notifica analogica e controllo gestione ZIP Postel
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 0          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
+    Then scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
+
+  @PostelPDFInjection @work-item:QA-18635
+  Scenario: [POSTEL-ZIP-NONREGRESSION-MULTI] Invio notifica multidestinatario analogica e controllo gestione PDF ARR stampato e firmato Postel
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_RS |
+    And destinatario Gherkin Analogic e:
+      | digitalDomicile         | NULL      |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_generatedAarUrl | NOT_NULL |
+    And viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+      | loadTimeline            | true     |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 1        |
+      | details_generatedAarUrl | NOT_NULL |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 0          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details                    | NOT_NULL   |
+      | details_recIndex           | 1          |
+      | details_sentAttemptMade    | 0          |
+      | aarType                    | PN_PRINTED |
+      | details_deliveryDetailCode | CON020     |
+    And scarico l'AAR della notifica analogica per il destinatario 0 e verifico che sia un PDF valido
+    And scarico l'AAR della notifica analogica per il destinatario 1 e verifico che sia un PDF valido
+

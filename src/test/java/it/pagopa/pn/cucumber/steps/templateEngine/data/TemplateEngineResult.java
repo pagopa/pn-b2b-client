@@ -15,7 +15,8 @@ public class TemplateEngineResult {
     }
 
     public TemplateEngineResult(String templateHtmlReturned) {
-        this.templateHtmlReturned = templateHtmlReturned;this.fileTextRetrieved = templateHtmlReturned;
+        this.templateHtmlReturned = templateHtmlReturned;
+        this.fileTextRetrieved = templateHtmlReturned;
     }
 
     public String retrieveFormattedText() {

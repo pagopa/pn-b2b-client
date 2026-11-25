@@ -1,5 +1,6 @@
 package it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.registry.model;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.AgreementState;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionState;
 import it.pagopa.interop.event.enums.InteropEvent;
@@ -11,8 +12,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.
 
 import java.util.List;
 
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.STANDARD;
-import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.WORM;
+import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole.*;
 import static it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.enums.InteropFile.*;
 
 public class Definitions {
@@ -20,10 +20,32 @@ public class Definitions {
             String documentBucketBase,
             String documentWormBucketBase,
             String eventBucketBase,
-            String eventWormBucketBase
+            String eventWormBucketBase,
+            String jwtDetailsBucketBase,
+            String jwtDetailsSignedBucketBase,
+            String m2mJwtDetailsBucketBase,
+            String m2mJwtDetailsSignedBucketBase
     ) {
 
         return List.of(
+
+                new FileInfoDefinition(
+                        AUDIT_JWT_EVENTS_LOG,
+                        MapFileTokenSource.of("jwtId", ":jwtId"),
+                        MapFileTokenSource.of(),
+                        List.of(new LocationDefinition(STANDARD, jwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                                new LocationDefinition(SIGNED, jwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                        )
+                ),
+
+                new FileInfoDefinition(
+                        AUDIT_JWT_M2M_EVENTS_LOG,
+                        MapFileTokenSource.of("jwtId", ":jwtId"),
+                        MapFileTokenSource.of(),
+                        List.of(new LocationDefinition(STANDARD, m2mJwtDetailsBucketBase, FilenameFormat.NDJSON_LOG),
+                                new LocationDefinition(SIGNED, m2mJwtDetailsSignedBucketBase, FilenameFormat.NDJSON_SIGNED_LOG)
+                        )
+                ),
 
                 new FileInfoDefinition(
                         RISK_ANALYSIS_DOC,
@@ -45,7 +67,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega alla fruizione", ":agreementId"),
+                        ListFileTokenSource.of("Delega alla fruizione", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -54,7 +76,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         CONSUMER_DELEGATION_REVOKED_DOC,
-                        ListFileTokenSource.of("Richiesta di revoca della delega", ":agreementId"),
+                        ListFileTokenSource.of("Revoca della delega alla fruizione", ":consumerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:consumerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -63,7 +85,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         PRODUCER_DELEGATION_REVOKED_DOC,
-                        ListFileTokenSource.of("Richiesta di revoca della delega all’erogazione", ":agreementId"),
+                        ListFileTokenSource.of("Revoca della delega all’erogazione", ":producerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -72,7 +94,7 @@ public class Definitions {
 
                 new FileInfoDefinition(
                         PRODUCER_DELEGATION_REQUEST_DOC,
-                        ListFileTokenSource.of("richiesta di delega all'erogazione", ":agreementId"),
+                        ListFileTokenSource.of("Delega all’erogazione", ":producerDelegationId"),
                         null,
                         List.of(new LocationDefinition(STANDARD, documentBucketBase + "delegation/:producerDelegationId", FilenameFormat.PDF_DOC),
                                 new LocationDefinition(WORM, documentWormBucketBase, FilenameFormat.PDF_SIGNED_DOC)
@@ -84,43 +106,103 @@ public class Definitions {
                         AGREEMENT_ACTIVATE_EVENTS_LOG,
                         InteropEvent.AGREEMENT_ACTIVATED,
                         ":agreementId",
-                        AgreementState.ACTIVE.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.ACTIVE.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG,
                         InteropEvent.AGREEMENT_SUSPENDED_BY_CONSUMER,
                         ":agreementId",
-                        AgreementState.SUSPENDED.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.SUSPENDED.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG,
                         InteropEvent.AGREEMENT_ARCHIVED_BY_CONSUMER,
                         ":agreementId",
-                        AgreementState.ARCHIVED.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        AgreementState.ARCHIVED.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        PRODUCER_DELEGATION_REQUEST_EVENTS_LOG,
+                        InteropEvent.PRODUCER_DELEGATION_APPROVED,
+                        ":producerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.ACTIVE.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        PRODUCER_DELEGATION_REVOKED_EVENTS_LOG,
+                        InteropEvent.PRODUCER_DELEGATION_REVOKED,
+                        ":producerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.REVOKED.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CONSUMER_DELEGATION_REQUEST_EVENTS_LOG,
+                        InteropEvent.CONSUMER_DELEGATION_APPROVED,
+                        ":consumerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.ACTIVE.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CONSUMER_DELEGATION_REVOKED_EVENTS_LOG,
+                        InteropEvent.CONSUMER_DELEGATION_REVOKED,
+                        ":consumerDelegationId",
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        DelegationState.REVOKED.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         PURPOSE_ACTIVATE_EVENTS_LOG,
                         InteropEvent.PURPOSE_ACTIVATED,
                         ":purposeId",
-                        PurposeVersionState.ACTIVE.getValue(),
                         eventBucketBase,
-                        eventWormBucketBase
+                        eventWormBucketBase,
+                        PurposeVersionState.ACTIVE.getValue()
                 ),
 
                 buildStandardEventLogFileDefinition(
                         NEW_PURPOSE_VERSION_ACTIVATE_EVENTS_LOG,
                         InteropEvent.NEW_PURPOSE_VERSION_ACTIVATED,
                         ":purposeId",
-                        PurposeVersionState.ACTIVE.getValue(),
+                        eventBucketBase,
+                        eventWormBucketBase,
+                        PurposeVersionState.ACTIVE.getValue()
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        CLIENT_DELETED_EVENTS_LOG,
+                        InteropEvent.CLIENT_DELETED,
+                        ":clientId",
+                        eventBucketBase,
+                        eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        KEY_ADDED_EVENTS_LOG,
+                        InteropEvent.CLIENT_KEY_ADDED,
+                        ":clientId",
+                        eventBucketBase,
+                        eventWormBucketBase
+                ),
+
+                buildStandardEventLogFileDefinition(
+                        KEY_DELETED_EVENTS_LOG,
+                        InteropEvent.CLIENT_KEY_DELETED,
+                        ":clientId",
                         eventBucketBase,
                         eventWormBucketBase
                 )
@@ -131,18 +213,25 @@ public class Definitions {
             InteropFile type,
             InteropEvent event,
             String id,
-            String state,
             String eventBucketBase,
-            String eventWormBucketBase
+            String eventWormBucketBase,
+            String... states
     ) {
+
+        var maps = states.length > 0
+                ? MapFileTokenSource.of(
+                "event_name", event.getValue(),
+                "id", id,
+                "state", toCamelCase(states[0])
+        )
+                : MapFileTokenSource.of(
+                "event_name", event.getValue(),
+                "id", id
+        );
 
         return new FileInfoDefinition(
                 type,
-                MapFileTokenSource.of(
-                        "event_name", event.getValue(),
-                        "id", id,
-                        "state", toCamelCase(state)
-                ),
+                maps,
                 MapFileTokenSource.of("timestamp", FileToken.hasValidTimestamp()),
                 List.of(new LocationDefinition(STANDARD, eventBucketBase, FilenameFormat.EVENT_LOG),
                         new LocationDefinition(WORM, eventWormBucketBase, FilenameFormat.EVENT_SIGNED_LOG))

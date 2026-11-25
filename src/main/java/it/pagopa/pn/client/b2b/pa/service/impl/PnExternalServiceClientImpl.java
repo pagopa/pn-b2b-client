@@ -235,9 +235,9 @@ public class PnExternalServiceClientImpl {
 
     public List<HashMap<String, String>> pgGroupInfo(SettableBearerToken.BearerTokenType settableBearerToken) throws RestClientException {
         switch (settableBearerToken) {
-            case PG_1:
+            case PG_1, PG_B2B_1:
                 return pgGroupInfoWithHttpInfo(gherkinSrlBearerToken).getBody();
-            case PG_2:
+            case PG_2, PG_B2B_2:
                 return pgGroupInfoWithHttpInfo(cucumberSpaBearerToken).getBody();
             default:
                 throw new IllegalArgumentException();
@@ -273,9 +273,8 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<List<HashMap<String, String>>> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(restTemplate, basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(restTemplate, basePathWebApi, "/bff/v1/pg/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
-    ///ext-registry-private/pg/v1/groups-all
 
 
     private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey) throws RestClientException {
@@ -654,7 +653,8 @@ public class PnExternalServiceClientImpl {
                 StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
+        };
 
         return invokeAPI(restTemplate, dataVaultBasePath,
                 "/consolidatore-ingress/v1/push-progress-events",

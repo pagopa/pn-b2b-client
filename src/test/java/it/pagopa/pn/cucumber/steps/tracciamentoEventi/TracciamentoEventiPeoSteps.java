@@ -19,8 +19,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 
-import static org.awaitility.Awaitility.await;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -31,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -42,6 +41,7 @@ public class TracciamentoEventiPeoSteps {
     private final IPnEcInternalClient ecInternalClient;
     private String clientInUse;
     private String requestId;
+    private DigitalCourtesyMailRequest lastEmailRequest;
     private static final String EICAR = "X5O!P%@AP[4\\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*";
 
     @Autowired
@@ -63,7 +63,29 @@ public class TracciamentoEventiPeoSteps {
 
     @When("viene inviata una mail tramite PEO all'indirizzo {string} con allegato {string}")
     public void sendEmailWithAttachment(String emailAddress, String attachmentType) {
+        DigitalCourtesyMailRequest emailRequest = buildEmailRequest(emailAddress, attachmentType);
 
+        ResponseEntity response = sendDigitalCourtesyMessage(emailRequest);
+        assertThat(response.getStatusCode().is2xxSuccessful()).as("La chiamata di invio mail ha prodotto un errore col seguente status code: {}", response.getStatusCodeValue()).isTrue();
+        log.info("Email inviata con successo");
+        log.info("Request id: {}", requestId);
+    }
+
+    @When("viene inviata nuovamente la stessa mail tramite PEO e si ottiene status code 204")
+    public void sendSameEmailAgain() {
+        assertThat(lastEmailRequest)
+                .as("Dev'essere stata inviata una mail in precedenza per poterla reinviare")
+                .isNotNull();
+
+        ResponseEntity response = sendDigitalCourtesyMessage(lastEmailRequest);
+        assertThat(response.getStatusCodeValue())
+                .as("La seconda chiamata di invio mail con gli stessi parametri e requestId '%s' dovrebbe restituire status code 204, ma ha restituito %s", requestId, response.getStatusCodeValue())
+                .isEqualTo(204);
+        log.info("Seconda mail con stessi parametri inviata, status code 204 ottenuto come atteso");
+        log.info("Request id: {}", requestId);
+    }
+
+    private DigitalCourtesyMailRequest buildEmailRequest(String emailAddress, String attachmentType) {
         String timestamp = Instant.now().toString();
         requestId = "TEST_QA_" + timestamp;
 
@@ -80,10 +102,12 @@ public class TracciamentoEventiPeoSteps {
         emailRequest.setAttachmentUrls(
                 attachmentType.equalsIgnoreCase("virus") ? List.of(uploadEicarVirusFile()) : new ArrayList<>());
 
-        ResponseEntity response = externalChannelsInternalClient.sendDigitalCourtesyMessage(requestId, clientInUse, emailRequest);
-        assertThat(response.getStatusCode().is2xxSuccessful()).as("La chiamata di invio mail ha prodotto un errore col seguente status code: {}", response.getStatusCodeValue()).isTrue();
-        log.info("Email inviata con successo");
-        log.info("Request id: {}", requestId);
+        this.lastEmailRequest = emailRequest;
+        return emailRequest;
+    }
+
+    private ResponseEntity sendDigitalCourtesyMessage(DigitalCourtesyMailRequest emailRequest) {
+        return externalChannelsInternalClient.sendDigitalCourtesyMessage(emailRequest.getRequestId(), clientInUse, emailRequest);
     }
 
     private String uploadEicarVirusFile() {

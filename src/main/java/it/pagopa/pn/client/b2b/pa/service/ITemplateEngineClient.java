@@ -50,4 +50,33 @@ public interface ITemplateEngineClient {
     String pecsubjectreject(LanguageEnum xLanguage) throws RestClientException;
 
     String smsbody(LanguageEnum xLanguage) throws RestClientException;
+
+    Resource informalAnalogCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalEmailCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException;
+
+    String informalPecCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalPecCommunicationSubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject);
+
+    String informalIoCommunication(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalSmsCommunication(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
+
+    String notificationCceForEmail(LanguageEnum xLanguage, NotificationCceForEmail request) throws RestClientException;
+
+    String courtesyEmailCommunicationBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    Resource analogDeliveryWorkflowTimeoutLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowTimeoutLegalFact request) throws RestClientException;
+
+    Resource analogFeedbackAvailabilityStatement(LanguageEnum xLanguage, AnalogFeedbackAvailabilityStatement request) throws RestClientException;
+    
+    String informalEmailCourtesyBody(LanguageEnum xLanguage, InformalCommunication informalCommunication) throws RestClientException;
+
+    String informalEmailCourtesySubject(LanguageEnum xLanguage, InformalEmailCommunicationSubject informalEmailCommunicationSubject) throws RestClientException;
+
+    String informalSmsCourtesy(LanguageEnum xLanguage, InformalSmsCommunication informalSmsCommunication) throws RestClientException;
+
 }

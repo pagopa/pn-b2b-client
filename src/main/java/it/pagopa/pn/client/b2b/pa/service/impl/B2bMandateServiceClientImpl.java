@@ -1,178 +1,106 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.api.MandateServiceApi;
-import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import org.springframework.beans.factory.annotation.Value;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateCountsDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.internal.mandate.model.UpdateRequestDto;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+/**
+ * Router tra le due implementazioni di IPnWebMandateClient disponibili nel flusso @useB2B:
+ * le utenze PG dedicate con token _B2B (PG_B2B_1/PG_B2B_2) usano {@link MandateB2BExternalClientImpl}
+ * (openapi pn-mandate-b2b-pg-external); ogni altra utenza (PF o PG classica) usa
+ * {@link MandateInternalClientImpl} (openapi pn-mandate-internal). La scelta avviene una sola
+ * volta in {@link #setBearerToken(BearerTokenType)}, cosi' i metodi di business si limitano a
+ * inoltrare la chiamata all'implementazione attiva.
+ */
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
-    private final RestTemplate restTemplate;
-    private final String gherkinSrlBearerToken;
-    private final String cucumberSpaBearerToken;
-    private final String marioGherkinBearerToken;
-    private final String marioCucumberBearerToken;
-    private final String b2bBasePath;
-    private final String webBasePath;
-    private final MandateServiceApi mandateServiceApi;
-    private BearerTokenType bearerTokenSetted;
+    private final MandateInternalClientImpl internalClient;
+    private final MandateB2BExternalClientImpl b2bExternalClient;
+    private IPnWebMandateClient activeClient;
 
-
-    public B2bMandateServiceClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.external.dest.base-url}") String b2bBasePath,
-                                       @Value("${pn.webapi.external.base-url}") String webBasePath,
-                                       @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken,
-                                       @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                       @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken) {
-        this.restTemplate = restTemplate;
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.b2bBasePath = b2bBasePath;
-        this.webBasePath = webBasePath;
-        this.bearerTokenSetted = BearerTokenType.PG_1;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
-    }
-
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
-        ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
-        newApiClient.setBearerToken(bearerToken);
-        return newApiClient;
-    }
-
-    @Override
-    public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto acceptRequestDto1 = deepCopy(acceptRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto.class);
-        mandateServiceApi.acceptMandate(mandateId, acceptRequestDto1);
-    }
-
-    @Override
-    public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void createMandate(MandateDto mandateDto) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto convertedMandateDto = deepCopy(mandateDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto.class);
-        deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
-    }
-
-    @Override
-    public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
-    }
-
-    @Override
-    public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
-        this.mandateServiceApi.updateMandate(mandateId, deepCopy(updateRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
-    }
-
-    @Override
-    public List<MandateDto> listMandatesByDelegate1(String status) throws RestClientException {
-        return mandateServiceApi.listMandatesByDelegate1(status)
-                .stream()
-                .map(x -> deepCopy(x, MandateDto.class))
-                .toList();
-    }
-
-    @Override
-    public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
-        return mandateServiceApi.listMandatesByDelegator1()
-                .stream()
-                .map(x -> deepCopy(x, MandateDto.class))
-                .toList();
-    }
-
-    @Override
-    public void rejectMandate(String mandateId) throws RestClientException {
-        mandateServiceApi.rejectMandate(mandateId);
-
-    }
-
-    @Override
-    public void revokeMandate(String mandateId) throws RestClientException {
-        mandateServiceApi.revokeMandate(mandateId);
-    }
-
-    @Override
-    public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto searchMandateRequestDto = new it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto();
-        searchMandateRequestDto.setTaxId(taxId);
-        searchMandateRequestDto.setGroups(groups);
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        return (responseDto != null && responseDto.getResultsPage() != null)
-                ? responseDto.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList() : null;
-    }
-
-    @Override
-    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
-        SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
-        searchMandateRequestDto.setTaxId(taxId);
-        searchMandateRequestDto.setGroups(groups);
-        searchMandateRequestDto.setStatus(status);
-        SearchMandateResponseDto responseDto = deepCopy(
-                mandateServiceApi.searchMandatesByDelegate(10, null,
-                        deepCopy(searchMandateRequestDto,
-                                it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto.class)),
-                it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.SearchMandateResponseDto.class);
-        return responseDto != null ? responseDto.getResultsPage() : null;
+    public B2bMandateServiceClientImpl(MandateInternalClientImpl internalClient, MandateB2BExternalClientImpl b2bExternalClient) {
+        this.internalClient = internalClient;
+        this.b2bExternalClient = b2bExternalClient;
+        this.activeClient = internalClient;
     }
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        switch (bearerToken) {
-            case PG_1 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, b2bBasePath, gherkinSrlBearerToken));
-                this.bearerTokenSetted = BearerTokenType.PG_1;
-            }
-            case PG_2 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
-                this.bearerTokenSetted = BearerTokenType.PG_2;
-            }
-            case USER_1 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
-            }
-            case USER_2 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_2;
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
-        }
-        return true;
+        this.activeClient = isB2BUtenza(bearerToken) ? b2bExternalClient : internalClient;
+        return activeClient.setBearerToken(bearerToken);
+    }
+
+    private static boolean isB2BUtenza(BearerTokenType bearerToken) {
+        return bearerToken == BearerTokenType.PG_B2B_1 || bearerToken == BearerTokenType.PG_B2B_2;
     }
 
     @Override
     public BearerTokenType getBearerTokenSetted() {
-        return bearerTokenSetted;
+        return activeClient.getBearerTokenSetted();
     }
 
-    private <T> T deepCopy(Object obj, Class<T> toClass) {
-        ObjectMapper objMapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
-        try {
-            String json = objMapper.writeValueAsString(obj);
-            return objMapper.readValue(json, toClass);
-        } catch (JsonProcessingException exc) {
-            throw new PnB2bException(exc.getMessage());
-        }
+    @Override
+    public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
+        activeClient.acceptMandate(mandateId, acceptRequestDto);
+    }
+
+    @Override
+    public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
+        return activeClient.countMandatesByDelegate(status);
+    }
+
+    @Override
+    public void createMandate(MandateDto mandateDto) throws RestClientException {
+        activeClient.createMandate(mandateDto);
+    }
+
+    @Override
+    public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
+        activeClient.updateMandate(mandateId, updateRequestDto);
+    }
+
+    @Override
+    public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
+        activeClient.updateMandate(xPagopaPnCxId, xPagopaPnCxType, mandateId, xPagopaPnCxGroups, xPagopaPnCxRole, updateRequestDto);
+    }
+
+    @Override
+    public List<MandateDto> listMandatesByDelegate1(String status) throws RestClientException {
+        return activeClient.listMandatesByDelegate1(status);
+    }
+
+    @Override
+    public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
+        return activeClient.listMandatesByDelegator1();
+    }
+
+    @Override
+    public void rejectMandate(String mandateId) throws RestClientException {
+        activeClient.rejectMandate(mandateId);
+    }
+
+    @Override
+    public void revokeMandate(String mandateId) throws RestClientException {
+        activeClient.revokeMandate(mandateId);
+    }
+
+    @Override
+    public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
+        return activeClient.searchMandatesByDelegate(taxId, groups);
+    }
+
+    @Override
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
+        return activeClient.searchMandatesByDelegateStatusFilter(taxId, status, groups);
     }
 }

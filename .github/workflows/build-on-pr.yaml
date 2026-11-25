@@ -51,6 +51,12 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
+      - name: Build common module
+        if: steps.pr_check.outputs.has_pr == 'true'
+        run: |
+          cd common
+          mvn clean install -Dgithub.token=${{ secrets.GH_TOKEN }}
+
       - name: Build interop-qa-tests module
         if: steps.pr_check.outputs.has_pr == 'true' && steps.changes.outputs.run_in_qa_tests == 'true'
         run: |

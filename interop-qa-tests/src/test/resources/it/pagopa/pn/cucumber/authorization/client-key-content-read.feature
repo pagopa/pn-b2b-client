@@ -21,10 +21,10 @@ Feature: Lettura di una chiave pubblica contenuta in un client
   @nrt-minimal
   @wait_for_fix
   Scenario Outline: [CLIENT_KEY_READ_02] Un utente di qualsiasi ruolo; appartenente all'ente che ha creato il client; il quale utente non è membro del client; nel quale client c'è una chiave pubblica; richiede la lettura del contenuto della chiave. L'operazione va a buon fine solo per admin e support
-    Given l'utente è un "<ruolo>" di "PA1"
-    Given "PA1" ha già creato 1 client "CONSUMER"
-    Given "PA1" ha già inserito l'utente con ruolo "<ruoloCaricatore>" come membro di quel client
-    Given un "<ruoloCaricatore>" di "PA1" ha caricato una chiave pubblica in quel client
+    Given l'utente è un "<ruolo>" di "PA2"
+    Given "PA2" ha già creato 1 client "CONSUMER"
+    Given "PA2" ha già inserito l'utente con ruolo "<ruoloCaricatore>" come membro di quel client
+    Given un "<ruoloCaricatore>" di "PA2" ha caricato una chiave pubblica in quel client
     When l'utente richiede la lettura del contenuto della chiave pubblica
     Then si ottiene status code <statusCode>
 
@@ -40,6 +40,13 @@ Feature: Lettura di una chiave pubblica contenuta in un client
       | api          | security        |        403 |
       | security     | admin           |        403 |
       | api,security | admin           |        403 |
+
+    @sad-path
+    @nuovi-operatori-update
+    Examples:
+      | ruolo        | ruoloCaricatore | statusCode |
+      | reviewer     | admin           |        403 |
+      | viewer       | admin           |        403 |
 
   @happy-path
   @nrt-minimal

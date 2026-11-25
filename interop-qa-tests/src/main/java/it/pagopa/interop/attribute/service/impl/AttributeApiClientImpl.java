@@ -50,6 +50,11 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     }
 
     @Override
+    public Attribute createCertifiedDiscreteAttribute(AttributeSeed attributeSeed) {
+        return attributesApi.createCertifiedDiscreteAttribute(attributeSeed);
+    }
+
+    @Override
     public Attribute createVerifiedAttribute(AttributeSeed attributeSeed) {
         return attributesApi.createVerifiedAttribute(attributeSeed);
     }
@@ -77,6 +82,11 @@ public class AttributeApiClientImpl implements IAttributeApiClient {
     @Override
     public ResponseEntity<Attribute> createVerifiedAttributeRE(AttributeSeed declaredAttributeSeed) {
         return attributesApi.createVerifiedAttributeWithHttpInfo(declaredAttributeSeed);
+    }
+
+    @Override
+    public Attribute getAttributeById(UUID attributeId) {
+        return attributesApi.getAttributeById(attributeId);
     }
 
     @Override

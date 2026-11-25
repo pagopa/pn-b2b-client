@@ -1,51 +1,55 @@
 package it.pagopa.pn.interop.cucumber.steps.common;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DeclaredAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.VerifiedAttribute;
 import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.CertifiedAttribute;
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.CertifiedDiscreteAttribute;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import it.pagopa.interop.generated.openapi.clients.m2mGatewayV3.model.EServiceDescriptorCertifiedDiscreteAttribute;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Getter
 @Setter
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AttributeCommonContext {
     UUID attributeId;
+    String attributeName;
     List<List<UUID>> requiredCertifiedAttributes = new ArrayList<>();
     List<List<UUID>> requiredDeclaredAttributes = new ArrayList<>();
     List<List<UUID>> requiredVerifiedAttributes = new ArrayList<>();
     String attributeConsumerTenant;
+    String certifierName;
 
     List<Attribute> createdAttributes = new ArrayList<>();
+    List<CompactAttribute> availableCertifiedDiscreteAttributes = new ArrayList<>();
+    String ownerCertifiedDiscreteAttribute;
+    List<CertifiedDiscreteTenantAttribute> ownedCertifiedDiscreteAttributes = new ArrayList<>();
 
     public Attribute getLastCreatedAttribute() {
         return lastOf(createdAttributes);
     }
 
-    public void addCreatedAttribute(Attribute attribute) {
+    public <T extends Attribute> void addCreatedAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
-    public void addDeclaredAttribute(Attribute attribute) {
+    public <T extends Attribute> void addDeclaredAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
 
-    public void addVerifiedAttribute(Attribute attribute) {
+    public <T extends Attribute> void addVerifiedAttribute(T attribute) {
         this.attributeId = attribute.getId();
         this.createdAttributes.add(attribute);
     }
@@ -54,6 +58,11 @@ public class AttributeCommonContext {
     //--M2M--
     List<CertifiedAttribute> certifiedPublished = new ArrayList<>();
     List<CertifiedAttribute> certifiedActual = new ArrayList<>();
+
+    List<CertifiedDiscreteAttribute> certifiedDiscretePublished = new ArrayList<>();
+    List<CertifiedDiscreteAttribute> certifiedDiscreteActual = new ArrayList<>();
+    List<List<CertifiedDiscreteAttribute>> certifiedDiscreteAssigned = new ArrayList<>();
+    List<CertifiedDiscreteAttribute> certifiedDiscreteRevoked = new ArrayList<>();
 
     List<DeclaredAttribute> declaredPublished = new ArrayList<>();
     List<DeclaredAttribute> declaredActual = new ArrayList<>();
@@ -78,6 +87,9 @@ public class AttributeCommonContext {
                         .id(attr.getId())
                         .explicitAttributeVerification(attr.getExplicitAttributeVerification())
                         .dailyCallsPerConsumer(attr.getDailyCallsPerConsumer());
+                if (attr.getDiscreteConfig() != null) {
+                    seed.setDiscreteConfig(attr.getDiscreteConfig());
+                }
                 groupSeed.add(seed);
             }
             seeds.add(groupSeed);

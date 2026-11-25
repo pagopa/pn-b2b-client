@@ -1,0 +1,120 @@
+// In data 05/10/2062 è identico alla variante GSP. La si colloca ugualmente in un file dedicato per facilitare eventuali adattamenti futuri in caso di divergenza tra caso GSP e caso PRIVATE.
+{
+  "version": "2.1",
+  "answers": {
+    "purpose": {
+      "values": [
+        "INSTITUTIONAL"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "institutionalPurpose": {
+      "values": [],
+      "editable": false,
+      "suggestedValues": [
+        "asasdasdasd",
+        "Answer1"
+      ]
+    },
+    "usesPersonalData": {
+      "values": [
+        "YES"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "personalDataTypes": {
+      "values": [
+        "WITH_NON_IDENTIFYING_DATA"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "legalBasis": {
+      "values": [
+        "CONSENT"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "knowsDataQuantity": {
+      "values": [
+        "NO"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "deliveryMethod": {
+      "values": [
+        "CLEARTEXT"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "policyProvided": {
+      "values": [
+        "YES"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "policyProvidedMedium": {
+      "values": [
+        "ONLINE"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "policyProvidedOnlineLink": {
+      "values": [],
+      "editable": false,
+      "suggestedValues": [
+        "www.info.it",
+        "www.altrapolicy.it"
+      ]
+    },
+    "confirmPricipleIntegrityAndDiscretion": {
+      "values": [
+        "true"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "doneDpia": {
+      "values": [
+        "NO"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "dataDownload": {
+      "values": [
+        "NO"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "purposePursuit": {
+      "values": [
+        "MERE_CORRECTNESS"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "checkedExistenceMereCorrectnessInteropCatalogue": {
+      "values": [
+        "true"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    },
+    "declarationConfirmGDPR": {
+      "values": [
+        "true"
+      ],
+      "editable": false,
+      "suggestedValues": []
+    }
+  }
+}

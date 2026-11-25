@@ -2,23 +2,17 @@ package it.pagopa.interop.purpose.service;
 
 import it.pagopa.interop.ListRequest;
 import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Agreement;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.FileDownloadMultipart;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purpose;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersion;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.PurposeVersions;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.Purposes;
-import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.RiskAnalysisFormSeed;
-import java.util.List;
-import java.util.UUID;
+import it.pagopa.interop.generated.openapi.clients.m2mGateway.model.*;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+import java.util.UUID;
+
 public interface IM2MPurposeClient extends SettableBearerToken {
+
     @Data
     @Builder
     class PurposePatchRequest {
@@ -89,4 +83,6 @@ public interface IM2MPurposeClient extends SettableBearerToken {
     Purpose patchPurpose(UUID purposeId, PurposePatchRequest body);
 
     Purpose patchReversePurpose(UUID reversePurposeId, ReversePurposePatchRequest body);
+
+    Purpose createPurpose(PurposeSeed purposeSeed);
 }

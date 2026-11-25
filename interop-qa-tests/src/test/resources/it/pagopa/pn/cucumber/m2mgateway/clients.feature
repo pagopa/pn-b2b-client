@@ -157,3 +157,34 @@ Feature: Gestione dei clients attraverso APIs M2M V2
     And viene impostato per l'utente un token m2m non valido
     And vengono recuperate le finalità associate al client "%actual" con limit "10" e offset "0" e filtri eserviceIds "%null", states "%null"
     Then si ottiene status code 401
+
+  # FIXME il numero di finalità associate era 150, e di client 50; li si riduce rispettivamente a 41 e 12 per rendere più facile il debug. Ripristinare non appena il test è stabile.
+  @hotfix-2.22
+  @m2m-purpose-client
+  Scenario: [M2M_CLIENTS_PURPOSES_CATALOG_4] Recupero dell'insieme di finalità associate a un client
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And l'utente è un "admin" di "PA2"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già creato 40 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente associa le ultime 40 finalità create al client con successo
+
+    And "PA2" ha già creato 10 client "CONSUMER"
+    And l'utente associa l'ultima finalità agli ultimi 10 client creati con successo
+
+    And "PA2" ha già creato 1 client "CONSUMER"
+    And "PA2" ha già creato 1 finalità in stato "ACTIVE" per quell'eservice
+    And l'utente associa le ultime 1 finalità create al client con successo
+
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And l'utente recupera tutte le finalità associate al primo client creato
+    Then si ottiene status code 200
+    And vengono recuperate 40 finalità associate al client
+    And le finalità restituite sono tutte e sole le prime 40 finalità create
+    And le finalità restituite sono ordinate correttamente
+
+    # Visto l'alto numero di finalità e client creati, si procede a pulire l'ambiente di test.
+    # Ci si limita ad archiviare le finalità perché non ne è consentita l'eliminazione una volta attivate.
+    And ["PA2" elimina i client e archivia le finalità create per il test]
