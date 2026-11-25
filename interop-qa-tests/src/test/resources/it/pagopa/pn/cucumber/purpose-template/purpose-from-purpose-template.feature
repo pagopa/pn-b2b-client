@@ -253,4 +253,5 @@ Feature: finalità agevolata, purpose from purpose template
     And viene creato un nuovo purpose template destinato a enti "GSP" indicando come modificabile il mezzo di specifica delle politiche di trattamento dei dati personali
     And il purpose template creato viene spostato in stato PUBLISHED
     When l'utente crea con successo una nuova finalità per quell'e-service indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali
+    And l'utente tenta di modificare una finalità non istanziata da template come se lo fosse, indicando un URL per l'informativa sul trattamento dei dati personali
     Then si ottiene response status code 400

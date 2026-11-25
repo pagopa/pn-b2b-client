@@ -1,23 +1,29 @@
 package it.pagopa.pn.interop.cucumber.steps.e_service_template.document;
 
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
-
 import it.pagopa.interop.e_service_template.IEServiceTemplateClient.EServiceTemplateDocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionDocumentSeed;
+
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
 public interface DocumentUpdateStrategy {
-    static DocumentUpdateStrategy from(EServiceTemplateDocumentKind documentKind1, EServiceTemplateDocumentKind documentKind2) {
-        if(documentKind1 == documentKind2 && documentKind2 == EServiceTemplateDocumentKind.DOCUMENT) {
+    static DocumentUpdateStrategy from(EServiceTemplateDocumentKind documentKind1,
+                                       EServiceTemplateDocumentKind documentKind2) {
+        if (documentKind1 == documentKind2
+                && documentKind2 == EServiceTemplateDocumentKind.DOCUMENT) {
             return new DocumentUpdateDocDocStrategy();
-        } else if(documentKind1 != documentKind2) {
-            return new DocumentUpdateDocIntStrategy();
+        } else if (documentKind1 != documentKind2) {
+            boolean updateDocument = documentKind1 == EServiceTemplateDocumentKind.DOCUMENT
+                    && documentKind2 == EServiceTemplateDocumentKind.INTERFACE;
+            return new DocumentUpdateDocIntStrategy(updateDocument);
         } else {
-            throw new IllegalArgumentException("Non è possibile creare una strategia di aggiornamento documento per i tipi %s e %s"
-                .formatted(documentKind1, documentKind2));
+            throw new IllegalArgumentException(
+                    "Non è possibile creare una strategia di aggiornamento documento per i tipi %s e %s"
+                            .formatted(documentKind1, documentKind2));
         }
     }
 
@@ -26,7 +32,7 @@ public interface DocumentUpdateStrategy {
     UUID getDocumentToUpdate(EServiceTemplateVersionDetails version);
 
     UpdateEServiceTemplateVersionDocumentSeed buildDocumentUpdateSeed(
-        EServiceTemplateVersionDetails version);
+            EServiceTemplateVersionDetails version);
 
     /* DEV. NOTE 21/03/2025: le seguenti implementazioni sono strettamente dipendenti dall'attuale
      * assetto degli step Cucumber in cui vengono utilizzate queste classi */
@@ -45,13 +51,19 @@ public interface DocumentUpdateStrategy {
 
         @Override
         public UpdateEServiceTemplateVersionDocumentSeed buildDocumentUpdateSeed(
-            EServiceTemplateVersionDetails version) {
+                EServiceTemplateVersionDetails version) {
             return new UpdateEServiceTemplateVersionDocumentSeed()
-                .prettyName(version.getDocs().get(1).getPrettyName());
+                    .prettyName(version.getDocs().get(1).getPrettyName());
         }
     }
 
     class DocumentUpdateDocIntStrategy implements DocumentUpdateStrategy {
+
+        private final boolean updateDocument;
+
+        DocumentUpdateDocIntStrategy(boolean updateDocument) {
+            this.updateDocument = updateDocument;
+        }
 
         @Override
         public boolean hasExpectedDocuments(EServiceTemplateVersionDetails version) {
@@ -60,10 +72,15 @@ public interface DocumentUpdateStrategy {
 
         @Override
         public UUID getDocumentToUpdate(EServiceTemplateVersionDetails version) {
+            if (updateDocument) {
+                return version.getDocs().get(0).getId();
+            }
+
             EServiceDoc theInterface = version.getInterface();
-            if(isNull(theInterface)) {
-                throw new IllegalStateException("L'e-service template %s non ha un documento di tipo interfaccia"
-                    .formatted(version.getEserviceTemplate().getName()));
+            if (isNull(theInterface)) {
+                throw new IllegalStateException(
+                        "L'e-service template %s non ha un documento di tipo interfaccia"
+                                .formatted(version.getEserviceTemplate().getName()));
             }
 
             return theInterface.getId();
@@ -71,12 +88,15 @@ public interface DocumentUpdateStrategy {
 
         @Override
         public UpdateEServiceTemplateVersionDocumentSeed buildDocumentUpdateSeed(
-            EServiceTemplateVersionDetails version) {
+                EServiceTemplateVersionDetails version) {
+            String prettyName = updateDocument
+                    ? version.getInterface().getPrettyName()
+                    : version.getDocs().get(0).getPrettyName();
+
             return new UpdateEServiceTemplateVersionDocumentSeed()
-                .prettyName(version.getDocs().get(0).getPrettyName());
+                    .prettyName(prettyName);
         }
 
-        @SuppressWarnings("all")
         private boolean notEmpty(EServiceDoc doc) {
             return nonNull(doc) && nonNull(doc.getId());
         }

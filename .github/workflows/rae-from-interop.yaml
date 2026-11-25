@@ -38,7 +38,7 @@ defaults:
 jobs:
   generate_rae:
     name: Generate RAE YAML and Draft PR
-    if: github.repository == 'pagopa/pn-b2b-client' && github.ref == 'refs/heads/develop'
+    if: github.repository == 'pagopa/pn-b2b-client' && github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     concurrency:
@@ -81,7 +81,6 @@ jobs:
           if ! jq -e --arg repo "$SOURCE_REPO" --arg attempt "$RUN_ATTEMPT" '
             .path == ".github/workflows/qa.yaml" and
             .head_repository.full_name == $repo and
-            .head_branch == "main" and
             (.run_attempt | tostring) == $attempt and
             (.event == "schedule" or .event == "workflow_dispatch")
           ' <<< "$run" > /dev/null; then
