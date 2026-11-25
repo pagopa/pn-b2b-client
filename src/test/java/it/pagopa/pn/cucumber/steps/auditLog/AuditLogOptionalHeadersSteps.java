@@ -2,6 +2,8 @@ package it.pagopa.pn.cucumber.steps.auditLog;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.Poller;
 import it.pagopa.common.util.CloudWatchLogsService;
 import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.audit.AuditLogPrivateApiClient;
@@ -13,17 +15,16 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static it.pagopa.pn.client.b2b.pa.domain.Costanti.AAR_GENERATION;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 
 /**
  * Step per QA-19752: invocano (tramite il client ad-hoc {@link AuditLogPrivateApiClient}) le 7 API private di
@@ -157,13 +158,25 @@ public class AuditLogOptionalHeadersSteps {
         expectedFields.put("cx_type", lastHeaders.cxType);
         expectedFields.put("uid", lastHeaders.uid);
         try {
-            await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                boolean found = cloudWatchLogsService.hasMatchingLog(logGroup, "\"" + tag + "\"", 20, expectedFields);
-                assertThat(found).as("Nessun audit log %s su %s riporta esattamente cx_id=%s, cx_type=%s, uid=%s",
-                        tag, logGroup, lastHeaders.cxId, lastHeaders.cxType, lastHeaders.uid).isTrue();
-            });
+            Poller.pollUntil(
+                    () -> hasMatchingLogIgnoringTransientErrors(logGroup, tag, expectedFields),
+                    found -> {
+                        assertThat(found).as("Nessun audit log %s su %s riporta esattamente cx_id=%s, cx_type=%s, uid=%s",
+                                tag, logGroup, lastHeaders.cxId, lastHeaders.cxType, lastHeaders.uid).isTrue();
+                    },
+                    PollingConfig.of(Duration.ofMinutes(2), Duration.ofSeconds(10)));
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    /** Ignora errori transitori di CloudWatch (es. throttling) riprovando al giro di polling successivo, invece di far fallire subito il check. */
+    private boolean hasMatchingLogIgnoringTransientErrors(String logGroup, String tag, Map<String, String> expectedFields) {
+        try {
+            return cloudWatchLogsService.hasMatchingLog(logGroup, "\"" + tag + "\"", 20, expectedFields);
+        } catch (RuntimeException e) {
+            log.warn("Errore transitorio durante la ricerca su CloudWatch, nuovo tentativo al prossimo giro di polling", e);
+            return false;
         }
     }
 

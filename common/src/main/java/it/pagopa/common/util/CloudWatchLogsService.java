@@ -48,6 +48,16 @@ public class CloudWatchLogsService {
         return fetchMessages(logGroup, filterPattern, minutes).stream().anyMatch(message -> matchesFields(message, expectedFields));
     }
 
+    /**
+     * Verifica che, tra i log JSON che soddisfano {@code filterPattern}, ne esista almeno uno in cui tutti i campi
+     * indicati siano valorizzati (presenti e non nulli), indipendentemente dal loro valore. Utile quando il valore
+     * atteso non e' noto a priori (es. deriva da un token di autenticazione) e conta solo che il campo sia stato
+     * propagato.
+     */
+    public boolean hasFieldsPresent(String logGroup, String filterPattern, long minutes, List<String> fields) {
+        return fetchMessages(logGroup, filterPattern, minutes).stream().anyMatch(message -> fieldsPresent(message, fields));
+    }
+
     private List<String> fetchMessages(String logGroup, String filterPattern, long minutes) {
         FilterLogEventsRequest request = CloudWatchQueryBuilder.search(logGroup, filterPattern, minutes);
         FilterLogEventsResponse response = cloudWatchLogsClient.filterLogEvents(request);
@@ -61,6 +71,15 @@ public class CloudWatchLogsService {
                 Object actual = json.get(expected.getKey());
                 return expected.getValue() == null ? actual == null : expected.getValue().equals(actual);
             });
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean fieldsPresent(String message, List<String> fields) {
+        try {
+            Map<?, ?> json = objectMapper.readValue(message, Map.class);
+            return fields.stream().allMatch(field -> json.get(field) != null);
         } catch (Exception e) {
             return false;
         }

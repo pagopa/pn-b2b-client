@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.Poller;
 import it.pagopa.common.util.CloudWatchLogsService;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
@@ -15,16 +17,15 @@ import org.springframework.context.annotation.Scope;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -86,10 +87,12 @@ public class AwsServiceSteps {
                                 : entry.getValue())
                         .collect(Collectors.toList());
 
-                await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    int matchCount = cloudWatchLogsService.countMatchingEvents(microservice, terms, minutes);
-                    assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), terms).isGreaterThan(0);
-                });
+                Poller.pollUntil(
+                        () -> countMatchingEventsIgnoringTransientErrors(microservice, terms, minutes),
+                        matchCount -> {
+                            assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), terms).isGreaterThan(0);
+                        },
+                        PollingConfig.of(Duration.ofMinutes(2), Duration.ofSeconds(10)));
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
@@ -211,6 +214,16 @@ public class AwsServiceSteps {
 
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    /** Ignora errori transitori di CloudWatch (es. throttling) riprovando al giro di polling successivo, invece di far fallire subito il check. */
+    private int countMatchingEventsIgnoringTransientErrors(String microservice, List<String> terms, int minutes) {
+        try {
+            return cloudWatchLogsService.countMatchingEvents(microservice, terms, minutes);
+        } catch (RuntimeException e) {
+            log.warn("Errore transitorio durante la ricerca su CloudWatch, nuovo tentativo al prossimo giro di polling", e);
+            return 0;
         }
     }
 

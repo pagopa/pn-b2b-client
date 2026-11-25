@@ -7,7 +7,7 @@
 @qa19752AuditHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPrivate (AUD_NT_LEGALOPEN_RCP)
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=PF-11111111-1111-1111-1111-111111111111 cx_type=assente uid=assente
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID] getLegalFactByIdPrivate: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -20,7 +20,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | $NULL    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=assente cx_type=PF uid=assente
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE] getLegalFactByIdPrivate: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -33,7 +33,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | $NULL    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_UID] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=assente cx_type=assente uid=22222222-2222-2222-2222-222222222222
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_UID] getLegalFactByIdPrivate: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -46,7 +46,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | 22222222-2222-2222-2222-222222222222    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_CXTYPE] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=PF-11111111-1111-1111-1111-111111111111 cx_type=PF uid=assente
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_CXTYPE] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -59,7 +59,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | $NULL    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_UID] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=PF-11111111-1111-1111-1111-111111111111 cx_type=assente uid=22222222-2222-2222-2222-222222222222
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_UID] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -72,7 +72,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | 22222222-2222-2222-2222-222222222222    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE_UID] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=assente cx_type=PF uid=22222222-2222-2222-2222-222222222222
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE_UID] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -85,7 +85,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | uid    | 22222222-2222-2222-2222-222222222222    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
 
-  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_ALL] getLegalFactByIdPrivate - audit log AUD_NT_LEGALOPEN_RCP con header opzionali cx_id=PF-11111111-1111-1111-1111-111111111111 cx_type=PF uid=22222222-2222-2222-2222-222222222222
+  Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_ALL] getLegalFactByIdPrivate: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
       | senderDenomination | Comune di Palermo                   |
@@ -97,3 +97,25 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxType | PF |
       | uid    | 22222222-2222-2222-2222-222222222222    |
     Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+
+  # PN-21832: startTransaction pubblica di pn-radd-alt (PR #388) propaga uid/cx_id/cx_type nella chiamata interna a
+  # getLegalFactByIdPrivate su pn-delivery-push. Per RADD cx_id/cx_type derivano dal bearer token usato, quindi si
+  # verifica solo che siano valorizzati, non un valore specifico.
+  Scenario: [PN-21832_LEGALOPEN_RCP_RADD] Un operatore RADD avvia il ritiro di un atto e ne scarica l'attestazione opponibile: pn-delivery-push registra nel suo audit log chi ha fatto la richiesta
+    Given viene generata una nuova notifica
+      | subject            | PN-21832 audit log radd startTransaction |
+      | senderDenomination | Comune di Palermo                        |
+    And destinatario
+      | denomination            | Mario Cucumber            |
+      | taxId                   | FRMTTR76M06B715E          |
+      | digitalDomicile_address | testpagopa3@pec.pagopa.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
+    Then la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti l'identità del chiamante, ossia i campi cx_id, cx_type e uid valorizzati
