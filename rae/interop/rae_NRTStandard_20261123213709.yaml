@@ -69,7 +69,7 @@ ko:
       responsabile del conflitto né dimostrano un difetto nella modifica
       dell'analisi del rischio.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19769
   - id_test: '[M2M_PURPOSE_TEMPLATE_EVENTS_04] L''evento di generazione del template della Risk Analysis di un purpose
     template deve essere visibile a tutti [cucumber-report-m2mv3.json]'
     error_log: |
