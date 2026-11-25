@@ -12,22 +12,34 @@ import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.boot.logging.DeferredLogFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.MapPropertySource;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertySource;
+import org.springframework.core.env.PropertySources;
 import org.springframework.core.env.StandardEnvironment;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerAsyncClient;
 import software.amazon.awssdk.services.ssm.SsmAsyncClient;
+import software.amazon.awssdk.services.ssm.model.GetParametersResponse;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Rende disponibili come property i valori di AWS Secrets Manager e Parameter Store, così nei file di properties
@@ -45,6 +57,9 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
 
     private static final Region REGION = Region.EU_SOUTH_1;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final int MAX_PARAMETERS_PER_CALL = 10;
+    private static final Pattern PARAMETER_PLACEHOLDER =
+            Pattern.compile("\\$\\{(" + AwsParameterStorePropertySource.PARAMETER_NAME.pattern() + ")[:}]");
 
     private final Log log;
 
@@ -58,6 +73,7 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
             log.info("AWS config disabled: placeholders will use local values or fallbacks");
             return;
         }
+        long start = System.nanoTime();
         AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.create();
         try {
             credentialsProvider.resolveCredentials();
@@ -65,11 +81,13 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
                     .bind(SECRET_IDS_PROPERTY, Bindable.listOf(String.class))
                     .orElse(List.of());
             MutablePropertySources propertySources = environment.getPropertySources();
-            // Il client resta aperto: i parametri SSM si leggono quando Spring risolve i placeholder
-            addAfterSystemEnvironment(propertySources, new AwsParameterStorePropertySource(
-                    SsmAsyncClient.builder().region(REGION).credentialsProvider(credentialsProvider).build()));
-            addAfterSystemEnvironment(propertySources,
-                    new MapPropertySource(SECRETS_PROPERTY_SOURCE_NAME, loadSecrets(secretIds, credentialsProvider)));
+            // Il client resta aperto per i parametri non citati nei file di properties, letti al primo utilizzo
+            SsmAsyncClient ssmClient = SsmAsyncClient.builder().region(REGION).credentialsProvider(credentialsProvider).build();
+            Map<String, Optional<String>> parameters = loadParameters(ssmClient, parameterNames(propertySources));
+            Map<String, Object> secrets = loadSecrets(secretIds, credentialsProvider);
+            addAfterSystemEnvironment(propertySources, new AwsParameterStorePropertySource(ssmClient, parameters));
+            addAfterSystemEnvironment(propertySources, new MapPropertySource(SECRETS_PROPERTY_SOURCE_NAME, secrets));
+            log.info("AWS config loaded in " + TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start) + " ms");
         } catch (RuntimeException e) {
             log.warn("AWS config not loaded, placeholders will use local values or fallbacks: " + e.getMessage());
         }
@@ -91,6 +109,57 @@ public class AwsConfigEnvironmentPostProcessor implements EnvironmentPostProcess
             }
             throw e;
         }
+    }
+
+    // Nomi SSM nei placeholder dei valori effettivi: se la property è passata con -D, il valore del file
+    // di properties non si usa e il suo parametro non si legge
+    private static Set<String> parameterNames(PropertySources propertySources) {
+        Set<String> keys = new HashSet<>();
+        Set<String> names = new LinkedHashSet<>();
+        for (PropertySource<?> source : propertySources) {
+            if (source instanceof EnumerablePropertySource<?> enumerable) {
+                for (String key : enumerable.getPropertyNames()) {
+                    if (keys.add(key) && enumerable.getProperty(key) instanceof String value) {
+                        Matcher placeholder = PARAMETER_PLACEHOLDER.matcher(value);
+                        while (placeholder.find()) {
+                            names.add(placeholder.group(1));
+                        }
+                    }
+                }
+            }
+        }
+        return names;
+    }
+
+    // GetParameters accetta al massimo 10 nomi: le chiamate partono tutte insieme e si attendono alla fine
+    private Map<String, Optional<String>> loadParameters(SsmAsyncClient client, Set<String> names) {
+        List<String> pending = new ArrayList<>(names);
+        List<List<String>> groups = new ArrayList<>();
+        for (int i = 0; i < pending.size(); i += MAX_PARAMETERS_PER_CALL) {
+            groups.add(List.copyOf(pending.subList(i, Math.min(i + MAX_PARAMETERS_PER_CALL, pending.size()))));
+        }
+        List<CompletableFuture<GetParametersResponse>> responses = groups.stream()
+                .map(group -> client.getParameters(r -> r.names(group).withDecryption(true)))
+                .toList();
+        Map<String, Optional<String>> values = new HashMap<>();
+        int loaded = 0;
+        for (int i = 0; i < groups.size(); i++) {
+            try {
+                GetParametersResponse response = join(responses.get(i));
+                for (Parameter parameter : response.parameters()) {
+                    values.put(parameter.name(), Optional.ofNullable(parameter.value()));
+                    loaded++;
+                }
+                response.invalidParameters()
+                        .forEach(name -> log.warn("AWS parameter " + name + " not found, fallback will be used"));
+            } catch (RuntimeException e) {
+                log.warn("AWS parameters " + groups.get(i) + " not loaded, fallbacks will be used: " + e.getMessage());
+            }
+            // anche i mancanti: non si richiedono di nuovo al primo utilizzo
+            groups.get(i).forEach(name -> values.putIfAbsent(name, Optional.empty()));
+        }
+        log.info("AWS parameters: " + loaded + " of " + names.size() + " loaded with " + groups.size() + " calls");
+        return values;
     }
 
     private Map<String, Object> loadSecrets(List<String> secretIds, AwsCredentialsProvider credentialsProvider) {

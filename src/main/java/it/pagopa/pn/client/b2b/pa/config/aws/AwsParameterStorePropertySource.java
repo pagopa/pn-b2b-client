@@ -12,19 +12,21 @@ import java.util.regex.Pattern;
 
 /**
  * Parametri di AWS Parameter Store indicati nel placeholder con il nome completo, es. ${/pn-test-e2e/domain:fallback}.
- * Ogni parametro viene letto una sola volta, al primo utilizzo.
+ * Quelli citati nei file di properties arrivano già letti all'avvio, gli altri si leggono al primo utilizzo:
+ * ogni parametro si chiede ad AWS una sola volta.
  */
 @Slf4j
 public class AwsParameterStorePropertySource extends PropertySource<SsmAsyncClient> {
 
     private static final String NAME = "awsParameterStore";
     // Solo nomi SSM validi: Spring cerca anche "nome:fallback" intero prima di separare il fallback
-    private static final Pattern PARAMETER_NAME = Pattern.compile("/[A-Za-z0-9_./-]+");
+    static final Pattern PARAMETER_NAME = Pattern.compile("/[A-Za-z0-9_./-]+");
 
     private final Map<String, Optional<String>> cache = new ConcurrentHashMap<>();
 
-    public AwsParameterStorePropertySource(SsmAsyncClient ssmClient) {
+    public AwsParameterStorePropertySource(SsmAsyncClient ssmClient, Map<String, Optional<String>> loadedParameters) {
         super(NAME, ssmClient);
+        cache.putAll(loadedParameters);
     }
 
     @Override
