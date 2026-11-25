@@ -130,22 +130,20 @@ public class INIPECGestionePuntualeEsitiSteps {
     @Then("la risposta sul registro {eservice} per il cf {string} non contiene recapiti")
     public void verifyResponseWithoutAddresses(Eservice eservice, String cf) {
 
-        Poller.pollUntil(
-                () -> retrieveNationalRegistryRequests(eservice),
-                items -> {
-                    Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
-                    assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(RequestStatus.WORKED.name());
+        Poller.pollUntil(() -> retrieveNationalRegistryRequests(eservice), items -> {
+            Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
+            assertThat(request.get("status").s()).as("Stato atteso").isEqualTo(RequestStatus.WORKED.name());
+            String response = request.containsKey("originalResponse") ? request.get("originalResponse").s() : null;
+            assertThat(response).as("Risposta non presente").isNotBlank();
 
-                    String resultPayload = request.containsKey("resultPayload") ? request.get("resultPayload").s() : null;
-
-                    if (eservice == Eservice.INAD) {
-                        assertThat(resultPayload).isNotBlank();
-                        assertThat(resultPayload).contains("\"digitalAddress\":[]");
-                    } else if (eservice == Eservice.INIPEC) {
-                        assertThat(resultPayload).isBlank();
-                    }
-                },
-                DB_POLLING);
+            if (eservice == Eservice.INAD) {
+                assertThat(response).contains("\"digitalAddress\":[]");
+            } else if (eservice == Eservice.INIPEC) {
+                assertThat(response).contains("\"pecProfessionista\":[]");
+                // se previsto dallo scenario
+                assertThat(response).contains("\"pecImpresa\":\"\"");
+            }
+        }, DB_POLLING);
     }
 
     private List<Map<String, AttributeValue>> retrieveNationalRegistryRequests(Eservice eservice) {
@@ -159,10 +157,12 @@ public class INIPECGestionePuntualeEsitiSteps {
 
     private Map<String, AttributeValue> assertSingleRequest(List<Map<String, AttributeValue>> items, Eservice eservice, String cf) {
 
-        assertThat(items).as("Attesa una sola request %s per correlationId=%s", eservice, sharedSteps.getCorrelationId()).hasSize(1);
-        Map<String, AttributeValue> request = items.get(0);
+        List<Map<String, AttributeValue>> matchingItems = items.stream().filter(item -> eservice.name().equals(item.get("registry").s())).toList();
+        assertThat(matchingItems).as("Attesa una sola request %s per correlationId=%s", eservice, sharedSteps.getCorrelationId()).hasSize(1);
+        Map<String, AttributeValue> request = matchingItems.get(0);
         assertThat(request.get("taxId").s()).as("CF atteso").isEqualTo(cf);
         assertThat(request.get("registry").s()).as("Registro atteso").isEqualTo(eservice.name());
+
         return request;
     }
 
@@ -243,7 +243,8 @@ public class INIPECGestionePuntualeEsitiSteps {
                     Map<String, AttributeValue> request = assertSingleRequest(items, eservice, cf);
 
                     int retryCount = getNumber(request, "retryCount");
-                    assertThat(retryCount).as("Atteso almeno un retry sulla richiesta").isGreaterThanOrEqualTo(1);}, DB_POLLING);
+                    assertThat(retryCount).as("Atteso almeno un retry sulla richiesta").isGreaterThanOrEqualTo(1);
+                }, DB_POLLING);
     }
 
     @Then("la richiesta verso il servizio {eservice} per il cf {string} risulta in stato {requestStatus}")
@@ -421,7 +422,7 @@ public class INIPECGestionePuntualeEsitiSteps {
                                     .as("cf=%s: nessun messaggio in %s per correlationId=%s", cf, NATIONAL_REGISTRY_GATEWAY_INPUTS_DLQ, correlationId)
                                     .anyMatch(message -> SqsMessageUtils.hasTaxId(message, cf)
                                             && SqsMessageUtils.fieldMatches(message, "correlationId",
-                                                    id -> !id.isEmpty() && correlationId.startsWith(id))));
+                                            id -> !id.isEmpty() && correlationId.startsWith(id))));
                 },
                 DLQ_QUEUE_POLLING);
     }
