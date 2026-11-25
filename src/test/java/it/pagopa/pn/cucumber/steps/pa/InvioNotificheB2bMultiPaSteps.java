@@ -49,7 +49,7 @@ public class InvioNotificheB2bMultiPaSteps {
         AtomicReference<BffLegalNotificationsResponse> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, null, null, sharedSteps.getNotificationIun(), 1, null))
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, null, sharedSteps.getNotificationIun(), 1, null))
             );
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionError assertionError) {

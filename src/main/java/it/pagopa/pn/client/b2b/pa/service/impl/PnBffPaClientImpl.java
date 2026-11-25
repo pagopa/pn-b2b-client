@@ -128,7 +128,7 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public BffLegalNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public BffLegalNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         BffLegalNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, iunMatch, size, nextPagesKey);
         return response;
     }

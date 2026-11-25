@@ -1488,12 +1488,7 @@ public class SharedSteps {
         BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
                 todayDate.minusDays(upperLimit),
                 todayDate.minusDays(lowerLimit),
-                recipientTaxId,
-                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE,
-                null,
-                null,
-                50,
-                null);
+                recipientTaxId, null, null, 50, null);
         AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();
@@ -1523,7 +1518,6 @@ public class SharedSteps {
                 todayDate.minusDays(lowerLimit),
                 recipientTaxId,
                 it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.valueOf(status.trim().toUpperCase()),
-                null,
                 null,
                 50,
                 null);
