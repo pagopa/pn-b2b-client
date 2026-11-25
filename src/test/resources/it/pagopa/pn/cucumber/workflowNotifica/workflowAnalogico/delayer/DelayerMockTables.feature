@@ -24,12 +24,12 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
       | numberOfShipments           | 46 |
       | firstWeekNumberOfShipments  | 27 |
       | secondWeekNumberOfShipments | 19 |
-    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v2.csv"
+    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v3.csv"
     And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek "2026-04-27"
     And viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate "2026-04-27" e capacità di stampa giornaliera 10
     And devono esistere capacità dichiarate mock per la deliveryDate "2026-04-27" e la provincia "P1"
     And devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate "2026-04-27"
-    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "infinityDriverP1" e la geokey "P1"
+    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
     When vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES
     Then la tabella "pn-PaperDeliverySenderLimitMock" non contiene alcun record
@@ -57,7 +57,7 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
     And vengono caricati i moduli commessa mock tramite il seguente zip: "portfatt_modulo_commessa_mock_maggio_26.zip"
     And vengono applicati localmente i seguenti moduli commessa per la provincia "P1":
       | classpath:/modulo_commessa_ranking2nd_890_mock_aprile.json |
-    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v2.csv"
+    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v3.csv"
     And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek "2026-04-27"
     And viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate "2026-04-27" e capacità di stampa giornaliera 10
     Then si verifica che la tabella pn-PaperDeliverySenderLimitMock contenga i nuovi limiti mittenti per la provincia "P1"
@@ -67,7 +67,7 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
       | secondWeekNumberOfShipments | 19 |
     And devono esistere capacità dichiarate mock per la deliveryDate "2026-04-27" e la provincia "P1"
     And devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate "2026-04-27"
-    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "infinityDriverP1" e la geokey "P1"
+    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
 
   @delayerMockTables @work-item:QA-18551
@@ -121,12 +121,12 @@ Feature: Delayer — pulizia tabelle mock del Simulatore tramite DELETE_MOCK_TAB
       | numberOfShipments           | 46 |
       | firstWeekNumberOfShipments  | 27 |
       | secondWeekNumberOfShipments | 19 |
-    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v2.csv"
+    And vengono caricate le capacità dei recapitisti mock tramite il file "MockCapacity_v3.csv"
     And il CSV "tcSenderPriority.csv" è importato da S3 nella pn-DelayerPaperDeliveryMock tramite lambda di test con deliveryWeek "2026-04-27"
     And viene avviata la step function BatchWorkflowStateMachine sulle tabelle mock con deliveryDate "2026-04-27" e capacità di stampa giornaliera 10
     And devono esistere capacità dichiarate mock per la deliveryDate "2026-04-27" e la provincia "P1"
     And devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate "2026-04-27"
-    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "infinityDriverP1" e la geokey "P1"
+    And devono esistere capacità utilizzate mock per la deliveryDate "2026-04-27", il recapitista "driverRanking2nd_890" e la geokey "P1"
     And devono esistere limiti mittente utilizzati mock per la deliveryDate "2026-04-20" e la provincia "P1"
     And vengono conteggiati i record delle tabelle reali per la deliveryDate "2026-04-27", la provincia "P1", il prodotto "890" e il recapitista "driverRanking2nd_890" e ciascuna contiene almeno un record
     When vengono eliminate e ricreate le tabelle mock tramite DELETE_MOCK_TABLES
