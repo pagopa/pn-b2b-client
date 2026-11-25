@@ -3146,18 +3146,17 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
       	at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-archiviation.feature:50)
     procedure: |
-      Riesaminare lo scenario che tenta un'operazione sulla finalità agevolata da
-      parte di un utente diverso dal creatore. Consultare il codice di risposta
-      restituito dall'API e l'asserzione in DelegationCommonStep.thenStatusCodeIs;
-      confrontare il risultato con la precedente presa visione dei log e la
-      riesecuzione locale documentata su Confluence.
+      Esamina lo scenario in cui un admin di un ente diverso dal creatore
+      tenta di archiviare un purpose template sospeso. Confronta il 403
+      atteso con il 404 restituito e consulta il bug di prodotto che
+      richiede di chiarire il comportamento previsto.
+
     result: |
-      L'operazione è respinta con HTTP 404 invece del 403 previsto per il caso di
-      autorizzazione negativa. L'analisi pregressa documenta lo scostamento del
-      codice e un rilancio in locale, senza registrare un risultato conclusivo né
-      una causa verificata. Il comportamento effettivo resta quindi difforme
-      dall'aspettativa del test.
-    link_prod_bug: ''
+      Il tentativo di archiviazione da parte dell'admin di GSP restituisce
+      HTTP 404, mentre lo scenario prevede HTTP 403. La stessa difformità
+      è segnalata nel bug di prodotto anche per le transizioni di
+      riattivazione, sospensione e archiviazione.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-9494
     link_suite_bug: ''
   - id_test: '[PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte
     di un utente non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3166,18 +3165,24 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
       	at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-reactivation.feature:50)
     procedure: |
-      Riesaminare lo scenario che tenta un'operazione sulla finalità agevolata da
-      parte di un utente diverso dal creatore. Consultare il codice di risposta
-      restituito dall'API e l'asserzione in DelegationCommonStep.thenStatusCodeIs;
-      confrontare il risultato con la precedente presa visione dei log e la
-      riesecuzione locale documentata su Confluence.
+      Esamina lo scenario in cui un admin di un ente diverso dal creatore
+      tenta di riattivare un purpose template. Confronta il 403 atteso
+      con il 404 restituito e consulta il bug di prodotto.
+      
+      Verifica anche lo stato del template prima della richiesta: la feature
+      lo prepara in PUBLISHED, sebbene il titolo descriva un template sospeso.
+
     result: |
-      L'operazione è respinta con HTTP 404 invece del 403 previsto per il caso di
-      autorizzazione negativa. L'analisi pregressa documenta lo scostamento del
-      codice e un rilancio in locale, senza registrare un risultato conclusivo né
-      una causa verificata. Il comportamento effettivo resta quindi difforme
-      dall'aspettativa del test.
-    link_prod_bug: ''
+      Il tentativo di riattivazione da parte dell'admin di GSP restituisce
+      HTTP 404, mentre lo scenario prevede HTTP 403. La difformità rientra
+      nella casistica del bug di prodotto, che richiede di chiarire quale
+      status sia corretto per un template appartenente a un altro ente.
+      
+      La feature crea tuttavia il template in stato PUBLISHED e non lo
+      sospende prima della richiesta. Occorre correggere o chiarire questa
+      precondizione e ripetere la verifica su un template sospeso.
+
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-9494
     link_suite_bug: ''
   - id_test: '[PURPOSE_TEMPLATE_SUSPENSION_NO_CREATOR] Sospensione di una finalità agevolata da parte di un utente
     non appartenente alla PA che ha creato la finalità agevolata (error 403) [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3186,18 +3191,21 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.thenStatusCodeIs(DelegationCommonStep.java:176)
       	at ✽.si ottiene lo status code 403(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-suspension.feature:50)
     procedure: |
-      Riesaminare lo scenario che tenta un'operazione sulla finalità agevolata da
-      parte di un utente diverso dal creatore. Consultare il codice di risposta
-      restituito dall'API e l'asserzione in DelegationCommonStep.thenStatusCodeIs;
-      confrontare il risultato con la precedente presa visione dei log e la
-      riesecuzione locale documentata su Confluence.
+      Esamina lo scenario in cui un admin di un ente diverso dal creatore
+      tenta di sospendere un purpose template pubblicato. Confronta il 403
+      atteso con il 404 restituito e consulta il bug di prodotto che
+      richiede di chiarire il comportamento previsto.
+
     result: |
-      L'operazione è respinta con HTTP 404 invece del 403 previsto per il caso di
-      autorizzazione negativa. L'analisi pregressa documenta lo scostamento del
-      codice e un rilancio in locale, senza registrare un risultato conclusivo né
-      una causa verificata. Il comportamento effettivo resta quindi difforme
-      dall'aspettativa del test.
-    link_prod_bug: ''
+      Il tentativo di sospensione da parte dell'admin di GSP restituisce
+      HTTP 404, mentre lo scenario prevede HTTP 403. La difformità rientra
+      nella casistica del bug di prodotto, che comprende anche la
+      riattivazione e l'archiviazione.
+
+      È necessario chiarire se, per un template appartenente a un altro
+      ente, lo status corretto sia 403 o 404 prima di modificare il test
+      o confermare un difetto del servizio.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-9494
     link_suite_bug: ''
   - id_test: '[COMB_NON_AMMESSE_27_1_DRAFT] Tentativo attivazione admin con workflow in stato DRAFT (negativo) [cucumber-report-nrt-bff-m2mv2.json]'
     error_log: |
@@ -3205,16 +3213,15 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/nuovi-operatori-combinazioni-non-ammesse.feature:153)
     procedure: |
-      Esaminare il caso negativo di attivazione con workflow nello stato DRAFT,
-      confrontando il risultato dell'API con la verifica HTTP in
-      ClientCommonSteps.verifyStatusCode. Riscontrare la stessa combinazione fra
-      stato del workflow e codice atteso nella documentazione dei casi non ammessi.
+      Esamina lo scenario di attivazione della finalità con workflow di
+      revisione in stato DRAFT. Confronta la risposta della POST di
+      attivazione con il 409 atteso e consulta il ticket PIN-10441.
+
     result: |
-      Con il workflow in stato DRAFT, la richiesta di attivazione restituisce HTTP
-      400 anziché il 409 atteso. La precedente analisi Confluence descrive lo stesso
-      scostamento come anomalia già nota, ma non ne fornisce la spiegazione
-      applicativa o un ticket di riferimento.
-    link_prod_bug: ''
+      La richiesta di attivazione viene rifiutata con HTTP 400, codice
+      004-0055, perché il workflow di revisione non è nello stato SIGNED.
+      Lo scenario attende invece HTTP 409.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-10441
     link_suite_bug: ''
   - id_test: '[COMB_NON_AMMESSE_27_1_ASSIGNED] Tentativo attivazione admin con workflow in stato ASSIGNED (negativo)
     [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3223,16 +3230,19 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/nuovi-operatori-combinazioni-non-ammesse.feature:166)
     procedure: |
-      Esaminare il caso negativo di attivazione con workflow nello stato ASSIGNED,
-      confrontando il risultato dell'API con la verifica HTTP in
-      ClientCommonSteps.verifyStatusCode. Riscontrare la stessa combinazione fra
-      stato del workflow e codice atteso nella documentazione dei casi non ammessi.
+      Esamina lo scenario di attivazione con workflow di revisione in
+      stato ASSIGNED. Confronta la risposta della POST con il 409 atteso,
+      analizza il dettaglio del 400 e consulta il ticket PIN-10441.
+
     result: |
-      Con il workflow in stato ASSIGNED, la richiesta di attivazione restituisce
-      HTTP 400 anziché il 409 atteso. La precedente analisi Confluence descrive lo
-      stesso scostamento come anomalia già nota, ma non ne fornisce la spiegazione
-      applicativa o un ticket di riferimento.
-    link_prod_bug: ''
+      La richiesta di attivazione viene rifiutata con HTTP 400, codice
+      004-0024, «Missing risk analysis», mentre lo scenario attende 409.
+
+      Il caso è incluso in PIN-10441, relativo all'uniformità dei codici
+      HTTP per stati workflow non ammessi. Tuttavia, la risposta di questa
+      run indica l'assenza di un'analisi del rischio valida e non identifica
+      esplicitamente lo stato ASSIGNED come causa del rifiuto.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-10441
     link_suite_bug: ''
   - id_test: '[COMB_NON_AMMESSE_27_1_SUBMITTED] Tentativo attivazione admin con workflow in stato SUBMITTED (negativo)
     [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3241,16 +3251,19 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/nuovi-operatori-combinazioni-non-ammesse.feature:181)
     procedure: |
-      Esaminare il caso negativo di attivazione con workflow nello stato SUBMITTED,
-      confrontando il risultato dell'API con la verifica HTTP in
-      ClientCommonSteps.verifyStatusCode. Riscontrare la stessa combinazione fra
-      stato del workflow e codice atteso nella documentazione dei casi non ammessi.
+      Esamina lo scenario di attivazione con workflow di revisione in
+      stato SUBMITTED. Confronta la risposta della POST con il 409 atteso,
+      analizza il dettaglio del 400 e consulta il ticket PIN-10441.
+
     result: |
-      Con il workflow in stato SUBMITTED, la richiesta di attivazione restituisce
-      HTTP 400 anziché il 409 atteso. La precedente analisi Confluence descrive lo
-      stesso scostamento come anomalia già nota, ma non ne fornisce la spiegazione
-      applicativa o un ticket di riferimento.
-    link_prod_bug: ''
+      La richiesta di attivazione viene rifiutata con HTTP 400, codice
+      004-0055, perché il workflow di revisione non è nello stato SIGNED.
+      Lo scenario attende invece HTTP 409.
+
+      La difformità sul codice HTTP è coerente con PIN-10441, che propone
+      l'uso di 409 per uniformare la gestione degli stati workflow non
+      ammessi.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-10441
     link_suite_bug: ''
   - id_test: '[COMB_NON_AMMESSE_27_1_REJECTED] Tentativo attivazione admin con workflow in stato REJECTED (negativo)
     [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3259,16 +3272,19 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/purpose/nuovi-operatori-combinazioni-non-ammesse.feature:197)
     procedure: |
-      Esaminare il caso negativo di attivazione con workflow nello stato REJECTED,
-      confrontando il risultato dell'API con la verifica HTTP in
-      ClientCommonSteps.verifyStatusCode. Riscontrare la stessa combinazione fra
-      stato del workflow e codice atteso nella documentazione dei casi non ammessi.
+      Esamina lo scenario di attivazione con workflow di revisione in
+      stato REJECTED. Confronta la risposta della POST con il 409 atteso,
+      analizza il dettaglio del 400 e consulta il ticket PIN-10441.
+
     result: |
-      Con il workflow in stato REJECTED, la richiesta di attivazione restituisce
-      HTTP 400 anziché il 409 atteso. La precedente analisi Confluence descrive lo
-      stesso scostamento come anomalia già nota, ma non ne fornisce la spiegazione
-      applicativa o un ticket di riferimento.
-    link_prod_bug: ''
+      La richiesta di attivazione viene rifiutata con HTTP 400, codice
+      004-0055, perché il workflow di revisione non è nello stato SIGNED.
+      Lo scenario attende invece HTTP 409.
+
+      La difformità sul codice HTTP è coerente con PIN-10441, che propone
+      l'uso di 409 per uniformare la gestione degli stati workflow non
+      ammessi.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-10441
     link_suite_bug: ''
   - id_test: '[PURPOSE_RISK_ANALYSIS_DOCUMENT_DOWNLOAD_2] Per una finalità precedentemente creata dal fruitore, la
     quale è stata in passato almeno per un momento ACTIVE, la quale ha avuto un aggiornamento della stima di carico
@@ -3282,20 +3298,25 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.purpose.PurposeRiskAnalysisDocumentDownloadSteps.userDownloadRiskAnalysis(PurposeRiskAnalysisDocumentDownloadSteps.java:54)
       	at ✽.l'utente scarica il documento di analisi del rischio(classpath:it/pagopa/pn/cucumber/purpose/purpose-risk-analysis-document-download.feature:44)
     procedure: |
-      Consultare lo stack trace del polling con cui lo scenario attende il documento
-      di analisi del rischio associato alla finalità. Verificare quale richiesta di
-      lettura o download non ha soddisfatto la condizione entro il tempo previsto.
-      Confrontare con la precedente riesecuzione isolata locale, riportata come
-      superata, e considerare i tempi di propagazione sotto carico come possibile
-      fattore.
+      Esamina le risposte delle GET della finalità dopo l'aggiornamento
+      della stima di carico. Verifica lo stato della versione corrente,
+      la presenza del documento di analisi del rischio e la durata
+      dell'attesa. Confronta l'esito con il rerun locale.
+
     result: |
-      La run QA non riesce a recuperare il documento di analisi del rischio entro il
-      limite del polling. In Confluence è documentato il superamento del caso in
-      esecuzione isolata e viene ipotizzato un effetto del volume di richieste. Il
-      dato conferma un fallimento temporale della verifica, ma non prova che il
-      traffico sia la causa specifica.
+      Lo scenario fallisce in NRT e risulta superato nel rerun locale.
+
+      In NRT la nuova versione della finalità risulta ACTIVE. Le GET
+      rispondono HTTP 200, ma la versione corrente non contiene il
+      documento di analisi del rischio e il BFF indica isDocumentReady
+      false fino all'esaurimento del polling.
+
+      Il test si interrompe prima del download e del confronto con il
+      documento della versione precedente. Un'attesa più lunga è da
+      valutare, ma i log non chiariscono la causa della mancata
+      disponibilità né se il documento sia stato generato in seguito.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19765
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 18] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3303,10 +3324,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
       	at ✽.si ottiene status code 204(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 19] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3314,10 +3343,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #3 | line: 20] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3325,10 +3362,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #4 | line: 21] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3336,10 +3381,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #5 | line: 22] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3347,10 +3400,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #1 | line: 27] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3358,10 +3419,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_01] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, alla richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente
     al primo aderente, va a buon fine [Examples: (senza nome) | Example #2 | line: 28] [cucumber-report-nrt-bff-m2mv2.json]'
@@ -3369,10 +3438,18 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <403> but was: <400>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
       	at ✽.si ottiene status code 403(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:14)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea e verifica un attributo per un aderente, quindi richiedine
+      la revoca come admin dell'ente verificatore. Controlla la richiesta
+      DELETE e la risposta restituita dal BFF.
+
+    result: |
+      Nell'esecuzione NRT la richiesta di revoca invia agreementId nel
+      body anziché nella query. Il BFF risponde HTTP 400 con codice
+      008-9999 e dettaglio "Incorrect value for query.agreementId";
+      il test attende una risposta di successo.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[TENANT_REVOKE_VERIFIED_ATTRIBUTE_02] Per un attributo precedentemente verificato da un primo aderente
     ad un secondo aderente, e poi successivamente verificato da un terzo aderente sempre al secondo aderente, alla
     richiesta di revoca da parte di un utente con sufficienti permessi (admin) appartenente al primo aderente, va
@@ -3381,10 +3458,21 @@ ko:
       org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
       	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:106)
       	at ✽.si ottiene status code 204(classpath:it/pagopa/pn/cucumber/tenant/tenant-revoke-verified-attribute.feature:42)
-    procedure: ''
-    result: ''
+    procedure: |
+      Fai verificare lo stesso attributo a PA1 da PA2 e da GSP,
+      su due distinte richieste di fruizione. Richiedi la revoca
+      come admin di PA2 e controlla la richiesta e la risposta.
+
+    result: |
+      Le verifiche dell'attributo da parte di PA2 e GSP rispondono
+      HTTP 204. La successiva richiesta di revoca invia agreementId
+      nel body anziché nella query; il BFF risponde HTTP 400 con
+      codice 008-9999 e dettaglio "Incorrect value for query.agreementId".
+
+      Il test si interrompe prima di verificare che l'attributo sia
+      revocato da PA2 e rimanga verificato da GSP.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[VOUCHER_GENERATION_AGREEMENT_05] La generazione del Voucher va a buon fine quando il fruitore perde
     e poi riottiene un attributo verificato necessario all’utilizzo dell’EService [cucumber-report-nrt-bff-m2mv2.json]'
     error_log: |
@@ -3393,10 +3481,24 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.revokeVerifiedAttributeToTenant(BFFDataPreparationService.java:1261)
       	at it.pagopa.pn.interop.cucumber.steps.voucher.VoucherGenerationAgreementSteps.revokeAttribute(VoucherGenerationAgreementSteps.java:94)
       	at ✽."PA2" ha già revocato quell'attributo "VERIFIED" a "PA1"(classpath:it/pagopa/pn/cucumber/voucher/voucher-generation-agreement.feature:87)
-    procedure: ''
-    result: ''
+    procedure: |
+      Predisponi una richiesta di fruizione attiva che richiede un
+      attributo verificato. Revoca l'attributo al fruitore, verificalo
+      nuovamente e richiedi la generazione del voucher. Controlla
+      l'esito delle operazioni.
+
+    result: |
+      Il test fallisce nello step di revoca dell'attributo verificato.
+      La DELETE invia agreementId nel body anziché nella query e il BFF
+      risponde HTTP 400, con codice 008-9999 e dettaglio
+      "Incorrect value for query.agreementId".
+
+      La nuova verifica dell'attributo e la richiesta del voucher non
+      vengono raggiunte. La difformità è riconducibile a QA-19747;
+      occorre rieseguire lo scenario dopo l'aggiornamento dell'OpenAPI
+      per verificare il comportamento attuale.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
   - id_test: '[VOUCHER_GENERATION_AGREEMENT_17] La generazione del Voucher fallisce quando il fruitore perde un attributo
     verificato necessario all’utilizzo dell’EService [cucumber-report-nrt-bff-m2mv2.json]'
     error_log: |
@@ -3405,7 +3507,21 @@ ko:
       	at it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService.revokeVerifiedAttributeToTenant(BFFDataPreparationService.java:1261)
       	at it.pagopa.pn.interop.cucumber.steps.voucher.VoucherGenerationAgreementSteps.revokeAttribute(VoucherGenerationAgreementSteps.java:94)
       	at ✽."PA2" ha già revocato quell'attributo "VERIFIED" a "PA1"(classpath:it/pagopa/pn/cucumber/voucher/voucher-generation-agreement.feature:298)
-    procedure: ''
-    result: ''
+    procedure: |
+      Predisponi una richiesta di fruizione attiva che richiede un
+      attributo verificato. Revoca l'attributo al fruitore, verifica
+      la sospensione della richiesta e richiedi il voucher, controllando
+      che la generazione sia rifiutata con HTTP 400.
+
+    result: |
+      Il test fallisce nello step di revoca dell'attributo verificato.
+      La DELETE invia agreementId nel body anziché nella query e il BFF
+      risponde HTTP 400, con codice 008-9999 e dettaglio
+      "Incorrect value for query.agreementId".
+
+      La verifica della sospensione e la richiesta del voucher non
+      vengono raggiunte. La difformità è riconducibile a QA-19747;
+      occorre rieseguire lo scenario dopo l'aggiornamento dell'OpenAPI
+      per verificare il comportamento attuale.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19747
