@@ -24,9 +24,24 @@ ko:
       	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:563)
       	at it.pagopa.pn.interop.cucumber.steps.purpose.PurposeCommonStep.previousPurposeCreationIsMalformed(PurposeCommonStep.java:102)
       	at ✽.la precedente richiesta risulta malformata e riporta gli errori:(classpath:it/pagopa/pn/cucumber/catalog/e-service-risk-analysis-addition.feature:407)
-    procedure: ''
-    result: ''
-    link_prod_bug: ''
+    procedure: |
+      Crea un template e-service in ricezione come GSP e inserisci
+      un'analisi del rischio con dati particolari e giudiziari,
+      omettendo le misure tecniche e organizzative. Controlla la
+      risposta all'inserimento e il successivo tentativo di pubblicazione.
+
+    result: |
+      La POST dell'analisi del rischio risponde HTTP 204 nonostante
+      l'assenza delle misure tecniche: comportamento coerente con il
+      bug prodotto descritto, il cui esempio utilizza tenantKind PRIVATE
+      mentre questo scenario utilizza GSP.
+
+      Il test prosegue e la pubblicazione risponde HTTP 404, codice
+      011-0018, per mancanza del documento di interfaccia. L'assertion
+      confronta questo 404 con il 400 atteso, non la risposta della
+      POST dell'analisi del rischio. La causa della mancanza
+      dell'interfaccia non è chiarita dai log.
+    link_prod_bug: https://pagopa.atlassian.net/browse/PIN-10963
     link_suite_bug: ''
   - id_test: '[INTEROP-EST-TK-02] A seguito del cambiamento di tenant kind si tenta modificare la risk analysis dell''e-service
     template [Examples: (senza nome) | Example #2 | line: 3532] [cucumber-report-adeg-analisi-rischio.json]'
@@ -38,8 +53,21 @@ ko:
       	at it.pagopa.interop.maintenance.InteropMaintenanceServiceImpl.alignTenantKind(InteropMaintenanceServiceImpl.java:129)
       	at it.pagopa.interop.maintenance.InteropMaintenanceServiceImpl.alignTenantKinds(InteropMaintenanceServiceImpl.java:112)
       	at it.pagopa.pn.interop.cucumber.steps.maintenance.TenantSteps.alignTenantKindsAfterRiskAnalysisTest(TenantSteps.java:71)
-    procedure: ''
-    result: ''
+    procedure: |
+      Crea un template e-service in ricezione come PA4, modifica
+      il tenant kind a GSP e aggiorna l'analisi del rischio in modo
+      coerente. Controlla la risposta e il ripristino finale del tenant.
+
+    result: |
+      La modifica dell'analisi del rischio risponde HTTP 204. Il KO
+      si verifica successivamente nell'hook di ripristino: il tentativo
+      di riportare PA4 a PA riceve HTTP 409, codice 005-10034, per
+      un'operazione in corso sulla stessa risorsa.
+
+      Il polling propaga il conflitto senza ritentare e il ripristino
+      non è confermato dall'hook. I log non identificano l'operazione
+      responsabile del conflitto né dimostrano un difetto nella modifica
+      dell'analisi del rischio.
     link_prod_bug: ''
     link_suite_bug: ''
   - id_test: '[M2M_PURPOSE_TEMPLATE_EVENTS_04] L''evento di generazione del template della Risk Analysis di un purpose
@@ -83,10 +111,6 @@ ko:
       di configurare 25 tentativi con intervalli di 5 secondi,
       portando l'attesa nominale massima da 57,5 a 120 secondi,
       escluso il tempo delle chiamate HTTP.
-
-      L'efficacia della modifica dovrà essere verificata mediante
-      una nuova esecuzione NRT.
-
     link_prod_bug: ''
     link_suite_bug: https://pagopa.atlassian.net/browse/QA-19746
   - id_test: '[M2MG_VERIFIEDATTRIBUTES_7] [Examples: (senza nome) | Example #1 | line: 216] [cucumber-report-m2mv3.json]'
