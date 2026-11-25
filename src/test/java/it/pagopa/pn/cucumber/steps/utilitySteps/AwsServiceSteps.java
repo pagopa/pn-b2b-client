@@ -3,7 +3,7 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.common.util.CloudWatchQueryBuilder;
+import it.pagopa.common.util.CloudWatchLogsService;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -12,9 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
-import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsResponse;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
@@ -34,7 +31,7 @@ import static org.awaitility.Awaitility.await;
 @RequiredArgsConstructor
 public class AwsServiceSteps {
     private final SharedSteps sharedSteps;
-    private final CloudWatchLogsClient cloudWatchLogsClient;
+    private final CloudWatchLogsService cloudWatchLogsService;
     private boolean checkAuditLogDisabled;
     private final DynamoDbService dynamoDbService;
 
@@ -83,20 +80,15 @@ public class AwsServiceSteps {
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
         if (!checkAuditLogDisabled) {
             try {
-                StringBuilder sb = new StringBuilder();
-                queryFiltersMap.forEach((key, value) -> {
-                    if (key.equalsIgnoreCase("IUN")) {
-                        sb.append("\"").append(value.equals("auto") ? sharedSteps.getNotificationIun() : value).append("\" ");
-                    } else {
-                        sb.append("\"").append(value).append("\" ");
-                    }
-                });
-                String search = sb.toString().trim();
+                List<String> terms = queryFiltersMap.entrySet().stream()
+                        .map(entry -> entry.getKey().equalsIgnoreCase("IUN") && entry.getValue().equals("auto")
+                                ? sharedSteps.getNotificationIun()
+                                : entry.getValue())
+                        .collect(Collectors.toList());
 
                 await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
-                    FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                    assertThat(logResponse.events().size()).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), search).isGreaterThan(0);
+                    int matchCount = cloudWatchLogsService.countMatchingEvents(microservice, terms, minutes);
+                    assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), terms).isGreaterThan(0);
                 });
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);

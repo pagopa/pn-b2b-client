@@ -2,6 +2,8 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.common.config.AwsConfig;
+import it.pagopa.common.util.CloudWatchLogsService;
+import it.pagopa.pn.client.b2b.audit.AuditLogPrivateApiClient;
 import it.pagopa.pn.cucumber.steps.config.SendHttpCallExecutorConfiguration;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.selfcare.privateapi.AooUoIdsApi;
 import it.pagopa.pn.client.b2b.pa.cache.CacheConfig;
@@ -272,6 +274,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnMandateAppIoClientImpl.class,
         ReworkTimelineClientImpl.class,
         PnPaB2bInternalInformalClientImpl.class,
+        CloudWatchLogsService.class,
+        AuditLogPrivateApiClient.class,
         LambdaInvoker.class,
         TemplateEngineConfigBean.class,
         SchemaValidator.class,
