@@ -29,7 +29,8 @@ public enum DynamoTableName {
     NATIONAL_REGISTRIES_REQUESTS_WITH_INDEX_REGISTRY_STATUS("pn-NationalRegistriesRequests"),
     NATIONAL_REGISTRIES_BATCHES_WITH_INDEX_STATUS("pn-NationalRegistriesBatches"),
     NOTIFICATIONS_METADATA("pn-NotificationsMetadata"),
-    PT_DELEGATIONS("pn-PtDelegations");
+    PT_DELEGATIONS("pn-PtDelegations"),
+    CAMPAIGNS("pn-Campaigns");
 
     private final String value;
 

@@ -1,6 +1,8 @@
 import re
 from collections import Counter
 from datetime import date
+from html import escape
+from urllib.parse import quote
 
 from .core import Step, TestCase
 
@@ -11,6 +13,15 @@ DISCLAIMER = ("Le verifiche descritte in questo e in tutti i documenti di proget
               "QR code, NFC, sensori, risoluzioni) vengono eseguite se possibile, in "
               "funzione del device disponibile al momento, ma non sono testate su "
               "dispositivi diversi.")
+
+
+def issue_label(key: str, base_url: str, statuses: dict[str, str], html_output: bool = False) -> str:
+    label = escape(key) if html_output else key
+    if base_url:
+        url = f'{base_url}/browse/{quote(key, safe="")}'
+        label = f'<a href="{escape(url, quote=True)}">{label}</a>' if html_output else f'[{label}]({url})'
+    status = statuses.get(key, 'Non disponibile').replace('\n', ' ').replace('\r', ' ')
+    return f'{label} — {escape(status)}' if html_output else f'{label} — {escape(status).replace("|", "&#124;")}'
 
 
 def replace_quoted_values(text: str, value_terms: dict[str, str]) -> str:
@@ -37,6 +48,9 @@ def render_document(
     excluded_fields: list[str] | None = None,
     field_value_phrases: dict[str, dict[str, str]] | None = None,
     step_phrases: list[dict[str, str]] | None = None,
+    jira_base_url: str = "",
+    jira_statuses: dict[str, str] | None = None,
+    versions: list[dict] | None = None,
 ) -> str:
     business_terms = business_terms or {}
     value_terms = value_terms or {}
@@ -44,6 +58,8 @@ def render_document(
     excluded_fields = excluded_fields or []
     field_value_phrases = field_value_phrases or {}
     step_phrases = step_phrases or []
+    show_jira_status = jira_statuses is not None
+    jira_statuses = jira_statuses or {}
     if not isinstance(excluded_fields, list) or any(not isinstance(field, str) for field in excluded_fields):
         raise ValueError("output.exclude_fields must be a list of field names")
     if layout != "cards":
@@ -53,12 +69,18 @@ def render_document(
     title = f"PST — {qa_epic}" if qa_epic else "PST — Casi di test"
     lines = [f"# {title}", "", "## Informazioni generali", "",
              "| Campo | Valore | Note |", "| --- | --- | --- |",
-             f"| Work-item | {', '.join(work_item_ids or []) or 'Da definire'} | Work-item associati |",
-             f"| QA Epic | {qa_epic or 'Da definire'} | Release attiva |",
+             f"| Work-item | {', '.join(issue_label(key, jira_base_url, jira_statuses) for key in work_item_ids) if work_item_ids and show_jira_status else ', '.join(work_item_ids or []) or 'Da definire'} | Work-item associati |",
+             f"| QA Epic | {issue_label(qa_epic, jira_base_url, jira_statuses) if qa_epic and show_jira_status else qa_epic or 'Da definire'} | Release attiva |",
              "| Responsabile | Da definire | Fonte da definire |",
              f"| Data aggiornamento | {(updated_on or date.today()).strftime('%d/%m/%Y')} | Generata automaticamente |",
-             f"| Scenari | {len(tests)} | |", "", "**DISCLAIMER**", "", DISCLAIMER,
-             "", "## Casi di test", ""]
+             f"| Scenari | {len(tests)} | |", ""]
+    if versions:
+        lines.extend(["<details>", "<summary>Storico versioni</summary>", "",
+                      "| Versione | Data | Modifica |", "| --- | --- | --- |"])
+        lines.extend(f"| {row['version']} | {row['date']} | {row['description']} |"
+                     for row in reversed(versions))
+        lines.extend(["", "</details>", ""])
+    lines.extend(["**DISCLAIMER**", "", DISCLAIMER, "", "## Casi di test", ""])
     for test in tests:
         groups = _group_steps(test.steps)
         short_id = _compact_id(test.test_id)

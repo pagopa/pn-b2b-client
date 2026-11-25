@@ -8,10 +8,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,6 +24,24 @@ public class DynamoDbService {
 
     public QueryResponse call(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         return dynamoDbClient.query(buildRequest(tableName, attributeValues));
+    }
+
+    /**
+     * Restituisce il primo item della tabella privo dell'attributo indicato che soddisfa il criterio.
+     * Le pagine dello Scan vengono scorse in modo lazy: il Limit si applica prima del filtro.
+     */
+    public Optional<Map<String, AttributeValue>> findFirstItemWithoutAttribute(DynamoTableName tableName, String attributeName,
+                                                                               Predicate<Map<String, AttributeValue>> criteria) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName.getValue())
+                .filterExpression("attribute_not_exists(#attr)")
+                .expressionAttributeNames(Map.of("#attr", attributeName))
+                .build();
+        return dynamoDbClient.scanPaginator(request)
+                .items()
+                .stream()
+                .filter(criteria)
+                .findFirst();
     }
 
     private static QueryRequest buildRequest(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
@@ -39,6 +60,7 @@ public class DynamoDbService {
             case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
+            case CAMPAIGNS -> queryWithoutFilters(tableName, List.of("senderId", "campaignId"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
             case PT_DELEGATIONS -> queryWithoutFilters(tableName, "ptId", attributeValues);
             case BATCH_POLLING -> queryWithoutFilters(tableName, "batchId", attributeValues);
@@ -139,6 +161,20 @@ public class DynamoDbService {
                 .items()
                 .stream()
                 .toList();
+    }
+
+    /**
+     * Verifica se la tabella non contiene alcun record tramite una Scan con Limit=1 e senza filtri.
+     * Il costo e' fisso (~0,5 RCU per chiamata) e indipendente dalla dimensione della tabella:
+     * una COUNT completa (Select.COUNT) addebiterebbe invece la lettura dell'intera tabella.
+     * In assenza di filter expression, nessun item restituito con Limit=1 significa tabella vuota.
+     */
+    public boolean isEmpty(String tableName) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(1)
+                .build();
+        return dynamoDbClient.scan(request).count() == 0;
     }
 
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {
