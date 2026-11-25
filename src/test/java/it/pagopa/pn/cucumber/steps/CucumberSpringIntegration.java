@@ -86,8 +86,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootTest(classes = {
         SendHttpCallExecutorConfiguration.class,
         JacksonAutoConfiguration.class,
-        ApiKeysConfiguration.class,
-        BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
         AwsConfig.class,

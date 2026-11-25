@@ -1,8 +1,6 @@
 package it.pagopa.pn;
 
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
@@ -36,8 +34,6 @@ import static org.awaitility.Awaitility.await;
 
 
 @SpringBootTest(classes = {
-        ApiKeysConfiguration.class,
-        BearerTokenConfiguration.class,
         TimingConfiguration.class,
         RestTemplateConfiguration.class,
         PnPaB2bExternalClientImpl.class,
