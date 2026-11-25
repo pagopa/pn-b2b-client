@@ -4,7 +4,7 @@
 # uno Scenario a se' stante (non una Examples di uno Scenario Outline), ognuno con la propria notifica creata al
 # momento, cosi' da essere indipendente dagli altri.
 
-@qa19752AuditHeaderOpzionali
+@auditLogHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_NT_REQQR)
 
   Scenario: [QA-19752_AUD_NT_REQQR_CXID] checkAarQrCode: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro

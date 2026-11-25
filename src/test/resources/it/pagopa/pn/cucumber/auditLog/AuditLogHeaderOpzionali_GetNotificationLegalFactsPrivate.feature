@@ -4,7 +4,7 @@
 # uno Scenario a se' stante (non una Examples di uno Scenario Outline), ognuno con la propria notifica creata al
 # momento, cosi' da essere indipendente dagli altri.
 
-@qa19752AuditHeaderOpzionali
+@auditLogHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - getNotificationLegalFactsPrivate (AUD_NT_LEGALOPEN_RCP)
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID] getNotificationLegalFactsPrivate: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
