@@ -1532,8 +1532,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_CONTRACT_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:24)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/agreement/0ca4a7e5-9af5-44b2-8738-8eb81e8bf103/442120ff-d8f2-4f30-aa32-3564f4a30e3e/20261125181857_0e9e2dab-2e93-4f24-ba59-38d9f11198ca_e79a24cd-8edc-441e-ae8d-e87c3aea0059_agreement_contract.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
