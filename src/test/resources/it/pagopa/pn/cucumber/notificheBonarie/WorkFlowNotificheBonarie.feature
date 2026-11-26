@@ -165,14 +165,14 @@ Feature: Workflow di una notifica bonaria.
   @informalNotificationsWorkFlow
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_01_4_A] Come ente mittente invio una notifica bonaria che termina senza aver trovato alcun recapito
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | FattOrd           |
-      | messageId       | ${NEW-IT}         |
-      | subject         | Test workflow     |
-      | recipientType   | PF                |
-      | taxId           | FRMTTR76M06B715E  |
-      | denomination    | Ettore Fieramosca |
-      | email           | NULL              |
-      | digitalDomicile | NULL              |
+      | campaignId      | FattOrd            |
+      | messageId       | ${NEW-IT}          |
+      | subject         | Test workflow      |
+      | recipientType   | PF                 |
+      | taxId           | MGNLSN90R10E625P   |
+      | denomination    | utente not allowed |
+      | email           | NULL               |
+      | digitalDomicile | NULL               |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
@@ -447,15 +447,15 @@ Feature: Workflow di una notifica bonaria.
   @informalNotificationsWorkFlow
   Scenario: [NOTIFICHE_BONARIE_WORKFLOW_02_5_A] Come ente mittente invio una notifica bonaria verso PF senza alcun recapito trovato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
-      | campaignId      | Reminder          |
-      | messageId       | ${NEW-IT}         |
-      | subject         | Test workflow     |
-      | recipientType   | PF                |
-      | taxId           | FRMTTR76M06B715E  |
-      | denomination    | Ettore Fieramosca |
-      | email           | NULL              |
-      | digitalDomicile | NULL              |
-      | phone_number    | NULL              |
+      | campaignId      | Reminder           |
+      | messageId       | ${NEW-IT}          |
+      | subject         | Test workflow      |
+      | recipientType   | PF                 |
+      | taxId           | MGNLSN90R10E625P   |
+      | denomination    | utente not allowed |
+      | email           | NULL               |
+      | digitalDomicile | NULL               |
+      | phone_number    | NULL               |
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
     And si attende che venga prodotto l'elemento "SEND_DIGITAL_MESSAGE_SKIP" della notifica bonaria con dettagli
       | details_channel | EMAIL |
