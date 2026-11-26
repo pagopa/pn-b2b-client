@@ -7,6 +7,7 @@
 @auditLogHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsPrivate (AUD_NT_SEARCH_SND)
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_CXID] searchNotificationsPrivate: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -23,6 +24,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | cx_id | PF-11111111-1111-1111-1111-111111111111 |
       | exclude | cx_type, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_CXTYPE] searchNotificationsPrivate: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -39,6 +41,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | cx_type | PF |
       | exclude | cx_id, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_UID] searchNotificationsPrivate: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -55,6 +58,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id, cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_CXID_CXTYPE] searchNotificationsPrivate: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -72,6 +76,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | cx_type | PF |
       | exclude | uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_CXID_UID] searchNotificationsPrivate: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -89,6 +94,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_CXTYPE_UID] searchNotificationsPrivate: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -106,6 +112,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - searchNotificationsP
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_SEARCH_SND_ALL] searchNotificationsPrivate: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_SEARCH_SND riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |

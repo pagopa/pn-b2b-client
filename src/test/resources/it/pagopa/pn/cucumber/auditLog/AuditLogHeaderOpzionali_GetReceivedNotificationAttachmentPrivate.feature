@@ -7,6 +7,7 @@
 @auditLogHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificationAttachmentPrivate (AUD_NT_ATCHOPEN_RCP)
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_CXID] getReceivedNotificationAttachmentPrivate: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -24,6 +25,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | cx_id | PF-11111111-1111-1111-1111-111111111111 |
       | exclude | cx_type, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_CXTYPE] getReceivedNotificationAttachmentPrivate: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -41,6 +43,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | cx_type | PF |
       | exclude | cx_id, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_UID] getReceivedNotificationAttachmentPrivate: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -58,6 +61,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id, cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_CXID_CXTYPE] getReceivedNotificationAttachmentPrivate: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -76,6 +80,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | cx_type | PF |
       | exclude | uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_CXID_UID] getReceivedNotificationAttachmentPrivate: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -94,6 +99,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_CXTYPE_UID] getReceivedNotificationAttachmentPrivate: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -112,6 +118,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_ATCHOPEN_RCP_ALL] getReceivedNotificationAttachmentPrivate: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_ATCHOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -133,6 +140,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getReceivedNotificat
   # PN-21832: startTransaction pubblica di pn-radd-alt (PR #388) propaga uid/cx_id/cx_type nella chiamata interna a
   # getReceivedNotificationAttachmentPrivate su pn-delivery. Per RADD cx_id/cx_type derivano dal bearer token usato,
   # quindi si verifica solo che siano valorizzati, non un valore specifico.
+  @work-item:QA-18882
   Scenario: [PN-21832_ATCHOPEN_RCP_RADD] Un operatore RADD avvia il ritiro di un atto e ne scarica un allegato: pn-delivery registra nel suo audit log chi ha fatto la richiesta
     Given viene generata una nuova notifica
       | subject            | PN-21832 audit log radd startTransaction |

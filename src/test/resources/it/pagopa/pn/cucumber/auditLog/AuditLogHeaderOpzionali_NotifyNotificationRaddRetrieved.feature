@@ -7,6 +7,7 @@
 @auditLogHeaderOpzionali
 Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRaddRetrieved (AUD_NT_RADD_OPEN)
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_CXID] notifyNotificationRaddRetrieved: quando in richiesta è presente solo cx_id (assenti cx_type e uid), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -24,6 +25,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | cx_id | PF-11111111-1111-1111-1111-111111111111 |
       | exclude | cx_type, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_CXTYPE] notifyNotificationRaddRetrieved: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -41,6 +43,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | cx_type | PF |
       | exclude | cx_id, uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_UID] notifyNotificationRaddRetrieved: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -58,6 +61,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id, cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_CXID_CXTYPE] notifyNotificationRaddRetrieved: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -76,6 +80,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | cx_type | PF |
       | exclude | uid |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_CXID_UID] notifyNotificationRaddRetrieved: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -94,6 +99,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_type |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_CXTYPE_UID] notifyNotificationRaddRetrieved: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -112,6 +118,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
       | uid | 22222222-2222-2222-2222-222222222222 |
       | exclude | cx_id |
 
+  @work-item:QA-18882
   Scenario: [QA-19752_AUD_NT_RADD_OPEN_ALL] notifyNotificationRaddRetrieved: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_RADD_OPEN riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
       | subject            | QA-19752 audit log header opzionali |
@@ -133,6 +140,7 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - notifyNotificationRa
   # PN-21832: completeTransaction pubblica di pn-radd-alt (PR #388) propaga uid/cx_id/cx_type nella chiamata interna a
   # notifyNotificationRaddRetrieved su pn-delivery-push. Per RADD cx_id/cx_type derivano dal bearer token usato,
   # quindi si verifica solo che siano valorizzati, non un valore specifico.
+  @work-item:QA-18882
   Scenario: [PN-21832_RADD_OPEN_RADD] Un operatore RADD completa il ritiro di un atto: pn-delivery-push registra nel suo audit log chi ha completato il ritiro
     Given viene generata una nuova notifica
       | subject            | PN-21832 audit log radd completeTransaction |
