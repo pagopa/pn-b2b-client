@@ -18,7 +18,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | $NULL |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | exclude | cx_type, uid |
 
   Scenario: [QA-19752_AUD_NT_REQQR_CXTYPE] checkAarQrCode: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -31,7 +35,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | $NULL   |
       | cxType | PF |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_type | PF |
+      | exclude | cx_id, uid |
 
   Scenario: [QA-19752_AUD_NT_REQQR_UID] checkAarQrCode: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -44,7 +52,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | $NULL   |
       | cxType | $NULL |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_id, cx_type |
 
   Scenario: [QA-19752_AUD_NT_REQQR_CXID_CXTYPE] checkAarQrCode: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -57,7 +69,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | PF |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | cx_type | PF |
+      | exclude | uid |
 
   Scenario: [QA-19752_AUD_NT_REQQR_CXID_UID] checkAarQrCode: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -70,7 +87,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | $NULL |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_type |
 
   Scenario: [QA-19752_AUD_NT_REQQR_CXTYPE_UID] checkAarQrCode: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -83,7 +105,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | $NULL   |
       | cxType | PF |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_type | PF |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_id |
 
   Scenario: [QA-19752_AUD_NT_REQQR_ALL] checkAarQrCode: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_REQQR riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -96,7 +123,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | PF |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | cx_type | PF |
+      | uid | 22222222-2222-2222-2222-222222222222 |
 
   # PN-21832: actInquiry pubblica di pn-radd-alt (PR #388) propaga uid/cx_id/cx_type nella chiamata interna a
   # checkAarQrCode su pn-delivery. Per RADD cx_id/cx_type derivano dal bearer token usato, quindi si verifica solo
@@ -115,4 +147,9 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - checkAarQrCode (AUD_
     And Il cittadino Mario Cucumber come destinatario 0 mostra il QRCode "corretto"
     When L'operatore scansione il qrCode per recuperare gli atti di Mario Cucumber
     Then la scansione si conclude correttamente su radd alternative
-    And verifico che l'audit log con tag "AUD_NT_REQQR" su "/aws/ecs/pn-delivery" riporti l'identità del chiamante, ossia i campi cx_id, cx_type e uid valorizzati
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_REQQR |
+      | iun | auto |
+      | cx_id | cx_id |
+      | cx_type | cx_type |
+      | uid | uid |

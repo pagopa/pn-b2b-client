@@ -18,7 +18,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | $NULL |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | exclude | cx_type, uid |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE] getLegalFactByIdPrivate: quando in richiesta è presente solo cx_type (assenti cx_id e uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -31,7 +35,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | $NULL   |
       | cxType | PF |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_type | PF |
+      | exclude | cx_id, uid |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_UID] getLegalFactByIdPrivate: quando in richiesta è presente solo uid (assenti cx_id e cx_type), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -44,7 +52,11 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | $NULL   |
       | cxType | $NULL |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_id, cx_type |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_CXTYPE] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_id e cx_type (assente uid), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -57,7 +69,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | PF |
       | uid    | $NULL    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | cx_type | PF |
+      | exclude | uid |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXID_UID] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_id e uid (assente cx_type), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -70,7 +87,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | $NULL |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_type |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_CXTYPE_UID] getLegalFactByIdPrivate: quando in richiesta sono presenti solo cx_type e uid (assente cx_id), l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -83,7 +105,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | $NULL   |
       | cxType | PF |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_type | PF |
+      | uid | 22222222-2222-2222-2222-222222222222 |
+      | exclude | cx_id |
 
   Scenario: [QA-19752_AUD_NT_LEGALOPEN_RCP_ALL] getLegalFactByIdPrivate: quando la richiesta include tutti e tre gli header opzionali cx_id, cx_type e uid, l'audit log AUD_NT_LEGALOPEN_RCP riporta esattamente gli header passati, nient'altro
     Given viene generata una nuova notifica
@@ -96,7 +123,12 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
       | cxId   | PF-11111111-1111-1111-1111-111111111111   |
       | cxType | PF |
       | uid    | 22222222-2222-2222-2222-222222222222    |
-    Then verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti solo gli header opzionali effettivamente passati
+    Then verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_id | PF-11111111-1111-1111-1111-111111111111 |
+      | cx_type | PF |
+      | uid | 22222222-2222-2222-2222-222222222222 |
 
   # PN-21832: startTransaction pubblica di pn-radd-alt (PR #388) propaga uid/cx_id/cx_type nella chiamata interna a
   # getLegalFactByIdPrivate su pn-delivery-push. Per RADD cx_id/cx_type derivano dal bearer token usato, quindi si
@@ -118,4 +150,9 @@ Feature: Audit log con header opzionali cx_id/cx_type/uid - getLegalFactByIdPriv
     And vengono caricati i documento di identità del cittadino su radd alternative
     And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
-    And verifico che l'audit log con tag "AUD_NT_LEGALOPEN_RCP" su "/aws/ecs/pn-delivery-push" riporti l'identità del chiamante, ossia i campi cx_id, cx_type e uid valorizzati
+    And verifico la presenza di un audit log su "/aws/ecs/pn-delivery-push" negli ultimi 20 minuti riportante i seguenti dati nel messaggio
+      | tag | AUD_NT_LEGALOPEN_RCP |
+      | iun | auto |
+      | cx_id | cx_id |
+      | cx_type | cx_type |
+      | uid | uid |

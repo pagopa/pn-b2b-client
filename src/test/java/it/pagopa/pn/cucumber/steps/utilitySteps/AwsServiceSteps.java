@@ -18,11 +18,11 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
@@ -70,9 +70,15 @@ public class AwsServiceSteps {
 
     /**
      * Dalla mappa di parametri passata in input si va a comporre la stringa con i filtri di ricerca per i log.
-     * Il nome delle chiavi impostato nel file feature è del tutto irrilevante, serve unicamente a migliorare la leggibilità.
-     * La sola eccezione è il campo iun (ignoreCase): se è impostato su auto, viene recuperato dal valore di notificationIun;
-     * in tutti gli altri casi, viene impostato col valore passato.
+     * Il nome delle chiavi impostato nel file feature è del tutto irrilevante, serve unicamente a migliorare la leggibilità,
+     * con due eccezioni (ignoreCase):
+     * <ul>
+     *     <li>{@code iun}: se il valore è {@code auto}, viene recuperato da {@code notificationIun} invece di essere
+     *     preso alla lettera;</li>
+     *     <li>{@code exclude}: il valore (una o più frasi separate da virgola) non va a comporre il filtro per
+     *     inclusione ma per esclusione, tramite l'operatore {@code -} dei filter pattern CloudWatch (es. per
+     *     verificare l'assenza di un campo, passando il nome del campo come frase da escludere).</li>
+     * </ul>
      * La scrittura dei log su CloudWatch è repentina, ma possono tuttavia capitare casi in cui il log viene scritto pochi secondi dopo
      * rispetto a quando viene eseguita la ricerca. Per evitare fail dei test dovuti a questa motivazione, il metodo riesegue la ricerca
      * tramite polling prima di dichiarare fallito il test.
@@ -81,22 +87,33 @@ public class AwsServiceSteps {
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
         if (!checkAuditLogDisabled) {
             try {
-                List<String> terms = queryFiltersMap.entrySet().stream()
-                        .map(entry -> entry.getKey().equalsIgnoreCase("IUN") && entry.getValue().equals("auto")
-                                ? sharedSteps.getNotificationIun()
-                                : entry.getValue())
-                        .collect(Collectors.toList());
+                List<String> includeTerms = new ArrayList<>();
+                List<String> excludeTerms = new ArrayList<>();
+                queryFiltersMap.forEach((key, value) -> {
+                    if (key.equalsIgnoreCase("exclude")) {
+                        excludeTerms.addAll(splitTerms(value));
+                    } else if (key.equalsIgnoreCase("IUN") && value.equals("auto")) {
+                        includeTerms.add(sharedSteps.getNotificationIun());
+                    } else {
+                        includeTerms.add(value);
+                    }
+                });
 
                 Poller.pollUntil(
-                        () -> countMatchingEventsIgnoringTransientErrors(microservice, terms, minutes),
+                        () -> countMatchingEventsIgnoringTransientErrors(microservice, includeTerms, excludeTerms, minutes),
                         matchCount -> {
-                            assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), terms).isGreaterThan(0);
+                            assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s (esclusi: %s)",
+                                    DateTime.now(), includeTerms, excludeTerms).isGreaterThan(0);
                         },
                         PollingConfig.of(Duration.ofMinutes(2), Duration.ofSeconds(10)));
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
         }
+    }
+
+    private static List<String> splitTerms(String value) {
+        return Arrays.stream(value.split(",")).map(String::trim).filter(term -> !term.isEmpty()).toList();
     }
 
     /**
@@ -218,9 +235,9 @@ public class AwsServiceSteps {
     }
 
     /** Ignora errori transitori di CloudWatch (es. throttling) riprovando al giro di polling successivo, invece di far fallire subito il check. */
-    private int countMatchingEventsIgnoringTransientErrors(String microservice, List<String> terms, int minutes) {
+    private int countMatchingEventsIgnoringTransientErrors(String microservice, List<String> includeTerms, List<String> excludeTerms, int minutes) {
         try {
-            return cloudWatchLogsService.countMatchingEvents(microservice, terms, minutes);
+            return cloudWatchLogsService.countMatchingEvents(microservice, includeTerms, excludeTerms, minutes);
         } catch (RuntimeException e) {
             log.warn("Errore transitorio durante la ricerca su CloudWatch, nuovo tentativo al prossimo giro di polling", e);
             return 0;
