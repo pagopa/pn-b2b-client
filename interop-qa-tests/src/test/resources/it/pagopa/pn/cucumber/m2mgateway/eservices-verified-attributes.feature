@@ -373,7 +373,7 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati
 
-  @wait_for_fix
+  @work-item:QA-18355
   Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_1] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
@@ -381,15 +381,16 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And via M2M specificando un ID delega casuale l'utente assegna a "PA2" l'attributo verificato precedentemente creato
-    Then si ottiene status code 400
+    Then si ottiene status code 403
     When l'utente è un "admin" di "PA1"
     And l'utente assegna a "PA2" l'attributo verificato precedentemente creato
     And si ottiene status code 204
     And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
     And via M2M specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato
-    Then si ottiene status code 400
+    Then si ottiene status code 403
 
-  @deleghe2 @wait_for_fix
+  @work-item:QA-18355
+  @deleghe2
   Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_2] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
@@ -404,7 +405,8 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     When via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato
     Then si ottiene status code 200
 
-  @deleghe2 @wait_for_fix
+  @work-item:QA-18355
+  @deleghe2
   Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_3] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un attributo verificato
@@ -415,9 +417,9 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And via M2M l'utente assegna a "PA3" l'attributo verificato precedentemente creato
-    Then si ottiene status code 400
+    Then si ottiene status code 403
     When l'utente è un "admin" di "PA2"
     And il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
     And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
     And via M2M l'utente revoca l'attributo precedentemente verificato
-    Then si ottiene status code 400
+    Then si ottiene status code 403

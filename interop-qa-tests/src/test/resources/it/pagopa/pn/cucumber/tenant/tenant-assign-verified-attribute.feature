@@ -61,6 +61,7 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     When l'utente assegna a "PA2" l'attributo verificato precedentemente creato con data di scadenza nel passato
     Then si ottiene status code 400
 
+  @work-item:QA-18355
   @nrt-minimal
   @tenant_assign_verified_attribute5
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_05] Per un attributo verificato precedentemente creato da un aderente, alla richiesta di assegnazione dell’attributo senza scadenza al proprio ente da parte di un utente con sufficienti permessi (admin), ottiene un errore. Spiega: un ente non può autoassegnarsi attributi verificati
@@ -72,7 +73,8 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     And l'utente assegna a "PA2" l'attributo verificato precedentemente creato
     Then si ottiene status code 403
 
-  @nrt-minimal @wait_for_fix
+  @work-item:QA-18355
+  @nrt-minimal
   @tenant_assign_verified_attribute6
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_06] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
@@ -80,9 +82,10 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
     And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When specificando un ID delega casuale l'utente assegna a "PA2" l'attributo verificato precedentemente creato
-    Then si ottiene status code 400
+    Then si ottiene status code 403
 
-  @nrt-minimal @wait_for_fix
+  @work-item:QA-18355
+  @nrt-minimal
   @tenant_assign_verified_attribute7 @deleghe2
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_07] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
@@ -95,7 +98,8 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     When il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
     Then si ottiene status code 200
 
-  @nrt-minimal @wait_for_fix
+  @work-item:QA-18355
+  @nrt-minimal
   @tenant_assign_verified_attribute8 @deleghe2
   Scenario: [TENANT_ASSIGN_VERIFIED_ATTRIBUTE_08] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla verifica dell'attributo
     Given l'utente è un "admin" di "PA1"
@@ -107,4 +111,4 @@ Feature: Assegnazione di un attributo verificato ad un aderente
     And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
     When l'utente è un "admin" di "PA2"
     And l'utente assegna a "PA3" l'attributo verificato precedentemente creato
-    Then si ottiene status code 400
+    Then si ottiene status code 403
