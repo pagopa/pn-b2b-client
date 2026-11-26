@@ -48,7 +48,7 @@ public final class DynamicFieldAnalyzer {
             String error = def.validator().validate(located);
 
             if (error != null) {
-                log.debug("FieldIssue [{}}]: {}", def.fieldName(), error);
+                log.debug("FieldIssue [{}]: {}", def.fieldName(), error);
                 issues.add(new FieldIssue(def.fieldName(), error, located));
             } else {
                 log.debug("Campo [{}] validato con successo ({} frammenti)", def.fieldName(), located.size());

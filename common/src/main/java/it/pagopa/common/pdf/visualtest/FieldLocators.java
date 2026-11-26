@@ -107,10 +107,12 @@ public final class FieldLocators {
      * stessa, quindi la stessa chiamata funziona su documenti con margini diversi.</p>
      *
      * <p>A differenza di {@link #labelProximity(String, float, float)}, il confronto con
-     * {@code labelText} richiede una corrispondenza esatta (ignorando maiuscole/minuscole e
-     * spazi iniziali/finali) dell'intero frammento, non una semplice sottostringa: questo
-     * evita falsi positivi quando il testo dell'etichetta compare per caso all'interno di
-     * un paragrafo discorsivo del documento.</p>
+     * {@code labelText} richiede che ogni parola dell'etichetta corrisponda esattamente a un
+     * frammento, <strong>maiuscole/minuscole comprese</strong> (ignorando solo gli spazi
+     * iniziali/finali e la forma Unicode), non una semplice sottostringa: questo evita falsi
+     * positivi quando le stesse parole compaiono all'interno di un paragrafo discorsivo del
+     * documento (es. "il domicilio digitale" in una frase rispetto all'etichetta
+     * "Domicilio digitale").</p>
      *
      * @param labelText       testo esatto dell'etichetta, così come appare nel PDF
      * @param occurrenceIndex indice 1-based dell'occorrenza dell'etichetta da considerare
@@ -119,7 +121,7 @@ public final class FieldLocators {
         if (occurrenceIndex < 1) {
             throw new IllegalArgumentException("occurrenceIndex deve essere >= 1 (1-based)");
         }
-        String[] labelWords = labelText.trim().split("\s+");
+        String[] labelWords = labelText.trim().split("\\s+");
         return allFragments -> {
             int occurrence = 0;
 

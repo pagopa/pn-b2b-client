@@ -253,13 +253,9 @@ class PdfComplianceStressTest {
             byte[] pdf = TestPdfFactory.spec().duplicateIdField(true).build();
 
             ExtractedPdfText extracted = PdfTextExtractor.extract(pdf);
-            for (TextFragment f : extracted.allFragments()) {
-                System.out.println("DEBUG_FRAG: '" + f.text() + "' at x=" + f.x() + ", y=" + f.y());
-            }
 
             FieldLocator locator = FieldLocators.labelProximity("identificativo:", MAX_OFFSET_X, MAX_OFFSET_Y);
             List<TextFragment> fragments = locator.locate(extracted.allFragments());
-            System.out.println("LOCATED: " + fragments.size());
 
             // Devono essere individuati i frammenti di entrambe le istanze
             assertTrue(fragments.size() >= 2, "Devono essere localizzati i valori di entrambe le occorrenze della label: trovati " + fragments.size());
