@@ -194,7 +194,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     And la richiesta verso il servizio INAD per il cf "UBHXPB21T15M096C" risulta in errore
 
 
-  @inadMassive @mockNR @ignoreUAT @inadIsolato @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @inadIsolato2 @work-item:QA-18515 #EnableInadMassiveApi:true
    Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_B1] Come PA invio una notifica verso una PG senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INIPEC con esito negativo e poi verso INAD per recuperarlo,
   in risposta il mock restituisce un errore 500 sul batc, viene predisposto un ulteriore tentativo,
