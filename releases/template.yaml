@@ -1,0 +1,136 @@
+# Copiare in releases/<prodotto>/<versione>.yaml e sostituire i valori di esempio.
+# Mantenere questo template in draft: non è una release da elaborare.
+# Istruzioni: releases/README.md.
+# Obbligatorietà: convenzioni del nuovo manifest, non tutte validate dai generatori.
+# Nei blocchi facoltativi, i campi obbligatori si applicano solo se il blocco è usato.
+# Completare i valori obbligatori prima di portare la release a planned.
+# OBBLIGATORIO.
+release:
+  # Testo: deve coincidere con il nome del file senza .yaml.
+  # Per Epic generator serve una Fix Version omonima nel progetto Jira QA.
+  # OBBLIGATORIO.
+  version: ga26q4.b
+  # Valori: draft | planned | in-progress | execution | closed.
+  # draft: preparazione; planned: piano approvato;
+  # in-progress: progettazione e implementazione dei test;
+  # execution: esecuzione dei test e analisi degli esiti;
+  # closed: lavoro QA concluso e consuntivato (non implica tutti i test passati).
+  # Aggiornare tramite PR. La fase è quella prevalente della release.
+  # Epic e PST elaborano solo in-progress. Passando a execution, i PST
+  # esistenti rimangono disponibili ma non vengono più aggiornati.
+  # execution non avvia automaticamente le suite: questo è uno sviluppo futuro.
+  # OBBLIGATORIO.
+  status: draft
+  # Testo libero: breve descrizione del perimetro della release.
+  # OBBLIGATORIO.
+  description: Piano di delivery QA della release SEND GA26Q4.B
+  # Valori: SEND | INTEROP, coerenti con la cartella send | interop.
+  # OBBLIGATORIO.
+  product: SEND
+  # Formato AAAA-QN, con N = 1, 2, 3 o 4.
+  # OBBLIGATORIO.
+  quarter: 2026-Q4
+
+  # Date previste di rilascio negli ambienti, non di consegna del lavoro QA.
+  # Chiavi: dev, test, qa, uat, prod. Usare qa al posto di test se applicabile.
+  # Valori: "AAAA-MM-GG" oppure vuoto se da definire.
+  # Omettere gli ambienti non applicabili.
+  # FACOLTATIVO.
+  delivery:
+    # FACOLTATIVO.
+    dev: "2026-11-06"
+    # FACOLTATIVO.
+    test: "2026-11-16"
+    # FACOLTATIVO.
+    uat: "2026-12-01"
+    # FACOLTATIVO.
+    prod: "2026-12-14"
+
+  # OBBLIGATORIO.
+  work-items:
+    # Chiave Jira del work item di prodotto (es. PN-12345 o PIN-12345).
+    # OBBLIGATORIO.
+    - id: PN-20853
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 1
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title: Recupero eventi di pagamento da piattaforma pagoPA
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: pn-b2b-client
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+        - TEST DI CARICO
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 7
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Mario Rossi
+          # OBBLIGATORIO.
+          role: TA
+        # OBBLIGATORIO.
+        - name: Giuseppe Bianchi
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes: >
+        Verificare anche la gestione degli eventi duplicati.
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks: >
+        Possibile indisponibilità di dati rappresentativi.
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+        - Disponibilità delle API nell'ambiente di test.
+        - Predisposizione dei dati per le prove di carico.
+
+  # Work item interamente esclusi dal perimetro QA; usare [] se non presenti.
+  # Ogni id è unico e non può comparire anche in work-items.
+  # FACOLTATIVO.
+  out_of_scope:
+    # id: chiave Jira obbligatoria; reason: motivazione testuale non vuota.
+    # OBBLIGATORIO.
+    - id: PN-21118
+      # OBBLIGATORIO.
+      reason: Attività di monitoraggio operativo senza intervento QA previsto.
+    # OBBLIGATORIO.
+    - id: PN-20023
+      # OBBLIGATORIO.
+      reason: Aggiornamento della documentazione tecnica.
