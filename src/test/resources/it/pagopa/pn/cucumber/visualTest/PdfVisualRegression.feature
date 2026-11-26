@@ -8,7 +8,6 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
   # - [VRT-06] in TEST nessun disservizio risolto ha un'attestazione prodotta dopo il golden master: quelle esistenti
   #   seguono il template precedente (footer diverso). Lo scenario crea un disservizio e non è stato eseguito.
   # - [VRT-07] l'AAR standard non viene più prodotto (vedi lo scenario commentato).
-  # - [VRT-10] il client SafeStorage pn-test non ha PN_COMMUNICATIONS_COVERPAGE tra i documenti leggibili (403).
 
   @visualTest @work-item:QA-18240
   Scenario: [VRT-01] L'attestazione di presa in carico corrisponde al golden master
@@ -94,13 +93,11 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
     And si recupera il documento "ANALOG_DELIVERY_WORKFLOW_TIMEOUT_LEGAL_FACT" della notifica
     Then il documento è conforme al golden master
 
-  # [VRT-10] Non eseguibile in TEST al momento. La chiave del file è sulla timeline B2B (COVERPAGE_CREATION_REQUEST),
-  # ma il download passa dall'API privata di SafeStorage (pn.safeStorage.base-url) e risponde 403: il client pn-test
-  # non ha il permesso di lettura sul tipo PN_COMMUNICATIONS_COVERPAGE (lo leggono workflow-manager, external-channels,
-  # io-connector e il consolidatore). Serve il permesso, oppure un client di test che lo abbia (setClientId).
-  # In locale serve anche un tunnel su localhost:8888 verso alb.confidential.pn.internal:8080, che tester.py non apre;
-  # CodeBuild la raggiunge senza tunnel.
-  @visualTest @work-item:QA-18240 @ignore
+  # [VRT-10] La chiave del file è sulla timeline B2B (COVERPAGE_CREATION_REQUEST); il download passa dall'API privata
+  # di SafeStorage (pn.safeStorage.base-url, in locale tunnel su localhost:8888). Oggetto e testo della copertina
+  # vengono dal messaggio creato da ${NEW-IT} (RISCUOTI_IT, con avviso di pagamento): la fixture del golden master
+  # riporta gli stessi valori.
+  @visualTest @work-item:QA-18240
   Scenario: [VRT-10] La copertina della comunicazione bonaria cartacea corrisponde al golden master
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId               | MessaMora                  |

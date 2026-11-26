@@ -1,9 +1,9 @@
 {
   "templateEngine": {
     "iun": "VRTG-LDNM-STRF-202601-A-1",
-    "subject": "Test workflow",
+    "subject": "È stata emessa una nuova fattura per te",
     "body": {
-      "primaryContent": "Contenuto principale della comunicazione VRT.",
+      "primaryContent": "Riscuoti S.p.a. ti informa che è stata emessa una fattura per l'utenza n.1812121.\n",
       "secondaryContent": null
     },
     "sender": {
@@ -17,6 +17,6 @@
       "recipientType": "PF"
     },
     "hasAttachment": true,
-    "hasPayment": false
+    "hasPayment": true
   }
 }
