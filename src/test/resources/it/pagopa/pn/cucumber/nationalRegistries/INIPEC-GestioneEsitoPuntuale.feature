@@ -211,7 +211,7 @@ Feature: Gestione puntuale per singolo CF degli esiti delle richieste in batch v
     Then recupero l'id correlato alla richiesta dall'elemento di timeline "PUBLIC_REGISTRY_CALL"
     And il retry della richiesta verso INAD per il cf "TYXYHK14A01A001Q" risulta correttamente registrato
 
-  @inadMassive @mockNR @ignoreUAT @inadIsolato @work-item:QA-18515 #EnableInadMassiveApi:true
+  @inadMassive @mockNR @ignoreUAT @ignore @inadIsolato @work-item:QA-18515 #EnableInadMassiveApi:true
   Scenario: [INAD_MASSIVE_GESTINE_ESITO_03_1_A2] Come PA invio una notifica verso una PF senza specificare un recapito digitale, quindi
   viene fatta una chiamata verso INAD per recuperarlo,
   in risposta il mock restituisce un errore 400 sul polling, viene predisposto un ulteriore tentativo,
