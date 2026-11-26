@@ -1587,8 +1587,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementSuspendedByConsumer venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:39)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_062028_2321b2cc-ecea-449c-ab55-99f481866de2.ndjson.zip'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
@@ -1642,8 +1642,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementArchivedByConsumer venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:39)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061946_a534f311-bb91-4fbf-a44e-fb8de719287b.ndjson.zip'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1696,8 +1696,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento PurposeActivated venga generato nell'opportuno bucket S3 STANDARD un RISK_ANALYSIS_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:57)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/risk-analysis/d6f15bad-a175-4a28-97d6-c994008d636d/20261125182028_a6ff8383-0956-4ff5-baf1-1c6e85469e64_risk_analysis.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_DOC_ARCHIVE_2] Attivazione nuova versione finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1750,8 +1750,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento NewPurposeVersionActivated venga generato nell'opportuno bucket S3 STANDARD un RISK_ANALYSIS_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:77)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/risk-analysis/1fe6e29a-4d65-43bd-acef-a3371120af98/20261125182134_dd44fc8e-553f-41ad-9f34-1d24ae299e12_risk_analysis.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1804,8 +1804,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ConsumerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REQUEST_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:99)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/78d87458-5696-4cbf-9bb0-6ba1b356b3be/bd374aff-f813-4a43-a873-0cc21dd99eb7/20261125182110_delegation_activation_contract.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1858,8 +1858,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ProducerDelegationApproved venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REQUEST_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:117)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/58619e1f-7f2e-4220-8ee3-06a3d605773e/d75c9bc8-1169-47ca-ac73-d9efd562d9b1/20261125182048_delegation_activation_contract.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1912,8 +1912,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ConsumerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un CONSUMER_DELEGATION_REVOKED_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:153)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/19134504-e1f7-4c76-8024-e662a4debaee/312da227-59bf-4d29-82ce-85341f4046dc/20261125182006_delegation_revocation_contract.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -1966,8 +1966,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ProducerDelegationRevoked venga generato nell'opportuno bucket S3 STANDARD un PRODUCER_DELEGATION_REVOKED_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:172)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/4d494e4a-e7b7-44d9-b601-65b7a57e09e8/38995ba9-d5b5-416b-a16d-b782046d0d5c/20261125181915_delegation_revocation_contract.pdf'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -2020,8 +2020,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ClientKeyAdded venga generato nell'opportuno bucket S3 STANDARD un KEY_ADDED_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:188)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061835_8bad7487-6906-47bb-a2f8-73302e99000f.ndjson.zip'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -2074,8 +2074,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ClientKeyDeleted venga generato nell'opportuno bucket S3 STANDARD un KEY_DELETED_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:201)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061758_d9cdcbf5-30c1-4258-9d25-1b1175fefe1e.ndjson.zip'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
@@ -2128,8 +2128,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento ClientDeleted venga generato nell'opportuno bucket S3 STANDARD un CLIENT_DELETED_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:212)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale. '
+  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061716_6786c4fc-04bc-4980-931c-bd2cdc521282.ndjson.zip'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il
@@ -2238,8 +2238,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.setDelegationAvailability(DelegationCreateStep.java:240)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.tenantGrantsProducerDelegationAvailability(DelegationCreateStep.java:190)
     	at ✽.l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione(classpath:it/pagopa/pn/cucumber/catalog/delegation-archiving.feature:1643)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi dei log e riesecuzione in locale con fine tuning di properties usate dal test'
+  result: 'La riesecuzione restituisce lo stesso errore di eventual consistency. Come per tutte le casistiche di eventual consistency, PRIMA O POI il dato si può recuperare. Allungando il periodo di timeout definitivo (max-polling-try-ms passa da 50 a 120 secondi) e rieseguendo con la nuova configurazione il test va a buon fine.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[DELEGATION_ARCHIVING_CLONING_1.2] Ente delegato e delegante NON possono duplicare un e-service in delega
@@ -2360,8 +2360,8 @@ ko:
     	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
     	at it.pagopa.pn.interop.cucumber.steps.catalog.EServiceCatalogListingSteps.checkEServiceState(EServiceCatalogListingSteps.java:217)
     	at ✽.la versione più recente dell'e-service è in stato "ARCHIVING"(classpath:it/pagopa/pn/cucumber/catalog/e-service-archiving.feature:262)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi log ed esecuzione in locale.'
+  result: 'La riesecuzione in locale si è conclusa con successo.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[ESERVICE_UPDATING_04] Richiesta di pubblicazione di una versione di un e-service concesso in delega,
@@ -2371,8 +2371,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.checkDelegation(DelegationCreateStep.java:308)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCreateStep.createDelegateSuccessfully(DelegationCreateStep.java:284)
     	at ✽.l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo(classpath:it/pagopa/pn/cucumber/catalog/e-service-update.feature:71)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi log e riesecuzione in locale'
+  result: 'La riesecuzione in locale ha terminato con successo.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-052-1] La modifica di un documento di un e-service template in qualsiasi stato, o di un''interfaccia
@@ -2557,10 +2557,16 @@ ko:
     	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
     	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.accuratelyVerifyStatusCode(ClientCommonSteps.java:149)
     	at ✽.si ottiene response status code 409(classpath:it/pagopa/pn/cucumber/e-service-template/e-service-template.feature:981)
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
-  link_suite_bug: ''
+  procedure: |
+    Verifica i parametri dell'Example #2 e confronta lo step Gherkin con la
+    strategia di aggiornamento della suite. Consulta nei log NRT il documento
+    selezionato, il nome inviato e la risposta della POST; confronta il
+    risultato con PIN-11001 e con il successivo rilancio locale.
+  result: "Nella run NRT la suite ha tentato di rinominare l'interfaccia usando il\nnome del documento. Il backend\
+    \ ha risposto HTTP 400 anziché il 409 atteso per il nome duplicato.\n\nIl comportamento atteso per il nome duplicato va approfondito:\nnon è stato possibile risalire\
+    \ al requisito, che potrebbe essere\ndeprecato.\n"
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11001'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19761'
 - id_test: '[INTEROP-EST-080] La cancellazione di una versione di un e-service template in stato DRAFT non può essere
     effettuata da un ente diverso dal creatore del template [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
@@ -2596,8 +2602,8 @@ ko:
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:17)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.instance.EServiceTemplateInstanceUpgradeSteps.checkEServiceCreatedFromLatestTemplateVersion(EServiceTemplateInstanceUpgradeSteps.java:66)
     	at ✽.il nuovo e-service riferito all'ultima versione dell'e-service template è stato creato correttamente(classpath:it/pagopa/pn/cucumber/e-service-template/e-service-template.feature:2563)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi dei log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale termina correttamente.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-163] L''aggiornamento di un''istanza di un template all''ultima versione dell''e-service
@@ -2609,8 +2615,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(EServiceTemplateTestAssistant.java:416)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.crud.EServiceTemplateCreateSteps.createEServiceTemplate(EServiceTemplateCreateSteps.java:96)
     	at ✽.l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED(classpath:it/pagopa/pn/cucumber/e-service-template/e-service-template.feature:2621)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi dei log e riesecuzione in locale.'
+  result: 'Rieseguendo in locale il problema non si presenta. Potrebbe essersi trattato di un problema di volume elevato di richieste come avvenuto in altri errori simili.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[LLGG_21] Verifica la pubblicazione di un e-service da parte di un ente delegato all''erogazione settando
@@ -2944,8 +2950,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:157)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.bringDescriptorToStateWFA(DelegationCommonStep.java:100)
     	at ✽."PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices-certified-attributes.feature:374)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_ESERVICES_DECLARED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli
@@ -2959,8 +2965,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:157)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.bringDescriptorToStateWFA(DelegationCommonStep.java:100)
     	at ✽."PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices-declared-attributes.feature:44)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2MG_ESERVICES_35_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service
@@ -3897,8 +3903,8 @@ ko:
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
     	at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:365)
     	at ✽.admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE(classpath:it/pagopa/pn/cucumber/notification/notification-api-body.feature:89)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato con il medesimo errore. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[Notifica finalità rifiutata] L''erogatore rifiuta la finalità richiesta dal fruitore per un e-service
@@ -4066,8 +4072,8 @@ ko:
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
     	at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:365)
     	at ✽.admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:241)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.5] Un delegato all''erogazione annulla la richiesta di archiviazione
@@ -4079,8 +4085,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.catalog.utils.DelegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(DelegatedArchivingRequestVerifier.java:72)
     	at it.pagopa.pn.interop.cucumber.steps.catalog.DelegationArchivingSteps.eServiceDelegatedArchivingRequestIsPending(DelegationArchivingSteps.java:247)
     	at ✽.la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:264)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato senza problemi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.6] Un delegante all''erogazione rifiuta la richiesta di archiviazione
@@ -4345,8 +4351,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.purposetemplate.PurposeTemplateSteps.preparePurposeTemplate(PurposeTemplateSteps.java:1151)
     	at it.pagopa.pn.interop.cucumber.steps.purposetemplate.PurposeTemplateSteps.createPurposeTemplatesDatasetUsingPreparePurposeTemplate(PurposeTemplateSteps.java:1232)
     	at ✽.esistono purpose templates di test creati tramite data preparation(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-get-and-create.feature:149)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log e riesecuzione in locale.'
+  result: 'La riesecuzione in locale ha terminato senza problemi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte
