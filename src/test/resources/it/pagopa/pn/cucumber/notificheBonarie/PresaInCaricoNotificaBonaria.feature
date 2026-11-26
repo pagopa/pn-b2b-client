@@ -121,7 +121,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId      | ${NEW-IT}         |
       | payment_amount | <amount>          |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
     Examples:
       | amount |
       | -1     |
@@ -280,7 +280,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalAsyncValidation @ricercaIndirizzoVas
   Scenario: [NOTIFICHE_BONARIE_VAS_HOTFIX_02] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico che varrà recuperato dal VAS.
-    Given l'ente mittente "Comune_1" compila una notifica bonaria con i seguenti dati:
+    Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | CampAnalogic             |
       | denomination     | PF censito vas           |
       | recipientType    | PF                       |
@@ -427,7 +427,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId       | ${NEW-IT}                 |
       | digitalDomicile | testpagopa1@pec.pagopa.it |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -437,7 +437,7 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId         | ABCDEF12345 |
       | messageId     | ${NEW-IT}   |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -449,7 +449,7 @@ Feature: Sottomissione di una notifica bonaria.
       | attachment_contentType | application/txt   |
       | messageId              | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation # la validazione è presa da quella esistente per le legal aperto bug che sarà gestito nelle prossime release:PN-20249
@@ -508,7 +508,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_province | BN                |
       | messageId                 | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -524,7 +524,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_province | NULL              |
       | messageId                 | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -569,7 +569,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_province | RM               |
       | messageId                 | ${NEW-IT}        |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_DELIVERY_DENOMINATION_LENGTH_EXCEEDED"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -583,7 +583,7 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_multy_number | 1                 |
       | messageId            | ${NEW-IT}         |
     Then viene inviata una nuova notifica bonaria con sha non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalSyncValidation #bug validation
@@ -657,7 +657,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR, IT            |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -669,7 +669,7 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | NULL              |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -681,7 +681,7 @@ Feature: Sottomissione di una notifica bonaria.
       | denomination  | Ettore Fieramosca |
       | messageId     | ${NEW-IT}         |
     When viene inviata una nuova notifica bonaria con content type non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY"
 
 
    #@informalNotificationsValidation @informalSyncValidation errore dato nella prepare non oggetto delle bonarie
@@ -1007,7 +1007,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId       | ${NEW-IT}                 |
       | digitalDomicile | testpagopa1@pec.pagopa.it |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 404 "PN_DELIVERY_CAMPAIGN_NOT_FOUND"
+    Then si riceve errore 404 "PN_CAMPAIGN_NOT_FOUND"
 
 
   @informalNotificationsValidation @informalAsyncValidation
@@ -1045,7 +1045,7 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_multy_number | 1                |
       | messageId            | ${NEW-IT}        |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 404 "PN_DELIVERY_CAMPAIGN_NOT_FOUND"
+    Then si riceve errore 404 "PN_CAMPAIGN_NOT_FOUND"
 
 
   @informalNotificationsValidation @informalAsyncValidation
