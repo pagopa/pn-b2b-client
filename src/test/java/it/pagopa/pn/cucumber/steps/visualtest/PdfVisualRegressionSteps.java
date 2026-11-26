@@ -58,6 +58,8 @@ public class PdfVisualRegressionSteps {
 
     private static final Path ACTUAL_ROOT = Paths.get("target", "vrt", "actual");
     private static final Path DIFF_ROOT = Paths.get("target", "vrt", "diff");
+    private static final int DOWNTIME_CLOSE_ATTEMPTS = 3;
+    private static final String DOWNTIME_DESCRIPTION = "OK RISOLTO";
 
     private final SharedSteps sharedSteps;
     private final DestinatarioRegistry destinatarioRegistry;
@@ -177,10 +179,11 @@ public class PdfVisualRegressionSteps {
     }
 
     /**
-     * Prepared, not yet run: the only way to obtain a malfunction attestation newer than the golden master is to
-     * open and close a downtime through the internal pn-downtime-logs API (KO then OK on one functionality). It
-     * writes to the environment's downtime history and shows in the platform status, so the scenario that uses it
-     * stays @ignore until the team agrees on running it.
+     * Opens and closes a downtime through the internal pn-downtime-logs API (KO then OK on one functionality), the
+     * only way to obtain a malfunction attestation produced by the release under test. It writes to the
+     * environment's downtime history and shows in the platform status, so the scenario runs only from its own runner
+     * ({@code PdfVisualRegressionDowntimeTest}), never from the regular suites. The closing event is retried: a
+     * downtime left open would show as an ongoing malfunction of the environment.
      */
     @Given("viene aperto e chiuso un disservizio della funzionalità {string}")
     public void vieneApertoEChiusoUnDisservizio(String functionality) {
@@ -189,8 +192,25 @@ public class PdfVisualRegressionSteps {
         createdDowntimeStart = OffsetDateTime.now().minusMinutes(2).withNano(0);
         downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid, List.of(downtimeEvent(PnFunctionalityStatus.KO,
                 createdDowntimeStart)));
-        downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid, List.of(downtimeEvent(PnFunctionalityStatus.OK,
-                createdDowntimeStart.plusMinutes(1))));
+        closeCreatedDowntime(createdDowntimeStart.plusMinutes(1));
+    }
+
+    private void closeCreatedDowntime(OffsetDateTime end) {
+        RuntimeException lastError = null;
+        for (int attempt = 1; attempt <= DOWNTIME_CLOSE_ATTEMPTS; attempt++) {
+            try {
+                downtimeLogsClient.addStatusChangeEvent(downtimeOperatorUid,
+                        List.of(downtimeEvent(PnFunctionalityStatus.OK, end)));
+                return;
+            } catch (RuntimeException e) {
+                lastError = e;
+                log.warn("Chiusura del disservizio {} del {}: tentativo {} fallito", createdDowntimeFunctionality,
+                        createdDowntimeStart, attempt, e);
+            }
+        }
+        throw new IllegalStateException("Disservizio " + createdDowntimeFunctionality + " aperto il "
+                + createdDowntimeStart + " rimasto aperto: va chiuso con un evento OK (operatore "
+                + downtimeOperatorUid + ")", lastError);
     }
 
     /** The attestation is generated asynchronously when the downtime closes. */
@@ -216,7 +236,10 @@ public class PdfVisualRegressionSteps {
                 .timestamp(timestamp)
                 .functionality(List.of(createdDowntimeFunctionality))
                 .sourceType(PnStatusUpdateEvent.SourceTypeEnum.OPERATOR)
-                .source("pn-b2b-client visual regression");
+                .source("pn-b2b-client visual regression")
+                // Required by the Template Engine (MalfunctionLegalFact.htmlDescription): without it the attestation
+                // is never generated. Same text as the golden master fixture (malfunction.json).
+                .htmlDescription(DOWNTIME_DESCRIPTION);
     }
 
     private PnDowntimeEntry createdDowntimeWithLegalFact() {

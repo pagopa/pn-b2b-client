@@ -5,8 +5,6 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
   # Limiti: l'attestazione di disponibilità dell'esito cartaceo non è prodotta da nessun workflow (solo da uno script
   # operativo): per questo documento esiste solo il golden master.
   # Blocchi attuali:
-  # - [VRT-06] in TEST nessun disservizio risolto ha un'attestazione prodotta dopo il golden master: quelle esistenti
-  #   seguono il template precedente (footer diverso). Lo scenario crea un disservizio e non è stato eseguito.
   # - [VRT-07] l'AAR standard non viene più prodotto (vedi lo scenario commentato).
 
   @visualTest @work-item:QA-18240
@@ -54,11 +52,11 @@ Feature: Visual regression dei documenti PDF prodotti da SEND
     And si recupera il documento "NOTIFICATION_CANCELLED" della notifica
     Then il documento è conforme al golden master
 
-  # [VRT-06] Preparato, non eseguito: apre e chiude un disservizio con l'API interna di pn-downtime-logs (KO poi OK),
-  # scrivendo nello storico dei disservizi e nello stato della piattaforma dell'ambiente: va eseguito solo dopo
-  # accordo col team. L'alternativa che non scrive, leggere l'ultimo disservizio risolto ("dell'ultimo disservizio
-  # risolto"), non è praticabile finché in TEST tutte le attestazioni esistenti seguono il template precedente.
-  @visualTest @work-item:QA-18240 @ignore
+  # [VRT-06] Apre e chiude un disservizio con l'API interna di pn-downtime-logs (KO poi OK, un minuto nel passato),
+  # così l'attestazione è prodotta dalla release in prova. Scrive nello storico dei disservizi e nello stato della
+  # piattaforma dell'ambiente: gira solo dal runner dedicato PdfVisualRegressionDowntimeTest (tag @visualTestDowntime),
+  # escluso da PdfVisualRegressionTest e dalle altre suite.
+  @visualTest @visualTestDowntime @work-item:QA-18240
   Scenario: [VRT-06] L'attestazione di malfunzionamento corrisponde al golden master
     Given viene aperto e chiuso un disservizio della funzionalità "NOTIFICATION_CREATE"
     When si recupera il documento "MALFUNCTION" del disservizio creato

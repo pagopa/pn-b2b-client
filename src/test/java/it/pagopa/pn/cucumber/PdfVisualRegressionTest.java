@@ -19,7 +19,7 @@ import org.junit.platform.suite.api.Suite;
         @ConfigurationParameter(key = Constants.GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = Constants.EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"ignore"})
+@ExcludeTags({"ignore", "visualTestDowntime"})
 @IncludeTags({"visualTest"})
 public class PdfVisualRegressionTest {
 }
