@@ -13,6 +13,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.PollingExecutionException;
+import it.pagopa.common.polling.PollingTimeoutException;
 import it.pagopa.common.util.DateUtils;
 import it.pagopa.common.util.StringUtils;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullNotificationSearchResponse;
@@ -68,7 +72,6 @@ import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchRowAsser
 import it.pagopa.pn.cucumber.utils.token.TokenResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +86,11 @@ import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -319,6 +326,9 @@ public class RicezioneNotificheWebSteps {
                 .findFirst();
     }
 
+    private static final PollingConfig INFORMAL_SEARCH_NOT_EMPTY_POLLING = PollingConfig.of(Duration.ofMinutes(1), Duration.ofSeconds(10));
+    private static final PollingConfig INFORMAL_SEARCH_PAGINATION_POLLING = PollingConfig.of(Duration.ofMinutes(3), Duration.ofSeconds(15));
+
     private LegalNotificationSearchResponse notificationSearchResponse;
     private InformalNotificationSearchResponse informalNotificationSearchResponse;
     private NotificationSearchParam lastMittenteSearchParam;
@@ -343,24 +353,26 @@ public class RicezioneNotificheWebSteps {
             // Subito dopo l'invio la notifica bonaria può non essere ancora indicizzata lato ricerca:
             // si ritenta finché resultsPage non è popolata, senza far fallire lo step in caso di timeout,
             // cosi' che sia l'eventuale step di verifica successivo a segnalare l'assenza di risultati.
-            Awaitility.await()
-                    .atMost(1, TimeUnit.MINUTES)
-                    .pollInterval(10, TimeUnit.SECONDS)
-                    .until(() -> {
-                        informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(searchParam);
-                        return informalNotificationSearchResponse.getResultsPage() != null
-                                && !informalNotificationSearchResponse.getResultsPage().isEmpty();
-                    });
-        } catch (HttpStatusCodeException e) {
-            notificationError = e;
-        } catch (ConditionTimeoutException e) {
+            informalNotificationSearchResponse = Poller.pollUntil(
+                    () -> b2BSenderReadClient.searchInformalSentNotification(searchParam),
+                    response -> response.getResultsPage() != null && !response.getResultsPage().isEmpty(),
+                    INFORMAL_SEARCH_NOT_EMPTY_POLLING);
+        } catch (PollingTimeoutException e) {
+            informalNotificationSearchResponse = (InformalNotificationSearchResponse) e.getLastValue();
             log.warn("resultsPage ancora vuota dopo il retry per il mittente '{}'", sender);
+        } catch (PollingExecutionException e) {
+            if (e.getCause() instanceof HttpStatusCodeException httpError) {
+                notificationError = httpError;
+            } else {
+                throw e;
+            }
         }
     }
 
     @And("si sfogliano tutte le pagine della ricerca lato mittente e si verifica che vengano raccolte almeno {int} notifiche")
     public void sfogliaTutteLePagineLatoMittente(int minimumExpectedCount) {
         int totalCollected;
+        String diagnostic = "";
         if (notificationSearchResponse != null) {
             totalCollected = notificationSearchResponse.getResultsPage().size();
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())
@@ -370,19 +382,99 @@ public class RicezioneNotificheWebSteps {
                 totalCollected += notificationSearchResponse.getResultsPage().size();
             }
         } else if (informalNotificationSearchResponse != null) {
-            totalCollected = informalNotificationSearchResponse.getResultsPage().size();
-            while (Boolean.TRUE.equals(informalNotificationSearchResponse.getMoreResult()) && totalCollected < minimumExpectedCount
-                    && informalNotificationSearchResponse.getNextPagesKey() != null && !informalNotificationSearchResponse.getNextPagesKey().isEmpty()) {
-                lastMittenteSearchParam.setNextPagesKey(informalNotificationSearchResponse.getNextPagesKey().get(0));
-                informalNotificationSearchResponse = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
-                totalCollected += informalNotificationSearchResponse.getResultsPage().size();
+            InformalPagesBrowse browse = browseInformalPagesUntil(minimumExpectedCount);
+            assertThat(browse.duplicatedIuns())
+                    .as("IUN restituiti più volte sfogliando le pagine della ricerca bonarie (pagine duplicate)")
+                    .isEmpty();
+            totalCollected = browse.iuns().size();
+            if (totalCollected < minimumExpectedCount) {
+                // Distingue un problema di paginazione backend (size=50 restituisce tutto) da un filtro delivered che esclude notifiche
+                int sameFiltersNoPaging = countInformalResults(50, lastMittenteSearchParam.delivered);
+                int withoutDeliveredFilter = countInformalResults(50, null);
+                diagnostic = String.format(" (IUN raccolti=%s; stessa ricerca con size=50: %d; size=50 senza filtro delivered: %d)",
+                        browse.iuns(), sameFiltersNoPaging, withoutDeliveredFilter);
             }
         } else {
             throw new IllegalStateException("Nessuna risposta di ricerca notifiche disponibile per sfogliare le pagine.");
         }
         assertThat(totalCollected)
-                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine")
+                .as("Numero totale di notifiche raccolte sfogliando tutte le pagine" + diagnostic)
                 .isGreaterThanOrEqualTo(minimumExpectedCount);
+    }
+
+    // Singola ricerca bonarie (prima pagina) con size/delivered sovrascritti; i parametri originali vengono ripristinati
+    private int countInformalResults(Integer size, Boolean delivered) {
+        Integer originalSize = lastMittenteSearchParam.size;
+        Boolean originalDelivered = lastMittenteSearchParam.delivered;
+        String originalNextPagesKey = lastMittenteSearchParam.nextPagesKey;
+        try {
+            lastMittenteSearchParam.size = size;
+            lastMittenteSearchParam.delivered = delivered;
+            lastMittenteSearchParam.nextPagesKey = null;
+            InformalNotificationSearchResponse response = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+            Set<String> iuns = response.getResultsPage() == null ? Set.of()
+                    : response.getResultsPage().stream().map(row -> row.getIun()).collect(Collectors.toCollection(LinkedHashSet::new));
+            log.info("Ricerca bonarie diagnostica (size={}, delivered={}): iun={}, moreResult={}",
+                    size, delivered, iuns, response.getMoreResult());
+            return iuns.size();
+        } finally {
+            lastMittenteSearchParam.size = originalSize;
+            lastMittenteSearchParam.delivered = originalDelivered;
+            lastMittenteSearchParam.nextPagesKey = originalNextPagesKey;
+        }
+    }
+
+    private record InformalPagesBrowse(Set<String> iuns, List<String> duplicatedIuns) {
+    }
+
+    /**
+     * Le notifiche appena create possono comparire nella ricerca con ritardo (indicizzazione asincrona): si risfoglia
+     * la ricerca dalla prima pagina finché non si raccolgono almeno {@code minimumExpectedCount} IUN distinti o scade
+     * il polling. In caso di timeout si restituisce l'ultimo giro, così l'asserzione finale riporta il conteggio reale.
+     */
+    private InformalPagesBrowse browseInformalPagesUntil(int minimumExpectedCount) {
+        try {
+            return Poller.pollUntil(
+                    () -> browseInformalPages(minimumExpectedCount),
+                    browse -> browse.iuns().size() >= minimumExpectedCount,
+                    INFORMAL_SEARCH_PAGINATION_POLLING);
+        } catch (PollingTimeoutException e) {
+            log.warn("Raccolti meno di {} IUN distinti dopo il polling della ricerca bonarie lato mittente", minimumExpectedCount);
+            return (InformalPagesBrowse) e.getLastValue();
+        }
+    }
+
+    // Un giro completo di paginazione a partire dalla prima pagina; si ferma raggiunto il minimo per limitare le chiamate
+    private InformalPagesBrowse browseInformalPages(int minimumExpectedCount) {
+        Set<String> iuns = new LinkedHashSet<>();
+        List<String> duplicatedIuns = new ArrayList<>();
+        lastMittenteSearchParam.setNextPagesKey(null);
+        InformalNotificationSearchResponse page = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+        int pageNumber = 1;
+        while (true) {
+            List<String> pageIuns = page.getResultsPage() == null ? List.of()
+                    : page.getResultsPage().stream().map(row -> row.getIun()).toList();
+            log.info("Ricerca bonarie lato mittente - pagina {}: iun={}, moreResult={}, nextPagesKey={}",
+                    pageNumber, pageIuns, page.getMoreResult(), page.getNextPagesKey());
+            int sizeBeforePage = iuns.size();
+            pageIuns.forEach(iun -> {
+                if (!iuns.add(iun)) {
+                    duplicatedIuns.add(iun);
+                }
+            });
+            boolean hasNextPage = Boolean.TRUE.equals(page.getMoreResult())
+                    && page.getNextPagesKey() != null && !page.getNextPagesKey().isEmpty();
+            // pagina senza IUN nuovi (es. la stessa pagina restituita di nuovo): si interrompe per non ciclare all'infinito
+            boolean pageAddedNothing = !pageIuns.isEmpty() && iuns.size() == sizeBeforePage;
+            if (!hasNextPage || iuns.size() >= minimumExpectedCount || pageAddedNothing) {
+                break;
+            }
+            lastMittenteSearchParam.setNextPagesKey(page.getNextPagesKey().get(0));
+            page = b2BSenderReadClient.searchInformalSentNotification(lastMittenteSearchParam);
+            pageNumber++;
+        }
+        informalNotificationSearchResponse = page;
+        return new InformalPagesBrowse(iuns, duplicatedIuns);
     }
 
     @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
