@@ -1,6 +1,7 @@
 """Read the configured Confluence parent page without writing any content."""
 
 import json
+from http.client import HTTPException
 import os
 from pathlib import Path
 import re
@@ -48,7 +49,7 @@ def main():
         }
         print(f'HTTP {exc.code}: ' + messages.get(exc.code, 'Richiesta Confluence non riuscita.'), file=sys.stderr)
         return 1
-    except (OSError, ValueError):
+    except (OSError, ValueError, HTTPException):
         print('Connessione Confluence o risposta JSON non valida.', file=sys.stderr)
         return 1
     # No response body, headers or token are emitted to the workflow log.
