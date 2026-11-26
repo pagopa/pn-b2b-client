@@ -8,6 +8,7 @@ configurazione, dipendenze, test e istruzioni di esecuzione.
 | --- | --- | --- | --- |
 | [Epic](epic/README.md) | Preparazione manuale del lavoro QA per una release | Manifest in `releases/` | QA Epic Jira, branch QA e PR di aggiornamento del manifest |
 | [PST](pst/README.md) | Preparazione e aggiornamento dei casi di test delle release in corso | `releases/`, branch Git e scenari Gherkin | `pst_<qa_epic>.md` nel branch `pst-output` |
+| [SDP](sdp/README.md) | Verifica locale del piano di delivery QA di una release | Manifest conforme al template in `releases/` | Anteprima Markdown su stdout |
 
 I percorsi di input e output della tabella sono relativi alla radice del repository.
 
