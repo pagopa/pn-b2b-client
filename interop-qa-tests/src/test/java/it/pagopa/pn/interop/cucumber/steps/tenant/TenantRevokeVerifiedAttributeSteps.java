@@ -60,9 +60,7 @@ public class TenantRevokeVerifiedAttributeSteps {
         } else {
             clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
         }
-
-        // TODO serve chiamare un metodo che usi delegationId
-        // TODO si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
+        sharedStepsContext.getDelegationCommonContext().setDelegationId(delegationId);
         revokeAttribute();
     }
 
@@ -78,7 +76,8 @@ public class TenantRevokeVerifiedAttributeSteps {
             () -> clientTokenConfigurator.getTenantsApi().revokeVerifiedAttribute(
                 identityService.getOrganizationId(consumerTenant),
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                sharedStepsContext.getAgreementCommonContext().getAgreementId())
+                sharedStepsContext.getAgreementCommonContext().getAgreementId(),
+                sharedStepsContext.getDelegationCommonContext().getDelegationId())
         );
     }
 

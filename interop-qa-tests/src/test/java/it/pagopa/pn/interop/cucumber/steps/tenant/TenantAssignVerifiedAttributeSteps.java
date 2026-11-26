@@ -5,6 +5,7 @@ import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import org.junit.jupiter.api.Assertions;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
@@ -43,6 +44,28 @@ public class TenantAssignVerifiedAttributeSteps {
         );
     }
 
+    @When("il delegato all'erogazione ha assegnato a {string} l'attributo verificato precedentemente creato")
+    public void delegatedProducerAssignedVerifiedAttribute(String tenantType) {
+        UUID delegationId = sharedStepsContext.getDelegationCommonContext().getDelegationId();
+        delegatedProducerAssignVerifiedAttribute(tenantType, delegationId);
+        Assertions.assertTrue(
+                sharedStepsContext.getHttpCallExecutor().getResponseStatus().is2xxSuccessful(),
+                "The verified attribute assignment by the delegated producer failed"
+        );
+
+        UUID tenantId = identityService.getOrganizationId(tenantType);
+        UUID attributeId = sharedStepsContext.getAttributeCommonContext().getAttributeId();
+        sharedStepsContext.getPollingService().makePolling(
+                () -> clientTokenConfigurator.getTenantsApi().getVerifiedAttributes(tenantId),
+                res -> res.getAttributes().stream()
+                        .filter(attr -> attr.getId().equals(attributeId))
+                        .anyMatch(attr -> attr.getVerifiedBy().stream()
+                                .anyMatch(verifier -> delegationId.equals(verifier.getDelegationId()))),
+                String.format("Verified attribute with id %s not assigned to tenant %s with delegation %s",
+                        attributeId, tenantId, delegationId)
+        );
+    }
+
     @When("specificando un ID delega casuale l'utente assegna a {string} l'attributo verificato precedentemente creato")
     public void delegatedProducerAssignVerifiedAttributeWithRandomDelegationId(String tenantType) {
         delegatedProducerAssignVerifiedAttribute(tenantType, UUID.randomUUID());
@@ -64,7 +87,7 @@ public class TenantAssignVerifiedAttributeSteps {
                         new VerifiedTenantAttributeSeed()
                                 .id(sharedStepsContext.getAttributeCommonContext().getAttributeId())
                                 .agreementId(sharedStepsContext.getAgreementCommonContext().getAgreementId())
-                        //.delegationId(delegationId) TODO si attende implementazione in DEV/QA di PIN-7448 (QA-18355 è in Blocked)
+                                .delegationId(delegationId)
                 )
         );
     }
