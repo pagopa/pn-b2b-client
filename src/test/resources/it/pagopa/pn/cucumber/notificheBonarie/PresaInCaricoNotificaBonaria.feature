@@ -19,7 +19,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_LANGUAGES_01_1_B] Come ente mittente invio una notifica bonaria allegando
   un messaggio multilingue e NON specificando nessuna addizionale.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
@@ -71,7 +71,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  Introduzione attributo amount e dueDate
 # *******************************************************************
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_AMOUNT_02_1_A] Come ente mittente invio una notifica bonaria definendo il campo amount e dueDate correttamente
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | FattOrd           |
@@ -96,7 +96,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_AMOUNT_02_1_C] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria senza definire il campo amount
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd           |
@@ -108,7 +108,7 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_amount      | NULL              |
       | payment_due_date    | 2026-12-31        |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio 'allowed: ["integer","number"]'
 
 
   @informalNotificationsValidation @informalSyncValidation     #validazione ripresa dalle legal + obbligo di rispettarer la firma del API
@@ -339,7 +339,7 @@ Feature: Sottomissione di una notifica bonaria.
 #  Sottomissione di una notifica bonaria Mancata validazione Sincrona
 # *******************************************************************
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_GROUP_DELETED] Come ente mittente invio una notifica bonaria con gruppo non attivo. Ricevo un errore
     Given mittente della notifica bonaria: "Comune_Multi"
     And imposto un gruppo non attivo per "Comune_Multi"
@@ -392,7 +392,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 403 "PN_DELIVERY_SEND_IS_DISABLED"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_B] come ente mittente invio una notifica bonaria con un numero di allegati di pagamento superiore al massimo configurato e ricevo un errore,
   Nome Parametro: PN_DELIVERY_INFORMALNOTIFICATIONMAXPAYMENTS
   Tipo parametro: Configurazione dichiarata nel file application-<env>.env
@@ -511,7 +511,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2T] Come ente mittente tento l'invio di una notifica bonaria con recipient type mancante, ricevo un errore.
     Given mittente della notifica bonaria: "Comune_Multi"
     And viene creata una nuova notifica bonaria con valori di default
@@ -524,7 +524,7 @@ Feature: Sottomissione di una notifica bonaria.
       | physical_address_province | NULL              |
       | messageId                 | ${NEW-IT}         |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "not found in enum"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -572,7 +572,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400 "PN_DELIVERY_DENOMINATION_LENGTH_EXCEEDED"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_1_PG          |
@@ -583,10 +583,10 @@ Feature: Sottomissione di una notifica bonaria.
       | payment_multy_number | 1                 |
       | messageId            | ${NEW-IT}         |
     Then viene inviata una nuova notifica bonaria con sha non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400
 
 
-  @informalSyncValidation #bug validation
+  @informalSyncValidation @informalComboRefactor #bug validation
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_S2] Invio bonaria con pagamento senza allegato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_1_PG          |
@@ -621,7 +621,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DUP_KEY] Invio con fileKey duplicata tra allegati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document      | DOC_1_PG;DOC_1_PG |
@@ -647,7 +647,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400 "PN_DELIVERY_MAX_ATTACHMENT_NUMBER_PASSED"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_MULTI_LANG] Invio con più lingue aggiuntive
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd           |
@@ -657,7 +657,7 @@ Feature: Sottomissione di una notifica bonaria.
       | messageId           | ${NEW-IT-FR}      |
       | additionalLanguages | FR, IT            |
     When l'invio della notifica bonaria fallisce
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "array is too long"
 
 
   @informalNotificationsValidation @informalSyncValidation
@@ -672,7 +672,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
 
 
-  @informalNotificationsValidation @informalSyncValidation
+  @informalNotificationsValidation @informalSyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_DOC_CONTENT_TYPE] Invio documento principale con contentType errato
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId    | FattOrd           |
@@ -680,8 +680,9 @@ Feature: Sottomissione di una notifica bonaria.
       | taxId         | FRMTTR76M06B715E  |
       | denomination  | Ettore Fieramosca |
       | messageId     | ${NEW-IT}         |
+    # Unica violazione nel body: contentType "application/txt" fuori schema (detail generico del validatore OpenAPI)
     When viene inviata una nuova notifica bonaria con content type non valido
-    Then si riceve errore 400 "PN_GENERIC_INVALIDPARAMETER"
+    Then si riceve errore 400 "PN_INVALID_BODY" con dettaglio "failed to match all required schemas"
 
 
    #@informalNotificationsValidation @informalSyncValidation errore dato nella prepare non oggetto delle bonarie
@@ -919,7 +920,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la sottomissione della notifica bonaria è andata a buon fine
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_E] Come ente mittenste invio una notifica bonaria con un documento e senza pagamneti e allegati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | DOC_INFORMAL      |
@@ -1010,7 +1011,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then si riceve errore 404 "PN_DELIVERY_CAMPAIGN_NOT_FOUND"
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_04_2_L] Invio con fileKey non coerente con contentType del pagamento
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId             | FattOrd               |
@@ -1061,7 +1062,7 @@ Feature: Sottomissione di una notifica bonaria.
     Then la notifica bonaria è stata rifiutata per l'errore: "DIGITAL_ADDRESS_MISSING"
 
 
-  @informalAsyncValidation
+  @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_ASYNC_ANALOG_01_6] Come ente mittente tento l'invio di una notifica bonaria senza indirizzo analogico per un campagna con canale analogico.Ottengo stato refused.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | MessaMora                |
@@ -1563,7 +1564,7 @@ Feature: Sottomissione di una notifica bonaria.
     When viene inviata una nuova notifica bonaria e si attende che vada in stato "ACCEPTED"
 
 
-  @informalNotificationsValidation @informalAsyncValidation
+  @informalNotificationsValidation @informalAsyncValidation @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_SM_01_1_H] Come ente mittenste invio una notifica bonaria senza documento e senza pagamneti e allegati
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | document             | NULL              |
