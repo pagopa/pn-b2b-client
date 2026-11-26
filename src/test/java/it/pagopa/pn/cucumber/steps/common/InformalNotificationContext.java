@@ -14,6 +14,8 @@ public class InformalNotificationContext {
     @Data
     public static class InformalRecipientContext {
         private Destinatario destinatario;
+        private String paymentCreditorTaxId;
+        private String paymentNoticeCode;
     }
 
 }

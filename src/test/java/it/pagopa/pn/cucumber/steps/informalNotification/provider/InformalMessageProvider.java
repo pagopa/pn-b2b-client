@@ -50,12 +50,26 @@ public class InformalMessageProvider {
         return createMessage(InformalMessageTemplates.RISCUOTI_IT.getContent(), InformalMessageTemplates.RISCUOTI_EN.getContent(), cxId, apiKeyType);
     }
 
+    /**
+     * Messaggio IT con l'oggetto del template sostituito da {@code subject}.
+     * L'oggetto del messaggio è quello che pn-workflow-manager invia su App IO.
+     */
+    public String createMessageITWithSubject(String subject, String cxId, SettableApiKey.ApiKeyType apiKeyType) {
+        NewMessageRequest request = new NewMessageRequest()
+                .primaryMessage(InformalMessageUtils.buildPrimaryMessage(InformalMessageTemplates.RISCUOTI_IT.getContent()).subject(subject));
+        return createMessage(request, cxId, apiKeyType);
+    }
+
     private String createMessage(InformalMessageContent primaryContent, InformalMessageContent additionalContent, String cxId, SettableApiKey.ApiKeyType apiKeyType) {
 
         NewMessageRequest request = new NewMessageRequest().primaryMessage(InformalMessageUtils.buildPrimaryMessage(primaryContent));
         if (additionalContent != null) {
             request.additionalMessage(InformalMessageUtils.buildAdditionalMessage(additionalContent));
         }
+        return createMessage(request, cxId, apiKeyType);
+    }
+
+    private String createMessage(NewMessageRequest request, String cxId, SettableApiKey.ApiKeyType apiKeyType) {
         String messageId = pnPaB2bExternalInformalClientImpl.createMessage(request, apiKeyType).getMessageId().toString();
         verifyMessageCreated(messageId, cxId, apiKeyType);
         return messageId;

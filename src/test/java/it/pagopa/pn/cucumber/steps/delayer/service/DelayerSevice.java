@@ -516,14 +516,6 @@ public class DelayerSevice {
         return lambdaClient.getPresignedUrlDownload(filename).getDownloadUrl();
     }
 
-    public void insertMockSenderLimit(String filename) {
-        try {
-            lambdaClient.insertMockSenderLimits(filename);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public void invokePortfatLambda(String downloadUrl) {
         portfatLambdaClient.invokePortfatLambda(downloadUrl);
     }

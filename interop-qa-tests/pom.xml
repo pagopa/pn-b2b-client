@@ -326,10 +326,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <!-- TODO 11/2026: in assenza di una specifica rilasciata è stato usato questo commit
-                                    specifico per permettere lo sviluppo di QA-19033. Sostituire con puntamento
-                                    a 2.25 una volta rilasciata.  -->
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/6625c5a5eb4193666920c3f415dca67182835a87/packages/api-clients/open-api/bffApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/bffApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -532,7 +529,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC2/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/m2mGatewayApi.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -568,7 +565,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC2/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.25.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

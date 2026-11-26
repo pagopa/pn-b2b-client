@@ -23,7 +23,15 @@ public interface SettableBearerToken {
         ROOT,
         SUPPORT_1,
         TENANT_1,
-        TENANT_2
+        TENANT_2;
+
+        public boolean isPf() {
+            return this == USER_1 || this == USER_2 || this == USER_3 || this == USER_4 || this == USER_5;
+        }
+
+        public boolean isPg() {
+            return this == PG_1 || this == PG_2 || this == PG_3 || this == PG_4 || this == PG_5;
+        }
     }
 
     boolean setBearerToken(BearerTokenType bearerToken);
