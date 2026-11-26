@@ -102,6 +102,47 @@ public class DelayerMockSteps {
                 "pn-PaperDeliveryUsedSenderLimitMock non contiene record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
     }
 
+    @Then("devono esistere contatori di stampa mock per la deliveryDate {string}")
+    public void verifyMockCountersPrint(String deliveryDate) {
+        awaitNotEmptyMockTable(
+                () -> mockService.getMockCountersPrintSize(deliveryDate),
+                "pn-PaperDeliveryCountersMock non contiene contatori di stampa per deliveryDate '%s'".formatted(deliveryDate));
+    }
+
+    // Un errore della lambda (statusCode != 200) fa fallire lo step: l'operazione deve completarsi correttamente
+    @When("viene richiesta la pulizia dei record delle tabelle mock tramite DELETE_DATA per il CSV {string}")
+    public void deleteDataMock(String csvName) {
+        mockService.deleteDataMock(csvName);
+    }
+
+    @Then("non devono esistere spedizioni mock in pn-DelayerPaperDeliveryMock per la deliveryDate {string}")
+    public void verifyNoMockPaperDeliveries(String deliveryDate) {
+        awaitEmptyMockTable(
+                () -> mockService.getMockPaperDeliverySize(deliveryDate),
+                "pn-DelayerPaperDeliveryMock contiene ancora record per deliveryDate '%s'".formatted(deliveryDate));
+    }
+
+    @Then("non devono esistere capacità utilizzate mock per la deliveryDate {string}, il recapitista {string} e la geokey {string}")
+    public void verifyNoMockUsedCapacities(String deliveryDate, String driver, String geoKey) {
+        awaitEmptyMockTable(
+                () -> mockService.getMockUsedCapacitySize(driver, geoKey, deliveryDate),
+                "pn-PaperDeliveryDriverUsedCapacitiesMock contiene ancora record per deliveryDate '%s', recapitista '%s' e geokey '%s'".formatted(deliveryDate, driver, geoKey));
+    }
+
+    @Then("non devono esistere limiti mittente utilizzati mock per la deliveryDate {string} e la provincia {string}")
+    public void verifyNoMockUsedSenderLimits(String deliveryDate, String province) {
+        awaitEmptyMockTable(
+                () -> mockService.getMockUsedSenderLimitSize(deliveryDate, province),
+                "pn-PaperDeliveryUsedSenderLimitMock contiene ancora record per deliveryDate '%s' e provincia '%s'".formatted(deliveryDate, province));
+    }
+
+    @Then("non devono esistere contatori di stampa mock per la deliveryDate {string}")
+    public void verifyNoMockCountersPrint(String deliveryDate) {
+        awaitEmptyMockTable(
+                () -> mockService.getMockCountersPrintSize(deliveryDate),
+                "pn-PaperDeliveryCountersMock contiene ancora contatori di stampa per deliveryDate '%s'".formatted(deliveryDate));
+    }
+
     // Sola lettura sulle tabelle reali (DescribeTable + Scan keys-only con Limit): nessun polling, i dati reali sono già presenti o non lo sono
     @Given("viene salvato un campione di record dalle tabelle reali del Delayer")
     public void snapshotRealTables() {
@@ -130,6 +171,10 @@ public class DelayerMockSteps {
 
     private void awaitNotEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
         awaitMockTableSize(sizeSupplier, size -> size > 0, failMessage);
+    }
+
+    private void awaitEmptyMockTable(Supplier<Integer> sizeSupplier, String failMessage) {
+        awaitMockTableSize(sizeSupplier, size -> size == 0, failMessage);
     }
 
     private void awaitMockTableSize(Supplier<Integer> sizeSupplier, IntPredicate condition, String failMessage) {

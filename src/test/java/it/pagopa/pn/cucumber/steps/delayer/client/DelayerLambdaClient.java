@@ -87,11 +87,35 @@ public class DelayerLambdaClient {
     }
 
     public void deleteData(String filename) {
-        var params = paramsOf(
+        deleteData(
                 DelayerTable.DelayerPaperDelivery,
                 DelayerTable.PaperDeliveryDriverUsedCapacities,
                 DelayerTable.PaperDeliveryUsedSenderLimit,
                 DelayerTable.PaperDeliveryCounters,
+                filename
+        );
+    }
+
+    public void deleteDataMock(String filename) {
+        deleteData(
+                DelayerTable.DelayerPaperDeliveryMock,
+                DelayerTable.PaperDeliveryDriverUsedCapacitiesMock,
+                DelayerTable.PaperDeliveryUsedSenderLimitMock,
+                DelayerTable.PaperDeliveryCountersMock,
+                mandatory("filename", filename)
+        );
+    }
+
+    private void deleteData(DelayerTable paperDeliveryTable,
+                            DelayerTable usedCapacitiesTable,
+                            DelayerTable usedSenderLimitTable,
+                            DelayerTable countersTable,
+                            Object filename) {
+        var params = paramsOf(
+                paperDeliveryTable,
+                usedCapacitiesTable,
+                usedSenderLimitTable,
+                countersTable,
                 filename
         );
 
@@ -344,12 +368,16 @@ public class DelayerLambdaClient {
     }
 
     public DelayerCountersPrint getCountersPrint(String deliveryDate) {
+        return getCountersPrint(deliveryDate, false);
+    }
+
+    public DelayerCountersPrint getCountersPrint(String deliveryDate, boolean fromMock) {
         return getCounters(
                 DelayerCounterType.PRINT,
                 deliveryDate,
                 null,
                 DelayerCountersPrint.class,
-                false
+                fromMock
         );
     }
 

@@ -183,6 +183,21 @@ public class DelayerMockService {
         lambdaClient.importDataMock(csvName, deliveryWeek);
     }
 
+    /**
+     * Pulizia record-level tramite DELETE_DATA sulle tabelle mock coinvolte (spedizioni, capacità utilizzate,
+     * limiti mittente utilizzati, contatori), a partire dal CSV presente su S3.
+     */
+    public void deleteDataMock(String csvName) {
+        lambdaClient.deleteDataMock(csvName);
+    }
+
+    public Integer getMockCountersPrintSize(String deliveryDate) {
+        var response = lambdaClient.getCountersPrint(deliveryDate, true);
+        if (response == null || response.getItems() == null)
+            throw new IllegalStateException("GET_COUNTERS returned no items list for table " + DelayerTable.PaperDeliveryCountersMock.tableName);
+        return response.getItems().size();
+    }
+
     public String runBatchWorkflowStateMachineMock(Integer printCapacity, String deliveryWeek) {
         return lambdaClient.runAlgorithmMock(printCapacity, deliveryWeek).getExecutionArn();
     }
