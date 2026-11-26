@@ -131,8 +131,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(EServiceTemplateTestAssistant.java:416)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.crud.EServiceTemplateCreateSteps.createEServiceTemplate(EServiceTemplateCreateSteps.java:96)
     	at ✽.l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates-certified-attributes.feature:112)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log. Riesecuzione in locale.'
+  result: 'La riesecuzione in locale non ha prodotto errori. Classificabile come errore dovuto a carico elevato delle richieste nella particolare finestra di tempo in cui questo test è stato eseguito.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di
@@ -430,8 +430,8 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(EServiceTemplateTestAssistant.java:416)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.crud.EServiceTemplateCreateSteps.createEServiceTemplate(EServiceTemplateCreateSteps.java:96)
     	at ✽.l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates.feature:690)
-  procedure: ''
-  result: ''
+  procedure: 'Analisi del log. Riesecuzione in locale.'
+  result: 'La riesecuzione in locale non ha prodotto errori. Classificabile come errore dovuto a carico elevato delle richieste nella particolare finestra di tempo in cui questo test è stato eseguito.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2MG_ESERVICES_35_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service
