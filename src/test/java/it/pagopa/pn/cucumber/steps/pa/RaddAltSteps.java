@@ -1,11 +1,13 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV29;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -13,12 +15,11 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
 import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
+import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
-import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.cucumber.utils.Compress;
-import it.pagopa.pn.client.b2b.pa.utils.FiscalCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -40,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
@@ -81,6 +83,11 @@ public class RaddAltSteps {
     private HttpStatusCodeException expectedStartTransactionException;
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private DataPreparationRaddVpceService dataPreparationService;
+    private static final Map<String, String> DOCUMENT_TYPE_ALIASES = Map.of(
+            "numeroDocumentiFrontespizio", "COVER_FILE",
+            "numeroDocumentiLegalFact", "ATTESTAZIONE_OPPONIBILE_A_TERZI",
+            "numeroDocumentiAtto", "ATTO_NOTIFICATO"
+    );
 
     @Autowired
     public RaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnExternalServiceClientImpl externalServiceClient, SharedSteps sharedSteps, DataPreparationRaddVpceService dataPreparationService) {
@@ -326,6 +333,87 @@ public class RaddAltSteps {
         Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
     }
 
+
+    @And("l'operazione di download degli atti restituisce i seguenti risultati su radd alternative:")
+    public void verificaRisultatiDownloadAttiRadd(DataTable dataTable) {
+
+        Map<String, String> data = dataTable.asMap(String.class, String.class);
+
+        Assertions.assertFalse(data.isEmpty(), "La tabella dei risultati non deve essere vuota");
+
+        boolean hasCodiceRisposta = data.containsKey("codiceRisposta");
+        boolean hasDescrizione = data.containsKey("descrizione");
+
+        if (!hasCodiceRisposta && !hasDescrizione) {
+            lOperazioneDiDownloadDegliAttiSiConcludeCorrettamente();
+        } else {
+            Assertions.assertNotNull(this.startTransactionResponse, "La risposta di startTransaction non deve essere null");
+            Assertions.assertNotNull(this.startTransactionResponse.getStatus(), "Lo status della risposta non deve essere null");
+
+            if (hasCodiceRisposta) {
+                int expectedCode = Integer.parseInt(data.get("codiceRisposta"));
+                StartTransactionResponseStatus.CodeEnum expectedStatusCode = getErrorCodeStartTransaction(expectedCode);
+                Assertions.assertEquals(
+                        expectedStatusCode,
+                        this.startTransactionResponse.getStatus().getCode(),
+                        "Codice risposta non coerente"
+                );
+            }
+
+            if (hasDescrizione) {
+                String expectedMessage = data.get("descrizione");
+                Assertions.assertNotNull(
+                        this.startTransactionResponse.getStatus().getMessage(),
+                        "Messaggio di risposta non presente"
+                );
+                Assertions.assertEquals(
+                        expectedMessage.trim().toLowerCase(),
+                        this.startTransactionResponse.getStatus().getMessage().trim().toLowerCase(),
+                        "Descrizione risposta non coerente"
+                );
+            }
+        }
+
+        Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList(),
+                "La lista degli atti non deve essere null");
+        Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty(),
+                "La lista degli atti non deve essere vuota");
+
+        Map<String, Long> expectedDocumentsByType = data.entrySet().stream()
+                .filter(e -> DOCUMENT_TYPE_ALIASES.containsKey(e.getKey()))
+                .collect(Collectors.toMap(
+                        e -> DOCUMENT_TYPE_ALIASES.get(e.getKey()),
+                        e -> Long.parseLong(e.getValue())
+                ));
+
+        Map<String, Long> actualDocumentsByType = this.startTransactionResponse.getDownloadUrlList().stream()
+                .filter(url -> url.getDocumentType() != null)
+                .collect(Collectors.groupingBy(
+                        url -> url.getDocumentType(),
+                        Collectors.counting()
+                ));
+// 1. Verifica che ogni documento atteso nel feature sia presente nella risposta con la quantità corretta
+        expectedDocumentsByType.forEach((type, expectedCount) -> {
+            Long actualCount = actualDocumentsByType.get(type);
+            Assertions.assertNotNull(actualCount, () -> String.format(
+                    "Tipo documento %s per lo IUN %s dichiarato nel feature ma non presente nella risposta.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    type, sharedSteps.getNotificationIun(), expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
+            Assertions.assertEquals(expectedCount, actualCount, () -> String.format(
+                    "Numero di documenti per tipo %s per lo IUN %s non coerente.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    type, sharedSteps.getNotificationIun(), expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
+        });
+
+// 2. Verifica che nella risposta non ci siano documenti non dichiarati nel feature
+        actualDocumentsByType.forEach((type, actualCount) -> {
+            Long expectedCount = expectedDocumentsByType.get(type);
+            Assertions.assertNotNull(expectedCount, () -> String.format(
+                    "Nella risposta per lo IUN %s è presente il tipo di documento %s ma non è dichiarato nel feature.%nExpected: %s%nActual: %s.%nthis.startTransactionResponse: %s",
+                    sharedSteps.getNotificationIun(), type, expectedDocumentsByType, actualDocumentsByType, this.startTransactionResponse.getDownloadUrlList().toString()));
+        });
+
+    }
+
+
     @And("l'operazione di download non restituisce atti, generando un errore {string} con codice {int} su radd alternative")
     public void lOperazioneDiDownloadNonRestituisceAttiGeneraUnErroreConCodice(String errorDescription, int erroCode) {
         StartTransactionResponseStatus.CodeEnum error = getErrorCodeStartTransaction(erroCode);
@@ -411,7 +499,15 @@ public class RaddAltSteps {
     public void downloadOperationReturnsTotDocuments(Integer documenti) {
         Assertions.assertNotNull(this.startTransactionResponse.getDownloadUrlList());
         Assertions.assertFalse(this.startTransactionResponse.getDownloadUrlList().isEmpty());
-        Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+        //Assertions.assertEquals(documenti, this.startTransactionResponse.getDownloadUrlList().size());
+        Assertions.assertEquals(
+                documenti,
+                this.startTransactionResponse.getDownloadUrlList().size(),
+                () -> "Documenti attesi: " + documenti
+                        + ", documenti trovati: " + this.startTransactionResponse.getDownloadUrlList().size()
+                        + "\nLista documenti:\n"
+                        + this.startTransactionResponse.getDownloadUrlList()
+        );
         Assertions.assertNotNull(this.startTransactionResponse.getStatus());
         Assertions.assertEquals(StartTransactionResponseStatus.CodeEnum.NUMBER_0, this.startTransactionResponse.getStatus().getCode());
     }
@@ -927,5 +1023,12 @@ public class RaddAltSteps {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "RaddAltSteps{" +
+                "startTransactionResponse=" + startTransactionResponse +
+                '}';
     }
 }

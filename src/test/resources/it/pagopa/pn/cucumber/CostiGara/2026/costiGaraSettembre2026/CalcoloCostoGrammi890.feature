@@ -64,6 +64,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 1086  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1086  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 939   | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1086  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-21GR_2] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -121,6 +124,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 1188  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1188  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1188  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1083  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1188  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -182,6 +188,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 1205  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1205  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1100  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1205  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-51GR_4] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -238,6 +247,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 1209  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1209  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1209  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1104  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1209  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -297,6 +309,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 1239  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1239  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1134  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1239  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-101GR_6] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -354,6 +369,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 1329  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1329  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1329  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1216  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1329  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -413,6 +431,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 1427  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1427  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1315  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1427  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-251GR_8] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -470,6 +491,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 1431  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1431  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1431  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1318  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1431  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -529,6 +553,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 1495  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1495  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1383  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1495  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-351GR_10] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -585,6 +612,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 1612  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 1612  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 1612  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1487  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 1612  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -643,6 +673,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 2050  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 2050  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 1926  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 2050  | SEUI                    | OG       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre26
   Scenario Outline: [CALCOLO-COSTO_890-1001GR_12] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -699,6 +732,9 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09007 | 2054  | SAMATZAI                | CA       | notifica analogica RECAPITISTA |
       | 09008 | 2054  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 2054  | SEULO                   | NU       | notifica analogica RECAPITISTA |
+
+      | 67071 | 1929  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 2054  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre26
@@ -758,8 +794,33 @@ Feature: calcolo costo notifica in base ai grammi con notifiche 890
       | 09008 | 2730  | USSANA                  | CA       | notifica analogica RECAPITISTA |
       | 08014 | 2730  | SEULO                   | NU       | notifica analogica RECAPITISTA |
 
+      | 67071 | 2606  | COLLARMELE              | AQ       | notifica analogica RECAPITISTA |
+      | 08051 | 2730  | SEUI                    | OG       | notifica analogica RECAPITISTA |
 
 
 
 
 
+  @costoAnalogicoSettembre26
+  Scenario Outline: [CALCOLO-COSTO_890-CAP_DISMESSO_1] (Settembre) Invio notifica verso CAP dismesso su raccomandata 890 e verifica rifiuto della notifica
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | REGISTERED_LETTER_890            |
+      | feePolicy             | DELIVERY_MODE                    |
+      | document              | DOC_4_PG;                        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_zip          | <CAP>          |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | payment_pagoPaForm           | NOALLEGATO     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "REFUSED"
+    Then viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+      | loadTimeline           | true                                 |
+      | details                | NOT_NULL                             |
+      | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
+    Examples:
+      | CAP   | MUNICIPALITY | PROVINCE |
+      | 09064 | SEUI         | OG       |

@@ -8,6 +8,7 @@ import it.pagopa.interop.authorization.domain.Role;
 import it.pagopa.interop.authorization.service.identity.IdentityService;
 import it.pagopa.interop.authorization.service.utils.PollingService;
 import it.pagopa.interop.common.IHttpExecutor;
+import it.pagopa.interop.conf.api_profile.ApiProfile;
 import it.pagopa.interop.utils.delay_service.DelayService;
 import it.pagopa.pn.interop.cucumber.steps.common.*;
 import it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateStepContext;
@@ -20,6 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,8 +39,10 @@ public class SharedStepsContext implements ISharedContext {
     private int testSeed;
     private String tenantType;
     private Role role;
+    private UUID userId;
     private String userToken;
     private Auth auth;
+    private ApiProfile.ApiSet apiSet;
     private ClientCommonContext clientCommonContext;
     private PurposeCommonContext purposeCommonContext;
     private EServicesCommonContext eServicesCommonContext;

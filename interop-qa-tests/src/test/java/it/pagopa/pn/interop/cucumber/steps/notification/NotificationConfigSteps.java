@@ -11,11 +11,18 @@ import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
+import java.util.Map;
+import java.util.UUID;
+
 @Slf4j
 public class NotificationConfigSteps {
 
     private enum NotificationConfigOp { READ, UPDATE, UNKNOWN }
     private enum ConfigTarget { USER, TENANT }
+
+    private static final Map<String, UserNotificationConfig> MAX_IN_APP_NOTIFICATION_CONFIG_BY_ROLE = Map.of(
+            "reviewer", createReviewerMaxInAppUserNotificationConfig()
+    );
 
     private final NotificationConfigClient configClient;
     private final SharedStepsContext sharedStepsContext;
@@ -29,6 +36,50 @@ public class NotificationConfigSteps {
         this.configClient = (NotificationConfigClient) clientTokenConfigurator.getNotificationConfigClient();
         this.configClient.setHttpCallExecutor(sharedStepsContext.getHttpCallExecutor());
         this.sharedStepsContext = sharedStepsContext;
+    }
+
+    private static NotificationConfig createAllDisabledNotificationConfig() {
+        return new NotificationConfig()
+                .agreementSuspendedUnsuspendedToProducer(false)
+                .agreementManagementToProducer(false)
+                .clientAddedRemovedToProducer(false)
+                .purposeStatusChangedToProducer(false)
+                .templateStatusChangedToProducer(false)
+                .eserviceStateChangedToProducer(false)
+                .agreementSuspendedUnsuspendedToConsumer(false)
+                .eserviceStateChangedToConsumer(false)
+                .agreementActivatedRejectedToConsumer(false)
+                .purposeActivatedRejectedToConsumer(false)
+                .purposeSuspendedUnsuspendedToConsumer(false)
+                .newEserviceTemplateVersionToInstantiator(false)
+                .eserviceTemplateNameChangedToInstantiator(false)
+                .eserviceTemplateStatusChangedToInstantiator(false)
+                .delegationApprovedRejectedToDelegator(false)
+                .eserviceNewVersionSubmittedToDelegator(false)
+                .eserviceNewVersionApprovedRejectedToDelegate(false)
+                .delegationSubmittedRevokedToDelegate(false)
+                .certifiedVerifiedAttributeAssignedRevokedToAssignee(false)
+                .clientKeyAndProducerKeychainKeyAddedDeletedToClientUsers(false)
+                .purposeQuotaAdjustmentRequestToProducer(false)
+                .purposeOverQuotaStateToConsumer(false)
+                .purposeRiskAnalysisAssignmentStatusToAdmin(false)
+                .purposeRiskAnalysisAssignmentStatusToReviewer(false)
+                .purposePublishedWithRiskAnalysisToReviewer(false)
+                .eserviceArchivingRequestedToDelegator(false)
+                .eserviceArchivingApprovedRejectedToDelegate(false);
+    }
+
+    private static UserNotificationConfig createReviewerMaxInAppUserNotificationConfig() {
+        NotificationConfig inAppConfig = createAllDisabledNotificationConfig()
+                .purposeRiskAnalysisAssignmentStatusToReviewer(true)
+                .purposePublishedWithRiskAnalysisToReviewer(true);
+
+        return new UserNotificationConfig()
+                .inAppNotificationPreference(true)
+                .emailNotificationPreference(false)
+                .emailDigestPreference(false)
+                .inAppConfig(inAppConfig)
+                .emailConfig(createAllDisabledNotificationConfig());
     }
 
     @When("si tenta di {word} la configurazione delle notifiche per {word}")
@@ -102,6 +153,75 @@ public class NotificationConfigSteps {
     @When("si disabilitano tutte le notifiche InApp per l'utente corrente")
     public void disableAllInAppNotificationsForCurrentUser() {
         triggerAllInAppNotificationsForCurrentUser(false);
+    }
+
+    /**
+     * Memorizza nel contesto la configurazione attuale delle notifiche dell'utente corrente.
+     */
+    @When("si prende nota dell'attuale configurazione delle notifiche InApp per l'utente corrente")
+    public void recordCurrentInAppNotificationConfigForCurrentUser() {
+        UserNotificationConfig currentConfig = configClient.getUserConfig();
+        Assertions.assertThat(currentConfig)
+                .as("La configurazione utente deve essere presente")
+                .isNotNull();
+
+        UUID userId = sharedStepsContext.getUserId();
+        sharedStepsContext.getNotificationCommonContext()
+                .getOriginalUserNotificationConfigs()
+                .put(userId, currentConfig);
+        actualUserNotificationConfig = currentConfig;
+    }
+
+    /**
+     * Attiva tutte le notifiche InApp possibili concesse al ruolo specificato in input.
+     *
+     * @param role il ruolo utente per cui attivare le notifiche InApp
+     */
+    @When("si attivano tutte le notifiche InApp possibili per l'utente {string}")
+    public void enableMaxInAppNotificationsForRole(String role) {
+        UserNotificationConfig roleMaxConfig = role == null
+                ? null
+                : MAX_IN_APP_NOTIFICATION_CONFIG_BY_ROLE.get(role.toLowerCase());
+
+        if (roleMaxConfig == null) {
+            throw new IllegalArgumentException(
+                    "Il ruolo \"" + role + "\" non è ancora supportato oppure è inesistente"
+            );
+        }
+
+        UserNotificationConfigUpdateSeed seed = toUpdateSeed(roleMaxConfig);
+        expectedUserNotificationConfig = roleMaxConfig;
+        configClient.updateUserNotificationConfig(seed);
+    }
+
+    /**
+     * Ripristina la configurazione delle notifiche originariamente annotata in contesto per l'utente corrente.
+     */
+    @When("si ripristinano le notifiche InApp originariamente previste per l'utente corrente")
+    public void restoreOriginalInAppNotificationsForCurrentUser() {
+        UUID userId = sharedStepsContext.getUserId();
+        UserNotificationConfig originalConfig = sharedStepsContext.getNotificationCommonContext()
+                .getOriginalUserNotificationConfigs()
+                .get(userId);
+
+        if (originalConfig == null) {
+            throw new IllegalStateException(
+                    "Nessuna configurazione originale delle notifiche trovata in contesto per l'utente con id: " + userId
+            );
+        }
+
+        UserNotificationConfigUpdateSeed seed = toUpdateSeed(originalConfig);
+        expectedUserNotificationConfig = originalConfig;
+        configClient.updateUserNotificationConfig(seed);
+    }
+
+    private static UserNotificationConfigUpdateSeed toUpdateSeed(UserNotificationConfig config) {
+        return new UserNotificationConfigUpdateSeed()
+                .inAppNotificationPreference(config.getInAppNotificationPreference())
+                .emailNotificationPreference(config.getEmailNotificationPreference())
+                .emailDigestPreference(config.getEmailDigestPreference())
+                .inAppConfig(config.getInAppConfig())
+                .emailConfig(config.getEmailConfig());
     }
 
     private void triggerAllInAppNotificationsForCurrentUser(boolean isActive) {
