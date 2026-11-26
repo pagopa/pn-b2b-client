@@ -34,6 +34,6 @@ import org.junit.platform.suite.api.Suite;
         )
 })
 @ExcludeTags({"wait_for_fix"})
-@IncludeTags({"m2m-events"})
+@IncludeTags({"m2m-events", "m2m-ra-events"})
 public class M2MEventsV3Test {
 }

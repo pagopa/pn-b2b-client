@@ -63,7 +63,9 @@ public class PnPollingServiceValidationStatusV28 extends PnPollingTemplate<PnPol
                 pnPollingResponse.setResult(false);
                 return false;
             }
-            if (pnPollingResponse.getNotification() == null) {
+            // Se non è stato assegnato un IUN (es. rifiuto avvenuto prima della protocollazione), la
+            // fullSentNotification non verrà mai recuperata: lo stato già verificato è quindi definitivo.
+            if (pnPollingResponse.getStatusResponse().getIun() != null && pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }

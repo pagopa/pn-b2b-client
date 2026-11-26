@@ -8,28 +8,28 @@ Feature: Test API of e-service template
     When l'utente effettua la creazione di un e-service template in modalità <modo> in stato di DRAFT
     Then si ottiene response status code 403
     Examples:
-      | ruolo     | modo        |
-      | security  | erogazione |
-      | support   | erogazione |
+      | ruolo    | modo       |
+      | security | erogazione |
+      | support  | erogazione |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo     | modo       |
-      | reviewer  | erogazione |
-      | viewer    | erogazione |
+      | ruolo    | modo       |
+      | reviewer | erogazione |
+      | viewer   | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | security | ricezione |
-      | support | ricezione |
+      | support  | ricezione |
 
     @e-service-template-receive-bff
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | reviewer | ricezione |
-      | viewer | ricezione |
+      | viewer   | ricezione |
 
   @happy-path
   @e-service-template-create
@@ -72,15 +72,15 @@ Feature: Test API of e-service template
     And l'utente effettua la sospensione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @happy-path
   @e-service-template-version-suspend
@@ -105,15 +105,15 @@ Feature: Test API of e-service template
     And l'utente effettua la riattivazione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @happy-path
   @e-service-template-version-activate
@@ -145,23 +145,23 @@ Feature: Test API of e-service template
     And l'utente tenta delle modifiche all'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
-      | security | DRAFT |
-      | support | DRAFT |
+      | ruolo    | stato     |
+      | security | DRAFT     |
+      | support  | DRAFT     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
-      | reviewer | DRAFT |
+      | ruolo    | stato     |
+      | reviewer | DRAFT     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | DRAFT |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | DRAFT     |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @happy-path
   @e-service-template-update
@@ -236,23 +236,23 @@ Feature: Test API of e-service template
     And l'utente tenta delle modifiche alla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
-      | security | DRAFT |
-      | support | DRAFT |
+      | ruolo    | stato     |
+      | security | DRAFT     |
+      | support  | DRAFT     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
-      | reviewer | DRAFT |
+      | ruolo    | stato     |
+      | reviewer | DRAFT     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | DRAFT |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | DRAFT     |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @happy-path
   @e-service-template-version-update
@@ -328,23 +328,23 @@ Feature: Test API of e-service template
     And l'utente tenta l'aggiunta di una risk analysis all'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
-      | security | DRAFT |
-      | support | DRAFT |
+      | ruolo    | stato     |
+      | security | DRAFT     |
+      | support  | DRAFT     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
-      | reviewer | DRAFT |
+      | ruolo    | stato     |
+      | reviewer | DRAFT     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | DRAFT |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | DRAFT     |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @happy-path
   @e-service-template-receive-bff
@@ -429,15 +429,15 @@ Feature: Test API of e-service template
     And l'utente tenta la cancellazione della risk analysis dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato |
       | security | DRAFT |
-      | support | DRAFT |
+      | support  | DRAFT |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato |
       | reviewer | DRAFT |
-      | viewer | DRAFT |
+      | viewer   | DRAFT |
 
   @happy-path
   @e-service-template-receive-bff
@@ -496,23 +496,23 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica della risk analysis dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
-      | security | DRAFT |
-      | support | DRAFT |
+      | ruolo    | stato     |
+      | security | DRAFT     |
+      | support  | DRAFT     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
-      | reviewer | DRAFT |
+      | ruolo    | stato     |
+      | reviewer | DRAFT     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | DRAFT |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | DRAFT     |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @happy-path
   @e-service-template-receive-bff
@@ -571,25 +571,25 @@ Feature: Test API of e-service template
     And l'utente tenta l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato | kind |
-      | security | DRAFT | DOCUMENT |
-      | support | DRAFT | DOCUMENT |
-      | security | PUBLISHED | DOCUMENT |
-      | support | PUBLISHED | DOCUMENT |
-      | security | SUSPENDED | DOCUMENT |
-      | support | SUSPENDED | DOCUMENT |
-      | security | DRAFT | INTERFACE |
-      | support | DRAFT | INTERFACE |
+      | ruolo    | stato     | kind      |
+      | security | DRAFT     | DOCUMENT  |
+      | support  | DRAFT     | DOCUMENT  |
+      | security | PUBLISHED | DOCUMENT  |
+      | support  | PUBLISHED | DOCUMENT  |
+      | security | SUSPENDED | DOCUMENT  |
+      | support  | SUSPENDED | DOCUMENT  |
+      | security | DRAFT     | INTERFACE |
+      | support  | DRAFT     | INTERFACE |
       | security | PUBLISHED | INTERFACE |
-      | support | PUBLISHED | INTERFACE |
+      | support  | PUBLISHED | INTERFACE |
       | security | SUSPENDED | INTERFACE |
-      | support | SUSPENDED | INTERFACE |
+      | support  | SUSPENDED | INTERFACE |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | kind |
+      | ruolo    | stato | kind     |
       | reviewer | DRAFT | DOCUMENT |
-      | viewer | DRAFT | DOCUMENT |
+      | viewer   | DRAFT | DOCUMENT |
 
   @happy-path
   @e-service-template-version-document-create
@@ -693,19 +693,19 @@ Feature: Test API of e-service template
     And l'utente tenta il reperimento del documento dalla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato | kind |
-      | security | DRAFT | DOCUMENT |
-      | security | PUBLISHED | DOCUMENT |
-      | security | SUSPENDED | DOCUMENT |
-      | security | DRAFT | INTERFACE |
+      | ruolo    | stato     | kind      |
+      | security | DRAFT     | DOCUMENT  |
+      | security | PUBLISHED | DOCUMENT  |
+      | security | SUSPENDED | DOCUMENT  |
+      | security | DRAFT     | INTERFACE |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | kind |
-      | reviewer | DRAFT | DOCUMENT |
-      | reviewer | PUBLISHED | DOCUMENT |
-      | reviewer | SUSPENDED | DOCUMENT |
-      | reviewer | DRAFT | INTERFACE |
+      | ruolo    | stato     | kind      |
+      | reviewer | DRAFT     | DOCUMENT  |
+      | reviewer | PUBLISHED | DOCUMENT  |
+      | reviewer | SUSPENDED | DOCUMENT  |
+      | reviewer | DRAFT     | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di reperimento di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello steop 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -722,13 +722,13 @@ Feature: Test API of e-service template
     And l'utente tenta il reperimento del documento dalla versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
       | security | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
 
@@ -840,23 +840,23 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato | kind |
-      | security | DRAFT | DOCUMENT |
-      | support | DRAFT | DOCUMENT |
-      | security | PUBLISHED | DOCUMENT |
-      | support | PUBLISHED | DOCUMENT |
-      | security | SUSPENDED | DOCUMENT |
-      | support | SUSPENDED | DOCUMENT |
-      | security | DRAFT | INTERFACE |
-      | support | DRAFT | INTERFACE |
+      | ruolo    | stato     | kind      |
+      | security | DRAFT     | DOCUMENT  |
+      | support  | DRAFT     | DOCUMENT  |
+      | security | PUBLISHED | DOCUMENT  |
+      | support  | PUBLISHED | DOCUMENT  |
+      | security | SUSPENDED | DOCUMENT  |
+      | support  | SUSPENDED | DOCUMENT  |
+      | security | DRAFT     | INTERFACE |
+      | support  | DRAFT     | INTERFACE |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | kind |
-      | reviewer | DRAFT | DOCUMENT |
+      | ruolo    | stato | kind      |
+      | reviewer | DRAFT | DOCUMENT  |
       | reviewer | DRAFT | INTERFACE |
-      | viewer | DRAFT | DOCUMENT |
-      | viewer | DRAFT | INTERFACE |
+      | viewer   | DRAFT | DOCUMENT  |
+      | viewer   | DRAFT | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di modifica di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello step 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -871,17 +871,17 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
-      | viewer | PUBLISHED |
+      | viewer   | PUBLISHED |
 
   # DEV. NOTE 20/03/2025: la modifica che viene effettuata è solo quella del nome del documento,
   # in quanto è al momento l'unico parametro a disposizione
@@ -980,10 +980,11 @@ Feature: Test API of e-service template
     When l'utente tenta la modifica di un documento di tipo <kind1> inserendo il nome di un altro documento di tipo <kind2>
     Then si ottiene response status code 409
     Examples:
-      | kind1    | kind2     |
-      | DOCUMENT | DOCUMENT  |
+      | kind1     | kind2     |
+      | DOCUMENT  | DOCUMENT  |
       #| INTERFACE | INTERFACE |  <-- combinazione impossibile, testata in uno scenario precedente
-      | DOCUMENT | INTERFACE |
+      | INTERFACE | DOCUMENT  |
+      | DOCUMENT  | INTERFACE |
 
   @sad-path
   @e-service-template-version-document-delete
@@ -995,23 +996,23 @@ Feature: Test API of e-service template
     And l'utente tenta la cancellazione del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato | kind |
-      | security | DRAFT | DOCUMENT |
-      | support | DRAFT | DOCUMENT |
-      | security | PUBLISHED | DOCUMENT |
-      | support | PUBLISHED | DOCUMENT |
-      | security | SUSPENDED | DOCUMENT |
-      | support | SUSPENDED | DOCUMENT |
-      | security | DRAFT | INTERFACE |
-      | support | DRAFT | INTERFACE |
+      | ruolo    | stato     | kind      |
+      | security | DRAFT     | DOCUMENT  |
+      | support  | DRAFT     | DOCUMENT  |
+      | security | PUBLISHED | DOCUMENT  |
+      | support  | PUBLISHED | DOCUMENT  |
+      | security | SUSPENDED | DOCUMENT  |
+      | support  | SUSPENDED | DOCUMENT  |
+      | security | DRAFT     | INTERFACE |
+      | support  | DRAFT     | INTERFACE |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | kind |
-      | reviewer | DRAFT | DOCUMENT |
+      | ruolo    | stato | kind      |
+      | reviewer | DRAFT | DOCUMENT  |
       | reviewer | DRAFT | INTERFACE |
-      | viewer | DRAFT | DOCUMENT |
-      | viewer | DRAFT | INTERFACE |
+      | viewer   | DRAFT | DOCUMENT  |
+      | viewer   | DRAFT | INTERFACE |
 
   # Si differenzia dallo scenario precedente perché tratta i casi di cancellazione di interfacce per templates pubblicati o sospesi:
     # in questo caso non c'è bisogno dello step 'l'utente effettua l'aggiunta di un documento di tipo <kind> alla versione dell'e-service template con successo'
@@ -1026,19 +1027,19 @@ Feature: Test API of e-service template
     And l'utente tenta la cancellazione del documento dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @happy-path
   @e-service-template-version-document-delete
@@ -1159,15 +1160,15 @@ Feature: Test API of e-service template
     And l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   # TODO 21/03/2025 somiglianza con alcuni scenari precedenti, verificare ed eventualmente rimuovere test identici
   @happy-path
@@ -1197,15 +1198,15 @@ Feature: Test API of e-service template
     And l'utente tenta la pubblicazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @happy-path
   @e-service-template-receive-bff
@@ -1338,15 +1339,15 @@ Feature: Test API of e-service template
       # TODO in realtà sarebbe sensata anche la verifica di casi negativi come questo, del tipo: And la cancellazione della versione dell'e-service template non è stata effettuata
 
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   # Ticket aperto: https://pagopa.atlassian.net/browse/PIN-8052
   @sad-path
@@ -1430,15 +1431,15 @@ Feature: Test API of e-service template
     And l'utente tenta la sospensione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @sad-path
   @e-service-template-version-suspend
@@ -1500,15 +1501,15 @@ Feature: Test API of e-service template
     And l'utente tenta la riattivazione della versione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @sad-path
   @e-service-template-version-activate
@@ -1561,19 +1562,19 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del nome dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   # TODO: a volte per incoerenze di stato restituisce 400, altre volte - come in questo caso - 409.
     # Bisogna identificare con precisione incoerenze di questo tipo.
@@ -1693,19 +1694,19 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica della descrizione dello scopo dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @sad-path
   @e-service-template-intendedTarget-update
@@ -1797,19 +1798,19 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica della descrizione dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @sad-path
   @e-service-template-description-update
@@ -2022,15 +2023,15 @@ Feature: Test API of e-service template
     And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
@@ -2047,15 +2048,15 @@ Feature: Test API of e-service template
     And l'utente tenta di aggiungere l'attributo creato alla versione dell'e-service template usando l'API specifica
     Then si ottiene response status code 403
     Examples:
-      | ruolo |
+      | ruolo    |
       | security |
-      | support |
+      | support  |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo |
+      | ruolo    |
       | reviewer |
-      | viewer |
+      | viewer   |
 
   @sad-path
   @e-service-template-version-attributes-update @certifiedAttribute
@@ -2168,19 +2169,19 @@ Feature: Test API of e-service template
     And l'utente tenta la creazione di una ulteriore versione nell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | security | PUBLISHED |
-      | support | PUBLISHED |
+      | support  | PUBLISHED |
       | security | SUSPENDED |
-      | support | SUSPENDED |
+      | support  | SUSPENDED |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato |
+      | ruolo    | stato     |
       | reviewer | PUBLISHED |
       | reviewer | SUSPENDED |
-      | viewer | PUBLISHED |
-      | viewer | SUSPENDED |
+      | viewer   | PUBLISHED |
+      | viewer   | SUSPENDED |
 
   @sad-path
   @e-service-template-version-create
@@ -2460,28 +2461,28 @@ Feature: Test API of e-service template
     And l'utente tenta la creazione di un nuovo e-service a partire dal template indicando solo le specifiche strettamente necessarie
     Then si ottiene response status code 403
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | security | erogazione |
-      | support | erogazione |
+      | support  | erogazione |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | reviewer | erogazione |
-      | viewer | erogazione |
+      | viewer   | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | security | ricezione |
-      | support | ricezione |
+      | support  | ricezione |
 
     @e-service-template-receive-bff
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | reviewer | ricezione |
-      | viewer | ricezione |
+      | viewer   | ricezione |
 
   # NOTA 16/04/2025: non mappato in SRS https://pagopa.atlassian.net/wiki/spaces/PDNDI/pages/1429864566/SRS+Template+e-service
   @happy-path
@@ -2905,28 +2906,28 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica dei campi dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | security | erogazione |
-      | support | erogazione |
+      | support  | erogazione |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | reviewer | erogazione |
-      | viewer | erogazione |
+      | viewer   | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | security | ricezione |
-      | support | ricezione |
+      | support  | ricezione |
 
     @e-service-template-receive-bff
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | reviewer | ricezione |
-      | viewer | ricezione |
+      | viewer   | ricezione |
 
   @sad-path
   @e-service-template-instance-update
@@ -3043,28 +3044,28 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del descriptor in stato DRAFT dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | security | erogazione |
-      | support | erogazione |
+      | support  | erogazione |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo       |
       | reviewer | erogazione |
-      | viewer | erogazione |
+      | viewer   | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | security | ricezione |
-      | support | ricezione |
+      | support  | ricezione |
 
     @e-service-template-receive-bff
     @nuovi-operatori-update
     Examples:
-      | ruolo | modo |
+      | ruolo    | modo      |
       | reviewer | ricezione |
-      | viewer | ricezione |
+      | viewer   | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -3182,36 +3183,36 @@ Feature: Test API of e-service template
     And l'utente tenta la modifica del descriptor dell'istanza dell'e-service template
     Then si ottiene response status code 403
     Examples:
-      | ruolo | stato | modo |
-      | security | PUBLISHED | erogazione |
-      | support | PUBLISHED | erogazione |
-      | security | SUSPENDED | erogazione |
-      | support | SUSPENDED | erogazione |
+      | ruolo    | stato      | modo       |
+      | security | PUBLISHED  | erogazione |
+      | support  | PUBLISHED  | erogazione |
+      | security | SUSPENDED  | erogazione |
+      | support  | SUSPENDED  | erogazione |
       | security | DEPRECATED | erogazione |
-      | support | DEPRECATED | erogazione |
+      | support  | DEPRECATED | erogazione |
 
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | modo |
+      | ruolo    | stato     | modo       |
       | reviewer | PUBLISHED | erogazione |
-      | viewer | PUBLISHED | erogazione |
+      | viewer   | PUBLISHED | erogazione |
 
     @e-service-template-receive-bff
     Examples:
-      | ruolo | stato | modo |
-      | security | PUBLISHED | ricezione |
-      | support | PUBLISHED | ricezione |
-      | security | SUSPENDED | ricezione |
-      | support | SUSPENDED | ricezione |
+      | ruolo    | stato      | modo      |
+      | security | PUBLISHED  | ricezione |
+      | support  | PUBLISHED  | ricezione |
+      | security | SUSPENDED  | ricezione |
+      | support  | SUSPENDED  | ricezione |
       | security | DEPRECATED | ricezione |
-      | support | DEPRECATED | ricezione |
+      | support  | DEPRECATED | ricezione |
 
     @e-service-template-receive-bff
     @nuovi-operatori-update
     Examples:
-      | ruolo | stato | modo |
+      | ruolo    | stato     | modo      |
       | reviewer | PUBLISHED | ricezione |
-      | viewer | PUBLISHED | ricezione |
+      | viewer   | PUBLISHED | ricezione |
 
   @sad-path
   @e-service-template-instance-descriptor-update
@@ -3509,11 +3510,11 @@ Feature: Test API of e-service template
     Then si ottiene response status code 204
     And la riattivazione della versione dell'e-service template è stata effettuata correttamente
     Examples:
-      | ente    | kind        |
-      | PA4     | PRIVATE     |
-      | PA4     | GSP         |
-      | GSP2    | PA          |
-      | Privato | PA          |
+      | ente    | kind    |
+      | PA4     | PRIVATE |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | Privato | PA      |
 
   @happy-path
   @e-service-template-receive-bff
@@ -3527,11 +3528,11 @@ Feature: Test API of e-service template
     Then si ottiene response status code 204
     And la modifica della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
-      | ente    | kind        |
-      | PA4     | PRIVATE     |
-      | PA4     | GSP         |
-      | GSP2    | PA          |
-      | Privato | PA          |
+      | ente    | kind    |
+      | PA4     | PRIVATE |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | Privato | PA      |
 
   @happy-path
   @e-service-template-receive-bff
@@ -3545,8 +3546,8 @@ Feature: Test API of e-service template
     Then si ottiene response status code 200
     And la cancellazione della risk analysis dell'e-service è stata effettuata correttamente
     Examples:
-      | ente    | kind        |
-      | PA4     | PRIVATE     |
-      | PA4     | GSP         |
-      | GSP2    | PA          |
-      | Privato | PA          |
+      | ente    | kind    |
+      | PA4     | PRIVATE |
+      | PA4     | GSP     |
+      | GSP2    | PA      |
+      | Privato | PA      |

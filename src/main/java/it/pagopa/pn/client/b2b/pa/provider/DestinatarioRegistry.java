@@ -48,6 +48,8 @@ public class DestinatarioRegistry {
     public final Destinatario DESTINATARIO_NESSUNO;
     public final Destinatario DESTINATARIO_ERRORE_D01;
     public final Destinatario DESTINATARIO_INDIRIZZO_VALIDO_ANPR;
+    public final Destinatario DESTINATARIO_SENZA_INDIRIZZO_REGISTRI;
+    public final Destinatario DESTINATARIO_PG_REGISTRO_IMPRESE;
 
     private final List<Destinatario> all;
     private final RecipientConfig taxIds;
@@ -141,6 +143,10 @@ public class DestinatarioRegistry {
                 recipients.getUserIndirizzoNonValidoD01().getUid(), PF, PEC);
         DESTINATARIO_INDIRIZZO_VALIDO_ANPR = new Destinatario(UTENZA_CON_INDIRIZZO_VALIDO_ANPR, recipients.getUserIndirizzoValidoAnpr().getTaxId(),
                 recipients.getUserIndirizzoValidoAnpr().getUid(), PF, PEC);
+        DESTINATARIO_SENZA_INDIRIZZO_REGISTRI = new Destinatario(UTENZA_SENZA_INDIRIZZO_REGISTRI,
+                recipients.getUserSenzaIndirizzoRegistri().getTaxId(), recipients.getUserSenzaIndirizzoRegistri().getUid(), PF, PEC);
+        DESTINATARIO_PG_REGISTRO_IMPRESE = new Destinatario(PG_REGISTRO_IMPRESE,
+                recipients.getPgRegistroImprese().getTaxId(), recipients.getPgRegistroImprese().getUid(), PG, PEC);
 
         all = List.of(
                 DESTINATARIO_MARIO_GHERKIN, DESTINATARIO_MARIO_CUCUMBER, DESTINATARIO_SIGNOR_CASUALE,
@@ -149,7 +155,8 @@ public class DestinatarioRegistry {
                 DESTINATARIO_GHERKIN_SRL, DESTINATARIO_GHERKIN_SRL_B2B, DESTINATARIO_CUCUMBER_SRL, DESTINATARIO_GHERKIN_ANALOGIC,
                 DESTINATARIO_CUCUMBER_ANALOGIC, DESTINATARIO_GHERKIN_IRREPERIBILE, DESTINATARIO_CUCUMBER_SOCIETY,
                 DESTINATARIO_SIGNOR_GENERATO, DESTINATARIO_NESSUNO, DESTINATARIO_ERRORE_D01, DESTINATARIO_INDIRIZZO_VALIDO_ANPR,
-                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO
+                DESTINATARIO_ALDA_MERINI, DESTINATARIO_DINO_SAURO,
+                DESTINATARIO_SENZA_INDIRIZZO_REGISTRI, DESTINATARIO_PG_REGISTRO_IMPRESE
         );
     }
 
