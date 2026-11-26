@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.regis
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitution;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.internal.external.registries.pt.model.PtInstitutionsResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.pa.service.PtDelegationRecord;
 import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -38,7 +39,7 @@ public class PtEntiDelegantiSteps {
     private static final String TOKEN_VUOTO = "@vuoto";
     private static final String TOKEN_LUNGHEZZA = "@lunghezza_";
     private static final int MAX_LIMIT = 50;
-    private static final long SCENARIO_PADDING_SECONDS = 10;
+    private static final long SCENARIO_PADDING_SECONDS = 7;
 
     private final PtEntiDelegantiService ptEntiDelegantiService;
     private final SharedSteps sharedSteps;
@@ -50,6 +51,9 @@ public class PtEntiDelegantiSteps {
     private String lastSearch;
     private PtDelegationStatus lastStatus;
     private Integer lastLimit;
+    private String lastHistoryPa;
+    private String lastHistoryPt;
+    private List<PtDelegationRecord> lastTwoDelegationRecords = List.of();
 
     public PtEntiDelegantiSteps(PtEntiDelegantiService ptEntiDelegantiService, SharedSteps sharedSteps) {
         this.ptEntiDelegantiService = ptEntiDelegantiService;
@@ -303,6 +307,43 @@ public class PtEntiDelegantiSteps {
         assertThat(allReadInstitutions)
                 .as("Una delega dell'Ente PT %s compare nell'elenco dell'Ente PT %s", otherPtName, lastPt)
                 .noneMatch(institution -> otherPtDelegationIds.contains(institution.getDelegationId()));
+    }
+
+    @Then("nella tabella delle deleghe dell'Ente PT {string} gli ultimi due record dell'Ente PA {string} hanno stato {string} e {string}, dal più recente, in date diverse")
+    public void lastTwoDelegationRecordsHaveStatuses(String ptName, String paName, String newerStatus, String olderStatus) {
+        this.lastHistoryPa = paName;
+        this.lastHistoryPt = ptName;
+        this.lastTwoDelegationRecords = ptEntiDelegantiService.awaitLastTwoDelegationRecords(paName, ptName, newerStatus, olderStatus);
+        PtDelegationRecord newer = lastTwoDelegationRecords.get(0);
+        PtDelegationRecord older = lastTwoDelegationRecords.get(1);
+        assertThat(newer.lastChangeAt())
+                .as("La variazione %s della delega %s -> %s non è successiva alla variazione %s", newerStatus, paName, ptName, olderStatus)
+                .isNotNull()
+                .isAfter(older.lastChangeAt());
+    }
+
+    @And("i due record riguardano la delega creata")
+    public void lastTwoDelegationRecordsReferToCreatedDelegation() {
+        String delegationId = ptEntiDelegantiService.getDelegationId(lastHistoryPa, lastHistoryPt);
+        assertThat(lastTwoDelegationRecords)
+                .as("Le ultime due variazioni non riguardano entrambe la delega %s creata da %s per %s", delegationId, lastHistoryPa, lastHistoryPt)
+                .extracting(PtDelegationRecord::delegationId)
+                .containsOnly(delegationId);
+    }
+
+    @And("il record più recente riguarda la nuova delega e quello precedente la delega revocata")
+    public void lastTwoDelegationRecordsReferToNewAndRevokedDelegation() {
+        String newDelegationId = ptEntiDelegantiService.getDelegationId(lastHistoryPa, lastHistoryPt);
+        String revokedDelegationId = ptEntiDelegantiService.getPreviousDelegationId(lastHistoryPa, lastHistoryPt);
+        assertSoftly(softly -> {
+            softly.assertThat(lastTwoDelegationRecords.get(0).delegationId())
+                    .as("La variazione più recente non riguarda la nuova delega")
+                    .isEqualTo(newDelegationId);
+            softly.assertThat(lastTwoDelegationRecords.get(1).delegationId())
+                    .as("La variazione precedente non riguarda la delega revocata")
+                    .isNotNull()
+                    .isEqualTo(revokedDelegationId);
+        });
     }
 
     private PtInstitution assertAppearsOnceWithStatus(String description, String status, Predicate<PtInstitution> matcher) {

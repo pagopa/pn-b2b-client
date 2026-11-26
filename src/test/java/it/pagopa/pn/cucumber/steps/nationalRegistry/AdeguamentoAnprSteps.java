@@ -65,11 +65,11 @@ public class AdeguamentoAnprSteps {
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("", ""))),
             entry("PRZPLA89E02L781K", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A C KM 50", ""),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Via Elena da Persico 12/A KM 50", ""),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("Via Elena da Persico KM 50", ""))),
             entry("BRNBNN92S02L781R", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput(" Elena da Persico A", "5"),
-                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Elena da Persico A C SNC", "BLU Scala 5"),
+                    AnprAlgorithm.MINIMAL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"),
                     AnprAlgorithm.FULL, new ExpectedAnprOutput("Elena da Persico A SNC", "BLU Scala 5"))),
             entry("LNNLNZ02L27L781Z", Map.of(
                     AnprAlgorithm.OLD, new ExpectedAnprOutput("Via Elena da Persico 12/A", ""),

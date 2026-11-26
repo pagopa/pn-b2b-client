@@ -29,6 +29,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.v30.*;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
+import it.pagopa.pn.client.b2b.pa.service.SqsService;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
@@ -44,6 +45,7 @@ import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSuiteContext;
 import it.pagopa.pn.cucumber.steps.delayer.planner.DelayerPlanner;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSkipSenderLimitService;
 import it.pagopa.pn.cucumber.steps.pa.service.PtEntiDelegantiService;
@@ -66,6 +68,14 @@ import it.pagopa.pn.cucumber.steps.tracciaturaIndagine.reader.TimelineDetailsRea
 import it.pagopa.pn.cucumber.steps.templateEngine.context.TemplateEngineContextFactory;
 import it.pagopa.pn.cucumber.steps.templateEngine.service.HtmlEscapeService;
 import it.pagopa.pn.cucumber.steps.utilitySteps.CieGeneratorTool;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.context.NotificheBonarieFatturazioneScenarioContext;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InternalTimelineService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.InvoicingRecordService;
+import it.pagopa.pn.cucumber.steps.fatturazioneComBo.service.NotificationCostExpectations;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettings;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PagoPaPaymentEventService;
+import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PaymentErrorQueueService;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -270,6 +280,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperTrackerSchemaValidatorProxy.class,
         DelayerLambdaClient.class,
         DelayerSevice.class,
+        DelayerMockService.class,
         DelayerValidator.class,
         DelayerContext.class,
         DelayerSuiteContext.class,
@@ -280,6 +291,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperEngageRequestBuilder.class,
         PnEcInternalClientImpl.class,
         DynamoDbService.class,
+        SqsService.class,
         TimelineDetailsReader.class,
         AwsConfig.class,
         SenderInfoProvider.class,
@@ -309,7 +321,17 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TransformedDocumentService.class,
         DocumentTagsService.class,
         PortfatControlLambdaClient.class,
-        IoMockScenarioContext.class
+        IoMockScenarioContext.class,
+        DocumentTagsService.class,
+        NotificheBonarieFatturazioneScenarioContext.class,
+        InternalTimelineService.class,
+        InvoicingRecordService.class,
+        NotificationCostExpectations.class,
+        PnKafkaMockClientImpl.class,
+        PaymentEventsScenarioContext.class,
+        PagoPaPaymentEventService.class,
+        PaymentErrorQueueService.class,
+        PaymentEventsSettings.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

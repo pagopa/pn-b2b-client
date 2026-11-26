@@ -11,6 +11,7 @@ import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiCo
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
 import it.pagopa.pn.cucumber.steps.delayer.utils.SenderOrderCheckResponse;
@@ -42,6 +43,7 @@ public class CensimentoStimeMittentiSteps {
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
+    private final DelayerMockService delayerMockService;
 
     @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
     public String senderLimitTable(String tableName) {
@@ -186,7 +188,7 @@ public class CensimentoStimeMittentiSteps {
         try {
             preloadZipFile(fileName, false);
             // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
-            delayerSevice.insertMockSenderLimit(fileName);
+            delayerMockService.insertMockSenderLimit(fileName);
 
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);

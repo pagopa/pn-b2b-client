@@ -1,9 +1,8 @@
 # Gherkin-to-PST Generator
 
 Genera un PST Markdown per ciascuna QA Epic delle release in corso, raccogliendo
-gli scenari Gherkin dai branch della release. Con `generate` e `generate-all`,
-`--html` produce anche l'HTML;
-può inoltre elaborare un singolo feature file in Markdown.
+gli scenari Gherkin dai branch della release. Può inoltre elaborare un singolo
+feature file in Markdown.
 
 ## Uso
 
@@ -75,7 +74,7 @@ Il workflow e il codice devono prima essere integrati in quel branch.
 
 Da GitHub: **Actions → Generate PST → Run workflow → develop**.
 L'esecuzione recupera la storia completa di tutti i branch, installa le dipendenze,
-esegue i test e genera Markdown e HTML delle QA Epic attive.
+esegue i test e genera i Markdown delle QA Epic attive.
 
 I documenti Markdown sono versionati nel branch permanente `pst-output`, con un commit
 solo quando PST o stato cambiano. I Markdown sono consultabili direttamente su
@@ -83,9 +82,8 @@ GitHub, per esempio `https://github.com/pagopa/pn-b2b-client/blob/pst-output/pst
 Sono anche scaricabili come artifact `pst-<run_id>-<run_attempt>`, conservato per
 30 giorni. Il riepilogo distingue Epic generate, invariate ed errori.
 
-La Action produce solo Markdown per impostazione predefinita. Nell'avvio manuale,
-l'opzione `include_html` permette di generare anche HTML. Un'esecuzione successiva
-senza l'opzione rimuove gli HTML precedenti. La Action legge il branch `pst-output` in una directory temporanea, confronta gli
+La Action produce solo Markdown e rimuove gli HTML precedenti dal branch
+`pst-output`. Legge il branch `pst-output` in una directory temporanea, confronta gli
 input con `.state/QA-123.json` e riusa i file integri delle Epic invariate. Se il
 branch non esiste, lo crea al primo aggiornamento. Non crea PR e non pubblica su
 GitHub Pages. In caso di conflitto conserva il PST precedente dell'Epic interessata,
@@ -111,8 +109,8 @@ Il comando disponibile per generare tutti i PST delle release attive è:
 .venv/bin/python -m pst_generator.cli generate-all --repo ../../.. --config config.yaml
 ```
 
-Aggiungere `--html` per produrre anche HTML e `--output-dir <directory>` per scegliere
-una cartella diversa da `<repo>/pst`. `generate --qa-epic QA-123` usa la stessa
+Aggiungere `--output-dir <directory>` per scegliere una cartella diversa da
+`<repo>/pst`. `generate --qa-epic QA-123` usa la stessa
 raccolta per una sola QA Epic; `--branch` forza una singola fonte per il debug.
 
 Dalla root di `pn-b2b-client`, per generare la QA Epic `QA-17458` da un checkout
@@ -126,12 +124,12 @@ PYTHONPATH=tools/generators/pst python3 -m pst_generator.cli generate \
 ```
 
 Per elaborare tutte le QA Epic delle release attive, usare `generate-all` senza
-`--qa-epic` e aggiungere `--html` se servono entrambi i formati:
+`--qa-epic`:
 
 ```bash
 PYTHONPATH=tools/generators/pst python3 -m pst_generator.cli generate-all \
   --repo . --source-repo qe_suit=/percorso/al/checkout/qe_suit \
-  --config tools/generators/pst/config.yaml --html
+  --config tools/generators/pst/config.yaml
 ```
 
 Il comando controlla tutte le QA Epic attive e riscrive un Markdown solo se il
@@ -154,12 +152,12 @@ Per versioni diverse si risale ai commit che hanno introdotto il contenuto dello
 
 Modifiche indipendenti producono un conflitto con QA Epic, ID, branch, commit e percorso. Il PST interessato rimane intatto; `generate-all` continua con gli altri PST e termina con codice 1. Il riepilogo viene scritto anche in `GITHUB_STEP_SUMMARY`, quando disponibile. Branch mancanti e storia non interpretabile producono un errore, senza pubblicare un PST parziale.
 
-Markdown e HTML riportano le fonti della versione selezionata. La raccolta considera gli scenari presenti: l'assenza di uno scenario in un branch non viene interpretata come richiesta di cancellarlo dalle altre fonti.
+Il Markdown riporta le fonti della versione selezionata. La raccolta considera gli scenari presenti: l'assenza di uno scenario in un branch non viene interpretata come richiesta di cancellarlo dalle altre fonti.
 
 ### Autori dell'ultima modifica
 
 Nei PST generati dalle release, ogni scenario riporta **Autori dell’ultima modifica**
-in Markdown e HTML. Sono i nomi registrati nel campo autore dei commit che hanno
+in Markdown. Sono i nomi registrati nel campo autore dei commit che hanno
 introdotto la versione selezionata dello scenario. Non vengono riportati indirizzi
 email e non vengono effettuate chiamate a GitHub per cercare profili utente.
 
@@ -249,12 +247,13 @@ Per ogni QA Epic viene generato o aggiornato il file:
 
 ```text
 pst/pst_QA-<numero>.md
-pst/pst_QA-<numero>.html  # con --html
 ```
 
 La cartella `pst/` viene creata se non esiste, salvo uso di `--output-dir`.
+Gli eventuali file `pst_*.html` preesistenti nella cartella di output vengono rimossi.
 In locale i documenti vengono scritti solo se il contenuto cambia, ma senza
-`--use-state` vengono comunque ricostruiti. La Action usa `--use-state` e legge
+`--use-state` vengono comunque ricostruiti e lo storico delle versioni viene
+aggiornato. La Action usa `--use-state` e legge
 lo stato persistente nel branch `pst-output`.
 
 ## Stato persistente
@@ -268,7 +267,45 @@ file estranei agli scenari invalida il confronto: la storia Git può influenzare
 autori e risoluzione dei conflitti.
 
 Se impronta e file coincidono, l'Epic è `invariata` e il PST conserva la data
-dell'ultima generazione. Se cambiano o manca un file, l'Epic viene rigenerata.
+dell'ultima generazione. Se l'impronta cambia, il generatore raccoglie gli
+scenari associati alla QA Epic e ne confronta il contenuto con quello salvato
+nello stato. Se gli scenari, la configurazione, gli ID dei work-item e i file
+prodotti sono invariati, conserva il PST
+e la sua data e aggiorna solo l'impronta degli input. Se gli scenari, la
+configurazione o gli ID cambiano, manca lo stato degli scenari o un file
+prodotto è stato alterato, rigenera.
+Le generazioni precedenti all'introduzione dello stato degli scenari vengono
+aggiornate una volta per registrarlo. Un branch sorgente mancante conserva il
+PST esistente e viene indicato nel riepilogo.
+
+```mermaid
+flowchart TD
+    A["QA Epic della release"] --> B["Calcola l'impronta degli input"]
+    B --> C{"Branch mancante?"}
+    C -- "Sì" --> D["Conserva il PST e segnala"]
+    C -- "No" --> E{"Impronta uguale e file integri?"}
+    E -- "Sì" --> F["PST invariato"]
+    E -- "No" --> G["Raccoglie gli scenari della QA Epic"]
+    G --> H{"Scenari e dati del PST invariati?"}
+    H -- "Sì" --> I["Conserva il PST e aggiorna l'impronta"]
+    H -- "No" --> J["Rigenera il PST e salva lo stato"]
+```
 Il branch viene aggiornato con un solo commit per esecuzione, se necessario.
 I conflitti lasciano intatti i PST validi precedenti e non bloccano le altre Epic.
 Le Epic non più attive non vengono ancora eliminate automaticamente dal branch.
+
+## Collegamenti Jira e versioni del PST
+
+Durante una rigenerazione, la Action usa `JIRA_CLOUD_ID` e `JIRA_API_TOKEN`, già
+usati da `epic_generator`, per leggere gli stati Jira della QA Epic e dei suoi
+work-item. L'URL per i collegamenti viene ricavato da Jira; la variabile
+facoltativa `JIRA_BASE_URL` può indicarlo esplicitamente. Se Jira non è
+disponibile, la generazione prosegue, mostra lo stato come non disponibile e
+segnala il problema nel riepilogo. Jira non avvia il workflow e i suoi stati
+non partecipano al confronto degli input: restano quelli letti all'ultima
+rigenerazione del documento.
+
+La data del PST e la riga nello «Storico versioni» cambiano solo quando il
+documento viene rigenerato. Lo storico è collassato nel Markdown e viene
+conservato nello stato della QA Epic su `pst-output`. Per i PST preesistenti,
+la prima rigenerazione con questo formato avvia lo storico dalla versione 1.

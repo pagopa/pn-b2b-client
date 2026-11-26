@@ -64,6 +64,7 @@ public class PresaInCaricoNoticaBonariaSteps {
     private String savedIun;
     private String currentGroupId;
     private String currentCxId;
+    @Getter
     private String savedNotificationRequestId;
     private TerminationRequestStatus terminationStatus;
     private String paName;
@@ -760,6 +761,13 @@ public class PresaInCaricoNoticaBonariaSteps {
         InformalNotificationRecipientV1 recipient = recipientBuilder.build(cleanedData, currentCxId, this.apiKeyType);
         informalNotificationRequestV1.getRecipients().add(recipient);
         sendSharedContext.getInformalNotificationContext().getRecipient().setDestinatario(destinatarioRegistry.destinatario(data.get("denomination")));
+        if (recipient.getPayments() != null && !recipient.getPayments().isEmpty()) {
+            var payItem = recipient.getPayments().get(0);
+            if (payItem.getPagoPa() != null) {
+                sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentCreditorTaxId(payItem.getPagoPa().getCreditorTaxId());
+                sendSharedContext.getInformalNotificationContext().getRecipient().setPaymentNoticeCode(payItem.getPagoPa().getNoticeCode());
+            }
+        }
     }
 
     @Then("si attende che venga prodotto l'elemento {string} della notifica bonaria")

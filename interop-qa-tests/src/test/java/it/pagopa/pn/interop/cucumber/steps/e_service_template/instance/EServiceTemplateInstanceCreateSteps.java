@@ -16,6 +16,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jeasy.random.EasyRandom;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -218,9 +219,9 @@ public class EServiceTemplateInstanceCreateSteps {
 
             pollingService.makePolling(
                     () -> httpCallExecutor.performCall(
-                            () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(eServiceId, descriptorId),
-                            ResponseEntity::getStatusCode),
-                    res -> res.getStatusCode().is2xxSuccessful(),
+                            () -> eServiceClient.getProducerEServiceDescriptorWithHttpInfo(eServiceId, descriptorId)
+                    ),
+                    HttpStatus::is2xxSuccessful,
                     "Il nuovo e-service non è stato creato correttamente"
             );
 
