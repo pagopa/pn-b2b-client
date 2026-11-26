@@ -56,7 +56,7 @@ public class CensimentoStimeMittentiSteps {
     }
 
 
-    @When("eseguo la lambda sender order check per il mese {string}")
+    @When("si effettua il controllo che verifica la presenza delle commesse su portfat per il mese {string}")
     public void executeSenderOrderCheck(String currentMonth) {
 
         SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck(currentMonth);
@@ -64,7 +64,7 @@ public class CensimentoStimeMittentiSteps {
         context.setSenderOrderCheckResponse(response);
     }
 
-    @When("eseguo la lambda sender order check")
+    @When("si effettua il controllo che verifica la presenza delle commesse su portfat")
     public void executeSenderOrderCheck() {
 
         SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck();
@@ -72,19 +72,26 @@ public class CensimentoStimeMittentiSteps {
         context.setSenderOrderCheckResponse(response);
     }
 
-    @Then("il risultato del controllo è {string}")
-    public void verifySenderOrderCheckResult(String expectedResult) {
+    @Then("si riceve esito {string} a seguito della verifica sulla presenza delle commesse caricate su portfat")
+    public void verifySenderOrderCheckResult(String expectedOutcome) {
 
         Assertions.assertThat(context.getSenderOrderCheckResponse())
                 .as("La risposta della lambda non deve essere null")
                 .isNotNull();
 
+        String expectedCheckResult = switch (expectedOutcome.toLowerCase()) {
+            case "positivo" -> "OK";
+            case "negativo" -> "KO";
+            default -> throw new IllegalArgumentException(
+                    "Esito non supportato: " + expectedOutcome + ". Valori ammessi: positivo, negativo");
+        };
+
         Assertions.assertThat(context.getSenderOrderCheckResponse().getCheckResult())
                 .as("Esito controllo inatteso")
-                .isEqualTo(expectedResult);
+                .isEqualTo(expectedCheckResult);
     }
 
-    @Then("le mensilità mancanti sono")
+    @Then("il controllo sulla presenza delle commesse su portfat ha dato esito negativo per la mancanza delle commesse dei seguenti mesi:")
     public void verifyMissingMonths(List<String> expectedMonths) {
 
         Assertions.assertThat(context.getSenderOrderCheckResponse()
