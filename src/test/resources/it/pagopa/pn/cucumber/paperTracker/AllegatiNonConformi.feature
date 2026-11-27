@@ -33,3 +33,20 @@ Feature: pn-paper-tracker - allegati non conformi alla macchina a stati corretti
       | details_sentAttemptMade    | 0         |
     And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
     And si verifica che su PaperTrackingsError sia presente un errore con categoria "ATTACHMENTS_ERROR", causa "INVALID_VALUES" e tipo "WARNING"
+
+  @paperTrackerARRunMode @alwaysRun @work-item:QA-19092
+  Scenario: [PAPER_TRACKER_ALLEGATI_NON_CONFORMI_AR_2] Compiuta giacenza AR: il recapitista invia RECRN005B con un AR invece del Plico e poi lo corregge inviando il Plico:
+  l'allegato non conforme genera solo un WARNING e la tripletta RECRN005 viene elaborata con il Plico corretto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@FAIL-CompiutaGiacenza-CorrectedDoc_AR |
+      | digitalDomicile         | NULL                                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNRN012"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005C"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005B" e verifica tipo DOC "Plico"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "AR"
+    Then si verifica che su PaperTrackingsError sia presente un errore con categoria "ATTACHMENTS_ERROR", causa "INVALID_VALUES" e tipo "WARNING"

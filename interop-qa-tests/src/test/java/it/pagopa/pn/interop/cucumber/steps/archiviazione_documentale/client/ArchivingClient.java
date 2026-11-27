@@ -4,6 +4,7 @@ import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.mode
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketRole;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.BucketUrl;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.model.S3BucketInfoBuilder;
+import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.AbstractPolling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.polling.S3Polling;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.model.*;
 import it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.file.processor.FileProcessor;
@@ -29,6 +30,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -64,19 +67,25 @@ public class ArchivingClient {
     private final FileProcessor fileProcessor = new FileProcessor();
 
     public ArchivedFileMatched findS3FileInInterval(PollingSpecification spec) {
+        return findS3FileInInterval(spec, condition -> new S3Polling(Region.EU_SOUTH_1, condition));
+    }
+
+    ArchivedFileMatched findS3FileInInterval(PollingSpecification spec,
+                                             Function<Predicate<S3Client>, AbstractPolling<S3Client>> pollingFactory) {
 
         FileLocation location = resolveLocation(spec);
         BucketUrl bucket = location.bucketUrl();
 
         AtomicInteger windowEnlargement = new AtomicInteger();
         Instant center = ArchivingUtils.parse(spec.getCenterTimestamp());
-        Instant start = center.minusSeconds(spec.getDeltaSeconds() + windowEnlargement.get());
-        Instant end   = center.plusSeconds(spec.getDeltaSeconds() + windowEnlargement.get());
 
         Set<String> checkedKeys = new HashSet<>();
         AtomicReference<ArchivedFileMatched> match = new AtomicReference<>();
 
-        S3Polling polling = new S3Polling(Region.EU_SOUTH_1, s3 -> {
+        AbstractPolling<S3Client> polling = pollingFactory.apply(s3 -> {
+            long deltaSeconds = (long) spec.getDeltaSeconds() + windowEnlargement.get();
+            Instant start = center.minusSeconds(deltaSeconds);
+            Instant end = center.plusSeconds(deltaSeconds);
 
             log.info("Ricerco il file all'interno del bucket: {}", bucket.fullPath());
             List<S3Object> candidates = getLatestNObjects(s3, bucket, 50, start, end).stream()
@@ -264,7 +273,7 @@ public class ArchivingClient {
 
         log.info(
                 """
-                S3 polling window enlarged (UTC)
+                S3 polling window for next attempt (UTC)
                   interval : {} → {}
                   center   : {}
                   window   : ±{} min ({} s)

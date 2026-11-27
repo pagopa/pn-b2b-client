@@ -372,3 +372,54 @@ Feature: Gestione degli attributi verificati degli e-services attraverso APIs M2
     When l'utente tenta di rimuovere l'attributo verificato numero 1 dal gruppo dell'e-service
     Then si ottiene lo status code 400
     And gli attributi verificati del gruppo sono rimasti invariati
+
+  @work-item:QA-18355
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_1] Per un attributo verificato richiesto da un erogatore non delegato è presente il delegation ID non atteso alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And "PA2" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And via M2M specificando un ID delega casuale l'utente assegna a "PA2" l'attributo verificato precedentemente creato
+    Then si ottiene status code 403
+    When l'utente è un "admin" di "PA1"
+    And l'utente assegna a "PA2" l'attributo verificato precedentemente creato
+    And si ottiene status code 204
+    And l'utente è un "admin" di "PA1" con ruolo M2M m2m-admin
+    And via M2M specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato
+    Then si ottiene status code 403
+
+  @work-item:QA-18355
+  @deleghe2
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_2] Per un attributo verificato richiesto da un erogatore delegato è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    Given "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And via M2M il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 200
+    When via M2M il delegato all'erogazione revoca l'attributo precedentemente verificato
+    Then si ottiene status code 200
+
+  @work-item:QA-18355
+  @deleghe2
+  Scenario: [M2M_TENANT_ASSIGN_REVOKE_VERIFIED_ATTRIBUTE_3] Per un attributo verificato richiesto da un erogatore delegato non è presente il delegation ID obbligatorio alla verifica e alla revoca dell'attributo
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un attributo verificato
+    And "PA1" ha già creato un e-service in stato "PUBLISHED" che richiede quegli attributi con approvazione "MANUAL"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And "PA3" ha una richiesta di fruizione in stato "PENDING" per quell'e-service
+    When l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And via M2M l'utente assegna a "PA3" l'attributo verificato precedentemente creato
+    Then si ottiene status code 403
+    When l'utente è un "admin" di "PA2"
+    And il delegato all'erogazione assegna a "PA3" l'attributo verificato precedentemente creato
+    And l'utente è un "admin" di "PA2" con ruolo M2M m2m-admin
+    And via M2M l'utente revoca l'attributo precedentemente verificato
+    Then si ottiene status code 403

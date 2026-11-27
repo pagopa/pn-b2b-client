@@ -1374,6 +1374,7 @@ public class PurposeTemplateSteps {
     }
 
     @When("l'utente tenta di effettuare la modifica parziale della finalità creata da template indicando un URL come indirizzo dell'informativa sul trattamento dei dati personali")
+    @When("l'utente tenta di modificare una finalità non istanziata da template come se lo fosse, indicando un URL per l'informativa sul trattamento dei dati personali")
     public void patchPurposeTemplateWithURLPolicy() {
         RandomStringUtils randomUtils = RandomStringUtils.insecure();
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());

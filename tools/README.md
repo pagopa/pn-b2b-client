@@ -13,10 +13,9 @@ repository che eseguono le suite.
 | Preparazione del lavoro QA | [epic_generator](generators/epic/README.md) in `pn-b2b-client` | Manifest di una release `in-progress` | QA Epic su Jira, branch QA e PR per riportare `qa_epic` e `branch` nel manifest |
 | Pianificazione dei test | [pst_generator](generators/pst/README.md) in `pn-b2b-client` | Manifest, branch QA e scenari Gherkin | PST per QA Epic nel branch `pst-output` |
 | Analisi degli esiti NRT | [RAE generator](https://github.com/pagopa/qe_suit/tree/develop/tools/rae-generator) in `qe_suit` | Report delle suite e analisi del QA | YAML RAE e Markdown, tramite Draft PR e revisione |
-| Quadro della release | SDP generator, da realizzare | Da definire | SDP su Confluence |
+| Quadro della release | [sdp_generator](generators/sdp/README.md) in `pn-b2b-client` | Manifest della release | Pagina SDP su Confluence; anteprima Markdown con `--dry-run` |
 
-La tabella descrive gli strumenti esistenti e il pezzo SDP ancora da
-progettare. Il catalogo tecnico dei generatori di questo repository è in
+La tabella descrive gli strumenti esistenti, inclusa la pubblicazione manuale SDP. Il catalogo tecnico dei generatori di questo repository è in
 [generators/README.md](generators/README.md).
 
 ## Come si collegano
@@ -30,8 +29,9 @@ progettare. Il catalogo tecnico dei generatori di questo repository è in
 3. Le suite vengono eseguite nei repository QA. In `qe_suit`, il generatore RAE
    parte dai report NRT, apre una Draft PR e lascia al QA il completamento
    dell'analisi prima della revisione. La RAE documenta gli esiti osservati.
-4. L'SDP dovrà fornire la vista della release su Confluence. Contenuti,
-   collegamenti e regole di aggiornamento saranno definiti con il generatore.
+4. `sdp_generator` pubblica su Confluence la vista della release, con calendario,
+   piano QA ed esclusioni. La lettura degli stati Jira e la pianificazione
+   giornaliera saranno introdotte successivamente.
 
 ## Responsabilità dei dati
 
@@ -41,7 +41,7 @@ progettare. Il catalogo tecnico dei generatori di questo repository è in
 | Scenari `.feature` | Comportamenti da verificare |
 | PST | Piano di test della QA Epic, derivato dagli scenari |
 | Report di esecuzione e RAE | Risultati osservati e analisi del QA |
-| SDP | Quadro della release, da definire |
+| SDP | Quadro della release derivato dal manifest e pubblicato su Confluence; anteprima locale con `--dry-run` |
 
 I comandi, le validazioni e la gestione degli errori sono nei README dei
 singoli strumenti. Il collegamento formale fra una RAE, la release e le QA Epic

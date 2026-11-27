@@ -41,6 +41,36 @@ public class TenantRevokeVerifiedAttributeSteps {
         revokeAttribute();
     }
 
+    @When("l'utente revoca l'attributo precedentemente verificato senza riferimento alla delega")
+    public void revokeAttributePreviouslyCreatedWithoutDelegationId() {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        sharedStepsContext.getDelegationCommonContext().setDelegationId(null);
+        revokeAttribute();
+    }
+
+    @When("il delegato all'erogazione revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreated() {
+        delegatedProducerRevokeAttributePreviouslyCreated(
+                sharedStepsContext.getDelegationCommonContext().getDelegationId()
+        );
+    }
+
+    @When("specificando un ID delega casuale l'utente revoca l'attributo precedentemente verificato")
+    public void delegatedProducerRevokeAttributePreviouslyCreatedWithRandomDelegationId() {
+        delegatedProducerRevokeAttributePreviouslyCreated(UUID.randomUUID());
+    }
+
+    private void delegatedProducerRevokeAttributePreviouslyCreated(UUID delegationId) {
+        String delegateTenant = sharedStepsContext.getDelegationCommonContext().getDelegateTenant();
+        if (delegateTenant == null) {
+            clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        } else {
+            clientTokenConfigurator.setBearerToken(identityService.getToken(delegateTenant, null));
+        }
+        sharedStepsContext.getDelegationCommonContext().setDelegationId(delegationId);
+        revokeAttribute();
+    }
+
     @When("{string} revoca l'attributo precedentemente verificato")
     public void revokeAttributePreviouslyCreated(String tenant) {
         clientTokenConfigurator.setBearerToken(identityService.getToken(tenant, null));
@@ -53,7 +83,8 @@ public class TenantRevokeVerifiedAttributeSteps {
             () -> clientTokenConfigurator.getTenantsApi().revokeVerifiedAttribute(
                 identityService.getOrganizationId(consumerTenant),
                 sharedStepsContext.getAttributeCommonContext().getAttributeId(),
-                sharedStepsContext.getAgreementCommonContext().getAgreementId())
+                sharedStepsContext.getAgreementCommonContext().getAgreementId(),
+                sharedStepsContext.getDelegationCommonContext().getDelegationId())
         );
     }
 
