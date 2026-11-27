@@ -1,7 +1,11 @@
 """Publish a release Service Delivery Plan; use --dry-run for an offline preview."""
 
 import argparse
-from datetime import date
+from datetime import date, datetime
+from zoneinfo import ZoneInfo
+from dataclasses import dataclass
+from urllib.parse import quote
+import os
 import html
 import math
 from pathlib import Path
@@ -130,7 +134,15 @@ def load_manifest(path):
     return release
 
 
+@dataclass(frozen=True)
+class Link:
+    label: str
+    url: str
+
+
 def cell(value):
+    if isinstance(value, Link):
+        return f"[{cell(value.label)}]({value.url})"
     if value is None or value == '':
         return '—'
     escaped = html.escape(str(value).strip(), quote=False)
@@ -145,6 +157,8 @@ def table(headers, rows):
 
 
 def storage_cell(value):
+    if isinstance(value, Link):
+        return f'<a href="{html.escape(value.url, quote=True)}">{storage_cell(value.label)}</a>'
     if value is None or value == '':
         return '—'
     return html.escape(str(value).strip()).replace('\r\n', '\n').replace('\r', '\n').replace('\n', '<br />')
@@ -155,7 +169,7 @@ def storage_table(headers, rows):
         '<tr>' + ''.join('<td>' + storage_cell(v) + '</td>' for v in row) + '</tr>' for row in rows) + '</tbody></table>'
 
 
-def render(release, storage=False):
+def render(release, storage=False, manifest_url=None, generated_at=None):
     """Render the same data as Markdown or Confluence storage XHTML."""
     escape = storage_cell if storage else cell
     make_table = storage_table if storage else table
@@ -163,37 +177,63 @@ def render(release, storage=False):
         return '<p>' + text + '</p>' if storage else text
     def heading(text, level=2):
         return f'<h{level}>{text}</h{level}>' if storage else '#' * level + ' ' + text
+    def issue(key):
+        return Link(key, f'https://pagopa.atlassian.net/browse/{key}')
+    timestamp = (generated_at or datetime.now(ZoneInfo('Europe/Rome'))).astimezone(ZoneInfo('Europe/Rome'))
     lines = [heading(f'Service Delivery Plan — {escape(release["product"])} {escape(release["version"])}', 1),
              '', paragraph(f'Trimestre: {escape(release["quarter"])} · Stato release: {escape(release["status"])}'),
              '', paragraph(escape(release['description'])), '',
-             paragraph('Jira non interrogato. Gli stati QA non sono sincronizzati.'), '']
+             paragraph('Titoli e stati QA aggiornati da Jira.' if release.get('_jira_synced') else 'Jira non interrogato. Gli stati QA non sono sincronizzati.'),
+             paragraph('Ultimo aggiornamento: ' + timestamp.strftime('%d/%m/%Y %H:%M %Z') + ' — Europe/Rome'), '']
     if release.get('delivery'):
         lines += [heading('Calendario della release'), '', make_table(['Ambiente', 'Data prevista'],
                   [(key.upper(), value or 'Da definire') for key, value in release['delivery'].items()]), '']
-    lines += [heading('Piano di delivery QA'), '']
+    items = release['work-items']
+    categories = {'new': 0, 'indeterminate': 0, 'done': 0, 'unknown': 0}
+    for item in items:
+        category = item.get('_qa_category') if item.get('qa_epic') else 'new'
+        categories[category if category in categories else 'unknown'] += 1
+    estimates = [i['size'] for i in items if i.get('size') is not None]
+    effort = f'{sum(estimates):g} gg/uomo su {len(estimates)} attività; {len(items) - len(estimates)} da stimare'
+    lines += [heading('Quadro di sintesi'), '', make_table(
+        ['Attività QA', 'Da avviare', 'In corso', 'Completate', 'Stato non disponibile', 'Effort stimato'],
+        [[len(items), categories['new'], categories['indeterminate'], categories['done'], categories['unknown'], effort]]), '',
+        paragraph('Effort di analisi, progettazione e implementazione dei test; esclude esecuzione e analisi degli esiti. Il completamento delle attività QA non indica che tutti i test siano passati.'),
+        paragraph('Conteggi per attività del manifest, anche quando condividono una QA Epic. Raggruppamento basato sulle categorie Jira; le attività senza Epic sono da avviare.'), '',
+        heading('Piano di delivery QA'), '']
     rows = []
     for item in release['work-items']:
         resources = '\n'.join(f'{p["name"]} ({p["role"]})' for p in item.get('resources', []))
-        details = []
-        for field, label in [('notes', 'Note'), ('risks', 'Rischi')]:
-            if item.get(field):
-                details.append(f'{label}: {item[field].strip()}')
-        if item.get('dependencies'):
-            details.append('Dipendenze: ' + '; '.join(item['dependencies']))
-        rows.append([item['id'], item['sequence'], item.get('title') or 'Titolo da recuperare da Jira',
-                     item.get('qa_epic') or 'Da creare', '\n'.join(item['strategies']),
-                     item.get('size'), resources or 'Da assegnare', item['priority'],
-                     'Non disponibile (Jira non interrogato)' if item.get('qa_epic') else 'QA Epic da creare',
-                     '\n'.join(details)])
+        rows.append([issue(item['id']), item.get('title') or 'Titolo da recuperare da Jira',
+                     issue(item['qa_epic']) if item.get('qa_epic') else 'Da creare', '\n'.join(item['strategies']),
+                     item.get('size') if item.get('size') is not None else 'Da stimare', resources or 'Da assegnare', item['priority'],
+                     item.get('_qa_status', 'Non disponibile (Jira non interrogato)') if item.get('qa_epic') else 'QA Epic da creare',
+                     Link('Apri PST', item['_pst_url']) if item.get('_pst_url') else ('Non disponibile' if release.get('_jira_synced') else 'Non verificato (anteprima offline)')])
     if rows:
-        lines += [make_table(['Work item', 'Seq.', 'Attività', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
-                         'Risorse', 'Priorità', 'Stato QA', 'Note / Rischi / Dipendenze'], rows)]
+        lines += [make_table(['Work item', 'Attività', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
+                         'Risorse', 'Priorità', 'Stato QA', 'PST'], rows)]
     else:
         lines += [paragraph('Nessuna attività QA pianificata.')]
+    details = []
+    for item in items:
+        entries = [(label, item.get(field)) for field, label in [('notes', 'Note'), ('risks', 'Rischi')]]
+        entries.append(('Dipendenze', '; '.join(item.get('dependencies') or [])))
+        entries = [(label, value) for label, value in entries if value and value.strip()]
+        if entries:
+            label = escape(issue(item['id'])) + ' — ' + escape(item.get('title') or 'Titolo da recuperare da Jira')
+            if item.get('qa_epic'):
+                label += ' (' + escape(issue(item['qa_epic'])) + ')'
+            details += [heading(label, 3)]
+            details += [paragraph(escape(name + ': ' + value)) for name, value in entries]
+    if details:
+        lines += ['', heading('Note, rischi e dipendenze'), ''] + details
     lines += ['', heading('Work item esclusi dal perimetro QA'), '']
     exclusions = release.get('out_of_scope', [])
-    lines += [make_table(['Work item', "Motivo dell'esclusione"], [(x['id'], x['reason']) for x in exclusions])
+    lines += [make_table(['Work item', "Motivo dell'esclusione"], [(issue(x['id']), x['reason']) for x in exclusions])
               if exclusions else paragraph('Nessun work item escluso.')]
+    lines += ['', paragraph('Pagina generata automaticamente. Le modifiche manuali vengono sostituite alla generazione successiva.')]
+    if manifest_url:
+        lines += [paragraph(escape(Link('Manifest sorgente', manifest_url)))]
     return '\n'.join(lines) + '\n'
 
 
@@ -204,11 +244,22 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         release = load_manifest(args.manifest)
+        manifest_url = None
+        root = Path(__file__).resolve().parents[3]
+        try:
+            relative = args.manifest.resolve().relative_to(root)
+            revision = os.getenv('GITHUB_SHA') or os.getenv('GITHUB_REF_NAME', 'develop')
+            manifest_url = 'https://github.com/pagopa/pn-b2b-client/blob/' + quote(revision, safe='') + '/' + quote(relative.as_posix(), safe='/')
+        except ValueError:
+            pass
         if args.dry_run:
-            output = render(release)
+            output = render(release, manifest_url=manifest_url)
         else:
             from confluence import publish
-            output = publish(release, render(release, storage=True)) + '\n'
+            from enrichment import enrich
+            if release['status'] != 'draft':
+                release = enrich(release)
+            output = publish(release, render(release, storage=True, manifest_url=manifest_url)) + '\n'
     except (OSError, ValueError, yaml.YAMLError) as exc:
         print(f'Errore SDP: {exc}', file=sys.stderr)
         return 1
