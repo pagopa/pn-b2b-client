@@ -61,7 +61,7 @@ class PublishTests(unittest.TestCase):
         method, path, payload = self.client.writes[-1]
         self.assertEqual((method, path), ('PUT', '/pages/20'))
         self.assertEqual(payload['version']['number'], 2)
-        self.assertEqual(payload['title'], 'Titolo modificato a mano')
+        self.assertEqual(payload['title'], f'{self.release["version"]} {self.release["product"]} - Service Delivery Plan')
         self.assertIn('Aggiornata', payload['body']['value'])
         self.assertEqual(len(self.client.stored), 1)
 
@@ -108,7 +108,7 @@ class PublishTests(unittest.TestCase):
             self.assertIn('esclusa', publish(self.release, ''))
             with redirect_stdout(io.StringIO()) as output:
                 self.assertEqual(main([str(ROOT / 'releases/template.yaml'), '--dry-run']), 0)
-            self.assertIn('# Service Delivery Plan', output.getvalue())
+            self.assertIn('**Trimestre:**', output.getvalue())
 
     def test_cli_publishes_by_default(self):
         with patch('sdp_generator.load_manifest', return_value=self.release), patch('confluence.publish', return_value='OK') as call, patch('enrichment.enrich', side_effect=lambda r: r):

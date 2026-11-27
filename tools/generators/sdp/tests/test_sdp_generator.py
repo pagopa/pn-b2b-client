@@ -21,7 +21,7 @@ class SDPTests(unittest.TestCase):
             self.release['status'] = status
             validate(self.release)
             output = render(self.release)
-            self.assertIn(f'Stato release: {status}', output)
+            self.assertIn(f'Stato release:** {status}', output)
             self.assertIn('QA Epic da creare', output)
             self.assertIn('PN-21118', output)
 
@@ -67,7 +67,7 @@ class SDPTests(unittest.TestCase):
                 validate(r)
                 output = render(r)
                 if value:
-                    self.assertIn('Dipendenze: Ambiente disponibile', output)
+                    self.assertIn('Dipendenze:** Ambiente disponibile', output)
                 else:
                     self.assertNotIn('Dipendenze:', output)
         for item in r['work-items']:
@@ -106,7 +106,7 @@ class SDPTests(unittest.TestCase):
     def test_cli_template(self):
         result = subprocess.run([sys.executable, str(SCRIPT), str(ROOT / 'releases/template.yaml'), '--dry-run'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertTrue(result.stdout.startswith('# Service Delivery Plan'))
+        self.assertTrue(result.stdout.startswith('**Trimestre:**'))
 
 
 if __name__ == '__main__':
