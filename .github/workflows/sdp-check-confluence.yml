@@ -1,0 +1,31 @@
+name: sdp_check_confluence
+
+on:
+  workflow_dispatch:
+    inputs:
+      page_id:
+        description: "ID pagina da verificare; vuoto = contenitore padre configurato"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r tools/generators/sdp/requirements.txt
+      - name: Read Confluence content
+        env:
+          JIRA_CLOUD_ID: ${{ vars.JIRA_CLOUD_ID }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          CONFLUENCE_CHECK_PAGE_ID: ${{ inputs.page_id }}
+        run: python tools/generators/sdp/check_confluence.py

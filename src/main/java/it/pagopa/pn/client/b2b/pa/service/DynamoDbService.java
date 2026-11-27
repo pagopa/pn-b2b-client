@@ -6,16 +6,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Service
@@ -149,6 +155,41 @@ public class DynamoDbService {
                 .limit(1)
                 .build();
         return dynamoDbClient.scan(request).count() == 0;
+    }
+
+    /**
+     * Restituisce la descrizione della tabella (stato, data di creazione, ARN) tramite DescribeTable.
+     */
+    public TableDescription describeTable(String tableName) {
+        return dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+    }
+
+    /**
+     * Restituisce al massimo {@code limit} item della tabella proiettati sui soli attributi indicati (tipicamente le chiavi primarie).
+     * Gli attributi sono referenziati tramite ExpressionAttributeNames per evitare conflitti con parole riservate DynamoDB.
+     */
+    public List<Map<String, AttributeValue>> scanKeys(String tableName, List<String> keyNames, int limit) {
+        Map<String, String> attributeNames = new LinkedHashMap<>();
+        IntStream.range(0, keyNames.size()).forEach(i -> attributeNames.put("#k" + i, keyNames.get(i)));
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(limit)
+                .projectionExpression(String.join(", ", attributeNames.keySet()))
+                .expressionAttributeNames(attributeNames)
+                .build();
+        return dynamoDbClient.scan(request).items();
+    }
+
+    /**
+     * Legge l'item con la chiave primaria indicata (lettura fortemente consistente); vuoto se non esiste.
+     */
+    public Optional<Map<String, AttributeValue>> getItem(String tableName, Map<String, AttributeValue> key) {
+        GetItemResponse response = dynamoDbClient.getItem(GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .consistentRead(true)
+                .build());
+        return response.hasItem() ? Optional.of(response.item()) : Optional.empty();
     }
 
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {

@@ -239,7 +239,7 @@ Feature: Messaggi e allegati di una notifica bonaria.
 
 
     #  CASO DI TEST 5.2 Corretto Download degli allegati di pagamento di una notifica.
-  @informalNotificationsMessageAttachment
+  @informalNotificationsMessageAttachment @informalComboRefactor
   Scenario: [NOTIFICHE_BONARIE_05_4] Come ente mittente Recupero l'allegato di pagamento di una notifica bonaria
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId    | FattOrd           |
