@@ -22,7 +22,7 @@ class ConfluenceCheckTests(unittest.TestCase):
 
     def setUp(self):
         self.environment = patch.dict(check_confluence.os.environ, {
-            'JIRA_CLOUD_ID': self.CLOUD, 'JIRA_API_TOKEN': self.TOKEN,
+            'JIRA_CLOUD_ID': self.CLOUD, 'CONFLUENCE_API_TOKEN': self.TOKEN,
         }, clear=True)
         self.environment.start()
         self.addCleanup(self.environment.stop)
@@ -118,6 +118,13 @@ class ConfluenceCheckTests(unittest.TestCase):
     def test_missing_credentials_prevent_requests(self):
         with patch.dict(check_confluence.os.environ, {}, clear=True):
             self.run_check(1)
+        self.builder.assert_not_called()
+
+    def test_jira_token_is_not_used_as_fallback(self):
+        with patch.dict(check_confluence.os.environ, {
+            'JIRA_CLOUD_ID': self.CLOUD, 'JIRA_API_TOKEN': self.TOKEN,
+        }, clear=True):
+            self.assertIn('CONFLUENCE_API_TOKEN', self.run_check(1))
         self.builder.assert_not_called()
 
 

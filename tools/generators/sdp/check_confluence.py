@@ -19,9 +19,9 @@ class NoRedirect(request.HTTPRedirectHandler):
 
 def main():
     cloud_id = os.getenv('JIRA_CLOUD_ID', '')
-    token = os.getenv('JIRA_API_TOKEN', '')
+    token = os.getenv('CONFLUENCE_API_TOKEN', '')
     if not cloud_id or not token:
-        print('Configurare vars.JIRA_CLOUD_ID e secrets.JIRA_API_TOKEN.', file=sys.stderr)
+        print('Configurare vars.JIRA_CLOUD_ID e secrets.CONFLUENCE_API_TOKEN.', file=sys.stderr)
         return 1
     try:
         cloud_id = str(UUID(cloud_id))
