@@ -138,6 +138,7 @@ def load_manifest(path):
 class Link:
     label: str
     url: str
+    inline: bool = False
 
 
 def cell(value):
@@ -158,6 +159,9 @@ def table(headers, rows):
 
 def storage_cell(value):
     if isinstance(value, Link):
+        if value.inline:
+            url = html.escape(value.url, quote=True)
+            return f'<a href="{url}" data-card-appearance="inline">{url}</a>'
         return f'<a href="{html.escape(value.url, quote=True)}">{storage_cell(value.label)}</a>'
     if value is None or value == '':
         return '—'
@@ -165,8 +169,8 @@ def storage_cell(value):
 
 
 def storage_table(headers, rows):
-    return '<table><tbody><tr>' + ''.join('<th>' + storage_cell(h) + '</th>' for h in headers) + '</tr>' + ''.join(
-        '<tr>' + ''.join('<td>' + storage_cell(v) + '</td>' for v in row) + '</tr>' for row in rows) + '</tbody></table>'
+    return '<table><tbody><tr>' + ''.join('<th><h6>' + storage_cell(h) + '</h6></th>' for h in headers) + '</tr>' + ''.join(
+        '<tr>' + ''.join('<td><h6>' + storage_cell(v) + '</h6></td>' for v in row) + '</tr>' for row in rows) + '</tbody></table>'
 
 
 def render(release, storage=False, manifest_url=None, generated_at=None):
@@ -178,7 +182,7 @@ def render(release, storage=False, manifest_url=None, generated_at=None):
     def heading(text, level=2):
         return f'<h{level}>{text}</h{level}>' if storage else '#' * level + ' ' + text
     def issue(key):
-        return Link(key, f'https://pagopa.atlassian.net/browse/{key}')
+        return Link(key, f'https://pagopa.atlassian.net/browse/{key}', inline=True)
     timestamp = (generated_at or datetime.now(ZoneInfo('Europe/Rome'))).astimezone(ZoneInfo('Europe/Rome'))
     lines = [heading(f'Service Delivery Plan — {escape(release["product"])} {escape(release["version"])}', 1),
              '', paragraph(f'Trimestre: {escape(release["quarter"])} · Stato release: {escape(release["status"])}'),
@@ -204,14 +208,13 @@ def render(release, storage=False, manifest_url=None, generated_at=None):
     rows = []
     for item in release['work-items']:
         resources = '\n'.join(f'{p["name"]} ({p["role"]})' for p in item.get('resources', []))
-        rows.append([issue(item['id']), item.get('title') or 'Titolo da recuperare da Jira',
-                     issue(item['qa_epic']) if item.get('qa_epic') else 'Da creare', '\n'.join(item['strategies']),
+        rows.append([issue(item['id']),
+                     issue(item['qa_epic']) if item.get('qa_epic') else 'QA Epic da creare', '\n'.join(item['strategies']),
                      item.get('size') if item.get('size') is not None else 'Da stimare', resources or 'Da assegnare', item['priority'],
-                     item.get('_qa_status', 'Non disponibile (Jira non interrogato)') if item.get('qa_epic') else 'QA Epic da creare',
                      Link('Apri PST', item['_pst_url']) if item.get('_pst_url') else ('Non disponibile' if release.get('_jira_synced') else 'Non verificato (anteprima offline)')])
     if rows:
-        lines += [make_table(['Work item', 'Attività', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
-                         'Risorse', 'Priorità', 'Stato QA', 'PST'], rows)]
+        lines += [make_table(['Work item', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
+                         'Risorse', 'Priorità', 'PST'], rows)]
     else:
         lines += [paragraph('Nessuna attività QA pianificata.')]
     details = []

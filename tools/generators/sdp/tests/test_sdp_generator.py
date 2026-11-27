@@ -87,7 +87,7 @@ class SDPTests(unittest.TestCase):
         item['title'] = None
         item['notes'] = 'a | b\n<script>bad</script>'
         output = render(self.release)
-        self.assertIn('Non disponibile (Jira non interrogato)', output)
+        self.assertIn('Jira non interrogato', output)
         self.assertIn('Titolo da recuperare da Jira', output)
         self.assertIn('a &#124; b<br>&lt;script&gt;', output)
         self.assertNotIn('<script>', output)
