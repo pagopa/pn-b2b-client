@@ -8,7 +8,8 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_LANGUAGES_01_1_A] Come ente mittente invio una notifica bonaria allegando
-  un messaggio multilingue e specificando la seconda lingia come lingua addizionale.
+  un messaggio multilingue e specificando la seconda lingua come lingua addizionale.
+  La notifica viene accettata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd           |
       | recipientType       | PF                |
@@ -21,7 +22,7 @@ Feature: Sottomissione di una notifica bonaria.
 
   @informalNotificationsValidation @informalAsyncValidation
   Scenario: [NOTIFICHE_LANGUAGES_01_1_B] Come ente mittente invio una notifica bonaria allegando
-  un messaggio multilingue e NON specificando nessuna addizionale.
+  un messaggio multilingue e NON specificando nessuna lingua addizionale. La notifica viene accettata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd                   |
       | recipientType       | PG                        |
@@ -34,8 +35,8 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalNotificationsValidation @informalSyncValidation
-  Scenario Outline: [NOTIFICHE_LANGUAGES_01_3_A] Come ente mittente ricevo errore nel tentativo di inviare
-  una notifica bonaria con allegato un messaggio e indicando una lingua non conforme
+  Scenario Outline: [NOTIFICHE_LANGUAGES_01_3_A] Come ente mittente invio tento l'invio di una notifica bonaria,
+    specificando lingua del messaggio non conforme. La notifica viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd               |
       | recipientType       | PF                    |
@@ -53,8 +54,9 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente ricevo errore nel tentativo di inviare
-  una notifica bonaria con allegato un messaggio e indicando una lingua non presente nel messaggio
+  Scenario: [NOTIFICHE_LANGUAGES_01_3_B] Come ente mittente tento di inviare
+  una notifica bonaria specificando una lingua non disponibile per il messaggio allegato.
+  La notifica viene rifiutata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd      |
       | recipientType       | PG           |
@@ -72,7 +74,8 @@ Feature: Sottomissione di una notifica bonaria.
 # *******************************************************************
 
   @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_AMOUNT_02_1_A] Come ente mittente invio una notifica bonaria definendo il campo amount e dueDate correttamente
+  Scenario: [NOTIFICHE_AMOUNT_02_1_A] Come ente mittente invio una notifica bonaria definendo i campi del pagamento
+  amount e dueDate correttamente. La notifica viene accettata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId       | FattOrd           |
       | recipientType    | PF                |
@@ -85,7 +88,8 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalNotificationsValidation @informalAsyncValidation
-  Scenario: [NOTIFICHE_AMOUNT_02_1_B] Come ente mittente invio una notifica bonaria definendo il campo amount e non definendo il campo dueDate
+  Scenario: [NOTIFICHE_AMOUNT_02_1_B] Come ente mittente invio una notifica bonaria definendo il campo amount e non definendo il campo dueDate.
+    La notifica viene accettata.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId     | FattOrd           |
       | recipientType  | PF                |
@@ -97,7 +101,8 @@ Feature: Sottomissione di una notifica bonaria.
 
 
   @informalNotificationsValidation @informalSyncValidation
-  Scenario: [NOTIFICHE_AMOUNT_02_1_C] Come ente mittente ricevo un errore nel tentativo di invio una notifica bonaria senza definire il campo amount
+  Scenario: [NOTIFICHE_AMOUNT_02_1_C] Come ente mittente
+  ricevo un errore nel tentativo di invio una notifica bonaria senza definire il campo amount.
     Given l'ente mittente "Comune_Multi" compila una notifica bonaria con i seguenti dati:
       | campaignId          | FattOrd           |
       | recipientType       | PF                |
