@@ -1,0 +1,1618 @@
+# Copiare in releases/<prodotto>/<versione>.yaml e sostituire i valori di esempio.
+# Mantenere questo template in draft: non è una release da elaborare.
+# Istruzioni: releases/README.md.
+# Obbligatorietà: convenzioni del nuovo manifest, non tutte validate dai generatori.
+# Nei blocchi facoltativi, i campi obbligatori si applicano solo se il blocco è usato.
+# Completare i valori obbligatori prima di portare la release a planned.
+# OBBLIGATORIO.
+release:
+  # Testo: deve coincidere con il nome del file senza .yaml.
+  # Per Epic generator serve una Fix Version omonima nel progetto Jira QA.
+  # OBBLIGATORIO.
+  version: 2.26.0
+  # Valori: draft | planned | in-progress | execution | closed.
+  # draft: preparazione; planned: piano approvato;
+  # in-progress: progettazione e implementazione dei test;
+  # execution: esecuzione dei test e analisi degli esiti;
+  # closed: lavoro QA concluso e consuntivato (non implica tutti i test passati).
+  # Aggiornare tramite PR. La fase è quella prevalente della release.
+  # Epic e PST elaborano solo in-progress. Passando a execution, i PST
+  # esistenti rimangono disponibili ma non vengono più aggiornati.
+  # execution non avvia automaticamente le suite: questo è uno sviluppo futuro.
+  # OBBLIGATORIO.
+  status: draft
+  # Testo libero: breve descrizione del perimetro della release.
+  # OBBLIGATORIO.
+  description: Piano di delivery QA della release INTEROP 2.26.0
+  # Valori: SEND | INTEROP, coerenti con la cartella send | interop.
+  # OBBLIGATORIO.
+  product: INTEROP
+  # Formato AAAA-QN, con N = 1, 2, 3 o 4.
+  # OBBLIGATORIO.
+  quarter: 2026-Q4
+
+  # Date previste di rilascio negli ambienti, non di consegna del lavoro QA.
+  # Chiavi: dev, test, qa, uat, prod. Usare qa al posto di test se applicabile.
+  # Valori: "AAAA-MM-GG" oppure vuoto se da definire.
+  # Omettere gli ambienti non applicabili.
+  # FACOLTATIVO.
+  delivery:
+    # FACOLTATIVO.
+    dev: "2026-11-27"
+    qa: "2026-12-11"
+    prod: "2027-01-07"
+
+  # OBBLIGATORIO.
+  work-items:
+    # Chiave Jira del work item di prodotto (es. PN-12345 o PIN-12345).
+    # OBBLIGATORIO.
+    - id: PIN-11135
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 1
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 3
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Vincenzo Massaro
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11060
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 2
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 5
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Giuseppe Veldorale
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-10898
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 3
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Stefano Capasso
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11519
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 4
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-19768
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11525
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 5
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-19816
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-9130
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 6
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 5
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Igor Cortese
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11206
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 7
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+        - NRT TA STANDARD
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 7
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Silvano Gresta Zucchi
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-10713
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 8
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 3
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Carmen Coviello
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11567
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 9
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Matteo Sperati
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11549
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 10
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 3
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Matteo Sperati
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11655
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 11
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Igor Cortese
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Critical
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-10081
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 12
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-18074
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-10082
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 13
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-18077
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-9436
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 14
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-18450
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Emanuele Scozzafava
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11528
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 16
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Matteo Sperati
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11609
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 18
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Matteo Sperati
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11548
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 19
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Matteo Sperati
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-6779
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 20
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-17502
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Silvano Gresta Zucchi
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11055
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 21
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Vincenzo Massaro
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-10918
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 23
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Vincenzo Massaro
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11458
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 24
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11472
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 25
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-9341
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 26
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-18446
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Silvano Gresta Zucchi
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-9329
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 27
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic: QA-18443
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TA VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Silvano Gresta Zucchi
+          # OBBLIGATORIO.
+          role: TA
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+    - id: PIN-11469
+      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+      # OBBLIGATORIO.
+      sequence: 28
+      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+      # FACOLTATIVO.
+      title:
+
+      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+      # OBBLIGATORIO.
+      repo: qe_suit
+      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+      # La coppia (id, qa_epic) valorizzata deve essere unica.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      qa_epic:
+      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+      branch:
+      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+
+      # Lista con uno o più dei seguenti valori:
+      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+      # TEST DI CARICO | TA FE VERTICALE.
+      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+      # OBBLIGATORIO.
+      strategies:
+        - TM VERTICALE
+
+      # Giorni uomo di analisi/progettazione e implementazione.
+      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+      # FACOLTATIVO.
+      size: 1
+
+      # Lista di persone; usare [] se non ancora assegnate.
+      # FACOLTATIVO.
+      resources:
+        # name: nome della persona; role: TA (automatici) | TM (manuali).
+        # OBBLIGATORIO.
+        - name: Virginia Ventura
+          # OBBLIGATORIO.
+          role: TM
+
+      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+      # OBBLIGATORIO.
+      priority: Medium
+
+      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+      # FACOLTATIVO.
+      notes:
+      # Testo libero sui rischi noti oppure vuoto.
+      # FACOLTATIVO.
+      risks:
+      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+      # FACOLTATIVO.
+      dependencies:
+
+  # Work item interamente esclusi dal perimetro QA; usare [] se non presenti.
+  # Ogni id è unico e non può comparire anche in work-items.
+  # FACOLTATIVO.
+  out_of_scope:
+    # id: chiave Jira obbligatoria; reason: motivazione testuale non vuota.
+    # OBBLIGATORIO.
+    - id: PIN-10956
+      # OBBLIGATORIO.
+      reason: Attività di miglioramento dei log di un componente internal senza intervento QA previsto.
+    # OBBLIGATORIO.
+    - id: PIN-10937
+      # OBBLIGATORIO.
+      reason: Attività di miglioramento del linter, senza intervento QA previsto.
+    - id: PIN-11558
+      # OBBLIGATORIO.
+      reason: Attività di aggiornamento dipendenze, senza intervento QA previsto.
+    - id: PIN-5935
+      # OBBLIGATORIO.
+      reason: Attività di aggiornamento dipendenze Kafka, senza intervento QA previsto.
+    - id: PIN-10939
+      # OBBLIGATORIO.
+      reason: Attività di analisi, non è necessario l'intervento di QA. La ticket operativo associato è rientrato invece in-scope.
+    - id: PIN-11398
+      # OBBLIGATORIO.
+      reason: Attività di bump, non è necessario l'intervento di QA.
+    - id: PIN-11256
+      # OBBLIGATORIO.
+      reason: Attività su una Github Action, non è necessario l'intervento di QA.
+    - id: PIN-10958
+      # OBBLIGATORIO.
+      reason: Attività di analisi implementativa, non è necessario l'intervento di QA.
+    - id: PIN-11621
+      # OBBLIGATORIO.
+      reason: Ticket in done senza descrizione.
+    - id: PIN-11572
+      # OBBLIGATORIO.
+      reason: Con gli strumenti attuali non testabile da QA, non è possibile simulare un crash di AWS.
+    - id: PIN-10940
+      # OBBLIGATORIO.
+      reason: Attività di bump, non è necessario l'intervento di QA.
+    - id: PIN-11668
+      # OBBLIGATORIO.
+      reason: Attività di bump, non è necessario l'intervento di QA.
