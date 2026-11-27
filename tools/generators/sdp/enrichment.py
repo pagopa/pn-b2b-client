@@ -1,4 +1,5 @@
 """Read-only Jira enrichment and verified PST discovery for SDP publishing."""
+from http.client import HTTPException
 import copy
 import json
 import os
@@ -21,7 +22,7 @@ def read_json(url, token, missing_ok=False):
         if missing_ok and exc.code == 404:
             return None
         raise ValueError(f'Lettura dati SDP: HTTP {exc.code}; verificare credenziali e permessi.') from None
-    except (OSError, ValueError):
+    except (OSError, ValueError, HTTPException):
         raise ValueError('Lettura dati SDP: connessione o risposta non valida.') from None
 
 

@@ -1,4 +1,6 @@
 import io
+from http.client import IncompleteRead
+from urllib.parse import urlsplit
 import copy
 from urllib.error import HTTPError
 from contextlib import redirect_stdout, redirect_stderr
@@ -22,7 +24,7 @@ class EnrichmentTests(unittest.TestCase):
         self.item.update(title=None, qa_epic='QA-123')
 
     def read(self, url, token, missing_ok=False):
-        if 'api.github.com' in url:
+        if urlsplit(url).hostname == 'api.github.com':
             return {'type': 'file'}
         return {'fields': {'summary': '<Titolo> & Jira', 'status': {
             'name': 'In lavorazione', 'statusCategory': {'key': 'indeterminate'}}}}
@@ -55,7 +57,7 @@ class EnrichmentTests(unittest.TestCase):
             return None if missing_ok else self.read(url, token)
         result = enrich(self.release, read)
         self.assertNotIn('_pst_url', result['work-items'][0])
-        self.assertEqual(sum('api.github.com' in u for u in calls), 1)
+        self.assertEqual(sum(urlsplit(u).hostname == 'api.github.com' for u in calls), 1)
         self.assertEqual(sum('/issue/QA-123?' in u for u in calls), 1)
         self.assertEqual(result['work-items'][1]['title'], 'Titolo esplicito')
 
@@ -87,3 +89,11 @@ class EnrichmentTests(unittest.TestCase):
             with redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
                 self.assertEqual(main(['unused.yaml']), 1)
             publish.assert_not_called()
+
+    def test_truncated_response_is_sanitized(self):
+        with patch('enrichment.request.build_opener') as opener:
+            response = opener.return_value.open.return_value.__enter__.return_value
+            response.read.side_effect = IncompleteRead(b'secret', 100)
+            with self.assertRaisesRegex(ValueError, 'connessione o risposta non valida') as raised:
+                read_json('https://api.github.com/test', 'secret')
+            self.assertNotIn('secret', str(raised.exception))
