@@ -5,7 +5,7 @@ Feature: Associazione del producer-keychain agli e-services
   # PST: https://pagopa.atlassian.net/wiki/x/HYCyzg
   # CASO DI TEST 1.1
   @work-item:QA-17417
-  Scenario Outline: [PRODUCER_KEYCHAIN_LINK_1] - Associazione del producer-keychain a un e-service in stato legittimo
+  Scenario Outline: [BFF_PRODUCER_KEYCHAIN_LINK_1] - Associazione del producer-keychain a un e-service in stato legittimo
     Un portachiavi erogatore può essere associato a un e-service in stato legittimo da un utente amministratore.
     Given "PA1" ha già creato un e-service in stato <stato>
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
@@ -24,7 +24,7 @@ Feature: Associazione del producer-keychain agli e-services
   # PST: https://pagopa.atlassian.net/wiki/x/HYCyzg
   # CASO DI TEST 1.2
   @work-item:QA-17417 @deleghe2
-  Scenario: [PRODUCER_KEYCHAIN_LINK_2] - Associazione del producer-keychain a un e-service in stato WAITING_FOR_APPROVAL
+  Scenario: [BFF_PRODUCER_KEYCHAIN_LINK_2] - Associazione del producer-keychain a un e-service in stato WAITING_FOR_APPROVAL
     Anche un e-service con un descrittore in attesa di approvazione può essere collegato al portachiavi erogatore.
     Given "PA1" ha già creato un e-service con un descrittore in stato WAITING_FOR_APPROVAL usando "PA2" come delegato
     And l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
@@ -40,7 +40,7 @@ Feature: Associazione del producer-keychain agli e-services
   # e-service verso lo stato ARCHIVED in tempi ragionevoli. E' possibile solo riferirsi ad e-service in stato
   # ARCHIVED pre-creati attraverso lo step di data preparation.
   @work-item:QA-17417
-  Scenario: [PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
+  Scenario: [BFF_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
     Un e-service archiviato non può essere collegato al portachiavi e il tentativo viene respinto.
     Given l'utente "admin" di "PA1" crea un portachiavi erogatore con successo
     When l'utente "admin" di "PA1" associa il portachiavi erogatore all'e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
