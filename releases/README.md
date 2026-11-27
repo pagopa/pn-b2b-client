@@ -243,7 +243,7 @@ di avvio saranno implementati in futuro.
 | `priority` | Priorità QA: `Critical`, `High`, `Medium`, `Low`. È un dato di pianificazione, non una sincronizzazione automatica della priorità Jira. |
 | `notes` | Note operative, inclusa eventuale complessità della fase di esecuzione. |
 | `risks` | Rischi noti per il lavoro QA. |
-| `dependencies` | Lista di prerequisiti o dipendenze. Usare `[]` quando non presenti. |
+| `dependencies` | Lista di prerequisiti o dipendenze. Se non presenti, il campo può essere omesso, lasciato vuoto (`dependencies:`) oppure valorizzato con `[]`. |
 
 Per i testi lunghi usare `>` come nel template. Per `notes` e `risks` senza
 contenuto lasciare il valore vuoto. I campi mancanti non devono essere

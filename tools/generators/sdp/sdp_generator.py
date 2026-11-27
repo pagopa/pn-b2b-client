@@ -105,6 +105,8 @@ def validate(release):
         for person in resources:
             require(isinstance(person, dict) and text(person.get('name')) and choice(person.get('role'), {'TA', 'TM'}), f'{where}.resources: name e role TA/TM obbligatori')
         dependencies = item.get('dependencies', [])
+        if dependencies is None:
+            dependencies = []
         require(isinstance(dependencies, list) and all(text(d) for d in dependencies), f'{where}.dependencies: lista di testi richiesta')
 
     exclusions = release.get('out_of_scope', [])
