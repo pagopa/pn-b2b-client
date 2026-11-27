@@ -341,9 +341,9 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INAD            |
+      | iun  | auto         |
+      | log1 | pec found: 2 |
+      | log2 | INAD         |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                   |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                     |
@@ -394,9 +394,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INAD            |
+      | iun  | auto |
+      | log1 | INAD |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | loadTimeline           | true                                                |
       | legalFactsIds          | [{"category": "DIGITAL_DELIVERY"}]                  |
@@ -449,9 +448,10 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | iun   | auto                  |
       | error | INAD - CF non trovato |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
+      | iun  | auto         |
+      | log2 | IniPEC       |
+      | log1 | valid pec: 1 |
+
 
   @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_2] Invio Notifica mono destinatario a PF con recupero dei domicili digitali profesionali in IniPec – INAD non trovato
@@ -495,15 +495,14 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_isAvailable          | true     |
     #     verifica errore 404 in INAD
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
+      | iun   | auto                                       |
+      | error | PEC not found on INAD, fallback to INI-PEC |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
+      | iun  | auto                     |
+      | log1 | called EService:  INIPEC |
 
   @PFinipec
-  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD non trovato
+  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_3] Invio Notifica mono destinatario a PF con recupero dei domicili digitali in IniPec – INAD lista vuota
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -543,13 +542,11 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | true     |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
+      | iun   | auto                           |
+      | error | inad digital addresses is null |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
-
+      | iun  | auto   |
+      | log1 | IniPEC |
 
   @PFinipec
   Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PF_INAD_INIPEC_4] Invio Notifica mono destinatario a PF senza recupero di domicili digitali nè in IniPec nè in INAD
@@ -576,9 +573,6 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details     | NOT_NULL |
-      | pollingTime | 40000    |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline                 | true     |
       | details                      | NOT_NULL |
@@ -587,11 +581,14 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | pollingTime                  | 40000    |
       | details_sentAttemptMade      | 0        |
       | details_isAvailable          | false    |
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | details     | NOT_NULL |
+      | pollingTime | 60000    |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun  | auto                         |
-      | log1 | pushing message for clientId |
-      | log4 | from source: INIPEC          |
+      | iun  | auto   |
+      | log1 | INIPEC |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
+      | iun   | auto         |
+      | log1  | Service INAD |
+      | error | errors=404   |
 

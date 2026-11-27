@@ -301,9 +301,8 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-
   @workflowDigitale @fallbackINAD @mockNR
-  Scenario: [TC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_1] Invio verso PG con ricerca indirizzo IPA - INIPEC e INAD nessun indirizzo valido su INAD
+  Scenario: [ooTC_RICERCA_DOMICILIO_DIGITALE_PG_INIPEC_INAD_1] Invio verso PG con ricerca indirizzo IPA - INIPEC e INAD nessun indirizzo valido su INAD
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -327,12 +326,12 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | iun   | auto                          |
       | error | Invoking external service IPA |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                        |
-      | log   | INIPEC - nextSource: [INAD] |
-      | error | digital Address not found   |
+      | iun   | auto         |
+      | log   | IniPEC       |
+      | error | valid pec: 0 |
     And verifico la presenza di un audit log su "/aws/ecs/pn-national-registries" negli ultimi 40 minuti riportante i seguenti dati nel messaggio
-      | iun   | auto                  |
-      | error | INAD - CF non trovato |
+      | iun   | auto                                     |
+      | error | no valid pec found for recipientType: PG |
 
 
   @workflowDigitale @fallbackINAD @mockNR
