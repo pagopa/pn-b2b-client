@@ -1577,7 +1577,7 @@ ko:
     Il KO è quindi causato dalla configurazione IAM dell'ambiente remoto
     e non dalla logica di attivazione della richiesta di fruizione.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
     (senza nome) | Example #1 | line: 47] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
@@ -1644,7 +1644,7 @@ ko:
     dell'ambiente remoto e impedisce il completamento delle verifiche
     sul file degli eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
     (senza nome) | Example #2 | line: 48] [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
@@ -1711,7 +1711,7 @@ ko:
     dell'ambiente remoto e impedisce il completamento delle verifiche
     sul file degli eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/risk-analysis/d6f15bad-a175-4a28-97d6-c994008d636d/20261125182028_a6ff8383-0956-4ff5-baf1-1c6e85469e64_risk_analysis.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: 7DMYKZJ0VA5W253H, Extended Request ID: 53hFvD0Nom8iSoZLEEor1NlNl1uBXUwW8fV741TxWpKthNOdFkfxpEYPeF8gIoqSDkyJHWpofOtF7I+dlO3eEplUuhg2pNIc)
@@ -1776,7 +1776,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sul documento e sugli eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[PURPOSE_DOC_ARCHIVE_2] Attivazione nuova versione finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/risk-analysis/1fe6e29a-4d65-43bd-acef-a3371120af98/20261125182134_dd44fc8e-553f-41ad-9f34-1d24ae299e12_risk_analysis.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: 1GFSH15YGJ88CJ34, Extended Request ID: QjWPhCZHNfk2mHQd0Y/NOJR0xsf+FUOC1A0TZ3I7U+ZELSkeiZCiI9n1A8Lj3ied3oiVzm9TsNA=)
@@ -1841,7 +1841,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sulla nuova versione e sui relativi eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/78d87458-5696-4cbf-9bb0-6ba1b356b3be/bd374aff-f813-4a43-a873-0cc21dd99eb7/20261125182110_delegation_activation_contract.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: HNMDXCDEVV821FYR, Extended Request ID: fsAik0r6pSjUGDIRmyPAnX82SGhHpxtYYrpE2WaFxg2x2ws5Mwea071t7lu7kd1laauFD4Izw+A=)
@@ -1906,7 +1906,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sul contratto e sugli eventi della delega.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/58619e1f-7f2e-4220-8ee3-06a3d605773e/d75c9bc8-1169-47ca-ac73-d9efd562d9b1/20261125182048_delegation_activation_contract.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: 35WMDDPSJ7M3QR15, Extended Request ID: XmzMlv1rGbVPvGWMT0On/xV4XcYo7NwZzSNwktnYtuZK1Ubupz7CWCcLYCWo2GjJwAzxybl+D+rOxAKCD2sTsZD+4RPilpOQ)
@@ -1971,7 +1971,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sul contratto e sugli eventi della delega.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/19134504-e1f7-4c76-8024-e662a4debaee/312da227-59bf-4d29-82ce-85341f4046dc/20261125182006_delegation_revocation_contract.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: V6W507K33P1EHMCC, Extended Request ID: OJCWjTmffaqcx5I/6k7UuM+Cj+L9JraWYA+OHdaVEdgC20ABb4m9Z2P5gzAZc0MvR4hIXDn7kv7O7ZF4rMcPxEwi3UCnyZoyam8q8dlHTRk=)
@@ -2037,7 +2037,7 @@ ko:
     dell'ambiente remoto e impedisce il completamento delle verifiche sul
     contratto di revoca e sugli eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/delegation/4d494e4a-e7b7-44d9-b601-65b7a57e09e8/38995ba9-d5b5-416b-a16d-b782046d0d5c/20261125181915_delegation_revocation_contract.pdf" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: TDKWW3RVX9SPPA5E, Extended Request ID: RHUkialABwcEcLK4y4ZBwWZOn4YuFKciDiufVcFjQ9abx+G0JYRjXfM8Mbn/aLhtQJSEPV4DfcQYlAd65JGmytinGaBJqV7s)
@@ -2103,7 +2103,7 @@ ko:
     dell'ambiente remoto e impedisce il completamento delle verifiche sul
     contratto di revoca e sugli eventi.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061835_8bad7487-6906-47bb-a2f8-73302e99000f.ndjson.zip" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: 1DC79JTYB0DKVNHW, Extended Request ID: bXS64PKyIZgPLD2smUAypT+HBvzYyrw2lTk8//Ogcl7NhX5quTMEWcaOEebhKs0vzcRuRPP2DZntJuNbXCXPIAXzb3M0+XVw)
@@ -2168,7 +2168,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sull'event log.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061758_d9cdcbf5-30c1-4258-9d25-1b1175fefe1e.ndjson.zip" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: WJZEV0AE0006CKXM, Extended Request ID: uKhRxIKOrBxz6ppmxgH6B5ECfYc/sczy/K7Iy3uHqr/1RrkCDhT6bx6iuWuOORboi42xBJZXJZp14wr6ZNQQXmm0kNbbjDJh)
@@ -2233,7 +2233,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sull'event log.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
     software.amazon.awssdk.services.s3.model.S3Exception: User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 is not authorized to perform: s3:GetObjectRetention on resource: "arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061716_6786c4fc-04bc-4980-931c-bd2cdc521282.ndjson.zip" because no identity-based policy allows the s3:GetObjectRetention action (Service: S3, Status Code: 403, Request ID: GF7651WJX39KBS1P, Extended Request ID: JTxkY/XOLvr5qDDbiJHZmMYglieo1FMaH5kIcgPOvvvwWchkAnbUnFBfwXeTVgdvAjHVyxu+8ws=)
@@ -2298,7 +2298,7 @@ ko:
     Il KO è causato dalla policy IAM dell'ambiente remoto e impedisce il
     completamento delle verifiche sull'event log.
   link_prod_bug: ''
-  link_suite_bug: 'https://pagopa.atlassian.net/jira/browse/QA-19662'
+  link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19662'
 - id_test: '[CERT_DISCRETE_ATTR_NOT_AVAILABLE] Gli attributi certificati discreti non sono disponibili quando il
     feature flag è false. [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
