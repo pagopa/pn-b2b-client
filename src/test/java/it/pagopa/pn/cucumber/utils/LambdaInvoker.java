@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
@@ -17,6 +18,7 @@ import software.amazon.awssdk.services.lambda.model.InvokeResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LambdaInvoker {
@@ -62,7 +64,6 @@ public class LambdaInvoker {
         return lambdaClient;
     }
 
-
     public String invokeMyLambda(String functionName, String payload) {
         InvokeRequest request = InvokeRequest.builder()
                 .functionName(functionName)
@@ -75,27 +76,39 @@ public class LambdaInvoker {
 
     public <T> T invokeMyLambda(String functionName, Object payload, Class<T> bodyClass) {
         try {
-            String payloadJson = payload instanceof String s
-                    ? s
-                    : objectMapper.writeValueAsString(payload);
+            String payloadJson = payload instanceof String s ? s : objectMapper.writeValueAsString(payload);
 
             String rawResponse = invokeMyLambda(functionName, payloadJson);
+            log.info("Lambda [{}] raw response: {}", functionName, rawResponse);
+
 
             JsonNode root = objectMapper.readTree(rawResponse);
-            int statusCode = root.path("statusCode").asInt(-1);
+            log.info("Lambda [{}] detected response type: {}", functionName, root.has("statusCode") ? "API_GATEWAY" : "DIRECT_DTO");
+            // Compatibilità con lambda che restituiscono:
+            // {
+            //   "statusCode": 200,
+            //   "body": ...
+            // }
+            if (root.has("statusCode")) {
 
-            JsonNode body = root.path("body");
+                int statusCode = root.path("statusCode").asInt(-1);
+                JsonNode body = root.path("body");
 
-            if (statusCode != 200) {
-                String bodyText = body.isTextual() ? body.asText() : body.toString();
-                throw new RuntimeException("Lambda failed: " + bodyText);
+                if (statusCode != 200) {
+                    log.info("Lambda [{}] request: {}", functionName, payloadJson);
+                    log.info("Lambda [{}] response: {}", functionName, rawResponse);
+
+                    String bodyText = body.isTextual() ? body.asText() : body.toString();
+
+                    throw new RuntimeException("Lambda failed: " + bodyText);
+                }
+                if (body.isTextual()) {
+                    return objectMapper.readValue(body.asText(), bodyClass);
+                }
+                return objectMapper.treeToValue(body, bodyClass);
             }
-
-            if (body.isTextual()) {
-                return objectMapper.readValue(body.asText(), bodyClass);
-            }
-
-            return objectMapper.treeToValue(body, bodyClass);
+            // Compatibilità con lambda che restituiscono direttamente il DTO
+            return objectMapper.treeToValue(root, bodyClass);
 
         } catch (Exception e) {
             throw new RuntimeException(

@@ -39,6 +39,7 @@ import it.pagopa.pn.client.b2b.pa.utils.DataPreparationRaddVpceService;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.client.DelayerLambdaClient;
+import it.pagopa.pn.cucumber.steps.delayer.client.PortfatControlLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.client.PortfatLambdaClient;
 import it.pagopa.pn.cucumber.steps.delayer.loader.DelayerCsvLoader;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerContext;
@@ -59,6 +60,7 @@ import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessage
 import it.pagopa.pn.cucumber.steps.informalNotification.utils.NotificationInformalUtilsV1;
 import it.pagopa.pn.cucumber.steps.pa.service.DocumentTagsService;
 import it.pagopa.pn.cucumber.steps.pa.service.TransformedDocumentService;
+import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.ioMock.context.IoMockScenarioContext;
 import it.pagopa.pn.cucumber.steps.paperTracker.parser.EventTimelineParser;
 import it.pagopa.pn.cucumber.steps.paperTracker.proxy.PaperTrackerSchemaValidatorProxy;
@@ -318,11 +320,13 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BSenderReadClientImpl.class,
         NotificationInformalUtilsV1.class,
         DelayerSkipSenderLimitService.class,
+        TransformedDocumentService.class,
+        DocumentTagsService.class,
+        PortfatControlLambdaClient.class,
         InformalCommunicationV1Adapter.class,
         InformalCommunicationAdapterResolver.class,
         IoMockScenarioContext.class,
         IoMockScenarioContext.class,
-        TransformedDocumentService.class,
         DocumentTagsService.class,
         NotificheBonarieFatturazioneScenarioContext.class,
         InternalTimelineService.class,
