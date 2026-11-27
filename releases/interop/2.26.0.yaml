@@ -9,7 +9,7 @@ release:
   # Testo: deve coincidere con il nome del file senza .yaml.
   # Per Epic generator serve una Fix Version omonima nel progetto Jira QA.
   # OBBLIGATORIO.
-  version: [INTEROP]-2.26.0
+  version: 2.26.0
   # Valori: draft | planned | in-progress | execution | closed.
   # draft: preparazione; planned: piano approvato;
   # in-progress: progettazione e implementazione dei test;
