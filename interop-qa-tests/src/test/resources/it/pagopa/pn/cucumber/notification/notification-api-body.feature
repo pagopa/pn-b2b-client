@@ -856,3 +856,131 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     La finalità $CONTEXT(purposeTitle) associata all'e-service $CONTEXT(eServiceName) è in attesa di approvazione
     perché è stata superata la soglia totale di chiamate API. La finalità dovrà essere approvata dall'erogatore.
     """
+
+  Scenario: [No Notifica documento per e-service sync bozza] L'erogatore aggiunge un documento all'e-service sincrono in bozza e versione 2, il fruitore non riceve notifica
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente ha già aggiunto un documento al descrittore
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 1
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
+    And "PA1" ha già una nuova versione in stato DRAFT per quell'e-service
+    When l'utente ha già aggiunto un documento al descrittore
+    Then admin di "PA2" non ha ricevuto la notifica in-app
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 2
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
+
+  Scenario: [No Notifica documento per e-service async bozza] L'erogatore aggiunge un documento all'e-service asincrono in bozza e versione 2, il fruitore non riceve notifica
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "PUBLISHED"
+    And "PA2" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'utente ha già aggiunto un documento al descrittore
+    And admin di "PA2" ha ricevuto la notifica in-app contenente il link CATALOGO_E_SERVICE
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 1
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
+    And "PA1" ha già una nuova versione in stato DRAFT per quell'e-service
+    When l'utente ha già aggiunto un documento al descrittore
+    Then admin di "PA2" non ha ricevuto la notifica in-app
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 2
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
+
+  Scenario: [No Notifica documento per e-service sync WFA] L'erogatore aggiunge un documento all'e-service sincrono in attesa di approvazione e versione 2, il fruitore non riceve notifica
+    Given l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And "PA1" ha già creato e pubblicato 1 e-service
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | agreementApprovalPolicy | MANUAL    |
+      | audience                | pagopa.it |
+      | dailyCallsPerConsumer   | 100       |
+      | dailyCallsTotal         | 1000      |
+      | description             | Descrizione versione 2 |
+      | voucherLifespan         | 80        |
+    When l'utente ha già aggiunto un documento al descrittore
+    And l'utente pubblica quel descrittore
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    Then admin di "GSP" non ha ricevuto la notifica in-app
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 2
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
+
+  Scenario: [No Notifica documento per e-service async WFA] L'erogatore aggiunge un documento all'e-service asincrono in attesa di approvazione e versione 2, il fruitore non riceve notifica
+    Given l'ente delegato "PA2"
+    And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
+    And l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service asincrono in stato "DRAFT" con:
+      | technology | REST    |
+      | mode       | DELIVER |
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And "PA1" ha già caricato un'interfaccia per quel descrittore
+    And "PA1" ha già caricato un'interfaccia di callback per quel descrittore
+    And l'utente pubblica l'e-service
+    And l'e-service è in stato "PUBLISHED"
+    And "GSP" ha una richiesta di fruizione in stato "ACTIVE" per quell'e-service
+    And l'ente "PA1" richiede la creazione di una delega in erogazione per l'ente "PA2" con successo
+    And l'ente "PA2" accetta la delega in erogazione con successo
+    And l'utente è un "admin" di "PA2"
+    And l'utente crea una nuova versione dell'e-service
+    And "PA2" ha già caricato un'interfaccia per quel descrittore
+    And l'utente aggiorna alcuni parametri di quel descrittore con:
+      | voucherLifespan                               | 60        |
+      | dailyCallsPerConsumer                         | 50        |
+      | dailyCallsTotal                               | 2000      |
+      | audience                                      | pagopa.it |
+      | agreementApprovalPolicy                       | AUTOMATIC |
+      | asyncExchangeProperties.responseTime          | 100       |
+      | asyncExchangeProperties.resourceAvailableTime | 100       |
+      | asyncExchangeProperties.confirmation          | true      |
+      | asyncExchangeProperties.bulk                  | true      |
+      | asyncExchangeProperties.maxResultSet          | 100       |
+    And "PA2" ha già caricato un'interfaccia di callback per quel descrittore
+    When l'utente ha già aggiunto un documento al descrittore
+    And l'utente pubblica quel descrittore
+    And l'e-service è in stato "WAITING_FOR_APPROVAL"
+    Then admin di "GSP" non ha ricevuto la notifica in-app
+    """
+    L'ente erogatore $CONTEXT(producerName) ha aggiunto un documento nella versione 2
+    dell'e-service $CONTEXT(eServiceName) a cui sei iscritto.
+    """
