@@ -1,4 +1,4 @@
-"""Render a release Service Delivery Plan as Markdown on stdout."""
+"""Publish a release Service Delivery Plan; use --dry-run for an offline preview."""
 
 import argparse
 from datetime import date
@@ -142,16 +142,33 @@ def table(headers, rows):
     return '\n'.join(lines)
 
 
-def render(release):
-    """Offline preview: never invent Jira states or issue titles."""
-    lines = [f'# Service Delivery Plan — {cell(release["product"])} {cell(release["version"])}',
-             '', f'Trimestre: {cell(release["quarter"])} · Stato release: {cell(release["status"])}',
-             '', cell(release['description']), '',
-             '> Anteprima locale: Jira non interrogato. Gli stati QA non sono sincronizzati.', '']
+def storage_cell(value):
+    if value is None or value == '':
+        return '—'
+    return html.escape(str(value).strip()).replace('\r\n', '\n').replace('\r', '\n').replace('\n', '<br />')
+
+
+def storage_table(headers, rows):
+    return '<table><tbody><tr>' + ''.join('<th>' + storage_cell(h) + '</th>' for h in headers) + '</tr>' + ''.join(
+        '<tr>' + ''.join('<td>' + storage_cell(v) + '</td>' for v in row) + '</tr>' for row in rows) + '</tbody></table>'
+
+
+def render(release, storage=False):
+    """Render the same data as Markdown or Confluence storage XHTML."""
+    escape = storage_cell if storage else cell
+    make_table = storage_table if storage else table
+    def paragraph(text):
+        return '<p>' + text + '</p>' if storage else text
+    def heading(text, level=2):
+        return f'<h{level}>{text}</h{level}>' if storage else '#' * level + ' ' + text
+    lines = [heading(f'Service Delivery Plan — {escape(release["product"])} {escape(release["version"])}', 1),
+             '', paragraph(f'Trimestre: {escape(release["quarter"])} · Stato release: {escape(release["status"])}'),
+             '', paragraph(escape(release['description'])), '',
+             paragraph('Jira non interrogato. Gli stati QA non sono sincronizzati.'), '']
     if release.get('delivery'):
-        lines += ['## Calendario della release', '', table(['Ambiente', 'Data prevista'],
+        lines += [heading('Calendario della release'), '', make_table(['Ambiente', 'Data prevista'],
                   [(key.upper(), value or 'Da definire') for key, value in release['delivery'].items()]), '']
-    lines += ['## Piano di delivery QA', '']
+    lines += [heading('Piano di delivery QA'), '']
     rows = []
     for item in release['work-items']:
         resources = '\n'.join(f'{p["name"]} ({p["role"]})' for p in item.get('resources', []))
@@ -167,23 +184,29 @@ def render(release):
                      'Non disponibile (Jira non interrogato)' if item.get('qa_epic') else 'QA Epic da creare',
                      '\n'.join(details)])
     if rows:
-        lines += [table(['Work item', 'Seq.', 'Attività', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
+        lines += [make_table(['Work item', 'Seq.', 'Attività', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
                          'Risorse', 'Priorità', 'Stato QA', 'Note / Rischi / Dipendenze'], rows)]
     else:
-        lines += ['Nessuna attività QA pianificata.']
-    lines += ['', '## Work item esclusi dal perimetro QA', '']
+        lines += [paragraph('Nessuna attività QA pianificata.')]
+    lines += ['', heading('Work item esclusi dal perimetro QA'), '']
     exclusions = release.get('out_of_scope', [])
-    lines += [table(['Work item', "Motivo dell'esclusione"], [(x['id'], x['reason']) for x in exclusions])
-              if exclusions else 'Nessun work item escluso.']
+    lines += [make_table(['Work item', "Motivo dell'esclusione"], [(x['id'], x['reason']) for x in exclusions])
+              if exclusions else paragraph('Nessun work item escluso.')]
     return '\n'.join(lines) + '\n'
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('manifest', type=Path, help='Manifest YAML della release')
+    parser.add_argument('--dry-run', action='store_true', help='Anteprima Markdown offline, senza scritture')
     args = parser.parse_args(argv)
     try:
-        output = render(load_manifest(args.manifest))
+        release = load_manifest(args.manifest)
+        if args.dry_run:
+            output = render(release)
+        else:
+            from confluence import publish
+            output = publish(release, render(release, storage=True)) + '\n'
     except (OSError, ValueError, yaml.YAMLError) as exc:
         print(f'Errore SDP: {exc}', file=sys.stderr)
         return 1

@@ -1,5 +1,5 @@
-# Configurazione della pubblicazione concordata.
-# Non ancora letta dalla CLI locale: integrazione Confluence da implementare.
+# Configurazione della pubblicazione Confluence.
+# La pianificazione è concordata ma non ancora attivata nel workflow.
 confluence:
   parent_type: folder
   parent_id: "3459022926"
