@@ -237,21 +237,19 @@ public class EServiceCatalogListingSteps {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         httpExecutor.performCall(
                 () -> eServiceClient.getCompactCatalogEServicesWithHttpInfo(
-                        offset, limit, query, states, agreementStates, mode, isConsumerDelegable, personalData)
+                        offset, limit, query, states, agreementStates, mode, isConsumerDelegable, personalData),
+                ResponseEntity::getStatusCode
         );
     }
 
     @Then("^il risultato del catalogo compatto (include|non include) gli e-service con id \"([^\"]*)\"$")
     public void verifyCompactCatalogEServiceIds(String operation, String eServiceIds) {
         List<UUID> expectedEserviceIds = catalogResolver.resolveEServiceIds(eServiceIds);
+        assertThat(expectedEserviceIds)
+                .as("Deve esserci almeno un e-service da verificare")
+                .isNotEmpty();
 
-        ResponseEntity<CompactCatalogEServices> response =
-                (ResponseEntity<CompactCatalogEServices>) httpExecutor.getResponse();
-        assertThat(response.getBody())
-                .as("La risposta del catalogo compatto non deve essere null")
-                .isNotNull();
-
-        List<UUID> actualEserviceIds = response.getBody().getResults().stream()
+        List<UUID> actualEserviceIds = getCompactCatalogResults().stream()
                 .map(CompactCatalogEService::getId)
                 .toList();
 
@@ -266,6 +264,44 @@ public class EServiceCatalogListingSteps {
                         .doesNotContain(expectedEserviceId);
             }
         }
+    }
+
+    /** Verifica che il catalogo compatto non vuoto non contenga descrittori attivi. */
+    @Then("il risultato del catalogo compatto contiene almeno un e-service e nessuno ha un descrittore attivo")
+    public void verifyCompactCatalogEServicesHaveNoActiveDescriptor() {
+        assertThat(getCompactCatalogResults())
+                .as("Il catalogo compatto deve contenere almeno un e-service")
+                .isNotEmpty()
+                .doesNotContainNull()
+                .allSatisfy(eService -> assertThat(eService.getActiveDescriptor())
+                        .as("L'e-service %s non deve avere un descrittore attivo", eService.getId())
+                        .isNull());
+    }
+
+    private List<CompactCatalogEService> getCompactCatalogResults() {
+        Object rawResponse = httpExecutor.getResponse();
+        assertThat(rawResponse)
+                .as("La risposta del catalogo compatto deve essere una ResponseEntity")
+                .isInstanceOf(ResponseEntity.class);
+
+        Object body = ((ResponseEntity<?>) rawResponse).getBody();
+        assertThat(body)
+                .as("Il body della risposta del catalogo compatto deve contenere i risultati")
+                .isInstanceOf(CompactCatalogEServices.class);
+
+        List<CompactCatalogEService> results = ((CompactCatalogEServices) body).getResults();
+        assertThat(results)
+                .as("La lista dei risultati del catalogo compatto non deve essere null")
+                .isNotNull();
+        return results;
+    }
+
+    /** Verifica la presenza o l'assenza dell'ultimo e-service creato nel catalogo compatto. */
+    @Then("^il risultato del catalogo compatto (include|non include) l'ultimo e-service creato$")
+    public void verifyLatestCompactCatalogEService(String operation) {
+        UUID eServiceId = eServicesCommonContext.getEserviceId();
+        assertThat(eServiceId).as("Deve esserci un e-service creato da verificare").isNotNull();
+        verifyCompactCatalogEServiceIds(operation, eServiceId.toString());
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo con offset {int}")

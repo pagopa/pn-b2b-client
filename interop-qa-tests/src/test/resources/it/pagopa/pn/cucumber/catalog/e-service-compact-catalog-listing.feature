@@ -74,7 +74,7 @@ Feature: Listing catalogo compatto e-services
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 2 e-services in catalogo in stato PUBLISHED o SUSPENDED e 1 in stato DRAFT
     And "PA1" ha già creato e pubblicato un e-service contenente la keyword "test"
-    And l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword "test"
+    When l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword "TEST"
     Then si ottiene status code 200 e la lista di 1 e-service dal catalogo compatto
 
   @happy-path
@@ -129,7 +129,7 @@ Feature: Listing catalogo compatto e-services
   @work-item:QA-19033
   Scenario Outline: [COMPACT_CATALOG_LISTING_10] Filtraggio in base alla presenza e definizione di dati personali
     Verifica l'applicazione del filtro sui dati personali (personalData) con valori TRUE, FALSE e DEFINED nel catalogo compatto.
-    Consente di visualizzare solo gli e-service con trattamento di dati personali abilitato, disabilitato o comunque esplicitamente definito sul descrittore.
+    Consente di visualizzare solo gli e-service con trattamento di dati personali abilitato, disabilitato o comunque esplicitamente definito.
     Given l'utente è un "admin" di "PA1"
     And "PA2" ha già creato e pubblicato 2 e-services con personalData true
     And "PA2" ha già creato e pubblicato 1 e-service con personalData false
@@ -145,11 +145,52 @@ Feature: Listing catalogo compatto e-services
   @happy-path
   @nrt-minimal
   @work-item:QA-19033
+  Scenario Outline: [COMPACT_CATALOG_LISTING_10.2] Il filtro personalData esclude e-service senza flag impostato
+    Verifica che i filtri TRUE, FALSE e DEFINED escludano un e-service con personalData non impostato.
+    L'e-service resta in DRAFT perché la piattaforma non consente di pubblicarlo senza specificare personalData; il listing viene eseguito dall'erogatore.
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service in modalità "<mode>" con un descrittore in stato "DRAFT" e flag dati personali a "undefined"
+    And verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia "undefined"
+    When l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData "<personalDataFilter>"
+    Then si ottiene status code 200
+    And il risultato del catalogo compatto non include l'ultimo e-service creato
+
+    Examples:
+      | mode    | personalDataFilter |
+      | DELIVER | TRUE               |
+      | DELIVER | FALSE              |
+      | DELIVER | DEFINED            |
+      | RECEIVE | TRUE               |
+      | RECEIVE | FALSE              |
+      | RECEIVE | DEFINED            |
+
+  @happy-path
+  @nrt-minimal
+  @work-item:QA-19033
+  Scenario Outline: [COMPACT_CATALOG_LISTING_10.3] Il catalogo compatto include e-service senza personalData se il filtro non è specificato
+    Verifica che il catalogo compatto includa un e-service con personalData non impostato quando non viene applicato il filtro personalData.
+    L'e-service resta in DRAFT perché la piattaforma non consente di pubblicarlo senza specificare personalData; il listing viene eseguito dall'erogatore.
+    Given l'utente è un "admin" di "PA2"
+    And "PA2" ha già creato un e-service in modalità "<mode>" con un descrittore in stato "DRAFT" e flag dati personali a "undefined"
+    And verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia "undefined"
+    When l'utente richiede una operazione di listing sul catalogo compatto
+    Then si ottiene status code 200
+    And il risultato del catalogo compatto include l'ultimo e-service creato
+
+    Examples:
+      | mode    |
+      | DELIVER |
+      | RECEIVE |
+
+  @happy-path
+  @nrt-minimal
+  @work-item:QA-19033
   Scenario Outline: [COMPACT_CATALOG_LISTING_10.1] Correlazione tra filtro dati personali e modalità di erogazione
     Verifica la compatibilità del filtro personalData su e-service creati sia in modalità DELIVER sia in modalità RECEIVE.
-    Il risultato del listing include o esclude gli e-service a seconda della corrispondenza tra il valore del filtro e il flag effettivamente presente sul descrittore.
+    Il risultato del listing include o esclude gli e-service a seconda della corrispondenza tra il valore del filtro e il flag effettivamente presente sull'e-service.
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato 2 e-service in modalità "<mode>" con un descrittore in stato "PUBLISHED" e flag dati personali a "<personalDataFlag>"
+    And verifica che il flagPersonalData presente nell'eService con il descrittore appena creato sia "<personalDataFlag>"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData "<personalDataFilter>"
     Then si ottiene status code 200
     And il risultato del catalogo compatto <esito> gli e-service con id "%actual"
@@ -157,20 +198,23 @@ Feature: Listing catalogo compatto e-services
     Examples:
       | mode    | personalDataFlag | personalDataFilter | esito       |
       | DELIVER | true             | TRUE               | include     |
-      | DELIVER | false            | FALSE              | include     |
-      | DELIVER | true             | DEFINED            | include     |
-      | DELIVER | false            | DEFINED            | include     |
       | DELIVER | true             | FALSE              | non include |
+      | DELIVER | true             | DEFINED            | include     |
       | DELIVER | false            | TRUE               | non include |
+      | DELIVER | false            | FALSE              | include     |
+      | DELIVER | false            | DEFINED            | include     |
       | RECEIVE | true             | TRUE               | include     |
-      | RECEIVE | false            | FALSE              | include     |
+      | RECEIVE | true             | FALSE              | non include |
       | RECEIVE | true             | DEFINED            | include     |
+      | RECEIVE | false            | TRUE               | non include |
+      | RECEIVE | false            | FALSE              | include     |
+      | RECEIVE | false            | DEFINED            | include     |
 
   @happy-path
   @nrt-minimal
   @work-item:QA-19033
   Scenario Outline: [COMPACT_CATALOG_LISTING_11] Filtraggio per stato del descrittore da parte di erogatore e terzi
-    Verifica le regole di visibilità e filtraggio per stato del descrittore nel catalogo compatto (DRAFT, PUBLISHED, SUSPENDED, DEPRECATED, ARCHIVING, ARCHIVING_SUSPENDED).
+    Verifica le regole di visibilità e filtraggio per stato del descrittore nel catalogo compatto (DRAFT, PUBLISHED, SUSPENDED, DEPRECATED).
     L'ente erogatore può visualizzare tutti i propri stati compreso DRAFT, mentre gli enti terzi possono consultare solo descrittori in stati visibili a catalogo.
     Given "PA1" ha già creato 2 e-services in stato <statoCreato>
     And l'utente è un "admin" di "<enteChiamante>"
@@ -179,24 +223,44 @@ Feature: Listing catalogo compatto e-services
     And il risultato del catalogo compatto <esito> gli e-service con id "%actual"
 
     Examples:
-      | statoCreato         | enteChiamante | statoFiltro         | esito       |
+      | statoCreato | enteChiamante | statoFiltro | esito       |
       # Prospettiva ente erogatore (PA1): può vedere tutti gli stati, incluso DRAFT
-      | DRAFT               | PA1           | DRAFT               | include     |
-      | PUBLISHED           | PA1           | PUBLISHED           | include     |
-      | SUSPENDED           | PA1           | SUSPENDED           | include     |
-      | DEPRECATED          | PA1           | DEPRECATED          | include     |
-      | ARCHIVING           | PA1           | ARCHIVING           | include     |
-      | ARCHIVING_SUSPENDED | PA1           | ARCHIVING_SUSPENDED | include     |
+      | DRAFT       | PA1           | DRAFT       | include     |
+      | PUBLISHED   | PA1           | PUBLISHED   | include     |
+      | SUSPENDED   | PA1           | SUSPENDED   | include     |
+      | DEPRECATED  | PA1           | DEPRECATED  | include     |
       # Prospettiva ente terzo (PA3): vede gli stati attivi/visibili a catalogo, ma NON vede DRAFT
-      | DRAFT               | PA3           | DRAFT               | non include |
-      | PUBLISHED           | PA3           | PUBLISHED           | include     |
-      | SUSPENDED           | PA3           | SUSPENDED           | include     |
-      | DEPRECATED          | PA3           | DEPRECATED          | include     |
-      | ARCHIVING           | PA3           | ARCHIVING           | include     |
-      | ARCHIVING_SUSPENDED | PA3           | ARCHIVING_SUSPENDED | include     |
+      | DRAFT       | PA3           | DRAFT       | non include |
+      | PUBLISHED   | PA3           | PUBLISHED   | include     |
+      | SUSPENDED   | PA3           | SUSPENDED   | include     |
+      | DEPRECATED  | PA3           | DEPRECATED  | include     |
       # Filtri non corrispondenti allo stato dell'e-service
-      | PUBLISHED           | PA3           | SUSPENDED           | non include |
-      | SUSPENDED           | PA3           | PUBLISHED           | non include |
+      | PUBLISHED   | PA3           | SUSPENDED   | non include |
+      | SUSPENDED   | PA3           | PUBLISHED   | non include |
+
+  @happy-path
+  @nrt-minimal
+  @work-item:QA-19033
+  Scenario Outline: [COMPACT_CATALOG_LISTING_11.1] Filtraggio per descrittori in archiviazione da parte di erogatore e terzi
+    Verifica la visibilità degli e-service con descrittori in stato ARCHIVING o ARCHIVING_SUSPENDED.
+    Given l'utente è un "admin" di "PA1"
+    And "PA1" ha già creato un e-service in stato <statoIniziale>
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And la versione più recente dell'e-service è in stato "<statoCreato>"
+    And "PA1" ha già creato un e-service in stato <statoIniziale>
+    And l'utente ha già avviato il processo di archiviazione dell'e-service "%actual" specificando la motivazione "QA test manual-archiving" e 60 giorni di preavviso
+    And la versione più recente dell'e-service è in stato "<statoCreato>"
+    And l'utente è un "admin" di "<enteChiamante>"
+    When l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati "<statoCreato>"
+    Then si ottiene status code 200
+    And il risultato del catalogo compatto include gli e-service con id "%actual"
+
+    Examples:
+      | statoIniziale | statoCreato         | enteChiamante |
+      | PUBLISHED     | ARCHIVING           | PA1           |
+      | SUSPENDED     | ARCHIVING_SUSPENDED | PA1           |
+      | PUBLISHED     | ARCHIVING           | PA3           |
+      | SUSPENDED     | ARCHIVING_SUSPENDED | PA3           |
 
   @happy-path
   @nrt-minimal
@@ -221,13 +285,13 @@ Feature: Listing catalogo compatto e-services
   @happy-path
   @nrt-minimal
   @work-item:QA-19033
-  Scenario Outline: [COMPACT_CATALOG_LISTING_13] Filtraggio per stato ARCHIVED e verifica dell'e-service archiviato
-    Verifica il recupero dal catalogo compatto degli e-service che si trovano nello stato ARCHIVED.
-    Eseguendo una ricerca mirata per lo stato ARCHIVED viene verificata la presenza dell'e-service preesistente archiviato.
+  Scenario Outline: [COMPACT_CATALOG_LISTING_13] Filtraggio per stato ARCHIVED e verifica degli e-service restituiti
+    Verifica il risultato del filtro ARCHIVED sul catalogo compatto, senza filtro sul nome.
+    Il risultato deve contenere almeno un e-service e nessuno deve avere un descrittore attivo.
     Given l'utente è un "admin" di "<enteChiamante>"
     When l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati "ARCHIVED" senza filtro sul nome
     Then si ottiene status code 200
-    And il risultato del catalogo compatto include gli e-service con id "45d822b9-066c-4a77-b4a1-331135496907"
+    And il risultato del catalogo compatto contiene almeno un e-service e nessuno ha un descrittore attivo
 
     Examples:
       | enteChiamante |
@@ -236,6 +300,7 @@ Feature: Listing catalogo compatto e-services
 
   @happy-path
   @nrt-minimal
+  @work-item:QA-19033
   Scenario: [COMPACT_CATALOG_LISTING_14] Filtraggio simultaneo per stati multipli con verifica cumulativa
     Verifica la possibilità di specificare più stati contemporaneamente separati da virgola (es. PUBLISHED,SUSPENDED) nel filtro di listing.
     Il catalogo compatto restituisce con successo l'insieme cumulativo di tutti gli e-service corrispondenti agli stati indicati.
