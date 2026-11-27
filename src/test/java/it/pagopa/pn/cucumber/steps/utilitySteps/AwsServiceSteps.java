@@ -3,7 +3,9 @@ package it.pagopa.pn.cucumber.steps.utilitySteps;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.common.util.CloudWatchQueryBuilder;
+import it.pagopa.common.polling.PollingConfig;
+import it.pagopa.common.polling.Poller;
+import it.pagopa.common.util.CloudWatchLogsService;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
 import it.pagopa.pn.client.b2b.pa.service.DynamoDbService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -12,29 +14,25 @@ import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import software.amazon.awssdk.services.cloudwatchlogs.CloudWatchLogsClient;
-import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsRequest;
-import software.amazon.awssdk.services.cloudwatchlogs.model.FilterLogEventsResponse;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
 
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import static org.awaitility.Awaitility.await;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 @RequiredArgsConstructor
 public class AwsServiceSteps {
     private final SharedSteps sharedSteps;
-    private final CloudWatchLogsClient cloudWatchLogsClient;
+    private final CloudWatchLogsService cloudWatchLogsService;
     private boolean checkAuditLogDisabled;
     private final DynamoDbService dynamoDbService;
 
@@ -72,9 +70,15 @@ public class AwsServiceSteps {
 
     /**
      * Dalla mappa di parametri passata in input si va a comporre la stringa con i filtri di ricerca per i log.
-     * Il nome delle chiavi impostato nel file feature è del tutto irrilevante, serve unicamente a migliorare la leggibilità.
-     * La sola eccezione è il campo iun (ignoreCase): se è impostato su auto, viene recuperato dal valore di notificationIun;
-     * in tutti gli altri casi, viene impostato col valore passato.
+     * Il nome delle chiavi impostato nel file feature è del tutto irrilevante, serve unicamente a migliorare la leggibilità,
+     * con due eccezioni (ignoreCase):
+     * <ul>
+     *     <li>{@code iun}: se il valore è {@code auto}, viene recuperato da {@code notificationIun} invece di essere
+     *     preso alla lettera;</li>
+     *     <li>{@code exclude}: il valore (una o più frasi separate da virgola) non va a comporre il filtro per
+     *     inclusione ma per esclusione, tramite l'operatore {@code -} dei filter pattern CloudWatch (es. per
+     *     verificare l'assenza di un campo, passando il nome del campo come frase da escludere).</li>
+     * </ul>
      * La scrittura dei log su CloudWatch è repentina, ma possono tuttavia capitare casi in cui il log viene scritto pochi secondi dopo
      * rispetto a quando viene eseguita la ricerca. Per evitare fail dei test dovuti a questa motivazione, il metodo riesegue la ricerca
      * tramite polling prima di dichiarare fallito il test.
@@ -83,25 +87,33 @@ public class AwsServiceSteps {
     public void checkAuditLogFromAws(String microservice, int minutes, Map<String, String> queryFiltersMap) {
         if (!checkAuditLogDisabled) {
             try {
-                StringBuilder sb = new StringBuilder();
+                List<String> includeTerms = new ArrayList<>();
+                List<String> excludeTerms = new ArrayList<>();
                 queryFiltersMap.forEach((key, value) -> {
-                    if (key.equalsIgnoreCase("IUN")) {
-                        sb.append("\"").append(value.equals("auto") ? sharedSteps.getNotificationIun() : value).append("\" ");
+                    if (key.equalsIgnoreCase("exclude")) {
+                        excludeTerms.addAll(splitTerms(value));
+                    } else if (key.equalsIgnoreCase("IUN") && value.equals("auto")) {
+                        includeTerms.add(sharedSteps.getNotificationIun());
                     } else {
-                        sb.append("\"").append(value).append("\" ");
+                        includeTerms.add(value);
                     }
                 });
-                String search = sb.toString().trim();
 
-                await().atMost(2, TimeUnit.MINUTES).pollInterval(10, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(() -> {
-                    FilterLogEventsRequest logRequest = CloudWatchQueryBuilder.search(microservice, search, minutes);
-                    FilterLogEventsResponse logResponse = cloudWatchLogsClient.filterLogEvents(logRequest);
-                    assertThat(logResponse.events().size()).as("Alle %s non è stato trovato nessun log che soddisfi la search %s", DateTime.now(), search).isGreaterThan(0);
-                });
+                Poller.pollUntil(
+                        () -> countMatchingEventsIgnoringTransientErrors(microservice, includeTerms, excludeTerms, minutes),
+                        matchCount -> {
+                            assertThat(matchCount).as("Alle %s non è stato trovato nessun log che soddisfi la search %s (esclusi: %s)",
+                                    DateTime.now(), includeTerms, excludeTerms).isGreaterThan(0);
+                        },
+                        PollingConfig.of(Duration.ofMinutes(2), Duration.ofSeconds(10)));
             } catch (AssertionError assertionError) {
                 sharedSteps.throwAssertionErrorWithIUN(assertionError);
             }
         }
+    }
+
+    private static List<String> splitTerms(String value) {
+        return Arrays.stream(value.split(",")).map(String::trim).filter(term -> !term.isEmpty()).toList();
     }
 
     /**
@@ -219,6 +231,16 @@ public class AwsServiceSteps {
 
         } catch (AssertionError assertionError) {
             sharedSteps.throwAssertionErrorWithIUN(assertionError);
+        }
+    }
+
+    /** Ignora errori transitori di CloudWatch (es. throttling) riprovando al giro di polling successivo, invece di far fallire subito il check. */
+    private int countMatchingEventsIgnoringTransientErrors(String microservice, List<String> includeTerms, List<String> excludeTerms, int minutes) {
+        try {
+            return cloudWatchLogsService.countMatchingEvents(microservice, includeTerms, excludeTerms, minutes);
+        } catch (RuntimeException e) {
+            log.warn("Errore transitorio durante la ricerca su CloudWatch, nuovo tentativo al prossimo giro di polling", e);
+            return 0;
         }
     }
 

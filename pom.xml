@@ -47,7 +47,7 @@
         <open.api.version.delivery.push_v25>56314229c57ea544dd0f7678ce61ba4e5de180f5</open.api.version.delivery.push_v25>
         <!--V26-->
         <open.api.version.delivery_v26>d90ca16f039dae243dcf7d2d805b00a94097d392</open.api.version.delivery_v26>
-        <open.api.version.delivery.push_v26>9e486010b7103547b0da6bf9136d14f87da43fd6</open.api.version.delivery.push_v26>
+        <open.api.version.delivery.push_v26>v2.28.0-RC.1</open.api.version.delivery.push_v26>
         <!-- Le due property sottostanti (relative all'ultima versione) coincidono con le due di sopra.
         Questa duplicità è dovuta al fatto che al rilascio di una nuova versione, alcune execution dovranno usare le versioni più
          recenti di delivery e deliveryPush, altre dovranno continuare a usare specificamente la versione precedente -->
@@ -1982,7 +1982,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.26.0-RC.2/docs/openapi/api-private.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/refs/tags/v2.28.0-RC.3/docs/openapi/api-private.yaml</inputSpec>
                             <auth>Authorization:Bearer ${github.token}</auth>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
