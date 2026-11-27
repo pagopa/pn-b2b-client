@@ -657,6 +657,67 @@
 #      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
 #      # FACOLTATIVO.
 #      dependencies:
+#    - id: PIN-11655
+#      # Intero positivo stabile. La coppia (id, sequence) deve essere unica.
+#      # Per più attività dello stesso id usare sequenze diverse; non rinumerare.
+#      # OBBLIGATORIO.
+#      sequence: 11
+#      # Testo libero; se vuoto, Epic generator recupera il summary da Jira.
+#      # FACOLTATIVO.
+#      title:
+#
+#      # Valori: pn-b2b-client | qe_suit (repository degli scenari QA).
+#      # OBBLIGATORIO.
+#      repo: qe_suit
+#      # Compilati dalla PR di epic_generator, oppure con riferimenti esistenti.
+#      # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
+#      # La coppia (id, qa_epic) valorizzata deve essere unica.
+#      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+#      qa_epic:
+#      # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
+#      # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
+#      branch:
+#      # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
+#      # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
+#
+#      # Lista con uno o più dei seguenti valori:
+#      # NRT TA STANDARD | TA VERTICALE | NRT TA AD-HOC | NRT TM STANDARD |
+#      # TM VERTICALE | TM ESPLORATIVO | NRT TM AD-HOC | DESIGN ONLY |
+#      # TEST DI CARICO | TA FE VERTICALE.
+#      # Le esclusioni complete vanno in out_of_scope, non nelle strategie.
+#      # OBBLIGATORIO.
+#      strategies:
+#        - TA VERTICALE
+#
+#      # Giorni uomo di analisi/progettazione e implementazione.
+#      # Numero positivo, anche frazionario (es. 2.5), oppure vuoto se non stimato.
+#      # Esclude esecuzione e analisi esiti. Non usare 0 o taglie S/M/L.
+#      # FACOLTATIVO.
+#      size: 1
+#
+#      # Lista di persone; usare [] se non ancora assegnate.
+#      # FACOLTATIVO.
+#      resources:
+#        # name: nome della persona; role: TA (automatici) | TM (manuali).
+#        # OBBLIGATORIO.
+#        - name: Igor Cortese
+#          # OBBLIGATORIO.
+#          role: TA
+#
+#      # Valori: Critical | High | Medium | Low. Priorità della pianificazione QA.
+#      # OBBLIGATORIO.
+#      priority: Critical
+#
+#      # Testo libero oppure vuoto; includere anche eventuali esclusioni parziali
+#      # e complessità della fase di esecuzione. Usare > per testi su più righe.
+#      # FACOLTATIVO.
+#      notes:
+#      # Testo libero sui rischi noti oppure vuoto.
+#      # FACOLTATIVO.
+#      risks:
+#      # Lista di descrizioni testuali dei prerequisiti; usare [] se assenti.
+#      # FACOLTATIVO.
+#      dependencies:
 #
 #  # Work item interamente esclusi dal perimetro QA; usare [] se non presenti.
 #  # Ogni id è unico e non può comparire anche in work-items.
