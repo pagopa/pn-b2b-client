@@ -9,7 +9,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainforma
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.api.SenderReadInformalNotificationB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bExternalInformalClient;
-import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,32 +24,25 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
-
 @Component
 @Slf4j
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInformalClient {
 
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String BEARER = "Bearer ";
-
     private final RestTemplate restTemplate;
     private final String basePath;
-    private final String enableInterop;
-    private final InteropTokenSingleton interopTokenSingleton;
+    private final InteropTokenInjector interopTokenInjector;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySon;
     private final String apiKeyRoot;
 
-    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url.pagopa}") String basePath, @Value("${pn.interop.enable}") String enableInterop, InteropTokenSingleton interopTokenSingleton, @Value("${pn.external.api-key}") String apiKeyMvp1, @Value("${pn.external.api-key-2}") String apiKeyMvp2, @Value("${pn.external.api-key-GA}") String apiKeyGa, @Value("${pn.external.api-key-SON}") String apiKeySon, @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
+    public PnPaB2bExternalInformalClientImpl(RestTemplate restTemplate, @Value("${pn.external.informal-base-url.pagopa}") String basePath, InteropTokenInjector interopTokenInjector, @Value("${pn.external.api-key}") String apiKeyMvp1, @Value("${pn.external.api-key-2}") String apiKeyMvp2, @Value("${pn.external.api-key-GA}") String apiKeyGa, @Value("${pn.external.api-key-SON}") String apiKeySon, @Value("${pn.external.api-key-ROOT}") String apiKeyRoot) {
 
         this.restTemplate = withIsoDateSerialization(restTemplate);
         this.basePath = basePath;
-        this.enableInterop = enableInterop;
-        this.interopTokenSingleton = interopTokenSingleton;
+        this.interopTokenInjector = interopTokenInjector;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
@@ -112,9 +105,7 @@ public class PnPaB2bExternalInformalClientImpl implements IPnPaB2bExternalInform
         var client = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.ApiClient(restTemplate);
         client.setBasePath(basePath);
         client.addDefaultHeader("x-api-key", apiKey);
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            client.addDefaultHeader(AUTHORIZATION, BEARER + interopTokenSingleton.getTokenInterop());
-        }
+        interopTokenInjector.applyTo(client::addDefaultHeader);
         client.setApiKey(apiKey);
 
         return client;

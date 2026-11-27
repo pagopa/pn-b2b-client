@@ -1,7 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenBinding;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenInjector;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api.EventsApi;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api.StreamsApi;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.INTEROP_ENABLED;
 
 
 @Component
@@ -40,54 +40,39 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String apiKeySon;
     private ApiKeyType apiKeyInUse;
     private final String devBasePath;
-    private String bearerTokenInterop;
-    private final String enableInterop;
-    private final InteropTokenSingleton interopTokenSingleton;
+    private final InteropTokenBinding interopTokenBinding;
 
 
-    public PnWebhookB2bExternalClientImpl(RestTemplate restTemplate, InteropTokenSingleton interopTokenSingleton,
+    public PnWebhookB2bExternalClientImpl(RestTemplate restTemplate, InteropTokenInjector interopTokenInjector,
                                           @Value("${pn.external.base-url}") String devBasePath,
                                           @Value("${pn.external.api-key}") String apiKeyMvp1,
                                           @Value("${pn.external.api-key-2}") String apiKeyMvp2,
                                           @Value("${pn.external.api-key-GA}") String apiKeyGa,
-                                          @Value("${pn.external.api-key-SON}") String apiKeySon,
-                                          @Value("${pn.interop.enable}") String enableInterop) {
+                                          @Value("${pn.external.api-key-SON}") String apiKeySon) {
         this.restTemplate = restTemplate;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
-        this.enableInterop = enableInterop;
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
-        }
-        this.interopTokenSingleton = interopTokenSingleton;
+        this.interopTokenBinding = interopTokenInjector.newBinding("webhookClient");
         this.devBasePath = devBasePath;
-        eventsApi = new EventsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        streamsApi = new StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        eventsApi = new EventsApi(newApiClient(apiKeyMvp1));
+        streamsApi = new StreamsApi(newApiClient(apiKeyMvp1));
+        this.interopTokenBinding
+                .register(() -> this.eventsApi.getApiClient()::addDefaultHeader)
+                .register(() -> this.streamsApi.getApiClient()::addDefaultHeader);
         this.apiKeyInUse = ApiKeyType.MVP_1;
     }
 
-    //@Scheduled(cron = "* * * * * ?")
     public void refreshAndSetTokenInteropClient() {
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            String tokenInterop = interopTokenSingleton.getTokenInterop();
-            if (!tokenInterop.equals(this.bearerTokenInterop)) {
-                log.info("webhookClient call interopTokenSingleton");
-                this.bearerTokenInterop = tokenInterop;
-                eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-                streamsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-            }
-        }
+        interopTokenBinding.refreshIfChanged();
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
+    private ApiClient newApiClient(String apikey) {
         ApiClient newApiClient = new ApiClient(restTemplate);
-        newApiClient.setBasePath(basePath);
+        newApiClient.setBasePath(devBasePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
-        if (INTEROP_ENABLED.equalsIgnoreCase(enableInterop)) {
-            newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
-        }
+        interopTokenBinding.applyTo(newApiClient::addDefaultHeader);
         return newApiClient;
     }
 
@@ -580,7 +565,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     public void setApiKey(String apiKey) {
-        eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        eventsApi.setApiClient(newApiClient(apiKey));
+        streamsApi.setApiClient(newApiClient(apiKey));
     }
 }
