@@ -125,6 +125,7 @@ Feature: Gestione degli attributi certificati degli e-service templates template
       | erogazione  |
     
     @e-service-template-receive-m2m
+    @rae-nrt-20261125-v3
     Examples:
       | mode        |
       | ricezione   |

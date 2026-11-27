@@ -376,6 +376,10 @@ Feature: Allineamento linee guida
     Examples:
       | personalDataFlag |
       | true             |
+
+    @rae-nrt-20261125-v2
+    Examples:
+      | personalDataFlag |
       | false            |
 
   @llgg

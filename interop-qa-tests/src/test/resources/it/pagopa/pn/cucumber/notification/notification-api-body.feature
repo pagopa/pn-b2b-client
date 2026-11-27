@@ -54,6 +54,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     $CONTEXT(eServiceName), precedentemente sospesa.
     """
 
+  @rae-nrt-20261125-v2
   Scenario: [Notifica richiesta fruizione sospesa e riattivata dalla Piattaforma] La Piattaforma PDND sospende e riattiva la richiesta di fruizione del fruitore al cambiamento dei requisiti
 
     # Scenario: [Notifica richiesta fruizione sospesa dalla Piattaforma] La Piattaforma PDND sospende la richiesta di fruizione del fruitore causa perdita dei requisiti
@@ -550,6 +551,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
+  @rae-nrt-20261125-v2
   Scenario: [Notifica rifiuto nuova versione e-service] L'ente delegante rifiuta la pubblicazione della nuova versione dell'e-service
     Given l'ente delegato "PA2"
     And l'ente "PA2" concede la disponibilità a ricevere deleghe in erogazione
@@ -575,6 +577,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     dell'e-service $CONTEXT(eServiceName) che gestisci tramite delega.
     """
 
+  @rae-nrt-20261125-v2
   Scenario: [Notifica ricezione richiesta di delega] L'ente riceve una richiesta di delega all'erogazione per un e-service
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"

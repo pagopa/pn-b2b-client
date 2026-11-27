@@ -1647,9 +1647,13 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     When l'utente tenta di clonare quell'e-service
     Then si ottiene response status code 403
 
+    @rae-nrt-20261125-v2
     Examples:
       | tenant | eserviceState |
       | PA1    | PUBLISHED     |
+
+    Examples:
+      | tenant | eserviceState |
       | PA1    | SUSPENDED     |
       | PA2    | PUBLISHED     |
       | PA2    | SUSPENDED     |
@@ -1668,9 +1672,13 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 403
 
+    @rae-nrt-20261125-v2
     Examples:
       | tenant |
       | PA1    |
+
+    Examples:
+      | tenant |
       | PA2    |
 
   @sad-path
@@ -1688,9 +1696,13 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     When l'utente tenta di clonare la vecchia versione dell'e-service
     Then si ottiene response status code 403
 
+    @rae-nrt-20261125-v2
     Examples:
       | tenant |
       | PA1    |
+
+    Examples:
+      | tenant |
       | PA2    |
 
   @sad-path

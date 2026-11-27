@@ -35,6 +35,7 @@ Feature: Gestione degli attributi dichiarati degli e-services attraverso APIs M2
       | DEPRECATED  |
 
   @deleghe2
+  @rae-nrt-20261125-v2
   Scenario: [M2M_ESERVICES_DECLARED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli attributi dichiarati a una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 197)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"

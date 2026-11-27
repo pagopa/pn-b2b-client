@@ -229,6 +229,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     """
 
   @notification-manual-archiving-delegation
+  @rae-nrt-20261125-v2
   Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.4] Un delegato all'erogazione richiede l'archiviazione di una versione di un e-service e viene approvata
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
@@ -252,6 +253,7 @@ Feature: Notifiche relative all'archiviazione manuale di uno specifico descritto
     """
 
   @notification-manual-archiving-delegation
+  @rae-nrt-20261125-v2
   Scenario: [NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.5] Un delegato all'erogazione annulla la richiesta di archiviazione di una versione di un e-service
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"
