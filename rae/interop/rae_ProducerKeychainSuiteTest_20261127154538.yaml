@@ -1,0 +1,44 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-27T15:37:25Z'
+  durata: 00:08:06
+  numero_ko: 3
+  run: https://github.com/pagopa/interop-qa-tests/actions/runs/46026150730/attempts/1
+  suite: ProducerKeychainSuiteTest
+  environment: qa
+  executor: Vincenzo-Massaro
+  source_branch: feature/QA-17417-eservice-producerKeychain-link
+ko_know: []
+ko:
+- id_test: '[M2M_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
+    [cucumber-report-producer-keychain-m2mv2.json]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: expected: <409> but was: <403>
+    	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyHttpStatusCode(ClientCommonSteps.java:118)
+    	at ✽.si ottiene http status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/producer-keychain-link.feature:49)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[BFF_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
+    [cucumber-report-producer-keychain-m2mv2.json]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: expected: <409> but was: <403>
+    	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyStatusCode(ClientCommonSteps.java:107)
+    	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/producer-keychain/producer-keychain-link.feature:47)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
+- id_test: '[M2M_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
+    [cucumber-report-producer-keychain-m2mv3.json]'
+  error_log: |
+    org.opentest4j.AssertionFailedError: expected: <409> but was: <403>
+    	at it.pagopa.pn.interop.cucumber.steps.authorization.ClientCommonSteps.verifyHttpStatusCode(ClientCommonSteps.java:118)
+    	at ✽.si ottiene http status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/producer-keychain-link.feature:49)
+  procedure: ''
+  result: ''
+  link_prod_bug: ''
+  link_suite_bug: ''
