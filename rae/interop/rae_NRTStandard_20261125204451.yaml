@@ -4085,8 +4085,12 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.catalog.utils.DelegatedArchivingRequestVerifier.pollPendingEServiceArchivingRequest(DelegatedArchivingRequestVerifier.java:72)
     	at it.pagopa.pn.interop.cucumber.steps.catalog.DelegationArchivingSteps.eServiceDelegatedArchivingRequestIsPending(DelegationArchivingSteps.java:247)
     	at ✽.la richiesta di archiviazione dell'e-service è stata inviata correttamente ed è in stato pending(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:264)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato senza problemi.'
+  procedure: |
+    I test sulle deleghe tendono a fare conflitto se lanciati in parallelo,
+    perché lo stesso tenant può essere impostato come delegato o meno da
+    test diversi. Rilanciando il test isolatamente in locale passa.
+  result: |
+    Il tenant non ha trovato l'e-service tra quelli delegati.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.6] Un delegante all''erogazione rifiuta la richiesta di archiviazione
@@ -4351,8 +4355,14 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.purposetemplate.PurposeTemplateSteps.preparePurposeTemplate(PurposeTemplateSteps.java:1151)
     	at it.pagopa.pn.interop.cucumber.steps.purposetemplate.PurposeTemplateSteps.createPurposeTemplatesDatasetUsingPreparePurposeTemplate(PurposeTemplateSteps.java:1232)
     	at ✽.esistono purpose templates di test creati tramite data preparation(classpath:it/pagopa/pn/cucumber/purpose-template/purpose-template-get-and-create.feature:149)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato senza problemi.'
+  procedure: |
+    Il test è stato rilanciato isolatamente in locale con tutti gli Examples
+    e passa. L'analisi è stata effettuata dopo una data prepration giornaliera
+    non è stato possibile verificare se il purpose template fosse esistente o meno.
+  result: |
+    Nonostante il polling il test non ha trovato il purpose template.
+    Si tratta di un test con numerosi Examples ed è probabile che il
+    volume delle richieste abbia comportato ritardi eccessivi.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_TEMPLATE_REACTIVATION_NO_CREATOR] Riattivazione di una finalità agevolata sospesa da parte
