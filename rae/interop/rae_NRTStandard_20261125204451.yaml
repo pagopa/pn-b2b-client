@@ -4070,9 +4070,15 @@ ko:
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
     	at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:365)
     	at ✽.admin di "PA2" ha ricevuto la notifica in-app contenente il link RICHIESTA_FRUIZIONE(classpath:it/pagopa/pn/cucumber/notification/notification-api-body.feature:89)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato con il medesimo errore. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
-  link_prod_bug: ''
+  procedure: |
+    Nel foglio mappatura delle notifiche ci sono delle disomogeneità di stile
+    che vanno prima chiarite per poi aggiustare piccoli interventi come presenza
+    o meno delle virgolette e simili. Serve che prodotto risolva il PIN indicato
+    per evitare di corregere e poi tornare indietro sulle scelte.
+  result: |
+    Non trova la notifica esatta attesa, ma differisce solo le virgolette
+    attorno al nome dell'e-service.
+  link_prod_bug: 'PIN-11098'
   link_suite_bug: ''
 - id_test: '[Notifica finalità rifiutata] L''erogatore rifiuta la finalità richiesta dal fruitore per un e-service
     [cucumber-report-nrt-bff-m2mv2.json]'
