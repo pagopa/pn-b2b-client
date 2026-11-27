@@ -1,0 +1,28 @@
+{
+  "notification": {
+    "subject": "invio notifica VRT NOTIFICATION_AAR_RADD_ALT",
+    "senderDenomination": "Comune di palermo"
+  },
+  "recipient": {
+    "name": "Mario Gherkin",
+    "data": {
+      "digitalDomicile": "NULL",
+      "physicalAddress_address": "Via@ok_890"
+    }
+  },
+  "templateEngine": {
+    "qrCodeQuickAccessLink": "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAAAAAAYplnuAAAA0UlEQVR42u3aMQqAQBRDwad4/ytrYS0sC7Iok8bGYpAUEn6JiMxkux/np7j7F780NDQ0NDQ0dNXx+Dsy/E/y9vvqAQ0NDQ0N/SO03UM9oKGhoaGhW7t7rNo3xt9XD2hoaGho6Owedg+dhoaGhoaGzr2HekBDQ0NDQ9s97B7Q0NDQ0NDZPdx7qAc0NDQ0NLTdw+4BDQ0NDQ2de4/ce0BDQ0NDQ0PbPdQDGhoaGho69x6594CGhoaGhoa2e6gHNDQ0NDQ0NDQ0NDQ0NPT/0SIic7kApMgaVla2ZxQAAAAASUVORK5CYII=",
+    "notification": {
+      "iun": "VRTG-LDNM-STRF-202601-A-1",
+      "subject": "${notification.subject}",
+      "sender": {
+        "paDenomination": "${notification.senderDenomination}"
+      }
+    },
+    "recipient": {
+      "recipientType": "PF",
+      "taxId": "CLMCST42R12D969Z",
+      "denomination": "${recipient.name}"
+    }
+  }
+}
