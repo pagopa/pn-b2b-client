@@ -4,6 +4,7 @@ import it.pagopa.interop.authorization.service.utils.SettableBearerToken;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.springframework.http.ResponseEntity;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
@@ -66,6 +67,16 @@ public interface IEServiceClient extends SettableBearerToken {
     CatalogEServices getEServicesCatalog(Integer offset, Integer limit, String q, List<UUID> producersIds,
                                          List<UUID> attributesIds, List<EServiceDescriptorState> states,
                                          List<AgreementState> agreementStates, EServiceMode mode, Boolean isConsumerDelegable);
+
+    ResponseEntity<CompactCatalogEServices> getCompactCatalogEServicesWithHttpInfo(
+            Integer offset,
+            Integer limit,
+            @Nullable String q,
+            @Nullable List<EServiceDescriptorState> states,
+            @Nullable List<AgreementState> agreementStates,
+            @Nullable EServiceMode mode,
+            @Nullable Boolean isConsumerDelegable,
+            @Nullable PersonalDataFilter personalData);
 
     CatalogEServiceDescriptor getCatalogEServiceDescriptor(UUID eserviceId, UUID descriptorId);
 

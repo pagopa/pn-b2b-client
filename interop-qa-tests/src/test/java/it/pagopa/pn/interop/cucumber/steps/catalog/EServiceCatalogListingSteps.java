@@ -11,6 +11,7 @@ import it.pagopa.interop.common.IHttpExecutor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
+import it.pagopa.pn.interop.cucumber.steps.catalog.utils.CatalogResolver;
 import it.pagopa.pn.interop.cucumber.steps.common.EServicesCommonContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.EServiceState;
@@ -32,6 +33,7 @@ public class EServiceCatalogListingSteps {
     private final PollingService pollingService;
     private final IHttpExecutor httpExecutor;
     private final IEServiceClient eServiceClient;
+    private final CatalogResolver catalogResolver;
 
     public EServiceCatalogListingSteps(BFFDataPreparationService dataPreparationService,
                                        ClientTokenConfigurator clientTokenConfigurator,
@@ -44,6 +46,7 @@ public class EServiceCatalogListingSteps {
         this.pollingService = sharedStepsContext.getPollingService();
         this.httpExecutor = sharedStepsContext.getHttpCallExecutor();
         this.eServiceClient = clientTokenConfigurator.getEServiceClient();
+        this.catalogResolver = new CatalogResolver(sharedStepsContext);
     }
 
     @Given("{string} ha già creato {int} e-services in catalogo in stato PUBLISHED o SUSPENDED e {int} in stato DRAFT")
@@ -153,6 +156,152 @@ public class EServiceCatalogListingSteps {
                         List.of(EServiceDescriptorState.PUBLISHED, EServiceDescriptorState.SUSPENDED), null,
                         null, null)
         );
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto")
+    public void requireCompactEServiceCatalogList() {
+        requireCompactEServiceCatalog(0, 12, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto limitata ai primi {int} e-services")
+    public void requireCompactEServiceCatalogListWithLimit(int limit) {
+        requireCompactEServiceCatalog(0, limit, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto con offset {int}")
+    public void requireCompactEServiceCatalogListWithOffset(int offset) {
+        requireCompactEServiceCatalog(offset, 12, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, null, null, null);
+    }
+
+    @When("l'utente richiede la lista del catalogo compatto per gli e-services per i quali ha almeno un agreement attivo")
+    public void requireCompactEServiceListWithActiveAgreement() {
+        requireCompactEServiceCatalog(0, 12, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, List.of(AgreementState.ACTIVE), null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per la keyword {string}")
+    public void requireCompactEServiceCatalogListByKeyword(String keyword) {
+        requireCompactEServiceCatalog(0, 12,
+                String.format("%s-%s", sharedStepsContext.getTestSeed(), keyword),
+                null, null, null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per modalità {string}")
+    public void requireCompactEServiceCatalogListByMode(String mode) {
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, EServiceMode.valueOf(mode), null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per isConsumerDelegable {string}")
+    public void requireCompactEServiceCatalogListByConsumerDelegable(String isConsumerDelegable) {
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, null, Boolean.valueOf(isConsumerDelegable), null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per personalData {string}")
+    public void requireCompactEServiceCatalogListByPersonalData(String personalData) {
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()),
+                null, null, null, null, PersonalDataFilter.fromValue(personalData));
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati {string}")
+    public void requireCompactEServiceCatalogListByStates(String states) {
+        List<EServiceDescriptorState> stateFilters = java.util.Arrays.stream(states.split(","))
+                .map(String::trim)
+                .map(EServiceDescriptorState::valueOf)
+                .toList();
+        requireCompactEServiceCatalog(0, 200, String.valueOf(sharedStepsContext.getTestSeed()), stateFilters, null, null, null, null);
+    }
+
+    @When("l'utente richiede una operazione di listing sul catalogo compatto filtrando per stati {string} senza filtro sul nome")
+    public void requireCompactEServiceCatalogListByStatesWithoutNameFilter(String states) {
+        List<EServiceDescriptorState> stateFilters = java.util.Arrays.stream(states.split(","))
+                .map(String::trim)
+                .map(EServiceDescriptorState::valueOf)
+                .toList();
+        requireCompactEServiceCatalog(0, 200, null, stateFilters, null, null, null, null);
+    }
+
+    private void requireCompactEServiceCatalog(
+            int offset,
+            int limit,
+            String query,
+            List<EServiceDescriptorState> states,
+            List<AgreementState> agreementStates,
+            EServiceMode mode,
+            Boolean isConsumerDelegable,
+            PersonalDataFilter personalData) {
+        clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
+        httpExecutor.performCall(
+                () -> eServiceClient.getCompactCatalogEServicesWithHttpInfo(
+                        offset, limit, query, states, agreementStates, mode, isConsumerDelegable, personalData),
+                ResponseEntity::getStatusCode
+        );
+    }
+
+    @Then("^il risultato del catalogo compatto (include|non include) gli e-service con id \"([^\"]*)\"$")
+    public void verifyCompactCatalogEServiceIds(String operation, String eServiceIds) {
+        List<UUID> expectedEserviceIds = catalogResolver.resolveEServiceIds(eServiceIds);
+        assertThat(expectedEserviceIds)
+                .as("Deve esserci almeno un e-service da verificare")
+                .isNotEmpty();
+
+        List<UUID> actualEserviceIds = getCompactCatalogResults().stream()
+                .map(CompactCatalogEService::getId)
+                .toList();
+
+        for (UUID expectedEserviceId : expectedEserviceIds) {
+            if ("include".equals(operation)) {
+                assertThat(actualEserviceIds)
+                        .as("Il risultato del catalogo compatto deve includere l'e-service %s", expectedEserviceId)
+                        .contains(expectedEserviceId);
+            } else {
+                assertThat(actualEserviceIds)
+                        .as("Il risultato del catalogo compatto non deve includere l'e-service %s", expectedEserviceId)
+                        .doesNotContain(expectedEserviceId);
+            }
+        }
+    }
+
+    /** Verifica che il catalogo compatto non vuoto non contenga descrittori attivi. */
+    @Then("il risultato del catalogo compatto contiene almeno un e-service e nessuno ha un descrittore attivo")
+    public void verifyCompactCatalogEServicesHaveNoActiveDescriptor() {
+        assertThat(getCompactCatalogResults())
+                .as("Il catalogo compatto deve contenere almeno un e-service")
+                .isNotEmpty()
+                .doesNotContainNull()
+                .allSatisfy(eService -> assertThat(eService.getActiveDescriptor())
+                        .as("L'e-service %s non deve avere un descrittore attivo", eService.getId())
+                        .isNull());
+    }
+
+    private List<CompactCatalogEService> getCompactCatalogResults() {
+        Object rawResponse = httpExecutor.getResponse();
+        assertThat(rawResponse)
+                .as("La risposta del catalogo compatto deve essere una ResponseEntity")
+                .isInstanceOf(ResponseEntity.class);
+
+        Object body = ((ResponseEntity<?>) rawResponse).getBody();
+        assertThat(body)
+                .as("Il body della risposta del catalogo compatto deve contenere i risultati")
+                .isInstanceOf(CompactCatalogEServices.class);
+
+        List<CompactCatalogEService> results = ((CompactCatalogEServices) body).getResults();
+        assertThat(results)
+                .as("La lista dei risultati del catalogo compatto non deve essere null")
+                .isNotNull();
+        return results;
+    }
+
+    /** Verifica la presenza o l'assenza dell'ultimo e-service creato nel catalogo compatto. */
+    @Then("^il risultato del catalogo compatto (include|non include) l'ultimo e-service creato$")
+    public void verifyLatestCompactCatalogEService(String operation) {
+        UUID eServiceId = eServicesCommonContext.getEserviceId();
+        assertThat(eServiceId).as("Deve esserci un e-service creato da verificare").isNotNull();
+        verifyCompactCatalogEServiceIds(operation, eServiceId.toString());
     }
 
     @When("l'utente richiede una operazione di listing sul catalogo con offset {int}")
