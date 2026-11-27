@@ -65,7 +65,6 @@ Feature: Aggiornamento di un e-service non pubblicato
   @happy-path
   @nrt-minimal
   @eservice_updating4
-  @rae-nrt-20261125-v2
   Scenario: [ESERVICE_UPDATING_04] Richiesta di pubblicazione di una versione di un e-service concesso in delega, se la richiesta è in pending, torna in bozza con la revoca della delega
     Given l'utente è un "admin" di "PA1"
     And "PA1" ha già creato un e-service con un descrittore in stato "PUBLISHED"

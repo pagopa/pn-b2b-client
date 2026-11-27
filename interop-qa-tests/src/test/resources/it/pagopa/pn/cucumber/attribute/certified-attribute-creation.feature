@@ -68,7 +68,6 @@ Feature: Creazione attributo certificato
 
   @certifiedDiscreteAttribute
   @certifiedDiscreteAttributeFlagOff
-  @rae-nrt-20261125-v2
   Scenario: [DISCRETE_ATTRIBUTE_CREATION_1b] La creazione di un attributo certificato discreto non va a buon fine
   con il feature flag impostato a false.
 

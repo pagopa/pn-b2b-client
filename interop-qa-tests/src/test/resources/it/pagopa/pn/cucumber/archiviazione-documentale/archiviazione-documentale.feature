@@ -14,7 +14,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And l'ente delegato accetta la delega in fruizione
     Then si ottiene status code 200
 
-  @rae-nrt-20261125-v2
   Scenario: [AGREEMENT_DOC_ARCHIVE_1] Attivazione richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -33,7 +32,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario Outline: [AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato un e-service in stato "PUBLISHED" con approvazione "AUTOMATIC"
@@ -49,7 +47,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
       | SUSPENDED      | AgreementSuspendedByConsumer | AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG |
       | ARCHIVED       | AgreementArchivedByConsumer  | AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG  |
 
-  @rae-nrt-20261125-v2
   Scenario: [PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -68,7 +65,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [PURPOSE_DOC_ARCHIVE_2] Attivazione nuova versione finalità - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA2" ha già creato e pubblicato 1 e-service
@@ -89,7 +85,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [DELEGATION_DOC_ARCHIVE_1] Delega in fruizione - archiviazione PDF firmato
     Given "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
     Given l'ente delegato "PA2"
@@ -111,7 +106,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [DELEGATION_DOC_ARCHIVE_2] Delega in erogazione - archiviazione PDF firmato
     Given l'ente delegante "PA1"
     And l'ente delegato "PA2"
@@ -130,7 +124,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [DELEGATION_DOC_ARCHIVE_3] Rifiuto delega in fruizione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
     And "PA3" ha già creato e pubblicato 1 e-service delegabile in fruizione
@@ -167,7 +160,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [DELEGATION_DOC_ARCHIVE_4] Rifiuto delega in erogazione - archiviazione PDF firmato
     Given l'utente è un "admin" di "PA2"
     And "PA1" ha già creato e pubblicato 1 e-service
@@ -187,7 +179,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [KEY_EVENT_ARCHIVE_1] Creazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -200,7 +191,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [KEY_EVENT_ARCHIVE_2] Eliminazione chiave pubblica - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"
@@ -214,7 +204,6 @@ Feature: Archiviazione documentale e verifica firma/marca temporale
     And verifica che il file nel bucket WORM abbia la proprietà "Retain until date" pari a 10 anni dalla data di creazione
     And verifica che il file contenga le opportune informazioni
 
-  @rae-nrt-20261125-v2
   Scenario: [CLIENT_EVENT_ARCHIVE_1] Eliminazione client - archiviazione ZIP firmato
     Given l'utente è un "admin" di "PA1"
     Given "PA1" ha già creato 1 client "CONSUMER"

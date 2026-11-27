@@ -182,7 +182,6 @@ Feature: finalità agevolata, purpose template GET
     # offset invalid - disattivato perché al momento non abbiamo modo di specificarlo NULL senza che l'oggetto client blocchi la chiamata
     #  | %null  | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |
 
-    @rae-nrt-20261125-v2
     Examples:
       | offset | limit | purposeTitle | creatorIds | eserviceIds | states  | targetTenantKind | handlesPersonalData | statusCode |
       | -1     | 10    | %actual      | %actual    | %actual     | %actual | %actual          | true                | 400        |

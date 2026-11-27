@@ -705,7 +705,6 @@ Feature: Test API M2M of e-service template
 
       | SUSPENDED               | true                | true                    |
 
-    @rae-nrt-20261125-v3
     Examples:
       | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
       | SUSPENDED               | false               | false                   |

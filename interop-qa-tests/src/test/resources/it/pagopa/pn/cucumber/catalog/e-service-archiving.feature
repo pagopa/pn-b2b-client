@@ -266,7 +266,6 @@ Feature: Archiviazione manuale di un e-service
     And l'utente richiede la generazione del voucher
     Then si ottiene la corretta generazione del voucher
 
-    @rae-nrt-20261125-v2
     Examples:
       | role         |
       | admin        |

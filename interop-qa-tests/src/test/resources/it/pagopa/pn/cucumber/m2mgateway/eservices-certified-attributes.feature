@@ -365,7 +365,6 @@ Feature: Gestione degli attributi certificati degli e-services attraverso APIs M
       | ARCHIVED    |
 
   @m2m-parte2-ottobre
-  @rae-nrt-20261125-v2
   Scenario: [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_B] Un utente NON può rimuovere gli attributi certificati da una versione di un e-service in stato WAITING_FOR_APPROVAL (Parte2#Scenario intorno a 275)
     Given "PA1" ha già creato un e-service con un descrittore in stato "DRAFT"
     And l'utente è un "admin" di "PA1"
