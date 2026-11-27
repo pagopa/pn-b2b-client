@@ -111,7 +111,7 @@ class PublishTests(unittest.TestCase):
             self.assertIn('# Service Delivery Plan', output.getvalue())
 
     def test_cli_publishes_by_default(self):
-        with patch('sdp_generator.load_manifest', return_value=self.release), patch('confluence.publish', return_value='OK') as call:
+        with patch('sdp_generator.load_manifest', return_value=self.release), patch('confluence.publish', return_value='OK') as call, patch('enrichment.enrich', side_effect=lambda r: r):
             with redirect_stdout(io.StringIO()):
                 self.assertEqual(main(['unused.yaml']), 0)
             call.assert_called_once()

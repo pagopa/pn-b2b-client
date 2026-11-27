@@ -26,7 +26,7 @@ L'anteprima accetta tutti gli stati: `draft`, `planned`, `in-progress`,
 `execution`, `closed`. Anche in `draft`, questa prima versione richiede i campi
 obbligatori del nuovo schema per produrre una tabella completa.
 Per pubblicare impostare le variabili di ambiente `JIRA_CLOUD_ID` e
-`CONFLUENCE_API_TOKEN`. Non inserire credenziali nel manifest.
+`CONFLUENCE_API_TOKEN` e `JIRA_API_TOKEN`. Non inserire credenziali nel manifest.
 Il comando non modifica manifest, Jira o branch.
 
 ## Documento prodotto
@@ -34,20 +34,35 @@ Il comando non modifica manifest, Jira o branch.
 - Prodotto, versione, trimestre, stato e descrizione della release.
 - Calendario degli ambienti indicati in `delivery`.
 - Una riga per attività QA, identificata da `id` e `sequence`: titolo, QA Epic,
-  strategie, effort in giorni uomo, risorse e ruoli, priorità, stato QA,
-  note, rischi e dipendenze.
+  strategie, effort in giorni uomo, risorse e ruoli, priorità, stato QA e PST.
+- Sezione separata per note, rischi e dipendenze.
+- Riepilogo delle attività e delle stime, data di aggiornamento e manifest sorgente.
 - Tabella separata delle esclusioni, con work item e motivazione.
 
-L'output usa l'ordine del manifest. Repository e branch servono ai generatori
+L'output usa l'ordine del manifest. `sequence` resta nel manifest per identificare
+le attività, ma non viene mostrato come colonna nell'SDP. Repository e branch servono ai generatori
 e non sono colonne della tabella SDP. L'effort rimane numerico: la conversione
 in T-Shirt size non viene introdotta senza averne definito le soglie.
 
-L'anteprima `--dry-run` è **offline** e non richiede credenziali.
-**La lettura Jira non è ancora implementata**, anche nella pagina pubblicata.
-Se manca `qa_epic`, mostra “QA Epic da creare”; se è presente, lo stato viene
-indicato come “Non disponibile (Jira non interrogato)”. Un titolo assente è
-segnalato come “Titolo da recuperare da Jira”. Non vengono inventati stati o
-titoli. La lettura Jira resta un passo successivo.
+L'anteprima `--dry-run` è offline: non legge Jira e non verifica i PST.
+In pubblicazione, `JIRA_API_TOKEN` e `JIRA_CLOUD_ID` consentono di recuperare
+il summary di prodotto quando `title` è vuoto e lo stato delle QA Epic.
+Il manifest non viene modificato. Errori di lettura interrompono la pubblicazione.
+
+La tabella contiene link alle issue Jira e ai PST verificati nel repository
+`pagopa/pn-b2b-client`, branch `pst-output`, file `pst_<QA-Epic>.md`.
+Il workflow usa `GITHUB_TOKEN` in sola lettura; un file non trovato è indicato
+come non disponibile. Altri errori GitHub interrompono la pubblicazione.
+Note, rischi e dipendenze sono riportati sotto la tabella, solo quando compilati.
+
+Il riepilogo conta le attività del manifest (non le Epic distinte): categorie
+Jira `new`, `indeterminate`, `done` corrispondono a Da avviare, In corso,
+Completate. Le attività senza Epic sono Da avviare; categorie mancanti o
+sconosciute sono Stato non disponibile. La tabella conserva lo stato originale.
+L'effort somma solo le stime presenti e indica quante attività sono da stimare;
+non include esecuzione e analisi esiti e non misura il successo dei test.
+La pagina riporta data e ora Europe/Rome e il link al manifest (commit della
+run GitHub, oppure branch develop per esecuzioni locali).
 
 ## Validazione ed errori
 
@@ -56,7 +71,7 @@ strategie, priorità, ruoli, date, stime positive, coppie `(id, sequence)` e
 `(id, qa_epic)` univoche, esclusioni univoche e separate dal perimetro QA.
 Sono rifiutati anche chiavi YAML duplicate e `status` nei work item: lo stato
 QA dovrà provenire dalla QA Epic. Le liste facoltative, se presenti, devono
-essere liste; usare `[]` per una lista vuota. Sono accettate release con sole
+essere liste; `dependencies` ammette anche il valore vuoto/null. Sono accettate release con sole
 esclusioni (`work-items: []`).
 
 Gli errori vanno su stderr con exit code 1, senza SDP parziali su stdout.
@@ -110,7 +125,8 @@ i conflitti di versione non vengono ritentati automaticamente.
 Da **Actions → sdp_generator → Run workflow**, selezionare il branch,
 il prodotto (`send` o `interop`) e il nome del manifest senza `.yaml`.
 Lasciare `dry_run` disattivato per pubblicare, attivarlo per l'anteprima.
-Il workflow usa `vars.JIRA_CLOUD_ID` e `secrets.CONFLUENCE_API_TOKEN`.
+Il workflow usa `vars.JIRA_CLOUD_ID`, `secrets.CONFLUENCE_API_TOKEN`,
+`secrets.JIRA_API_TOKEN` e il token GitHub in sola lettura.
 Deve essere presente sul branch predefinito per essere avviabile dall'UI.
 
 Le esecuzioni del workflow sono serializzate anche tra branch diversi.

@@ -40,6 +40,8 @@ jobs:
       - name: Generate SDP
         env:
           JIRA_CLOUD_ID: ${{ vars.JIRA_CLOUD_ID }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
           CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
           SDP_PRODUCT: ${{ inputs.product }}
           SDP_RELEASE: ${{ inputs.release }}
