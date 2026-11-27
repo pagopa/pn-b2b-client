@@ -20,7 +20,7 @@ ko:
     	at ✽.si ottiene http status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/producer-keychain-link.feature:49)
   procedure: "Dall'analisi dei log è emerso che l'operazione fallisce correttamente, restituendo tuttavia un codice di errore diverso da quello atteso. È stata effettuata una prova in locale, impostando come codice atteso quello effettivamente restituito, per sbloccare il test, portarlo a termine e verificare che non emergessero ulteriori errori. La prova ha confermato che l'unica anomalia riguardava lo status code."
   result: "Il codice di errore restituito è diverso da quello atteso. Poiché nella piattaforma Interop è prassi restituire il codice 409 quando si tenta di eseguire un'operazione incoerente con lo stato delle risorse coinvolte, la difformità dello status code è stata considerata un bug."
-  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11724'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11724'
   link_suite_bug: ''
 - id_test: '[BFF_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
     [cucumber-report-producer-keychain-m2mv2.json]'
@@ -30,7 +30,7 @@ ko:
     	at ✽.si ottiene status code 409(classpath:it/pagopa/pn/cucumber/producer-keychain/producer-keychain-link.feature:47)
   procedure: "Dall'analisi dei log è emerso che l'operazione fallisce correttamente, restituendo tuttavia un codice di errore diverso da quello atteso. È stata effettuata una prova in locale, impostando come codice atteso quello effettivamente restituito, per sbloccare il test, portarlo a termine e verificare che non emergessero ulteriori errori. La prova ha confermato che l'unica anomalia riguardava lo status code."
   result: "Il codice di errore restituito è diverso da quello atteso. Poiché nella piattaforma Interop è prassi restituire il codice 409 quando si tenta di eseguire un'operazione incoerente con lo stato delle risorse coinvolte, la difformità dello status code è stata considerata un bug."
-  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11722'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11722'
   link_suite_bug: ''
 - id_test: '[M2M_PRODUCER_KEYCHAIN_LINK_3] - Associazione del producer-keychain a un e-service in stato illegittimo
     [cucumber-report-producer-keychain-m2mv3.json]'
@@ -40,5 +40,5 @@ ko:
     	at ✽.si ottiene http status code 409(classpath:it/pagopa/pn/cucumber/m2mgateway/producer-keychain-link.feature:49)
   procedure: "Dall'analisi dei log è emerso che l'operazione fallisce correttamente, restituendo tuttavia un codice di errore diverso da quello atteso. È stata effettuata una prova in locale, impostando come codice atteso quello effettivamente restituito, per sbloccare il test, portarlo a termine e verificare che non emergessero ulteriori errori. La prova ha confermato che l'unica anomalia riguardava lo status code."
   result: "Il codice di errore restituito è diverso da quello atteso. Poiché nella piattaforma Interop è prassi restituire il codice 409 quando si tenta di eseguire un'operazione incoerente con lo stato delle risorse coinvolte, la difformità dello status code è stata considerata un bug."
-  link_prod_bug: 'https://pagopa.atlassian.net/jira/browse/PIN-11724'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11724'
   link_suite_bug: ''
