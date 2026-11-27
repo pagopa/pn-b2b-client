@@ -1,0 +1,25 @@
+# Configurazione della pubblicazione concordata.
+# Non ancora letta dalla CLI locale: integrazione Confluence da implementare.
+confluence:
+  parent_type: folder
+  parent_id: "3459022926"
+  title_template: "SDP — {product} — {version}"
+  # Identità stabile della pagina, indipendente dal titolo modificabile.
+  identity_fields:
+    - product
+    - version
+
+publication:
+  active_statuses:
+    - planned
+    - in-progress
+    - execution
+  excluded_statuses:
+    - draft
+  final_status: closed
+  # Segnare la chiusura pubblicata solo dopo un aggiornamento riuscito.
+  publish_closed_once: true
+
+schedule:
+  timezone: Europe/Rome
+  time: "18:00"
