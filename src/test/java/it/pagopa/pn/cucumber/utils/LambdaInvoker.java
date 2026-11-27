@@ -46,14 +46,16 @@ public class LambdaInvoker {
                     .httpClient(ApacheHttpClient.builder()
                             .maxConnections(50)
                             .connectionTimeout(Duration.ofSeconds(20))      // connessione iniziale
-                            .socketTimeout(Duration.ofSeconds(180))         // attesa risposta
+                            .socketTimeout(Duration.ofMinutes(5))           // attesa risposta
                             .connectionAcquisitionTimeout(Duration.ofSeconds(60))
                             .connectionMaxIdleTime(Duration.ofSeconds(300)) // evita chiusura a 60s
                             .tcpKeepAlive(true)
                             .build())
                     .overrideConfiguration(c -> c
-                            .apiCallAttemptTimeout(Duration.ofSeconds(180))
-                            .apiCallTimeout(Duration.ofMinutes(6)))
+                            // Timeout ampi per le lambda lunghe (es. DELETE_MOCK_TABLES): allo scadere del tentativo l'SDK
+                            // reinvierebbe la Invoke mentre la prima esecuzione è ancora in corso
+                            .apiCallAttemptTimeout(Duration.ofMinutes(5))
+                            .apiCallTimeout(Duration.ofMinutes(10)))
 //                    .credentialsProvider(ProfileCredentialsProvider.create(getUserRole())) // locale
                     .credentialsProvider(DefaultCredentialsProvider.create()) // codebuild
                     .region(Region.EU_SOUTH_1)
