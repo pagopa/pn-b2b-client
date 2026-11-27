@@ -1,9 +1,12 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.builders;
 
-
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
+import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
+import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
-import it.pagopa.pn.cucumber.steps.informalNotification.mapper.InformalNotificationRequestMapper;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPayment;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalPhysicalAddress;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalRecipient;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.RecipientType;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import it.pagopa.pn.cucumber.steps.informalNotification.provider.InformalMessageProvider;
 import lombok.RequiredArgsConstructor;
@@ -22,37 +25,31 @@ import static it.pagopa.pn.cucumber.steps.informalNotification.model.Notificatio
 @RequiredArgsConstructor
 public class InformalRecipientBuilder {
 
-    private final InformalNotificationRequestMapper mapper;
     private final InformalMessageProvider messageProvider;
+    private final DestinatarioRegistry destinatarioRegistry;
 
-    public InformalNotificationRecipientV1 build(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType ) {
+    public InformalRecipient build(Map<String, String> data, String currentCxId, SettableApiKey.ApiKeyType apiKeyType) {
 
-        InformalNotificationRecipientV1 recipient = new InformalNotificationRecipientV1();
+        InformalRecipient recipient = new InformalRecipient();
 
         // =========================
         // BASE
         // =========================
         String recipientType = getValue(data, RECIPIENT_TYPE.key);
         if (recipientType != null) {
-            recipient.setRecipientType(InformalNotificationRecipientV1.RecipientTypeEnum.fromValue(recipientType));
+            recipient.setRecipientType(RecipientType.fromValue(recipientType));
         }
         recipient.setMessageId(resolveMessageId(data, currentCxId, apiKeyType));
-        recipient.setTaxId(getValue(data, RECIPIENT_TAX_ID.key));
+        recipient.setTaxId(resolveTaxId(getValue(data, RECIPIENT_TAX_ID.key)));
         recipient.setDenomination(getValue(data, RECIPIENT_DENOMINATION.key));
 
         recipient.setAdditionalLanguages(buildAdditionalLanguages(data));
-
 
         // =========================
         // DIGITAL
         // =========================
         String digitalDomicile = getValue(data, DIGITAL_DOMICILE.key);
-
-        if (digitalDomicile != null) {
-            recipient.setDigitalDomicile(new NotificationDigitalAddress().type(NotificationDigitalAddress.TypeEnum.PEC).address(digitalDomicile));
-        } else {
-            recipient.setDigitalDomicile(null);
-        }
+        recipient.setDigitalDomicile(digitalDomicile);
 
         // =========================
         // CONTACTS
@@ -91,7 +88,7 @@ public class InformalRecipientBuilder {
     // =========================================================
     // PHYSICAL ADDRESS
     // =========================================================
-    private NotificationPhysicalAddress buildPhysicalAddress(Map<String, String> data) {
+    private InformalPhysicalAddress buildPhysicalAddress(Map<String, String> data) {
 
         String physicalAddressValue = data.get("physical_address");
 
@@ -100,45 +97,63 @@ public class InformalRecipientBuilder {
         if (isNull) {
             return null;
         }
-        NotificationPhysicalAddress pa = new NotificationPhysicalAddress();
-
-        pa.setAddress(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key));
-        pa.setAddressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key));
-        pa.setZip(getValue(data, PHYSICAL_ADDRESS_ZIP.key));
-        pa.setMunicipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key));
-        pa.setProvince(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key));
-        pa.setForeignState(getValue(data, PHYSICAL_ADDRESS_STATE.key));
-        pa.setAt(getValue(data, PHYSICAL_ADDRESS_AT.key));
-
-        return pa;
+        return InformalPhysicalAddress.builder()
+                .address(getValue(data, PHYSICAL_ADDRESS_ADDRESS.key))
+                .addressDetails(getValue(data, PHYSICAL_ADDRESS_DETAILS.key))
+                .zip(getValue(data, PHYSICAL_ADDRESS_ZIP.key))
+                .municipality(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITY.key))
+                .province(getValue(data, PHYSICAL_ADDRESS_PROVINCE.key))
+                .foreignState(getValue(data, PHYSICAL_ADDRESS_STATE.key))
+                .at(getValue(data, PHYSICAL_ADDRESS_AT.key))
+                .build();
     }
 
     // =========================================================
     // PAYMENTS
     // =========================================================
-    private List<InformalNotificationPaymentItem> buildPayments(Map<String, String> data) {
+    private List<InformalPayment> buildPayments(Map<String, String> data) {
 
-        int paymentNumber = Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key));
-        List<InformalNotificationPaymentItem> payments = new ArrayList<>();
+        String multyNumberStr = getValue(data, PAYMENT_MULTY_NUMBER.key);
+        if (multyNumberStr == null) {
+            return new ArrayList<>();
+        }
+        int paymentNumber = Integer.parseInt(multyNumberStr);
+        List<InformalPayment> payments = new ArrayList<>();
 
         for (int i = 0; i < paymentNumber; i++) {
-
-            NotificationPaymentAttachment attachment = mapper.buildPaymentAttachment(data);
-            PagoPaPaymentBase pagoPa = new PagoPaPaymentBase().noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i)).creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)).attachment(attachment);
-
             String amount = getValue(data, PAYMENT_AMOUNT.key);
-            if (amount != null) {
-                pagoPa.setAmount(Integer.valueOf(amount));
-            }
             String dueDate = getValue(data, PAYMENT_DUE_DATE.key);
-            if (dueDate != null) {
-                pagoPa.setDueDate(parseDueDate(dueDate));
-            }
-            InformalNotificationPaymentItem item = new InformalNotificationPaymentItem();
-            item.setPagoPa(pagoPa);
-            payments.add(item);
+
+            InformalPayment payment = InformalPayment.builder()
+                    .noticeCode(generateNoticeCode(getValue(data, PAYMENT_NOTICE_CODE.key), i))
+                    .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                    .amount(amount != null ? Integer.valueOf(amount) : null)
+                    .dueDate(dueDate != null ? parseDueDate(dueDate) : null)
+                    .attachmentKey(getValue(data, ATTACHMENT_KEY.key))
+                    .attachmentContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key))
+                    .build();
+            payments.add(payment);
         }
         return payments;
+    }
+
+    // =========================================================
+    // TAX ID
+    // =========================================================
+
+    /**
+     * ${nome destinatario} diventa il codice fiscale configurato per l'ambiente, es. ${Mario Cucumber}.
+     */
+    private String resolveTaxId(String value) {
+        if (value == null || !value.startsWith("${") || !value.endsWith("}")) {
+            return value;
+        }
+        String name = value.substring(2, value.length() - 1);
+        Destinatario destinatario = destinatarioRegistry.destinatario(name);
+        if (destinatario == null) {
+            throw new IllegalArgumentException("Nessun destinatario configurato con nome: " + name);
+        }
+        return destinatario.getTaxId();
     }
 
     // =========================================================
@@ -203,4 +218,3 @@ public class InformalRecipientBuilder {
         }
     }
 }
-

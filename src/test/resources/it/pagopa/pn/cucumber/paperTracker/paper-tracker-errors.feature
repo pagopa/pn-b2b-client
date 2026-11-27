@@ -357,9 +357,9 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
       | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-17T08:31:51.022386721Z\",\"errorCategory\":\"DATE_ERROR\",\"details\":{\"cause\":\"VALUES_NOT_MATCHING\",\"message\":\"Invalid business timestamps\",\"additionalDetails\":{\"affectedEvents\":[{\"statusTimestamp\":\"2026-03-17T08:31:48Z\",\"statusCode\":\"RECAG005C\"},{\"statusTimestamp\":\"2026-03-17T08:31:43Z\",\"statusCode\":\"RECAG005B\"},{\"statusTimestamp\":\"2026-03-17T08:31:37Z\",\"statusCode\":\"RECAG005A\"},{\"statusTimestamp\":\"2026-03-17T08:31:02Z\",\"statusCode\":\"RECAG011A\"}]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"91fe5e8c-9740-4d81-8d34-ed36290b4cca\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
 
 
-  @paperTracker890 @strictFinalValidationTrue @trackerErrors
+  @paperTracker890 @strictFinalValidationTrue @trackerErrors @work-item:QA-19092
   Scenario Outline: [PAPER_TRACKER_ERROR_890_2_ZZZ] Si verifica che andando a simulare una giacenza con attachment non validi si abbia un errore ATTACHMENTS_ERROR - INVALID_VALUES (FAIL_890-BadAttachment)
-  ed un errore di tipo ERROR poiché strictFinalValidation è settato a true
+  di tipo WARNING anche con strictFinalValidation settato a true, perché gli allegati non conformi alla macchina a stati non sono bloccanti
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -397,7 +397,7 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     Then si verifica che su PaperTrackingsError ci sia un errore del seguente tipo: <expectedError>
     Examples:
       | expectedError                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T21:00:34.953135302Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"INVALID_VALUES\",\"message\":\"Event RECAG011B contains invalid attachments: [AR]\",\"additionalDetails\":{\"invalidAttachments\":[\"AR\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"f7266d4a-afef-4965-b8fb-dd69df1ab569\",\"productType\":\"890\",\"type\":\"ERROR\"}" |
+      | "{\"trackingId\":\"PREPARE_ANALOG_DOMICILE.IUN_<iun>.RECINDEX_0.ATTEMPT_0.PCRETRY_0\",\"created\":\"2026-03-16T21:00:34.953135302Z\",\"errorCategory\":\"ATTACHMENTS_ERROR\",\"details\":{\"cause\":\"INVALID_VALUES\",\"message\":\"Event RECAG011B contains invalid attachments: [AR]\",\"additionalDetails\":{\"invalidAttachments\":[\"AR\"]}},\"flowThrow\":\"SEQUENCE_VALIDATION\",\"eventThrow\":\"RECAG005C\",\"eventIdThrow\":\"f7266d4a-afef-4965-b8fb-dd69df1ab569\",\"productType\":\"890\",\"type\":\"WARNING\"}" |
 
 
 

@@ -1,7 +1,5 @@
 package it.pagopa.pn.interop.cucumber.steps.purpose;
 
-import static java.util.Objects.nonNull;
-
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -18,10 +16,13 @@ import it.pagopa.pn.interop.cucumber.steps.ClientTokenConfigurator;
 import it.pagopa.pn.interop.cucumber.steps.SharedStepsContext;
 import it.pagopa.pn.interop.cucumber.steps.datapreparationservice.BFFDataPreparationService;
 import it.pagopa.pn.interop.cucumber.utility.CommonUtils;
+import org.junit.jupiter.api.Assertions;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.junit.jupiter.api.Assertions;
+
+import static java.util.Objects.nonNull;
 
 public class PurposeRiskAnalysisDocumentDownloadSteps {
     private final ClientTokenConfigurator clientTokenConfigurator;
@@ -49,18 +50,19 @@ public class PurposeRiskAnalysisDocumentDownloadSteps {
     public void userDownloadRiskAnalysis() {
         clientTokenConfigurator.setBearerToken(sharedStepsContext.getUserToken());
         IPurposeApiClient purposeApiClient = clientTokenConfigurator.getPurposeApiClient();
-        PollingService pollingService = sharedStepsContext.getPollingService();
 
-        Purpose getPurposeResponse = pollingService.makePolling(
-            () -> purposeApiClient.getPurpose(
-                UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
-            res -> nonNull(res.getCurrentVersion().getRiskAnalysisDocument()),
-            "Non è stato prodotto alcun documento di analisi del rischio nel tempo limite"
+        Purpose getPurposeResponse = PollingService.makePolling(
+                () -> purposeApiClient.getPurpose(
+                        UUID.fromString(sharedStepsContext.getPurposeCommonContext().getPurposeId())),
+                res -> nonNull(res.getCurrentVersion().getRiskAnalysisDocument()),
+                "Non è stato prodotto alcun documento di analisi del rischio nel tempo limite",
+                181,
+                1000L
         );
         commonUtils.assertValidResponse();
         purposeVersions = getPurposeResponse.getVersions();
 
-        UUID riskAnalysisId =  Optional.ofNullable(getPurposeResponse.getCurrentVersion())
+        UUID riskAnalysisId = Optional.ofNullable(getPurposeResponse.getCurrentVersion())
                 .map(PurposeVersion::getRiskAnalysisDocument)
                 .map(PurposeVersionDocument::getId)
                 .orElseThrow(() -> new IllegalStateException("Alla purpose non è associato alcun documento di analisi del rischio"));

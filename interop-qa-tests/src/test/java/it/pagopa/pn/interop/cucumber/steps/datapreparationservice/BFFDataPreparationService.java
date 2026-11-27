@@ -1304,7 +1304,7 @@ public class BFFDataPreparationService {
     }
 
     public void revokeVerifiedAttributeToTenant(UUID tenantId, UUID attributeId, UUID agreementId, UUID revokerId) {
-        httpCallExecutor.performCall(() -> tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId));
+        httpCallExecutor.performCall(() -> tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId, null));
         assertValidResponse();
         pollingService.makePolling(
             () -> tenantsApi.getVerifiedAttributes(tenantId),

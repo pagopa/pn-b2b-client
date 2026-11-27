@@ -4,14 +4,17 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.ModuloCommessa;
 import it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model.StimeMittentiContext;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerCountersSumEstimatesItem;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimits;
+import it.pagopa.pn.cucumber.steps.delayer.service.DelayerMockService;
 import it.pagopa.pn.cucumber.steps.delayer.service.DelayerSevice;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
+import it.pagopa.pn.cucumber.steps.delayer.utils.SenderOrderCheckResponse;
 import it.pagopa.pn.cucumber.steps.pa.utilityVersions.B2bUtils;
 import it.pagopa.pn.cucumber.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,7 @@ public class CensimentoStimeMittentiSteps {
     private final StimeMittentiContext context;
     private final ApplicationContext applicationContext;
     private final DelayerSevice delayerSevice;
+    private final DelayerMockService delayerMockService;
 
     @ParameterType("pn-PaperDeliverySenderLimit|pn-PaperDeliverySenderLimitMock")
     public String senderLimitTable(String tableName) {
@@ -50,6 +54,51 @@ public class CensimentoStimeMittentiSteps {
     public boolean containsOrNot(String value) {
         return value.equals("contenga");
     }
+
+
+    @When("si effettua il controllo che verifica la presenza delle commesse su portfat per il mese {string}")
+    public void executeSenderOrderCheck(String currentMonth) {
+
+        SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck(currentMonth);
+        log.info("SenderOrderCheck response: {}", response);
+        context.setSenderOrderCheckResponse(response);
+    }
+
+    @When("si effettua il controllo che verifica la presenza delle commesse su portfat")
+    public void executeSenderOrderCheck() {
+
+        SenderOrderCheckResponse response = delayerSevice.executeSenderOrderCheck();
+        log.info("SenderOrderCheck response: {}", response);
+        context.setSenderOrderCheckResponse(response);
+    }
+
+    @Then("si riceve esito {string} a seguito della verifica sulla presenza delle commesse caricate su portfat")
+    public void verifySenderOrderCheckResult(String expectedOutcome) {
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse())
+                .as("La risposta della lambda non deve essere null")
+                .isNotNull();
+
+        String expectedCheckResult = switch (expectedOutcome.toLowerCase()) {
+            case "positivo" -> "OK";
+            case "negativo" -> "KO";
+            default -> throw new IllegalArgumentException(
+                    "Esito non supportato: " + expectedOutcome + ". Valori ammessi: positivo, negativo");
+        };
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse().getCheckResult())
+                .as("Esito controllo inatteso")
+                .isEqualTo(expectedCheckResult);
+    }
+
+    @Then("il controllo sulla presenza delle commesse su portfat ha dato esito negativo per la mancanza delle commesse dei seguenti mesi:")
+    public void verifyMissingMonths(List<String> expectedMonths) {
+
+        Assertions.assertThat(context.getSenderOrderCheckResponse()
+                        .getMissingMonths())
+                .containsExactlyInAnyOrderElementsOf(expectedMonths);
+    }
+
 
     @When("si verifica che la tabella {senderLimitTable} {containsOrNot} i nuovi limiti mittenti per la provincia {string}")
     public void fetchSenderLimitUntilCondition(String senderLimitTable, boolean shouldContain, String province) {
@@ -81,17 +130,17 @@ public class CensimentoStimeMittentiSteps {
         }
     }
 
-private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
-    if (actual == null || actual.getItems() == null) {
-        return false;
+    private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expected) {
+        if (actual == null || actual.getItems() == null) {
+            return false;
+        }
+        return actual.getItems().stream()
+                .anyMatch(item -> item.getPk().equals(expected.getPk())
+                        && item.getDeliveryDate().equals(expected.getDeliveryDate())
+                        && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
+                        && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
+                        && item.getOriginalEstimate() == expected.getOriginalEstimate());
     }
-    return actual.getItems().stream()
-            .anyMatch(item -> item.getPk().equals(expected.getPk())
-                    && item.getDeliveryDate().equals(expected.getDeliveryDate())
-                    && item.getWeeklyEstimate() == expected.getWeeklyEstimate()
-                    && item.getMonthlyEstimate() == expected.getMonthlyEstimate()
-                    && item.getOriginalEstimate() == expected.getOriginalEstimate());
-}
 
     @Given("vengono recuperate le stime mittenti da {string} a {string} per la provincia {string}")
     public void getSenderLimits(String meseAnnoDa, String meseAnnoA, String provincia) throws Exception {
@@ -146,7 +195,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
         try {
             preloadZipFile(fileName, false);
             // viene invocata la lambda per effettuare il caricamento dei limiti mittenti mock
-            delayerSevice.insertMockSenderLimit(fileName);
+            delayerMockService.insertMockSenderLimit(fileName);
 
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
@@ -154,17 +203,40 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
         }
     }
 
+    /*
+    Per effettuare il controllo tramite lambda è necessario che i file delle commesse siano caricati in un path che contenga
+    /anno_mese/ -> 2026_05
+     */
+    @Given("vengono caricati i moduli commessa come file zip su portfat: {string} anno {int} mese {int}")
+    public void uploadZipFile(String fileName, Integer year, Integer month) {
+
+        try {
+            String storagePath = String.format("modulicommessazip/%04d_%02d", year, month);
+            String preloadUrlDownload = preloadZipFile(fileName, storagePath, true);
+            Assertions.assertThat(preloadUrlDownload).as("Presigned url download non generato correttamente").isNotNull();
+
+            delayerSevice.invokePortfatLambda(preloadUrlDownload);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
+        }
+    }
 
     private String preloadZipFile(String fileName, boolean withDownload) {
+        return preloadZipFile(fileName, null, withDownload);
+    }
+
+    private String preloadZipFile(String fileName, String storagePath, boolean withDownload) {
+
         String preloadUrl = null;
+        String fileNameForStorage = storagePath == null ? fileName : storagePath + "/" + fileName;
+
         try {
             String sha256 = B2bUtils.computeSha256(applicationContext, String.format("classpath:/%s", fileName));
-            // viene caricato il file zip su S3 tramite il presigned url ottenuto
-            preloadUrl = delayerSevice.getPresignedUploadUrl(fileName, sha256);
+            preloadUrl = delayerSevice.getPresignedUploadUrl(fileNameForStorage, sha256);
             B2bUtils.loadToPresigned(applicationContext, preloadUrl, null, null, String.format("classpath:/%s", fileName), "application/zip");
             if (withDownload) {
-                // viene ottenuto il presigned url per il download del file elaborato
-                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileName);
+                preloadUrl = delayerSevice.getPresignedDownloadUrl(fileNameForStorage);
             }
         } catch (Exception e) {
             log.error("Errore durante il caricamento del file zip e l'invocazione della lambda portfat", e);
@@ -178,13 +250,14 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
      * La stima attesa è calcolata internamente in base alla distribuzione dei giorni della settimana considerando anche i giorni a cavallo tra due mesi e al valore di commessa di ciascun mese.
      * Formula:
      * - numberOfShipments = (valore commessa primo mese / giorni totali primo mese) * giorni della settimana a cavallo del primo mese + (valore commessa secondo mese / giorni totali secondo mese) * giorni della settimana a cavallo del secondo mese
+     *
      * @param deliveryDate la settimana di riferimento (formato yyyy-MM-dd, deve essere un lunedì)
-     * @param product il prodotto di riferimento
-     * @param province la provincia di riferimento
-     * @param dataTable la tabella con le stime attese, con le seguenti colonne:
-     *                  - numberOfShipments: la stima settimanale provinciale attesa
-     *                  - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
-     *                  - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
+     * @param product      il prodotto di riferimento
+     * @param province     la provincia di riferimento
+     * @param dataTable    la tabella con le stime attese, con le seguenti colonne:
+     *                     - numberOfShipments: la stima settimanale provinciale attesa
+     *                     - firstWeekNumberOfShipments: la stima della prima parte della settimana a cavallo attesa
+     *                     - secondWeekNumberOfShipments: la stima della seconda parte della settimana a cavallo attesa
      */
     @And("per la settimana {string}, per il prodotto {string} per la provincia {string} si verifica che la somma delle commesse sia:")
     public void verifyWeeklyProvincialEstimates(String deliveryDate, String product, String province, Map<String, String> dataTable) {
@@ -198,8 +271,7 @@ private boolean isPresent(DelayerSenderLimits actual, DelayerSenderLimit expecte
                 () -> delayerSevice.getCountersSumEstimates(deliveryDate, province, product, true));
     }
 
-    private void verifyWeeklyProvincialEstimates(Map<String, String> dataTable,
-                                                 Supplier<DelayerCountersSumEstimatesItem> estimatesSupplier) {
+    private void verifyWeeklyProvincialEstimates(Map<String, String> dataTable, Supplier<DelayerCountersSumEstimatesItem> estimatesSupplier) {
         int expectedTotal = Integer.parseInt(dataTable.get("numberOfShipments"));
         int expectedFirstWeek = Integer.parseInt(dataTable.get("firstWeekNumberOfShipments"));
         int expectedSecondWeek = Integer.parseInt(dataTable.get("secondWeekNumberOfShipments"));

@@ -6,13 +6,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.DescribeTableRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 import software.amazon.awssdk.services.dynamodb.model.QueryRequest;
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse;
+import software.amazon.awssdk.services.dynamodb.model.ScanRequest;
+import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
 @Service
@@ -23,11 +32,29 @@ public class DynamoDbService {
         return dynamoDbClient.query(buildRequest(tableName, attributeValues));
     }
 
+    /**
+     * Restituisce il primo item della tabella privo dell'attributo indicato che soddisfa il criterio.
+     * Le pagine dello Scan vengono scorse in modo lazy: il Limit si applica prima del filtro.
+     */
+    public Optional<Map<String, AttributeValue>> findFirstItemWithoutAttribute(DynamoTableName tableName, String attributeName,
+                                                                               Predicate<Map<String, AttributeValue>> criteria) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName.getValue())
+                .filterExpression("attribute_not_exists(#attr)")
+                .expressionAttributeNames(Map.of("#attr", attributeName))
+                .build();
+        return dynamoDbClient.scanPaginator(request)
+                .items()
+                .stream()
+                .filter(criteria)
+                .findFirst();
+    }
+
     private static QueryRequest buildRequest(DynamoTableName tableName, Map<String, AttributeValue> attributeValues) {
         return switch (tableName) {
             //query WITH filters
             case TIMELINE -> queryWithFilters(tableName, List.of("iun", "category"), attributeValues);
-            case REWORKED_TIMELINES_FOR_INVOICING ->
+            case REWORKED_TIMELINES_FOR_INVOICING, TIMELINES_FOR_INVOICING, INFORMAL_TIMELINES_FOR_INVOICING ->
                     queryWithFilters(tableName, List.of("paId_invoicingDay", "iun"), attributeValues);
             //query WITHOUT filters
             case PAYMENT_INFO, COST_COMPONENTS, COST_UPDATE_RESULT, USER_ATTRIBUTES ->
@@ -39,7 +66,10 @@ public class DynamoDbService {
             case IO_CONNECTOR_REQUESTS, PAPER_REQUEST_ERROR ->
                     queryWithoutFilters(tableName, "requestId", attributeValues);
             case NOTIFICATION_DELIVERY_COST -> queryWithoutFilters(tableName, List.of("pk", "sk"), attributeValues);
+            case CAMPAIGNS -> queryWithoutFilters(tableName, List.of("senderId", "campaignId"), attributeValues);
             case NOTIFICATIONS_METADATA -> queryWithoutFilters(tableName, "iun_recipientId", attributeValues);
+            case PT_DELEGATIONS -> queryWithoutFilters(tableName, "ptId", attributeValues);
+            case BATCH_POLLING -> queryWithoutFilters(tableName, "batchId", attributeValues);
             //query WITH sorting
             case BATCH_REQUESTS_WITH_INDEX_SEND_STATUS ->
                     buildBatchRequestsBySendStatusAndLastReservedAfter(attributeValues);
@@ -111,6 +141,55 @@ public class DynamoDbService {
                 .items()
                 .stream()
                 .toList();
+    }
+
+    /**
+     * Verifica se la tabella non contiene alcun record tramite una Scan con Limit=1 e senza filtri.
+     * Il costo e' fisso (~0,5 RCU per chiamata) e indipendente dalla dimensione della tabella:
+     * una COUNT completa (Select.COUNT) addebiterebbe invece la lettura dell'intera tabella.
+     * In assenza di filter expression, nessun item restituito con Limit=1 significa tabella vuota.
+     */
+    public boolean isEmpty(String tableName) {
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(1)
+                .build();
+        return dynamoDbClient.scan(request).count() == 0;
+    }
+
+    /**
+     * Restituisce la descrizione della tabella (stato, data di creazione, ARN) tramite DescribeTable.
+     */
+    public TableDescription describeTable(String tableName) {
+        return dynamoDbClient.describeTable(DescribeTableRequest.builder().tableName(tableName).build()).table();
+    }
+
+    /**
+     * Restituisce al massimo {@code limit} item della tabella proiettati sui soli attributi indicati (tipicamente le chiavi primarie).
+     * Gli attributi sono referenziati tramite ExpressionAttributeNames per evitare conflitti con parole riservate DynamoDB.
+     */
+    public List<Map<String, AttributeValue>> scanKeys(String tableName, List<String> keyNames, int limit) {
+        Map<String, String> attributeNames = new LinkedHashMap<>();
+        IntStream.range(0, keyNames.size()).forEach(i -> attributeNames.put("#k" + i, keyNames.get(i)));
+        ScanRequest request = ScanRequest.builder()
+                .tableName(tableName)
+                .limit(limit)
+                .projectionExpression(String.join(", ", attributeNames.keySet()))
+                .expressionAttributeNames(attributeNames)
+                .build();
+        return dynamoDbClient.scan(request).items();
+    }
+
+    /**
+     * Legge l'item con la chiave primaria indicata (lettura fortemente consistente); vuoto se non esiste.
+     */
+    public Optional<Map<String, AttributeValue>> getItem(String tableName, Map<String, AttributeValue> key) {
+        GetItemResponse response = dynamoDbClient.getItem(GetItemRequest.builder()
+                .tableName(tableName)
+                .key(key)
+                .consistentRead(true)
+                .build());
+        return response.hasItem() ? Optional.of(response.item()) : Optional.empty();
     }
 
     private static QueryRequest buildBatchRequestsBySendStatusAndLastReservedAfter(Map<String, AttributeValue> attributeValues) {

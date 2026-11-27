@@ -6,7 +6,9 @@ configurazione, dipendenze, test e istruzioni di esecuzione.
 
 | Generatore | Quando utilizzarlo | Input | Output |
 | --- | --- | --- | --- |
-| [PST](pst/README.md) | Preparazione e aggiornamento dei casi di test delle release in corso | `releases/`, branch Git e scenari Gherkin | `pst/pst_<qa_epic>.md`, HTML opzionale |
+| [Epic](epic/README.md) | Preparazione manuale del lavoro QA per una release | Manifest in `releases/` | QA Epic Jira, branch QA e PR di aggiornamento del manifest |
+| [PST](pst/README.md) | Preparazione e aggiornamento dei casi di test delle release in corso | `releases/`, branch Git e scenari Gherkin | `pst_<qa_epic>.md` nel branch `pst-output` |
+| [SDP](sdp/README.md) | Pubblicazione del piano di delivery QA di una release | Manifest conforme al template in `releases/` | Pagina Confluence; anteprima Markdown con `--dry-run` |
 
 I percorsi di input e output della tabella sono relativi alla radice del repository.
 
@@ -26,8 +28,9 @@ in caso di errore, insieme alle dipendenze e ai test necessari. Aggiornare la ta
   che tutti i generatori utilizzino lo stesso linguaggio.
 - Estrarre moduli condivisi quando almeno due generatori ne hanno necessità concreta.
 
-Il generatore PST è eseguibile in locale e tramite il workflow manuale
-[`Generate PST`](../../.github/workflows/generate-pst.yml), da integrare in `develop`.
-Per ora produce artifact scaricabili. La strategia concordata per PR dei risultati
-verso `develop` e impronte persistenti è documentata nel
-[README PST](pst/README.md#strategia-futura--da-implementare) come lavoro futuro.
+La [mappa del processo](../README.md) include anche gli strumenti ospitati in
+altri repository e le parti ancora da realizzare. Il PST è eseguibile in locale
+o tramite [`Generate PST`](../../.github/workflows/generate-pst.yml): i risultati
+sono conservati nel branch `pst-output` e scaricabili come artifact. La Action
+manuale [`epic_generator`](../../.github/workflows/epic-generator.yml) prepara
+le QA Epic e propone una PR per aggiornare il manifest.

@@ -28,7 +28,10 @@ import org.assertj.core.api.Assertions;
 import org.springframework.http.HttpStatus;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import static it.pagopa.pn.interop.cucumber.utility.StepParser.*;
 import static java.time.temporal.ChronoUnit.SECONDS;
@@ -371,10 +374,13 @@ public class PurposesSteps {
         UUID versionId = sharedStepsContext.getPurposeCommonContext().getCurrentVersionIdAsUUID();
         httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId));
 
-        sharedStepsContext.getPollingService().makePolling(
-                () -> httpCallExecutor.performCall(() -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId)),
+        PollingService.makePolling(
+                () -> httpCallExecutor.performCall(
+                        () -> purposeClient.downloadPurposeVersionDocument(purposeId, versionId)),
                 HttpStatus::is2xxSuccessful,
-                "Errore durante il recupero dell'analisi del rischio"
+                "Errore durante il recupero dell'analisi del rischio",
+                181,
+                1_000L
         );
     }
 

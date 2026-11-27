@@ -1,7 +1,8 @@
 package it.pagopa.pn.cucumber.steps.informalNotification.mapper;
 
-
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpainformal.model.*;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalCommunication;
+import it.pagopa.pn.cucumber.steps.informalNotification.domain.model.InformalDocument;
 import it.pagopa.pn.cucumber.steps.informalNotification.model.NotificationInformalValue;
 import org.springframework.stereotype.Component;
 
@@ -22,21 +23,38 @@ public class InformalNotificationRequestMapper {
     }
 
     // New Informal Notification
-    public InformalNotificationRequestV1 buildInformalNotificationRequest(Map<String, String> data) {
-        InformalNotificationRequestV1 request = new InformalNotificationRequestV1();
+    public InformalCommunication buildInformalNotificationRequest(Map<String, String> data) {
+        InformalCommunication request = new InformalCommunication();
 
         request.setSenderDenomination(getValue(data, SENDER_DENOMINATION.key));
         request.setPaProtocolNumber(getValue(data, PA_PROTOCOL_NUMBER.key));
         request.setIdempotenceToken(getValue(data, IDEMPOTENCE_TOKEN.key));
-        request.setCampaignId(getValue(data, CAMPAIGN_ID.key));
+        request.setCampaignId(resolveExternalValue(getValue(data, CAMPAIGN_ID.key)));
         request.setSubject(getValue(data, SUBJECT.key));
         request.setGroup(getValue(data, GROUP.key));
 
-        request.setGroup(getValue(data, GROUP.key));
-        //  NESSUN DESTINATARIO DI DEFAULT
+        // NESSUN DESTINATARIO DI DEFAULT
         request.setRecipients(new ArrayList<>());
         request.setDocuments(buildDocuments(data));
         return request;
+    }
+
+    /**
+     * ${chiave:default} si legge da -Dchiave o dalla variabile d'ambiente CHIAVE ('.' e '-' diventano '_').
+     */
+    static String resolveExternalValue(String value) {
+        if (value == null || !value.startsWith("${") || !value.endsWith("}")) {
+            return value;
+        }
+        String expression = value.substring(2, value.length() - 1);
+        int separator = expression.indexOf(':');
+        String key = separator < 0 ? expression : expression.substring(0, separator);
+        String defaultValue = separator < 0 ? null : expression.substring(separator + 1);
+        String resolved = System.getProperty(key);
+        if (resolved == null || resolved.isBlank()) {
+            resolved = System.getenv(key.toUpperCase().replace('.', '_').replace('-', '_'));
+        }
+        return resolved == null || resolved.isBlank() ? defaultValue : resolved;
     }
 
     // builder
@@ -66,7 +84,7 @@ public class InformalNotificationRequestMapper {
         return content;
     }
 
-    private List<NotificationDocument> buildDocuments(Map<String, String> data) {
+    private List<InformalDocument> buildDocuments(Map<String, String> data) {
 
         if (!data.containsKey(DOCUMENT.key)) {
             return List.of(buildDefaultDocument(data));
@@ -79,11 +97,11 @@ public class InformalNotificationRequestMapper {
         if (documentsToAdd == null || documentsToAdd.trim().isEmpty()) {
             return List.of(buildDefaultDocument(data));
         }
-        List<NotificationDocument> result = new ArrayList<>();
+        List<InformalDocument> result = new ArrayList<>();
 
         for (String doc : documentsToAdd.split(";")) {
             String path = getDocumentPath(doc);
-            result.add(new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key(path)));
+            result.add(InformalDocument.builder().contentType("application/pdf").key(path).build());
         }
         return result;
     }
@@ -105,27 +123,7 @@ public class InformalNotificationRequestMapper {
     }
 
     // fallback
-    private NotificationDocument buildDefaultDocument(Map<String, String> data) {
-        return new NotificationDocument().contentType("application/pdf").ref(new NotificationAttachmentBodyRef().key("classpath:/sample_1pg.pdf"));
-    }
-
-    // =========================
-    // ATTACHMENT PAGAMENTO
-    // =========================
-
-    public NotificationPaymentAttachment buildPaymentAttachment(Map<String, String> data) {
-
-        NotificationAttachmentBodyRef ref = new NotificationAttachmentBodyRef();
-        ref.setKey(getValue(data, ATTACHMENT_KEY.key));
-
-        NotificationPaymentAttachment attachment = new NotificationPaymentAttachment();
-        attachment.setContentType(getValue(data, ATTACHMENT_CONTENT_TYPE.key));
-        attachment.setRef(ref);
-        return attachment;
+    private InformalDocument buildDefaultDocument(Map<String, String> data) {
+        return InformalDocument.builder().contentType("application/pdf").key("classpath:/sample_1pg.pdf").build();
     }
 }
-
-
-
-
-

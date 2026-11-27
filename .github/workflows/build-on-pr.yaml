@@ -10,7 +10,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    if: github.event_name == 'push'
+    if: >-
+      ${{
+        github.event_name == 'push' &&
+        !startsWith(github.ref, 'refs/heads/rae/')
+      }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
