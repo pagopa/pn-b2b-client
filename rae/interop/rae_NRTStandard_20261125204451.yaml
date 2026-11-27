@@ -4138,10 +4138,16 @@ ko:
     	at it.pagopa.interop.authorization.service.utils.PollingService.makePolling(PollingService.java:68)
     	at it.pagopa.pn.interop.cucumber.steps.notification.NotificationSteps.checkInAppNotificationBody(NotificationSteps.java:365)
     	at ✽.admin di "PA1" ha ricevuto la notifica in-app contenente il link E_SERVICE_EROGAZIONE_PRIMO_DESCRITTORE(classpath:it/pagopa/pn/cucumber/notification/notification-descriptor-archiving.feature:241)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
+  procedure: |
+    Controllando che PA1 e PA2 abbiano la corretta configurazione delle deleghe
+    allora il test lanciato isolatamente passa. Il problema dipende dall'assenza
+    di una strategia per non creare incoerenze nella configurazione delle deleghe
+    durante il lancio dei test in parallelo.
+  result: |
+    Il test non trova la notifica attesa, ma la conseguenza di questo fallimento
+    è dovuta alla giusta configurazione delle deleghe di PA1 e PA2.
   link_prod_bug: ''
-  link_suite_bug: ''
+  link_suite_bug: 'QA-19759'
 - id_test: '[NOTIFICA_ARCHIVIAZIONE_VIA_DELEGA_1.5] Un delegato all''erogazione annulla la richiesta di archiviazione
     di una versione di un e-service [cucumber-report-nrt-bff-m2mv2.json]'
   error_log: |
