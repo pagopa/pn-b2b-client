@@ -16,6 +16,10 @@ public enum EServiceState {
 
     ARCHIVED("ARCHIVED"),
 
+    ARCHIVING("ARCHIVING"),
+
+    ARCHIVING_SUSPENDED("ARCHIVING_SUSPENDED"),
+
     WAITING_FOR_APPROVAL("WAITING_FOR_APPROVAL");
 
     private String value;

@@ -456,7 +456,7 @@ Feature: Gestione degli eServices attraverso APIs M2M
       | DEPRECATED      |
       | SUSPENDED       |
 
-    # Corretto 400 in 409
+  # Corretto 400 in 409
   # 09/03/2026 ticket https://pagopa.atlassian.net/browse/QA-10948: al momento non è possibile archiviare un e-service
   #test originariamente creato per APIv2 Parte 2 poi modificato (esteso) per la feature "Abilitazione deleghe su E-Service pubblicati"
   @eservice_published_delegation
