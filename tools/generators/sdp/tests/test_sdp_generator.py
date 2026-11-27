@@ -85,7 +85,7 @@ class SDPTests(unittest.TestCase):
             self.assertIn('Errore SDP:', result.stderr)
 
     def test_cli_template(self):
-        result = subprocess.run([sys.executable, str(SCRIPT), str(ROOT / 'releases/template.yaml')], capture_output=True, text=True)
+        result = subprocess.run([sys.executable, str(SCRIPT), str(ROOT / 'releases/template.yaml'), '--dry-run'], capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertTrue(result.stdout.startswith('# Service Delivery Plan'))
 
