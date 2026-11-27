@@ -1,0 +1,68 @@
+name: sdp_generator
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: Prodotto
+        type: choice
+        options: [send, interop]
+        required: true
+      release:
+        description: Nome del manifest senza .yaml (es. 2.26.0)
+        type: string
+        required: true
+      dry_run:
+        description: Solo anteprima, senza modificare Confluence
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+# Serializza le pubblicazioni anche tra branch diversi.
+concurrency:
+  group: sdp-confluence-publisher
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - run: python -m pip install -r tools/generators/sdp/requirements.txt
+      - name: Generate SDP
+        env:
+          JIRA_CLOUD_ID: ${{ vars.JIRA_CLOUD_ID }}
+          CONFLUENCE_API_TOKEN: ${{ secrets.CONFLUENCE_API_TOKEN }}
+          SDP_PRODUCT: ${{ inputs.product }}
+          SDP_RELEASE: ${{ inputs.release }}
+          SDP_DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          import re
+          import sys
+          sys.path.insert(0, 'tools/generators/sdp')
+          from sdp_generator import load_manifest, main
+          product = os.environ['SDP_PRODUCT']
+          release = os.environ['SDP_RELEASE']
+          if product not in ('send', 'interop') or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]*', release):
+              sys.exit('Prodotto o nome release non valido')
+          path = Path('releases') / product / (release + '.yaml')
+          if not path.resolve().is_relative_to((Path('releases') / product).resolve()):
+              sys.exit('Percorso manifest non valido')
+          if load_manifest(path)['product'].lower() != product:
+              sys.exit('Prodotto del manifest diverso da quello selezionato')
+          args = [str(path)]
+          if os.environ['SDP_DRY_RUN'] == 'true':
+              args.append('--dry-run')
+          sys.exit(main(args))
+          PY

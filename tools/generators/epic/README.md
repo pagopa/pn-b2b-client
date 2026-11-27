@@ -33,6 +33,35 @@ La validazione avviene prima di qualsiasi chiamata Jira. Una `qa_epic` già
 valorizzata viene saltata. La coppia `(id, qa_epic)` valorizzata deve essere
 unica nel file. Il campo `branch` non serve alla creazione della QA Epic.
 
+## Se `qa_epic` è già valorizzato
+
+**Il generatore salta l'intero work item, incluso il setup del branch QA.**
+Questo permette di mantenere nel manifest Epic già associate e di elaborare
+soltanto i work item con `qa_epic` vuoto.
+
+| Situazione nel manifest | Comportamento |
+| --- | --- |
+| `qa_epic` valorizzato e `branch` valorizzato | Salta il work item e lascia invariati entrambi i campi |
+| `qa_epic` valorizzato e `branch` vuoto | Salta il work item: non crea né compila il branch |
+| `qa_epic` vuoto e `branch` vuoto | In modalità `apply`, crea o recupera la QA Epic; la Action crea o riusa il branch e propone l'aggiornamento del manifest in PR |
+| `qa_epic` vuoto e `branch` valorizzato | Errore di validazione: il branch deve restare vuoto finché non viene assegnata la QA Epic |
+
+Per una `qa_epic` già valorizzata:
+
+- Non crea una nuova Epic e non aggiorna quella indicata: niente modifiche a
+  label, Fix Version, stima, link o commenti.
+- Controlla il formato della chiave (per esempio `QA-19720`) e l'unicità della
+  coppia `(id, qa_epic)` nel manifest, ma **non verifica che l'Epic esista su Jira**.
+  Restano applicabili anche le altre regole di validazione del manifest.
+- Non verifica né ripristina il branch QA. Se `branch` è vuoto, occorre
+  predisporre il branch e compilare il campo manualmente.
+
+**Se tutte le `qa_epic` sono già valorizzate, la Action non crea branch né apre PR.**
+
+Il recupero di un'Epic tramite label, descritto sotto, riguarda invece i work
+item con `qa_epic` ancora vuoto: non viene eseguito per le chiavi già inserite
+nel manifest.
+
 ## Funzionamento
 
 Per ciascuna `qa_epic` vuota l'anteprima mostra le richieste Jira previste:

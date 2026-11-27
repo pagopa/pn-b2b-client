@@ -611,3 +611,31 @@ Feature: Casi di test relativi al nuovo microservizio pn-paper-tracker per il pr
     And genera la key da utilizzare per invocare l'API per il prodotto: "890"
     Then si verifica che la richiesta OCR del documento "23L" sia associata all'ultimo RECAG012 inviato dal recapitista
     And si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista
+
+  @paperTrackerRunMode890 @work-item:QA-19079
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_14] Se il recapitista invia più RECAG012 per un 890 in giacenza oltre 10 giorni, il FEEDBACK RECAG012 riporta la data dell'ultimo RECAG012 ricevuto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-Giacenza-gt10-23L_890-DoubleRECAG012 |
+      | digitalDomicile         | NULL                                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si verifica che il FEEDBACK RECAG012 riporti la data dell'ultimo RECAG012 inviato dal recapitista
+
+  @paperTrackerRunMode890 @ocrEnabled @work-item:QA-19079
+  Scenario: [PAPER_TRACKER_RUN_MODE_890_15] Se il recapitista invia più RECAG012 per un 890 in giacenza oltre 10 giorni, la verifica OCR del 23L è associata all'ultimo RECAG012 ricevuto
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+    And destinatario Mario Cucumber e:
+      | physicalAddress_address | Via@OK-Giacenza-gt10-23L_890-DoubleRECAG012 |
+      | digitalDomicile         | NULL                                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
+    And genera la key da utilizzare per invocare l'API per il prodotto: "890"
+    Then si verifica che la richiesta OCR del documento "23L" sia associata all'ultimo RECAG012 inviato dal recapitista

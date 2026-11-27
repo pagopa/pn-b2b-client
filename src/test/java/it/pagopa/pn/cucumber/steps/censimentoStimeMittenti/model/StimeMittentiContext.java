@@ -2,7 +2,9 @@ package it.pagopa.pn.cucumber.steps.censimentoStimeMittenti.model;
 
 import it.pagopa.pn.cucumber.steps.delayer.model.DelayerSenderLimit;
 import it.pagopa.pn.cucumber.steps.delayer.utils.DelayerSenderLimitUtils;
+import it.pagopa.pn.cucumber.steps.delayer.utils.SenderOrderCheckResponse;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,11 @@ import java.util.*;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class StimeMittentiContext {
+
+
+    @Getter
+    @Setter
+    private SenderOrderCheckResponse senderOrderCheckResponse;
 
     public static class SenderLimitsForPeriod {
         public List<DelayerSenderLimit> senderLimits = new ArrayList<>();
