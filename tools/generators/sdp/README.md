@@ -33,8 +33,8 @@ Il comando non modifica manifest, Jira o branch.
 
 - Prodotto, versione, trimestre, stato e descrizione della release.
 - Calendario degli ambienti indicati in `delivery`.
-- Una riga per attività QA, identificata da `id` e `sequence`: titolo, QA Epic,
-  strategie, effort in giorni uomo, risorse e ruoli, priorità, stato QA e PST.
+- Una riga per attività QA, identificata da `id` e `sequence`: work item, QA Epic,
+  strategie, effort in giorni uomo, risorse e ruoli, priorità e PST.
 - Sezione separata per note, rischi e dipendenze.
 - Riepilogo delle attività e delle stime, data di aggiornamento e manifest sorgente.
 - Tabella separata delle esclusioni, con work item e motivazione.
@@ -49,6 +49,11 @@ In pubblicazione, `JIRA_API_TOKEN` e `JIRA_CLOUD_ID` consentono di recuperare
 il summary di prodotto quando `title` è vuoto e lo stato delle QA Epic.
 Il manifest non viene modificato. Errori di lettura interrompono la pubblicazione.
 
+Le celle delle tabelle, incluse le intestazioni, usano H6; titoli e paragrafi
+della pagina mantengono la formattazione normale. Le colonne Attività e Stato QA
+sono omesse: i link Jira sono Smart Link inline, risolti da Confluence secondo
+i permessi del lettore. In anteprima Markdown restano link normali.
+
 La tabella contiene link alle issue Jira e ai PST verificati nel repository
 `pagopa/pn-b2b-client`, branch `pst-output`, file `pst_<QA-Epic>.md`.
 Il workflow usa `GITHUB_TOKEN` in sola lettura; un file non trovato è indicato
@@ -58,7 +63,7 @@ Note, rischi e dipendenze sono riportati sotto la tabella, solo quando compilati
 Il riepilogo conta le attività del manifest (non le Epic distinte): categorie
 Jira `new`, `indeterminate`, `done` corrispondono a Da avviare, In corso,
 Completate. Le attività senza Epic sono Da avviare; categorie mancanti o
-sconosciute sono Stato non disponibile. La tabella conserva lo stato originale.
+sconosciute sono Stato non disponibile. Lo stato della singola Epic è mostrato dallo Smart Link inline di Confluence.
 L'effort somma solo le stime presenti e indica quante attività sono da stimare;
 non include esecuzione e analisi esiti e non misura il successo dei test.
 La pagina riporta data e ora Europe/Rome e il link al manifest (commit della

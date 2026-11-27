@@ -37,7 +37,7 @@ class EnrichmentTests(unittest.TestCase):
         self.assertEqual(result['work-items'][0]['_qa_status'], 'In lavorazione')
         for storage in (False, True):
             output = render(result, storage=storage)
-            self.assertIn('In lavorazione', output)
+            self.assertNotIn('Stato QA', output)
             self.assertIn('&lt;Titolo&gt;', output)
             self.assertIn('pst-output/pst_QA-123.md', output)
             self.assertNotIn('Seq.', output)
@@ -97,3 +97,22 @@ class EnrichmentTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'connessione o risposta non valida') as raised:
                 read_json('https://api.github.com/test', 'secret')
             self.assertNotIn('secret', str(raised.exception))
+
+    def test_compact_tables_and_inline_jira_links(self):
+        from xml.etree import ElementTree as ET
+        root = ET.fromstring('<div>' + render(self.release, storage=True) + '</div>')
+        self.assertIsNotNone(root.find('h1'))
+        self.assertIsNotNone(root.find('h2'))
+        self.assertIsNotNone(root.find('p'))
+        self.assertEqual(root.findall('h6'), [])
+        for cell in root.findall('.//th') + root.findall('.//td'):
+            self.assertEqual([child.tag for child in cell], ['h6'])
+        plan = root.findall('table')[2]
+        headers = [node.text for node in plan.findall('.//th/h6')]
+        self.assertEqual(headers, ['Work item', 'QA Epic', 'Strategia', 'Effort (gg/uomo)', 'Risorse', 'Priorità', 'PST'])
+        row = plan.findall('./tbody/tr')[1]
+        for index, key in ((0, self.item['id']), (1, self.item['qa_epic'])):
+            link = row[index].find('h6/a')
+            self.assertEqual(link.get('data-card-appearance'), 'inline')
+            self.assertEqual(link.get('href'), 'https://pagopa.atlassian.net/browse/' + key)
+            self.assertEqual(link.text, link.get('href'))
