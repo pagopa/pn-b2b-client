@@ -70,7 +70,7 @@ Feature: Censimento stime mittenti
   Scenario: [CHECK_PORTFAT_01_1_A] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del mese successivo.
     When si effettua il controllo che verifica la presenza delle commesse su portfat per il mese "2020-03"
-    Then il risultato del controllo è "KO"
+    Then si riceve esito "negativo" a seguito della verifica sulla presenza delle commesse caricate su portfat
     And il controllo sulla presenza delle commesse su portfat ha dato esito negativo per la mancanza delle commesse dei seguenti mesi:
       | X+1 (2020-04) |
 
@@ -79,7 +79,7 @@ Feature: Censimento stime mittenti
   Scenario: [CHECK_PORTFAT_01_1_B] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza della commessa del quarto mese successivo.
     When si effettua il controllo che verifica la presenza delle commesse su portfat per il mese "2020-02"
-    Then il risultato del controllo è "KO"
+    Then si riceve esito "negativo" a seguito della verifica sulla presenza delle commesse caricate su portfat
     And il controllo sulla presenza delle commesse su portfat ha dato esito negativo per la mancanza delle commesse dei seguenti mesi:
       | X+4 (2020-06) |
 
@@ -88,7 +88,7 @@ Feature: Censimento stime mittenti
   Scenario: [CHECK_PORTFAT_01_1_D] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese dato in input, il test fallisce per mancanza delle commesse relative al mese in input.
     When si effettua il controllo che verifica la presenza delle commesse su portfat per il mese "2020-05"
-    Then il risultato del controllo è "KO"
+    Then si riceve esito "negativo" a seguito della verifica sulla presenza delle commesse caricate su portfat
     And il controllo sulla presenza delle commesse su portfat ha dato esito negativo per la mancanza delle commesse dei seguenti mesi:
       | X+1 (2020-06) |
       | X+4 (2020-09) |
@@ -155,7 +155,7 @@ Feature: Censimento stime mittenti
   Scenario: [CHECK_PORTFAT_04_2] Tramite lambda si effettua un controllo per verificare che sul portale fatturazioni
   siano caricate le commesse del mese in corso, il test da esito negativo per mancanza di una commessa necessaria.
     When si effettua il controllo che verifica la presenza delle commesse su portfat
-    Then il risultato del controllo è "KO"
+    Then si riceve esito "negativo" a seguito della verifica sulla presenza delle commesse caricate su portfat
 
 #**********************************
 # **** Stati diversi da completato
