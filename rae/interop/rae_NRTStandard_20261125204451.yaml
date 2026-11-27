@@ -131,8 +131,24 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(EServiceTemplateTestAssistant.java:416)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.crud.EServiceTemplateCreateSteps.createEServiceTemplate(EServiceTemplateCreateSteps.java:96)
     	at ✽.l'utente effettua la creazione di un e-service template in modalità ricezione in stato di DRAFT(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates-certified-attributes.feature:112)
-  procedure: 'Analisi del log. Riesecuzione in locale.'
-  result: 'La riesecuzione in locale non ha prodotto errori. Classificabile come errore dovuto a carico elevato delle richieste nella particolare finestra di tempo in cui questo test è stato eseguito.'
+  procedure: |
+    Analizzare lo stack trace dell'esecuzione NRT e individuare
+    il punto di fallimento nel setup dello scenario: la creazione
+    del template DRAFT viene interrotta durante la verifica della 
+    risk analysis aggiunta correttamente.
+    Rieseguire isolatamente lo scenario per entrambe le modalità 
+    previste e verificare che la creazione del template, l'aggiunta 
+    della risk analysis e la successiva gestione degli attributi 
+    completino correttamente.
+  result: |
+    Il fallimento è avvenuto durante il setup dello scenario, prima
+    della fase che verifica la risposta HTTP 401 attesa. 
+    La creazione del template è stata considerata fallita dal polling 
+    che non ha riscontrato la risk analysis entro la finestra prevista.
+    La riesecuzione isolata in locale non ha prodotto errori, quindi
+    il comportamento è coerente con una propagazione intermittente
+    delle informazioni del template o con un carico elevato delle
+    richieste durante l'esecuzione NRT.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[INTEROP-EST-M2M-PATCH_05] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di
@@ -1532,8 +1548,19 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementActivated venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_CONTRACT_DOC(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:24)
-  procedure: 'Analisi del log e riesecuzione in locale. '
-  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-application-documents-qa-es1/qa/generated-documents/agreement/0ca4a7e5-9af5-44b2-8738-8eb81e8bf103/442120ff-d8f2-4f30-aa32-3564f4a30e3e/20261125181857_0e9e2dab-2e93-4f24-ba59-38d9f11198ca_e79a24cd-8edc-441e-ae8d-e87c3aea0059_agreement_contract.pdf'
+  procedure: |
+    Analizzare il log della run remota.
+    Rieseguire lo scenario isolato [AGREEMENT_DOC_ARCHIVE_1] in remoto
+    e verificare che il controllo della Retain until date venga completato
+    per il documento AGREEMENT_CONTRACT_DOC.
+  result: |
+    Lo scenario passa in locale, mentre nella run remota fallisce durante
+    il controllo della retention del documento WORM. Il log indica un
+    errore S3 403 per l'azione s3:GetObjectRetention: il ruolo IAM
+    interop-github-qa-runner-task-qa-es1 non dispone dell'autorizzazione
+    necessaria sulla risorsa del bucket interop-application-documents-qa-es1.
+    Il KO è quindi causato dalla configurazione IAM dell'ambiente remoto
+    e non dalla logica di attivazione della richiesta di fruizione.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
