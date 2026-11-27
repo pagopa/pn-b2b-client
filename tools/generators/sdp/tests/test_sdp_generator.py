@@ -46,7 +46,9 @@ class SDPTests(unittest.TestCase):
     def test_invalid_data(self):
         for field, value in [('size', True), ('size', 0), ('size', float('nan')),
                              ('strategies', ['UNKNOWN']), ('resources', [{}]),
-                             ('dependencies', 'not a list'), ('status', 'done')]:
+                             ('dependencies', 'not a list'), ('dependencies', 0),
+                             ('dependencies', False), ('dependencies', {}),
+                             ('dependencies', [123]), ('status', 'done')]:
             with self.subTest(field=field, value=value):
                 r = copy.deepcopy(self.release)
                 r['work-items'][0][field] = value
@@ -55,6 +57,23 @@ class SDPTests(unittest.TestCase):
         self.release['delivery']['test'] = '2026-02-30'
         with self.assertRaises(ValueError):
             validate(self.release)
+
+    def test_optional_dependencies(self):
+        for value in (None, [], ['Ambiente disponibile']):
+            with self.subTest(value=value):
+                r = copy.deepcopy(self.release)
+                for item in r['work-items']:
+                    item['dependencies'] = value
+                validate(r)
+                output = render(r)
+                if value:
+                    self.assertIn('Dipendenze: Ambiente disponibile', output)
+                else:
+                    self.assertNotIn('Dipendenze:', output)
+        for item in r['work-items']:
+            item.pop('dependencies')
+        validate(r)
+        self.assertNotIn('Dipendenze:', render(r))
 
     def test_missing_optional_data_and_exclusions_only(self):
         self.release['work-items'] = []
