@@ -117,8 +117,8 @@ public class TenantsApiClientImpl implements ITenantsApi {
     }
 
     @Override
-    public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId) {
-        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId, null);
+    public void revokeVerifiedAttribute(UUID tenantId, UUID attributeId, UUID agreementId, UUID delegationId) {
+        tenantsApi.revokeVerifiedAttribute(tenantId, attributeId, agreementId, delegationId);
     }
 
     @Override
