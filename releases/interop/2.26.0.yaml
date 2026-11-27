@@ -20,7 +20,7 @@ release:
   # esistenti rimangono disponibili ma non vengono più aggiornati.
   # execution non avvia automaticamente le suite: questo è uno sviluppo futuro.
   # OBBLIGATORIO.
-  status: draft
+  status: in-progress
   # Testo libero: breve descrizione del perimetro della release.
   # OBBLIGATORIO.
   description: Piano di delivery QA della release INTEROP 2.26.0
