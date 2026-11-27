@@ -446,8 +446,23 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.shared.EServiceTemplateTestAssistant.addRiskAnalysisToEServiceTemplateSuccessfully(EServiceTemplateTestAssistant.java:416)
     	at it.pagopa.pn.interop.cucumber.steps.e_service_template.crud.EServiceTemplateCreateSteps.createEServiceTemplate(EServiceTemplateCreateSteps.java:96)
     	at ✽.l'utente effettua la creazione di un e-service template in modalità ricezione in stato di PUBLISHED(classpath:it/pagopa/pn/cucumber/m2mgateway/e-service-templates.feature:690)
-  procedure: 'Analisi del log. Riesecuzione in locale.'
-  result: 'La riesecuzione in locale non ha prodotto errori. Classificabile come errore dovuto a carico elevato delle richieste nella particolare finestra di tempo in cui questo test è stato eseguito.'
+  procedure: |
+    Analizzare il log della run NRT e individuare il fallimento
+    durante il setup dello scenario, prima della modifica parziale
+    della delega dell'e-service template instance.
+    Verificare che la risk analysis aggiunta al template venga
+    restituita correttamente dalla API di lettura entro la finestra
+    di polling prevista.
+    Rieseguire isolatamente lo Scenario Outline
+    [M2M_ESERVICE_TEMPLATE_INSTANCE_PUBLISHED_UPDATE_DELEGATION_1].
+  result: |
+    Il KO si verifica nella fase di creazione dell'e-service template
+    in modalità ricezione nello stato PUBLISHED: il polling non rileva
+    entro la finestra prevista la risk analysis appena aggiunta.
+    La riesecuzione in locale non ha prodotto errori, quindi il fallimento
+    è compatibile con un ritardo dovuto al carico elevato della run NRT.
+    La successiva modifica parziale della delega dell'e-service non viene
+    raggiunta in questa esecuzione.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2MG_ESERVICES_35_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service
@@ -1614,8 +1629,20 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementSuspendedByConsumer venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:39)
-  procedure: 'Analisi del log e riesecuzione in locale. '
-  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_062028_2321b2cc-ecea-449c-ab55-99f481866de2.ndjson.zip'
+  procedure: |
+    Analizzare il log della run.
+    Rieseguire in locale l'esempio SUSPENDED dello scenario
+    [AGREEMENT_DOC_ARCHIVE_2] e verificare la generazione nel bucket
+    STANDARD e nel bucket WORM dell'AGREEMENT_SUSPENDED_BY_CONSUMER_EVENTS_LOG.
+  result: |
+    Il passaggio relativo all'archiviazione nel bucket STANDARD fallisce
+    durante la lettura della configurazione di retention dell'evento
+    AgreementSuspendedByConsumer. La run restituisce un errore S3
+    403 perché il ruolo IAM interop-github-qa-runner-task-qa-es1 non
+    dispone dell'azione s3:GetObjectRetention sul bucket
+    interop-domain-events-qa-es1. Il KO è causato dalla policy IAM
+    dell'ambiente remoto e impedisce il completamento delle verifiche
+    sul file degli eventi.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[AGREEMENT_DOC_ARCHIVE_2] Cambio stato richiesta di fruizione - archiviazione PDF firmato [Examples:
@@ -1669,8 +1696,20 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.client.ArchivingClient.findS3FileInInterval(ArchivingClient.java:70)
     	at it.pagopa.pn.interop.cucumber.steps.archiviazione_documentale.ArchivingSteps.checkFileInS3Bucket(ArchivingSteps.java:77)
     	at ✽.verifica che a fronte dell'evento AgreementArchivedByConsumer venga generato nell'opportuno bucket S3 STANDARD un AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG(classpath:it/pagopa/pn/cucumber/archiviazione-documentale/archiviazione-documentale.feature:39)
-  procedure: 'Analisi del log e riesecuzione in locale. '
-  result: 'Run in locale andata bene. Dal log di errore della run in remoto si riscontra che lo User: arn:aws:sts::755649575658:assumed-role/interop-github-qa-runner-task-qa-es1/13d8d769009a4ff9a1ccef8566361ad3 non è autorizzato per eseguire s3:GetObjectRetention sulla risorsa arn:aws:s3:::interop-domain-events-qa-es1/year=2026/month=11/day=25/events_20261125_061946_a534f311-bb91-4fbf-a44e-fb8de719287b.ndjson.zip'
+  procedure: |
+    Analizzare il log della run.
+    Rieseguire in remoto l'esempio ARCHIVED dello scenario
+    [AGREEMENT_DOC_ARCHIVE_2] e verificare la generazione nel bucket
+    STANDARD e nel bucket WORM dell'AGREEMENT_ARCHIVED_BY_CONSUMER_EVENTS_LOG.
+  result: |
+    Il passaggio relativo all'archiviazione nel bucket STANDARD fallisce
+    durante la lettura della configurazione di retention dell'evento
+    AgreementArchivedByConsumer. La run remota restituisce un errore S3
+    403 perché il ruolo IAM interop-github-qa-runner-task-qa-es1 non
+    dispone dell'azione s3:GetObjectRetention sul bucket
+    interop-domain-events-qa-es1. Il KO è causato dalla policy IAM
+    dell'ambiente remoto e impedisce il completamento delle verifiche
+    sul file degli eventi.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[PURPOSE_DOC_ARCHIVE_1] Attivazione di una finalità - archiviazione PDF firmato [cucumber-report-nrt-bff-m2mv2.json]'
