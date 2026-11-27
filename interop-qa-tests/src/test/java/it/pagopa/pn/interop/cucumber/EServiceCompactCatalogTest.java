@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         "html:target/cucumber-report-compact-catalog.html"
         ),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.interop.cucumber.steps"),
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "same_thread"),
+        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({"compact-catalog"})
