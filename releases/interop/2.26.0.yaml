@@ -367,10 +367,10 @@ release:
       # Chiave Jira QA-<numero> oppure vuoto; non rimuovere il campo.
       # La coppia (id, qa_epic) valorizzata deve essere unica.
       # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
-      qa_epic: QA-19842
+      qa_epic: QA-19657
       # Nome del branch QA esistente oppure vuoto; non rimuovere il campo.
       # PRESENZA OBBLIGATORIA; valore vuoto ammesso prima della generazione.
-      branch: feature/QA-19842
+      branch:
       # Non aggiungere status al work item: lo stato QA è quello della QA Epic.
       # Il futuro SDP lo leggerà da Jira; senza Epic mostrerà "QA Epic da creare".
 
