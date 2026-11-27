@@ -67,7 +67,7 @@ non pubblica pagine né attiva esecuzioni pianificate.
 
 | Aspetto | Regola |
 | --- | --- |
-| Pagina padre | `3459022926` |
+| Cartella padre | `3459022926` (`parent_type: folder`, `parent_id` in configurazione) |
 | Granularità | Una pagina per prodotto e versione della release |
 | Titolo iniziale | `SDP — {product} — {version}` |
 | Identificazione | Prodotto e versione come identità stabile, indipendente dal titolo |
@@ -99,11 +99,13 @@ python3 -m unittest discover -s tools/generators/sdp/tests -v
 
 ## Verifica preliminare accesso Confluence
 
-La Action manuale `sdp_check_confluence` esegue soltanto un GET della pagina
-padre configurata, usando `vars.JIRA_CLOUD_ID` e `secrets.CONFLUENCE_API_TOKEN`
+La Action manuale `sdp_check_confluence` esegue soltanto un GET del contenitore
+padre configurato, usando `vars.JIRA_CLOUD_ID` e `secrets.CONFLUENCE_API_TOKEN`
 con autenticazione Bearer sul gateway Atlassian, come il generatore Epic.
 Il token dedicato deve essere abilitato per Confluence; il controllo richiede
-`read:page:confluence`. Il Cloud ID resta quello del sito già configurato.
+`read:folder:confluence` per la cartella padre e `read:page:confluence` per
+le pagine. Per la futura pubblicazione serve anche `write:page:confluence`.
+Il Cloud ID resta quello del sito già configurato.
 Non viene usato il token Jira come fallback. La prova verifica anche che
 questa modalità di autenticazione sia accettata per il token creato.
 
@@ -112,9 +114,19 @@ per essere avviabile tramite `workflow_dispatch`. Da GitHub: **Actions →
 sdp_check_confluence → Run workflow**, selezionando il ramo con il codice
 del generatore. Non è una pubblicazione e non ha una pianificazione.
 
-Il successo conferma solo la lettura della pagina. HTTP 401/403 richiedono
+Il campo facoltativo `page_id` permette di verificare una pagina diversa:
+per la pagina di test usare `3494707940`. Lasciandolo vuoto viene letta la
+cartella padre in `config.yaml`. Questo parametro non cambia la destinazione
+degli SDP. In locale il parametro corrisponde a `CONFLUENCE_CHECK_PAGE_ID`.
+
+Il successo conferma solo la lettura del contenuto richiesto. HTTP 401/403 richiedono
 la verifica dell'autenticazione, degli scope e dei permessi; HTTP 404 può
 indicare anche contenuto non visibile. Non vengono stampati token o corpi
 delle risposte. Nessuna scrittura viene eseguita.
 
-Endpoint di riferimento: [Confluence REST API v2 — Get page by ID](https://developer.atlassian.com/cloud/confluence/rest/v2/api-group-page/#api-pages-id-get).
+Per la cartella il controllo usa `/wiki/api/v2/folders/3459022926`; per una
+pagina usa `/wiki/api/v2/pages/{id}`.
+
+Riferimento cartelle: [Confluence REST API v2 — Folder](https://developer.atlassian.com/cloud/confluence/rest/v2/api-group-folder/).
+
+Endpoint pagine di riferimento: [Confluence REST API v2 — Get page by ID](https://developer.atlassian.com/cloud/confluence/rest/v2/api-group-page/#api-pages-id-get).

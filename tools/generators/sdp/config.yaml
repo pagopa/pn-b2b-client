@@ -1,7 +1,8 @@
 # Configurazione della pubblicazione concordata.
 # Non ancora letta dalla CLI locale: integrazione Confluence da implementare.
 confluence:
-  parent_page_id: "3459022926"
+  parent_type: folder
+  parent_id: "3459022926"
   title_template: "SDP — {product} — {version}"
   # Identità stabile della pagina, indipendente dal titolo modificabile.
   identity_fields:

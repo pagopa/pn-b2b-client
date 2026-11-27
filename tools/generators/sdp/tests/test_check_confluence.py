@@ -27,7 +27,7 @@ class ConfluenceCheckTests(unittest.TestCase):
         self.environment.start()
         self.addCleanup(self.environment.stop)
         config = patch.object(check_confluence.Path, 'read_text', return_value=
-                              f'confluence:\n  parent_page_id: "{self.PAGE}"\n')
+                              f'confluence:\n  parent_type: folder\n  parent_id: "{self.PAGE}"\n')
         config.start()
         self.addCleanup(config.stop)
         # The entire transport is replaced: no credentials or network needed.
@@ -53,7 +53,7 @@ class ConfluenceCheckTests(unittest.TestCase):
             self.assertEqual(err.getvalue(), '')
         return combined
 
-    def test_valid_page_uses_read_only_request(self):
+    def test_valid_folder_uses_read_only_request(self):
         self.response(json.dumps({'id': self.PAGE, 'spaceId': '123', 'body': self.BODY}))
         output = self.run_check(0)
         self.assertIn('leggibile', output)
@@ -62,7 +62,7 @@ class ConfluenceCheckTests(unittest.TestCase):
         req = self.opener.open.call_args.args[0]
         self.assertEqual(req.get_method(), 'GET')
         self.assertIsNone(req.data)
-        self.assertEqual(req.full_url, f'https://api.atlassian.com/ex/confluence/{self.CLOUD}/wiki/api/v2/pages/{self.PAGE}')
+        self.assertEqual(req.full_url, f'https://api.atlassian.com/ex/confluence/{self.CLOUD}/wiki/api/v2/folders/{self.PAGE}')
         self.assertEqual(req.get_header('Authorization'), f'Bearer {self.TOKEN}')
         self.assertEqual(self.opener.open.call_args.kwargs['timeout'], 30)
         self.assertIsInstance(self.builder.call_args.args[0], check_confluence.NoRedirect)
@@ -117,6 +117,17 @@ class ConfluenceCheckTests(unittest.TestCase):
 
     def test_missing_credentials_prevent_requests(self):
         with patch.dict(check_confluence.os.environ, {}, clear=True):
+            self.run_check(1)
+        self.builder.assert_not_called()
+
+    def test_page_override(self):
+        self.response(json.dumps({'id': '3494707940', 'spaceId': '123'}))
+        with patch.dict(check_confluence.os.environ, {'CONFLUENCE_CHECK_PAGE_ID': '3494707940'}):
+            self.assertIn('3494707940', self.run_check(0))
+        self.assertTrue(self.opener.open.call_args.args[0].full_url.endswith('/pages/3494707940'))
+
+    def test_invalid_page_override_prevents_request(self):
+        with patch.dict(check_confluence.os.environ, {'CONFLUENCE_CHECK_PAGE_ID': '../other'}):
             self.run_check(1)
         self.builder.assert_not_called()
 
