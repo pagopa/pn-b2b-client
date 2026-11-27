@@ -100,9 +100,12 @@ python3 -m unittest discover -s tools/generators/sdp/tests -v
 ## Verifica preliminare accesso Confluence
 
 La Action manuale `sdp_check_confluence` esegue soltanto un GET della pagina
-padre configurata, usando `vars.JIRA_CLOUD_ID` e `secrets.JIRA_API_TOKEN`
-con autenticazione Bearer, come il generatore Epic. Il riuso delle credenziali
-è una prova: il token potrebbe non avere accesso o scope Confluence.
+padre configurata, usando `vars.JIRA_CLOUD_ID` e `secrets.CONFLUENCE_API_TOKEN`
+con autenticazione Bearer sul gateway Atlassian, come il generatore Epic.
+Il token dedicato deve essere abilitato per Confluence; il controllo richiede
+`read:page:confluence`. Il Cloud ID resta quello del sito già configurato.
+Non viene usato il token Jira come fallback. La prova verifica anche che
+questa modalità di autenticazione sia accettata per il token creato.
 
 Dopo commit e push, il workflow deve essere presente sul branch predefinito
 per essere avviabile tramite `workflow_dispatch`. Da GitHub: **Actions →
