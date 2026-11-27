@@ -141,11 +141,59 @@ class Link:
     inline: bool = False
 
 
+# Fixed palette, shared by the legend and the delivery table.
+PALETTE = {
+    'grey': ('#F1F2F4', '#B3B9C4', '#292A2E'),
+    'blue': ('#CCE0FF', '#85B8FF', '#09326C'),
+    'green': ('#D3F1A7', '#94C748', '#37471F'),
+    'red': ('#FFD5D2', '#FF9C8F', '#5D1F1A'),
+    'purple': ('#EED7FC', '#D8A0F7', '#48245D'),
+    'yellow': ('#FEEDB9', '#F5CD47', '#533F04'),
+}
+STRATEGY_COLORS = {
+    'NRT TA STANDARD': 'red', 'TA VERTICALE': 'red',
+    'NRT TA AD-HOC': 'yellow', 'NRT TM STANDARD': 'purple',
+    'TM VERTICALE': 'purple', 'TM ESPLORATIVO': 'purple',
+    'NRT TM AD-HOC': 'blue', 'OUT OF QA SCOPE': 'grey',
+    'DESIGN ONLY': 'green', 'TEST DI CARICO': 'yellow',
+    'TA FE VERTICALE': 'blue',
+}
+ROLE_COLORS = {'TA': 'blue', 'TM': 'green'}
+EFFORT_BANDS = [(0, 'XSS', 'grey'), (1, 'XS', 'grey'), (3, 'S', 'blue'),
+                (5, 'M', 'green'), (7, 'L', 'red'), (10, 'XL', 'purple')]
+
+
+@dataclass(frozen=True)
+class Badge:
+    label: str
+    color: str
+
+
+@dataclass(frozen=True)
+class InlineGroup:
+    parts: tuple
+    separator: str = ' '
+
+
+def effort_badge(size):
+    if size is None:
+        return Badge('Da stimare', 'grey')
+    for limit, label, color in EFFORT_BANDS:
+        if size <= limit:
+            return Badge(f'{label} · {size:g}', color)
+    return Badge(f'XXL · {size:g}', 'purple')
+
+
 def cell(value):
+    if isinstance(value, Badge):
+        return cell(value.label)
+    if isinstance(value, InlineGroup):
+        separator = '<br>' if value.separator == '\n' else cell(value.separator) if value.separator.strip() else ' '
+        return separator.join(cell(part) for part in value.parts)
     if isinstance(value, Link):
         return f"[{cell(value.label)}]({value.url})"
     if value is None or value == '':
-        return '—'
+        return '-'
     escaped = html.escape(str(value).strip(), quote=False)
     escaped = re.sub(r'([\\`*_\[\]])', r'\\\1', escaped)
     return escaped.replace('|', '&#124;').replace('\r\n', '\n').replace('\r', '\n').replace('\n', '<br>')
@@ -158,18 +206,31 @@ def table(headers, rows):
 
 
 def storage_cell(value):
+    if isinstance(value, Badge):
+        background, border, foreground = PALETTE[value.color]
+        style = (f'background-color: {background}; color: {foreground}; '
+                 f'border: 1px solid {border}; border-radius: 4px; '
+                 'padding: 1px 4px; font-size: inherit; font-weight: normal;')
+        return f'<span style="{style}">{storage_cell(value.label)}</span>'
+    if isinstance(value, InlineGroup):
+        separator = '<br />' if value.separator == '\n' else html.escape(value.separator)
+        return separator.join(storage_cell(part) for part in value.parts)
     if isinstance(value, Link):
         if value.inline:
             url = html.escape(value.url, quote=True)
             return f'<a href="{url}" data-card-appearance="inline">{url}</a>'
         return f'<a href="{html.escape(value.url, quote=True)}">{storage_cell(value.label)}</a>'
     if value is None or value == '':
-        return '—'
+        return '-'
     return html.escape(str(value).strip()).replace('\r\n', '\n').replace('\r', '\n').replace('\n', '<br />')
 
 
 def storage_table(headers, rows):
-    return '<table><tbody><tr>' + ''.join('<th><h6>' + storage_cell(h) + '</h6></th>' for h in headers) + '</tr>' + ''.join(
+    columns = ''
+    if 'Effort (gg/uomo)' in headers:
+        widths = [240, 260, 150, 90, 160, 100, 110]
+        columns = '<colgroup>' + ''.join(f'<col style="width: {width}px;" />' for width in widths) + '</colgroup>'
+    return '<table>' + columns + '<tbody><tr>' + ''.join('<th><h6>' + storage_cell(h) + '</h6></th>' for h in headers) + '</tr>' + ''.join(
         '<tr>' + ''.join('<td><h6>' + storage_cell(v) + '</h6></td>' for v in row) + '</tr>' for row in rows) + '</tbody></table>'
 
 
@@ -181,14 +242,16 @@ def render(release, storage=False, manifest_url=None, generated_at=None):
         return '<p>' + text + '</p>' if storage else text
     def heading(text, level=2):
         return f'<h{level}>{text}</h{level}>' if storage else '#' * level + ' ' + text
+    def field(name, value):
+        label = '<strong>' + escape(name) + ':</strong>' if storage else '**' + escape(name) + ':**'
+        return label + ' ' + escape(value)
     def issue(key):
         return Link(key, f'https://pagopa.atlassian.net/browse/{key}', inline=True)
     timestamp = (generated_at or datetime.now(ZoneInfo('Europe/Rome'))).astimezone(ZoneInfo('Europe/Rome'))
-    lines = [heading(f'Service Delivery Plan — {escape(release["product"])} {escape(release["version"])}', 1),
-             '', paragraph(f'Trimestre: {escape(release["quarter"])} · Stato release: {escape(release["status"])}'),
+    lines = [paragraph(field('Trimestre', release['quarter']) + ' · ' + field('Stato release', release['status'])),
              '', paragraph(escape(release['description'])), '',
              paragraph('Titoli e stati QA aggiornati da Jira.' if release.get('_jira_synced') else 'Jira non interrogato. Gli stati QA non sono sincronizzati.'),
-             paragraph('Ultimo aggiornamento: ' + timestamp.strftime('%d/%m/%Y %H:%M %Z') + ' — Europe/Rome'), '']
+             paragraph(field('Ultimo aggiornamento', timestamp.strftime('%d/%m/%Y %H:%M %Z') + ' - Europe/Rome')), '']
     if release.get('delivery'):
         lines += [heading('Calendario della release'), '', make_table(['Ambiente', 'Data prevista'],
                   [(key.upper(), value or 'Da definire') for key, value in release['delivery'].items()]), '']
@@ -207,13 +270,14 @@ def render(release, storage=False, manifest_url=None, generated_at=None):
         heading('Piano di delivery QA'), '']
     rows = []
     for item in release['work-items']:
-        resources = '\n'.join(f'{p["name"]} ({p["role"]})' for p in item.get('resources', []))
+        resources = InlineGroup(tuple(InlineGroup((person['name'], Badge(person['role'], ROLE_COLORS[person['role']])))
+                                      for person in item.get('resources', [])), '\n')
         rows.append([issue(item['id']),
-                     issue(item['qa_epic']) if item.get('qa_epic') else 'QA Epic da creare', '\n'.join(item['strategies']),
-                     item.get('size') if item.get('size') is not None else 'Da stimare', resources or 'Da assegnare', item['priority'],
+                     issue(item['qa_epic']) if item.get('qa_epic') else 'QA Epic da creare', InlineGroup(tuple(Badge(strategy, STRATEGY_COLORS[strategy]) for strategy in item['strategies']), '\n'),
+                     effort_badge(item.get('size')), resources if resources.parts else 'Da assegnare', item['priority'],
                      Link('Apri PST', item['_pst_url']) if item.get('_pst_url') else ('Non disponibile' if release.get('_jira_synced') else 'Non verificato (anteprima offline)')])
     if rows:
-        lines += [make_table(['Work item', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
+        lines += [make_table(['Work item Prodotto', 'QA Epic', 'Strategia', 'Effort (gg/uomo)',
                          'Risorse', 'Priorità', 'PST'], rows)]
     else:
         lines += [paragraph('Nessuna attività QA pianificata.')]
@@ -223,17 +287,37 @@ def render(release, storage=False, manifest_url=None, generated_at=None):
         entries.append(('Dipendenze', '; '.join(item.get('dependencies') or [])))
         entries = [(label, value) for label, value in entries if value and value.strip()]
         if entries:
-            label = escape(issue(item['id'])) + ' — ' + escape(item.get('title') or 'Titolo da recuperare da Jira')
+            label = escape(issue(item['id'])) + ' - ' + escape(item.get('title') or 'Titolo da recuperare da Jira')
             if item.get('qa_epic'):
                 label += ' (' + escape(issue(item['qa_epic'])) + ')'
             details += [heading(label, 3)]
-            details += [paragraph(escape(name + ': ' + value)) for name, value in entries]
+            details += [paragraph(field(name, value)) for name, value in entries]
     if details:
         lines += ['', heading('Note, rischi e dipendenze'), ''] + details
     lines += ['', heading('Work item esclusi dal perimetro QA'), '']
     exclusions = release.get('out_of_scope', [])
-    lines += [make_table(['Work item', "Motivo dell'esclusione"], [(issue(x['id']), x['reason']) for x in exclusions])
+    lines += [make_table(['Work item Prodotto', "Motivo dell'esclusione"], [(issue(x['id']), x['reason']) for x in exclusions])
               if exclusions else paragraph('Nessun work item escluso.')]
+    legend_effort = InlineGroup(tuple(Badge(label, color) for label, color in (
+        ('XSS (=0)', 'grey'), ('XS (>0-1)', 'grey'), ('S (>1-3)', 'blue'),
+        ('M (>3-5)', 'green'), ('L (>5-7)', 'red'), ('XL (>7-10)', 'purple'),
+        ('XXL (>10)', 'purple'))))
+    legend_roles = InlineGroup((Badge('TA', 'blue'), Badge('TM', 'green')))
+    legend_strategies = InlineGroup(tuple(Badge(name, color) for name, color in STRATEGY_COLORS.items()))
+    compact = lambda content: '<h6>' + content + '</h6>' if storage else content
+    explanation = ('Effort size: effort totale attribuito al work item per analisi/progettazione '
+                   'e implementazione, espresso in giorni uomo; non è una stima per ogni singola persona. '
+                   'Esclude esecuzione e analisi esiti su TEST/UAT. XSS (=0) indica nessun effort '
+                   'aggiuntivo attribuito al work item, ad esempio copertura NRT condivisa con un altro '
+                   'work item; non significa assenza di lavoro QA. Un valore vuoto significa Da stimare. '
+                   '')
+    lines += ['', heading('LEGENDA'), compact(field('EFFORT SIZE', legend_effort) + ' | ' + escape(legend_roles))]
+    if storage:
+        lines += ['<div style="background-color: #E9F2FF; padding: 12px; border-radius: 6px;">'
+                  + compact(field('Effort size', explanation.removeprefix('Effort size: '))) + '</div>']
+    else:
+        lines += [paragraph(field('Effort size', explanation.removeprefix('Effort size: ')))]
+    lines += [compact(field('STRATEGIA', legend_strategies))]
     lines += ['', paragraph('Pagina generata automaticamente. Le modifiche manuali vengono sostituite alla generazione successiva.')]
     if manifest_url:
         lines += [paragraph(escape(Link('Manifest sorgente', manifest_url)))]

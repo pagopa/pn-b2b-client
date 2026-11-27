@@ -101,18 +101,42 @@ class EnrichmentTests(unittest.TestCase):
     def test_compact_tables_and_inline_jira_links(self):
         from xml.etree import ElementTree as ET
         root = ET.fromstring('<div>' + render(self.release, storage=True) + '</div>')
-        self.assertIsNotNone(root.find('h1'))
+        self.assertIsNone(root.find('h1'))
+        self.assertEqual(root.find('p/strong').text, 'Trimestre:')
         self.assertIsNotNone(root.find('h2'))
         self.assertIsNotNone(root.find('p'))
-        self.assertEqual(root.findall('h6'), [])
+        self.assertEqual(len(root.findall('h6')), 2)  # Compact legend lines
         for cell in root.findall('.//th') + root.findall('.//td'):
             self.assertEqual([child.tag for child in cell], ['h6'])
         plan = root.findall('table')[2]
         headers = [node.text for node in plan.findall('.//th/h6')]
-        self.assertEqual(headers, ['Work item', 'QA Epic', 'Strategia', 'Effort (gg/uomo)', 'Risorse', 'Priorità', 'PST'])
+        self.assertEqual(headers, ['Work item Prodotto', 'QA Epic', 'Strategia', 'Effort (gg/uomo)', 'Risorse', 'Priorità', 'PST'])
+        self.assertEqual(plan.findall('colgroup/col')[3].get('style'), 'width: 90px;')
         row = plan.findall('./tbody/tr')[1]
         for index, key in ((0, self.item['id']), (1, self.item['qa_epic'])):
             link = row[index].find('h6/a')
             self.assertEqual(link.get('data-card-appearance'), 'inline')
             self.assertEqual(link.get('href'), 'https://pagopa.atlassian.net/browse/' + key)
             self.assertEqual(link.text, link.get('href'))
+
+    def test_effort_badges_boundaries_and_missing_estimate(self):
+        from sdp_generator import effort_badge
+        for size, tag in [(0, 'XSS'), (0.5, 'XS'), (1, 'XS'), (1.5, 'S'),
+                          (3, 'S'), (3.5, 'M'), (5, 'M'), (5.5, 'L'),
+                          (7, 'L'), (7.5, 'XL'), (10, 'XL'), (10.5, 'XXL')]:
+            with self.subTest(size=size):
+                self.assertEqual(effort_badge(size).label, f'{tag} · {size:g}')
+        self.assertEqual(effort_badge(None).label, 'Da stimare')
+
+    def test_badges_keep_h6_and_escape_resource_names(self):
+        from xml.etree import ElementTree as ET
+        self.item['resources'] = [{'name': '<script> & Mario', 'role': 'TA'}]
+        output = render(self.release, storage=True)
+        root = ET.fromstring('<div>' + output + '</div>')
+        row = root.findall('table')[2].findall('./tbody/tr')[1]
+        self.assertEqual(row[2].find('h6/span').text, 'TA VERTICALE')
+        self.assertEqual(row[3].find('h6/span').text, 'L · 7')
+        self.assertEqual(row[4].find('h6/span').text, 'TA')
+        self.assertNotIn('<script>', output)
+        self.assertIn('&lt;script&gt; &amp; Mario', output)
+        self.assertIn('LEGENDA', output)

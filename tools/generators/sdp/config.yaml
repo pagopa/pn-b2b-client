@@ -3,7 +3,7 @@
 confluence:
   parent_type: folder
   parent_id: "3459022926"
-  title_template: "SDP — {product} — {version}"
+  title_template: "{version} {product} - Service Delivery Plan"
   # Identità stabile della pagina, indipendente dal titolo modificabile.
   identity_fields:
     - product

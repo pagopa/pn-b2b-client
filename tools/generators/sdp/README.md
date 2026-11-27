@@ -41,14 +41,28 @@ Il comando non modifica manifest, Jira o branch.
 
 L'output usa l'ordine del manifest. `sequence` resta nel manifest per identificare
 le attività, ma non viene mostrato come colonna nell'SDP. Repository e branch servono ai generatori
-e non sono colonne della tabella SDP. L'effort rimane numerico: la conversione
-in T-Shirt size non viene introdotta senza averne definito le soglie.
+e non sono colonne della tabella SDP. Il manifest mantiene l'effort numerico; la pagina mostra taglia e valore esatto
+(es. `S · 2.5`). Le soglie sono XSS = 0, XS fino a 1, S fino a 3, M fino a 5,
+L fino a 7, XL fino a 10, XXL oltre 10. Ogni fascia esclude il limite superiore
+della precedente. Lo zero è previsto dalla legenda, ma resta non ammesso
+dalla validazione attuale; il campo vuoto è Da stimare.
+
+Effort, ruoli e strategie usano badge XHTML con palette condivisa con la legenda,
+in H6 compatto. TA è blu, TM verde; le strategie seguono i colori della legenda.
+OUT OF QA SCOPE resta una voce esplicativa: le esclusioni si compilano in
+`out_of_scope`, non in `strategies`. Il riquadro della legenda descrive il
+perimetro dell'effort. La resa degli stili inline va verificata su Confluence,
+che può normalizzarli durante la pubblicazione.
 
 L'anteprima `--dry-run` è offline: non legge Jira e non verifica i PST.
 In pubblicazione, `JIRA_API_TOKEN` e `JIRA_CLOUD_ID` consentono di recuperare
 il summary di prodotto quando `title` è vuoto e lo stato delle QA Epic.
 Il manifest non viene modificato. Errori di lettura interrompono la pubblicazione.
 
+Il titolo non viene ripetuto nel corpo della pagina. Le chiavi delle coppie
+chiave: valore sono in grassetto e i separatori usano il trattino semplice.
+La colonna Work item Prodotto identifica la card di prodotto; la colonna
+Effort ha una larghezza richiesta di 90 px.
 Le celle delle tabelle, incluse le intestazioni, usano H6; titoli e paragrafi
 della pagina mantengono la formattazione normale. Le colonne Attività e Stato QA
 sono omesse: i link Jira sono Smart Link inline, risolti da Confluence secondo
@@ -94,7 +108,7 @@ La CLI legge la configurazione per pubblicare. La pianificazione giornaliera
 | --- | --- |
 | Cartella padre | `3459022926` (`parent_type: folder`, `parent_id` in configurazione) |
 | Granularità | Una pagina per prodotto e versione della release |
-| Titolo iniziale | `SDP — {product} — {version}` |
+| Titolo | `{version} {product} - Service Delivery Plan`, applicato anche agli aggiornamenti |
 | Identificazione | Prodotto e versione come identità stabile, indipendente dal titolo |
 | Prima esecuzione | Creazione della pagina se manca |
 | Esecuzioni successive | Aggiornamento della stessa pagina, senza duplicati |
@@ -106,7 +120,7 @@ La CLI legge la configurazione per pubblicare. La pianificazione giornaliera
 
 La pagina contiene macro Anchor generate con un'identità derivata da prodotto
 e versione. La ricerca scorre le pagine visibili dello spazio con paginazione,
-comprese quelle archiviate. Il titolo modificato manualmente viene conservato.
+comprese quelle archiviate. Il titolo viene riallineato al formato configurato a ogni pubblicazione.
 Non rimuovere le macro Anchor generate e mantenere l'accesso dell'utenza
 tecnica alle pagine: il riconoscimento dipende da questi dati.
 
