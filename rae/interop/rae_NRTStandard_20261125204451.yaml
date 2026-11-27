@@ -3117,8 +3117,21 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:157)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.bringDescriptorToStateWFA(DelegationCommonStep.java:100)
     	at ✽."PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices-certified-attributes.feature:374)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
+  procedure: |
+    Analizzare il log della run NRT e verificare che il KO avvenga durante
+    il setup dello scenario, nella pubblicazione del descrittore verso lo
+    stato WAITING_FOR_APPROVAL.
+    Rieseguire isolatamente lo scenario [M2M_ESERVICES_CERTIFIED_ATTRIBUTES_DELETE_06_B].
+  result: |
+    Il fallimento si verifica prima della verifica prevista sul codice HTTP
+    400: lo scenario non raggiunge il tentativo di rimozione dell'attributo
+    certificato da PA2.
+    Il polling della pubblicazione del descrittore termina con
+    "Failed to publish descriptor", indicativo di un ritardo di consistenza
+    nell'evoluzione dello stato dell'e-service.
+    La riesecuzione locale termina senza problemi, quindi il KO è compatibile
+    con una condizione temporanea dell'ambiente NRT e non con un difetto
+    riproducibile della logica di rimozione degli attributi.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2M_ESERVICES_DECLARED_ATTRIBUTES_ADD_02_A] Un utente con ruolo M2M-ADMIN NON può aggiungere degli
@@ -3132,8 +3145,23 @@ ko:
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.buildWFAEService(DelegationCommonStep.java:157)
     	at it.pagopa.pn.interop.cucumber.steps.delegate.DelegationCommonStep.bringDescriptorToStateWFA(DelegationCommonStep.java:100)
     	at ✽."PA1" porta il descrittore dell'e-service in stato WAITING_FOR_APPROVAL usando "PA2" come delegato(classpath:it/pagopa/pn/cucumber/m2mgateway/eservices-declared-attributes.feature:44)
-  procedure: 'Analisi del log e riesecuzione in locale.'
-  result: 'La riesecuzione in locale ha terminato senza problemi. Come nei casi analoghi di problemi con eventual consistency, nel caso di errore si può considerare di allungare il periodo di timeout per dare più tempo a queste inconsistenze di giungere a risoluzione.'
+  procedure: |
+    Analizzare il log della run NRT e verificare che il KO avvenga durante
+    il setup dello scenario, nella pubblicazione del descrittore verso lo
+    stato WAITING_FOR_APPROVAL.
+    Rieseguire isolatamente lo scenario [M2M_ESERVICES_DECLARED_ATTRIBUTES_ADD_02_A] 
+    e verificare la creazione del gruppo, la delega a PA2 e il tentativo di aggiunta
+    dell'attributo dichiarato atteso con HTTP 400.
+  result: |
+    Il fallimento si verifica prima della verifica prevista sul codice HTTP
+    400: lo scenario non raggiunge il tentativo di aggiunta dell'attributo
+    dichiarato da parte dell'utente M2M di PA2.
+    Il polling della pubblicazione del descrittore termina con
+    "Failed to publish descriptor", indicativo di un ritardo di consistenza
+    nell'evoluzione dello stato dell'e-service.
+    La riesecuzione locale termina senza problemi, quindi il KO è compatibile
+    con una condizione temporanea dell'ambiente NRT e non con un difetto
+    riproducibile della logica di aggiunta degli attributi dichiarati.
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[M2MG_ESERVICES_35_A] Un utente con ruolo M2M-ADMIN NON può effettuare una modifica parziale di un e-service
