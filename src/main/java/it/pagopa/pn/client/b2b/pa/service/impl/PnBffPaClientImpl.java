@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.info.InfoPaApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.pa.recipient.NotificationSentApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffLegalNotificationsResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.sender.dashboard.SenderDashboardApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.info.BffAdditionalLanguages;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffDocumentDownloadMetadataResponse;
@@ -128,9 +129,18 @@ public class PnBffPaClientImpl implements IPnWebPaClient {
     }
 
     @Override
-    public BffLegalNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        BffLegalNotificationsResponse response = this.notificationSentApi.searchSentNotificationsV1(startDate, endDate, recipientId, status, iunMatch, size, nextPagesKey);
-        return response;
+    public BffLegalNotificationsResponse searchSentNotification(
+            OffsetDateTime startDate,
+            OffsetDateTime endDate,
+            String recipientId,
+            NotificationStatusV26 status,
+            String iunMatch,
+            Integer size,
+            String nextPagesKey
+    ) throws RestClientException {
+        return this.notificationSentApi.searchSentNotificationsV1(
+                startDate, endDate, recipientId, status, iunMatch, size, nextPagesKey
+        );
     }
 
     @Override

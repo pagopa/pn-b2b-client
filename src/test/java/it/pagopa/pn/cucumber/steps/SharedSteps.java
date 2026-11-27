@@ -20,17 +20,33 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.cache.CacheManager;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
 import it.pagopa.pn.client.b2b.pa.domain.Costanti;
 import it.pagopa.pn.client.b2b.pa.domain.Destinatario;
 import it.pagopa.pn.client.b2b.pa.domain.DynamoTableName;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaladdressbook.model.CourtesyDigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpainformal.model.FullSentInformalNotificationV1;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV28;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV28;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.provider.DestinatarioRegistry;
 import it.pagopa.pn.client.b2b.pa.provider.SenderInfoProvider;
-import it.pagopa.pn.client.b2b.pa.service.*;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.wrapper.LegalCourtesyAddressWrapper;
@@ -69,13 +85,81 @@ import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static it.pagopa.pn.client.b2b.pa.domain.Costanti.*;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALDA_MERINI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_1_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_2_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_MULTI_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_ROOT_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.COMUNE_SON_TAX_ID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CRISTOFORO_COLOMBO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.CUCUMBER_SPA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DINO_SAURO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_ANALOG_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_FAILURE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_DIGITAL_REFINEMENT_DEFAULT_SUCCESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_SECOND_NOTIFICATION_WORKFLOW_WAITING_TIME_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_TIME_TO_ADD_IN_NON_VISIBILITY_TIME_CASE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.DURATION_WAIT_READ_COURTESY_MESSAGE_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.ETTORE_FIERAMOSCA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.EXTENSION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_NOTFOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_PDF_INVALID_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.FILE_SHA_ERROR;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GALILEO_GALILEI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.GHERKIN_SRL;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.INVALID_PARAMETER_MAX_ATTACHMENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LEONARDO_DA_VINCI;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.LUCIO_ANNEO_SENECA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CREDENZIALI_SCADUTE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_CUCUMBER;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MARIO_GHERKIN;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.MOST_RECENT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_INJECTION_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_ACCEPTED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOTIFICATION_STATUS_CANCELLED;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_EQUAL_SHA_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ALLEGATO_JSON;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_NO_PRELOAD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_FOUND_ON_SAFE_STORAGE;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.NOT_VALID_ADDRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVERSIZE_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.OVER_15_ALLEGATO;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SCHEDULING_DELTA_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_ANALOG_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.SHA_256;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.TAXID_NOT_VALID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_ACCEPTATION_SHORT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.VALIDATION_STATUS_NO_ACCEPTATION;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAITING_GPD;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_EXTRA_RAPID;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_DEFAULT;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WORKFLOW_WAIT_UPPER_BOUND;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.Costanti.WRONG_EXTENSION;
 import static java.time.OffsetDateTime.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -276,7 +360,7 @@ public class SharedSteps {
         this.iuvGPD = new ArrayList<>();
         this.objMapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
         this.secureRandom = new SecureRandom();
-        this.dynamoDbService = dynamoDbService;
+        this.dynamoDbService = dynamoDbServicedynamoDbService;
         this.senderInfoProvider = senderInfoProvider;
         versionUsed = getNotificationVersion(MOST_RECENT);
         this.senderTaxIdCacheManager = senderTaxIdCacheManager;
@@ -296,21 +380,9 @@ public class SharedSteps {
     }
 
     @Before
-    public void injectScenarioNameInsideSlf4jMdc(Scenario scenario) {
+    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put(RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName);
-        Matcher testCaseIdMatcher = TEST_CASE_ID_PATTERN.matcher(scenarioName);
-        if (testCaseIdMatcher.find()) {
-            MDC.put(RestTemplateConfiguration.CUCUMBER_TEST_CASE_ID_MDC_ENTRY, testCaseIdMatcher.group(1));
-        }
-        MDC.put(RestTemplateConfiguration.CUCUMBER_FEATURE_FILE_MDC_ENTRY, extractFeatureFileName(scenario.getUri()));
-        log.info("START SCENARIO: {}", scenarioName);
-    }
-
-    private static String extractFeatureFileName(URI featureUri) {
-        String path = featureUri.getPath() != null ? featureUri.getPath() : featureUri.getSchemeSpecificPart();
-        int lastSlash = path.lastIndexOf('/');
-        return lastSlash >= 0 ? path.substring(lastSlash + 1) : path;
     }
 
     @Before("@integrationTest")
@@ -319,18 +391,11 @@ public class SharedSteps {
     }
 
     /**
-     * Restituisce lo FullSentNotification di una notifica legale aggiornata all'ultima versione
+     * Restituisce lo FullSentNotification aggiornata all'ultima versione (quella maggiormente utilizzata a codice)
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV29 getSentNotificationLastVersion() {
-        return b2bClient.getSentNotificationV29(notificationIun);
-    }
-
-    /**
-     * Restituisce lo FullSentNotification di una notifica bonaria aggiornata all'ultima versione
-     */
-    public FullSentInformalNotificationV1 getSentInformalSentNotificationLastVersion() {
-        return pnPaB2bInternalInformalClientImpl.getSentInformalNotificationSender(informalSenderId, notificationIun, true);
+    public FullSentNotificationV28 getSentNotificationLastVersion() {
+        return b2bClient.getSentNotificationV28(notificationIun);
     }
 
     /**
@@ -339,21 +404,13 @@ public class SharedSteps {
      * Usato in un solo punto del codice
      */
     //TODO: all'introduzione di una nuova versione, ri-fattorizzare il tipo di oggetto ritornato e cambiare i punti di codice che richiamano questo metodo
-    public FullSentNotificationV29 getSentNotificationLastVersionByIun(String iun) {
-        return b2bClient.getSentNotificationV29(iun);
-    }
-
-
-    /**
-     * In base al notificationIun settato stabilisce se si tratta di una notifica legale o bonaria (le legali terminano con 1, le bonarie con la lettera)
-     */
-    public boolean isLegalNotification() {
-        return notificationIun != null && notificationIun.endsWith("1");
+    public FullSentNotificationV28 getSentNotificationLastVersionByIun(String iun) {
+        return b2bClient.getSentNotificationV28(iun);
     }
 
     public NotificationVersion getNotificationVersion(String version) {
         if (version.trim().equalsIgnoreCase(MOST_RECENT)) {
-            return NotificationVersion.V26;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
+            return NotificationVersion.V25;//TODO: modificare questo valore ogni volta che viene aggiunta una versione più recente
         }
         return NotificationVersion.valueOf(version.trim().toUpperCase());
     }
@@ -386,7 +443,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -404,7 +461,7 @@ public class SharedSteps {
         getNotificationStepInterface().prepareNotificationRequest(Map.of(
                 "subject", "MOCKED NOTIFICATION",
                 "senderDenomination", "Comune di Palermo"));
-        getNotificationStepInterface().addRecipientToNotification(destinatarioRegistry.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
+        getNotificationStepInterface().addRecipientToNotification(Destinatario.DESTINATARIO_MARIO_CUCUMBER, new HashMap<>());
     }
 
     /**
@@ -447,13 +504,11 @@ public class SharedSteps {
 
     @And("destinatario {destinatario}")
     public void addDestinatario(Destinatario destinatario) {
-        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, new HashMap<>());
     }
 
     @And("destinatario {destinatario} e:")
     public void addDestinatarioWithParams(Destinatario destinatario, Map<String, String> data) {
-        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         getNotificationStepInterface().addRecipientToNotification(destinatario, data);
     }
 
@@ -465,7 +520,6 @@ public class SharedSteps {
 
     @And("vengono create {int} notifiche con destinatario {destinatario} per la pa {string} e si aspetta che raggiungano l'elemento di timeline della notifica {string}")
     public void creaNotifiche(int notificationNumber, Destinatario destinatario, String pa, String timelineEvent, Map<String, String> data) throws IOException, InterruptedException {
-        sendSharedContext.getLegalNotificationContext().getRecipient().setDestinatario(destinatario);
         NotificationStepsInterface notificationStepsInterface = getNotificationStepInterface();
         for (int i = 0; i < notificationNumber; i++) {
             prepareNotificationRequestWithVersion(MOST_RECENT, data);
@@ -495,7 +549,7 @@ public class SharedSteps {
         }
     }
 
-    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isTheSame}")
+    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e codice avviso {isUguale}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreAndCodiceAvvisoVariabile(boolean isCodiceAvvisoUguale) {
         getNotificationStepInterface().prepareNotificationRequestSimileAllaPrecedente(
                 true, isCodiceAvvisoUguale, false, null);
@@ -570,17 +624,8 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paName) {
-        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
-    }
-
-    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata con polling EXTRA_RAPID")
-    public void laNotificaVieneInviataOkAndCancelledExtraRapid(String paName) {
-        laNotificaVieneInviataOkAndCancelled(paName, WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS_EXTRA_RAPID);
-    }
-
-    private void laNotificaVieneInviataOkAndCancelled(String paName, int wait, String status, String pollingStrategy) {
         setPaAndSenderTaxId(paName);
-        getNotificationStepInterface().sendNotification(wait, status, pollingStrategy);
+        getNotificationStepInterface().sendNotification(WAIT_EXTRA_RAPID, NOTIFICATION_STATUS_ACCEPTED, VALIDATION_STATUS);
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() -> b2bClient.notificationCancellation(notificationIun));
 
@@ -625,23 +670,38 @@ public class SharedSteps {
         }
     }
 
-    @Then("la timeline {contains} elementi con la stringa {string}")
-    public void verifyPresenceOfTimelineElementsWithString(boolean contains, String searchString) {
-        FullSentNotificationV29 fullSentNotification = getSentNotificationLastVersion();
+    @Then("^verifico la (presenza|non presenza) di elementi di timeline con stringa \"([^\"]*)\"$")
+    public void verifyPresenceOfTimelineElementsWithString(String presence, String searchString) {
+
+        FullSentNotificationV28 fullSentNotification = getSentNotificationLastVersion();
         List<TimelineElementV28> timeline = fullSentNotification.getTimeline();
-        List<TimelineElementV28> matchingElements = timeline.stream().filter(e -> e.getElementId() != null && e.getElementId().contains(searchString)).toList();
+
+        List<TimelineElementV28> matchingElements = timeline.stream()
+                .filter(e -> e.getElementId() != null && e.getElementId().contains(searchString))
+                .toList();
 
         if (!matchingElements.isEmpty()) {
             log.warn("Elementi di timeline contenenti '{}':", searchString);
-            matchingElements.forEach(e -> log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp()));
+            matchingElements.forEach(e ->
+                    log.warn(" - elementId: {}, timestamp: {}", e.getElementId(), e.getTimestamp())
+            );
         } else {
             log.info("Nessun elemento di timeline contiene la stringa '{}'", searchString);
         }
-        int matchingElementsSize = matchingElements.size();
-        if (contains) {
-            assertThat(matchingElementsSize).as("Attesa la presenza di elementi contenenti '%s' ma non ne sono stati trovati", searchString).isGreaterThan(0);
+
+        boolean isPresenceExpected = presence.equalsIgnoreCase("presenza");
+
+        if (isPresenceExpected) {
+            Assertions.assertFalse(
+                    matchingElements.isEmpty(),
+                    "Attesa la presenza di elementi contenenti '" + searchString + "' ma non ne sono stati trovati"
+            );
         } else {
-            assertThat(matchingElementsSize).as("Non era attesa la presenza di elementi contenenti '%s' ma ne sono stati trovati %s", searchString, matchingElementsSize).isEqualTo(0);
+            Assertions.assertTrue(
+                    matchingElements.isEmpty(),
+                    "Non attesa la presenza di elementi contenenti '" + searchString +
+                            "' ma ne sono stati trovati: " + matchingElements.size()
+            );
         }
     }
 
@@ -758,18 +818,6 @@ public class SharedSteps {
         }
     }
 
-    @When("la notifica viene inviata dal {string} con errore {string}")
-    public void laNotificaVieneInviataDallaPAWithError(String paName, String errorType) {
-        setPaAndSenderTaxId(paName);
-        try {
-            getNotificationStepInterface().uploadNotification(errorType);
-        } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException httpError) {
-                this.notificationError = httpError;
-            }
-        }
-    }
-
     // Spostato da AvanzamentoNotificheB2bSteps, ha più senso qua
     //Annullamento Notifica
     @And("la notifica può essere annullata dal sistema tramite codice IUN")
@@ -787,11 +835,6 @@ public class SharedSteps {
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione, Integer posizioneDebitoria) {
         getNotificationStepInterface().addIuvGpdToDestinatario(denominazione, getIuvGPD(posizioneDebitoria), posizioneDebitoria);
-    }
-
-    @And("al destinatario {int} viene associato lo iuv creato mediante partita debitoria alla posizione {int} per il suo pagamento alla posizione {int}")
-    public void destinatarioAddIuvGPD(Integer recIndex, Integer posizioneDebitoria, Integer recipientPaymentIndex) {
-        getNotificationStepInterface().addIuvGpdToDestinatario(recIndex, getIuvGPD(posizioneDebitoria), recipientPaymentIndex);
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
@@ -848,11 +891,8 @@ public class SharedSteps {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
             } else {
-                log.warn("Errore durante la rimozione PEC di piattaforma (status: {}): {}",
-                        httpStatusCodeException.getStatusCode(), httpStatusCodeException.getMessage());
+                throw httpStatusCodeException;
             }
-        } catch (Exception e) {
-            log.warn("Errore imprevisto durante la rimozione PEC di piattaforma: {}", e.getMessage());
         }
     }
 
@@ -1488,12 +1528,8 @@ public class SharedSteps {
         BffLegalNotificationsResponse bffNotificationsResponse = webPaClient.searchSentNotification(
                 todayDate.minusDays(upperLimit),
                 todayDate.minusDays(lowerLimit),
-                recipientTaxId,
-                it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE,
-                null,
-                null,
-                50,
-                null);
+                recipientTaxId,it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.NotificationStatusV26.EFFECTIVE_DATE,
+                 null, 50, null);
         AssertionsForClassTypes.assertThat(bffNotificationsResponse).as("La bffNotificationResponse non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere null").isNotNull();
         AssertionsForInterfaceTypes.assertThat(bffNotificationsResponse.getResultsPage()).as("La lista di notifiche vecchie " + lowerLimit + " giorni non dev'essere vuota").isNotEmpty();

@@ -16,7 +16,15 @@ import java.time.OffsetDateTime;
 
 
 public interface IPnWebPaClient extends SettableBearerToken {
-    BffLegalNotificationsResponse searchSentNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException;
+    BffLegalNotificationsResponse searchSentNotification(
+            OffsetDateTime startDate,
+            OffsetDateTime endDate,
+            String recipientId,
+            NotificationStatusV26 status,
+            String iunMatch,
+            Integer size,
+            String nextPagesKey
+    ) throws RestClientException;
     BffNewNotificationResponse newSentNotificationV1(BffNewNotificationRequest notificationRequest) throws RestClientException;
     BffFullNotificationV1 getSentNotificationV1(String iun) throws RestClientException;
     BffRequestStatus notificationCancellationV1(String iun) throws RestClientException;

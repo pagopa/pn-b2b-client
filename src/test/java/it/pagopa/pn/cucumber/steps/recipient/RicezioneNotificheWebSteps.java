@@ -870,7 +870,7 @@ public class RicezioneNotificheWebSteps {
         BffLegalNotificationsResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                        convertedStatus, searchParam.subjectRegExp,
+                        convertedStatus,
                         searchParam.iunMatch, searchParam.size, null);
         List<BffLegalNotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
@@ -881,7 +881,7 @@ public class RicezioneNotificheWebSteps {
                     notificationSearchResponse = webPaClient
                             .searchSentNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
-                                    convertedStatus, searchParam.subjectRegExp,
+                                    convertedStatus,
                                     searchParam.iunMatch, searchParam.size, pageKey);
                     resultsPage = notificationSearchResponse.getResultsPage();
                     beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getNotificationIun())).findAny().orElse(null) != null;
