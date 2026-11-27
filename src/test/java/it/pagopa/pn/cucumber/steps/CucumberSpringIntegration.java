@@ -74,6 +74,7 @@ import it.pagopa.pn.cucumber.steps.ingestionPagamenti.config.PaymentEventsSettin
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.context.PaymentEventsScenarioContext;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PagoPaPaymentEventService;
 import it.pagopa.pn.cucumber.steps.ingestionPagamenti.service.PaymentErrorQueueService;
+import it.pagopa.pn.cucumber.steps.messaggiCortesiaEmail.service.TestEmailInboxService;
 import it.pagopa.pn.cucumber.utils.LambdaInvoker;
 import it.pagopa.pn.cucumber.utils.notificationsearch.NotificationSearchCriteriaMapper;
 import it.pagopa.pn.cucumber.utils.validator.SchemaValidator;
@@ -123,6 +124,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServicePaymentInfo.class,
         CieGeneratorTool.class,
         TaxIdConfiguration.class,
+        TestEmailConfig.class,
 
         PnPollingServiceTimelineRapidV1.class,
         PnPollingServiceStatusRapidV1.class,
@@ -327,6 +329,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaymentEventsScenarioContext.class,
         PagoPaPaymentEventService.class,
         PaymentErrorQueueService.class,
+        TestEmailInboxService.class,
         PaymentEventsSettings.class
 })
 @EnableScheduling
