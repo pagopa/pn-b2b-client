@@ -441,8 +441,7 @@ Feature: API Notifiche - verifica notifiche in-app messaggio e deep link (genera
     del template "$CONTEXT(eServiceTemplateName)".
     """
 
-  # FALLISCE: la notifica riporta il nome del template vecchio e nuovo, e non dell'e-service nome vecchio e nuovo
-  @wait_for_fix
+  # FALLISCE: difformità della notifica attesa vedi bug PIN-11673
   Scenario: [Notifica aggiornamento nome template] L'e-service viene rinominato in quanto il suo template è stato rinominato
     Given l'utente è un "admin" di "PA2"
     And l'utente effettua la creazione di un e-service template in modalità erogazione in stato di PUBLISHED
