@@ -704,7 +704,13 @@ Feature: Test API M2M of e-service template
       | PUBLISHED               | %null               | false                   |
 
       | SUSPENDED               | true                | true                    |
+
+    Examples:
+      | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
       | SUSPENDED               | false               | false                   |
+
+    Examples:
+      | eServiceDescriptorState | isConsumerDelegable | isClientAccessDelegable |
       | SUSPENDED               | true                | false                   |
       | SUSPENDED               | true                | %null                   |
       | SUSPENDED               | false               | %null                   |

@@ -269,6 +269,9 @@ Feature: Archiviazione manuale di un e-service
     Examples:
       | role         |
       | admin        |
+
+    Examples:
+      | role         |
       | api          |
       | api,security |
 

@@ -376,6 +376,9 @@ Feature: Allineamento linee guida
     Examples:
       | personalDataFlag |
       | true             |
+
+    Examples:
+      | personalDataFlag |
       | false            |
 
   @llgg

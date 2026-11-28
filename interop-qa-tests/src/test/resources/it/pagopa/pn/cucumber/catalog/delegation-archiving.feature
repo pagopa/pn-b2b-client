@@ -1650,6 +1650,9 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Examples:
       | tenant | eserviceState |
       | PA1    | PUBLISHED     |
+
+    Examples:
+      | tenant | eserviceState |
       | PA1    | SUSPENDED     |
       | PA2    | PUBLISHED     |
       | PA2    | SUSPENDED     |
@@ -1671,6 +1674,9 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Examples:
       | tenant |
       | PA1    |
+
+    Examples:
+      | tenant |
       | PA2    |
 
   @sad-path
@@ -1691,6 +1697,9 @@ Feature: Gestione deleghe per archiviazione manuale e-service
     Examples:
       | tenant |
       | PA1    |
+
+    Examples:
+      | tenant |
       | PA2    |
 
   @sad-path
